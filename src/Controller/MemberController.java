@@ -150,7 +150,7 @@ public class MemberController extends HttpServlet {
 	    	
 	    	case "/login.do": // 일반 로그인 방법으로 로그인한 경우
 	    		
-		    	nextPage = "/testMain.jsp";
+		    	nextPage = "/main.jsp";
 		    	        
 	    		break;
 	    		
@@ -183,7 +183,7 @@ public class MemberController extends HttpServlet {
 //	    		}
 	    		
 	    		// 재요청할 전체 메인화면 주소를 저장
-	    		nextPage = "/testMain.jsp";
+	    		nextPage = "/main.jsp";
 	    		
 	    		break;
 	    		
@@ -201,7 +201,7 @@ public class MemberController extends HttpServlet {
 	    	    	out.println("<html><body>");
 	    	        out.println("<script>");
 	    	        out.println("alert('로그아웃이 완료되었습니다.');");
-	    	        out.println("window.location.href = '/TestProject/testMain.jsp';");
+	    	        out.println("window.location.href = '/EduManager/main.jsp';");
 	    	        out.println("</script>");
 	    	        out.println("</body></html>");
 	    	        
