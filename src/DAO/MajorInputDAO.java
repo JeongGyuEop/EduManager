@@ -20,7 +20,7 @@ public class MajorInputDAO {
 	public MajorInputDAO() {
 		try {
 			Context ctx = new InitialContext();
-			ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/jspbeginner");
+			ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/edumanager");
 		} catch (Exception e) {
 			System.out.println("커넥션 풀을 얻는 데 실패했습니다: " + e.toString());
 		}
@@ -50,7 +50,7 @@ public class MajorInputDAO {
 		// db 연동
 		try {
 		con = ds.getConnection();
-        sql = "insert into department (deptname, depttel) values (?, ?)";
+        sql = "insert into majorinformation (majorname, majortel) values (?, ?)";
         pstmt = con.prepareStatement(sql);
         pstmt.setString(1, newDepartmentName);
         pstmt.setString(2, newMajorTel);

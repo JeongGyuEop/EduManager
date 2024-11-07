@@ -3,7 +3,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<c:set var="contextPath" value="${pageContext.request.contextPath}" />
+<%
+	String contextPath = request.getContextPath();
+	System.out.println(contextPath);
+%>
 
 <!DOCTYPE html>
 <html>
@@ -26,16 +29,18 @@
 </script>
 </head>
 <body>
-	<form action="${contextPath}/DMI/MajorInput.do" method="get"
+	<form action="<%=contextPath %>/DMI/MajorInput.do" method="get"
 		onsubmit="return validateForm()">
 		<label for="MajorNameInput">신규 학과명:</label> <input type="text"
 			id="MajorNameInput" name="MajorNameInput" placeholder="**학과"
 			required="required"> <label for="MajorTelInput">학과
 			사무실 전화번호:</label> <input type="tel" id="MajorTelInput" name="MajorTelInput"
 			placeholder="02-123-1234">
+			
+			
 		<button type="submit">제출</button>
 	</form>
-	<script>
+	<!-- <script>
 		// 전화번호 유효성 검사
 		function validateForm() {
 			const telNumber = document.getElementById("MajorTelInput").value;
@@ -47,7 +52,7 @@
 			}
 			return true;
 		}
-	</script>
+	</script> -->
 
 </body>
 </html>
