@@ -1,23 +1,23 @@
 package Controller;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import Service.DepartmentInputService;
+import Service.MajorInputService;
 import Service.MajorInputService;
 
 @WebServlet("/DMI/*")
-public class DepartmentMajorInputController extends HttpServlet {
-    private DepartmentInputService departmentInputService;
+public class MajorInputController extends HttpServlet {
     private MajorInputService majorInputService;
 
     @Override
     public void init() throws ServletException {
-        // 학부 입력 서비스 및 전공 입력 서비스 초기화
-        departmentInputService = new DepartmentInputService();
+        // 전공 입력 서비스 초기화
         majorInputService = new MajorInputService();
     }
 
@@ -41,12 +41,15 @@ public class DepartmentMajorInputController extends HttpServlet {
         String action = request.getPathInfo();
 
         switch (action) {
-            case "/DepartmentInput.do":
-                departmentInputService.departmentInput(request);
+            case "/MajorInput.do":
+                int addResult = majorInputService.majorInput(request);
+                request.setAttribute("addResult", addResult);
                 break;
             default:
                 System.out.println("jsp 소실");
                 break;
         }
+        RequestDispatcher dispatcher = request.getRequestDispatcher("major.jsp");
+        dispatcher.forward(request, response);
     }
 }
