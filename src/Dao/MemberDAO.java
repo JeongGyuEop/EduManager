@@ -28,7 +28,7 @@ public class MemberDAO {
 	public MemberDAO() {
 		try {
 			Context ctx = new InitialContext();
-			ds = (DataSource)ctx.lookup("java:/comp/env/jdbc/jspbeginner");
+			ds = (DataSource)ctx.lookup("java:/comp/env/jdbc/edumanager");
 		} catch (Exception e) {
 			System.out.println("커넥션풀 얻기 실패 : "+ e);
 		} 
@@ -49,14 +49,14 @@ public class MemberDAO {
 
 	
 	//로그인 요청시 입력한 아이디, 비밀번호가 DB의 member테이블에 있는지 확인
-	public int userCheck(String login_id, String login_pass) {
+	public String userCheck(String login_id, String login_pass) {
 		
-		int check = -1;
+		String check = null;
 		
 		try {
 			con = ds.getConnection();
 			
-			String sql = "select * from member where id=?";
+			String sql = "select * from user where user_id=?";
 			
 			pstmt = con.prepareStatement(sql);
 			
@@ -66,14 +66,14 @@ public class MemberDAO {
 			
 			if(rs.next()) {//입력한 아이디로 조회한 행이 있으면?(아이디가 DB에 있으면?)
 				//입력한 비밀번호와 조회된 비밀전호를 비교해서 있으면?(비밀번호가 있으면?)
-				if(login_pass.equals(rs.getString("pw"))) {
-					check = 1;					
+				if(login_pass.equals(rs.getString("user_pw"))) {
+					return rs.getString("role");					
 				}else {//입력한 아이디는 존재하나 비밀번호가 없으면?
-					check = 0;
+					check = "0";
 				}
 				
 			}else {//입력한 아이디가 DB의 테이블에 없다. (아이디가 DB에 없으면?)
-				check = -1;
+				check = "-1";
 			}
 			
 		} catch (Exception e) {
@@ -85,6 +85,8 @@ public class MemberDAO {
 		
 		return check; //MemberService(부장)에게 결과 반환 
 	}
+
+	
 
 
 

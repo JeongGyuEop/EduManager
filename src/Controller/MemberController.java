@@ -72,40 +72,17 @@ public class MemberController extends HttpServlet {
 
 		//===========================================================================================
 	    
-	    	case "/login.me":
-	    		
-	    		// 부장에게 시킴
-	    		center = memberservice.serviceLoginMember();
-	    		// "members/login.jsp"
-	    		
-	    		// 중앙 화면 VIEW 주소 바인딩
-	    		request.setAttribute("center", center);
-	    		
-	    		// 재요청할 전체 메인화면 주소를 저장
-	    		nextPage = "member/login.jsp";
-	    		
-	    		break;
-	    		
-	    //===========================================================================================
-	    	
-	    	case "/login.do": // 일반 로그인 방법으로 로그인한 경우
-	    		
-		    	nextPage = "/main.jsp";
-		    	        
-	    		break;
-	    		
-	    		
-	    //=========================================================================================
-	    	
-	    	case "/loginPro.me": // 로그인 요청을 한 2단계 요청주소 일 때
+	    	case "/login.do": // 로그인 요청을 한 2단계 요청주소 일 때
 	    		
 	    		// 부장에게 시킴
 	    		// check 변수의 값이 1 이면 아이디, 비밀번호가 DB에 존재한다.
 	    		//                   0 이면 아이디만 DB에 존재한다.
 	    		//                  -1 이면 아이디 DB에 존재하지 않음
-	    		int check = memberservice.serviceUserCheck(request);
+	    		String check = memberservice.serviceUserCheck(request);
 	    		
-	    		if(check == 0) { // 아이디 맞음, 비밀번호 틀림
+	    		out = response.getWriter();
+	    		
+	    		if(check == "0") { // 아이디 맞음, 비밀번호 틀림
 	    			out.println("<script>");
 	    				out.println("window.alert('비밀번호 틀림');");
 	    				out.println("history.go(-1);");
@@ -113,7 +90,7 @@ public class MemberController extends HttpServlet {
 	    			
 	    			return; // doHandle 메소드를 빠져나가기 위함
 	    			
-	    		} else if(check == -1) { // 아이디 틀림
+	    		} else if(check == "-1") { // 아이디 틀림
 	    			out.println("<script>");
     					out.println("window.alert('아이디 틀림');");
     					out.println("history.go(-1);");
@@ -122,8 +99,23 @@ public class MemberController extends HttpServlet {
     				return; // doHandle 메소드를 빠져나가기 위함
 	    		}
 	    		
-	    		// 재요청할 전체 메인화면 주소를 저장
-	    		nextPage = "/main.jsp";
+	    		
+	    		
+	    		if(check.equals("학생")) {
+	    			// 재요청할 전체 메인화면 주소를 저장
+		    		nextPage = "/studentHome.jsp";
+		    		break;
+	    		}else if(check.equals("교수")) {
+	    			// 재요청할 전체 메인화면 주소를 저장
+		    		nextPage = "/professorHome.jsp";
+		    		break;
+	    		}else if(check.equals("관리자")) {
+	    			// 재요청할 전체 메인화면 주소를 저장
+		    		nextPage = "/masterHome.jsp";
+		    		break;
+	    		}
+	    		
+	    	
 	    		
 	    		break;
 	    		

@@ -32,18 +32,19 @@ public class MemberService {
 	}
 
 	//로그인 요청 
-	public int serviceUserCheck(HttpServletRequest request) {
+	public String serviceUserCheck(HttpServletRequest request) {
 		
 		//요청한 값 얻기(로그인 요청시 입력한 아이디, 비밀번호 request에서 얻기)
 		String login_id = request.getParameter("id");
-		String login_pass = request.getParameter("pw");
+		String login_pass = request.getParameter("pass");
 		
 		//check 변수값이 1이면 입력한 아이디, 비밀번호가 DB에 존재함 
 		
-		//HttpSession메모리 얻기
-		HttpSession session = request.getSession();
-		//HttpSession메모리에 입력한 아이디 바인딩
-		session.setAttribute("id", login_id);
+//		//HttpSession메모리 얻기
+//		HttpSession session = request.getSession();
+//		
+//		//HttpSession메모리에 입력한 아이디 바인딩
+//		session.setAttribute("id", login_id);
 	
 		return memberDao.userCheck(login_id, login_pass);
 	}	
@@ -58,6 +59,6 @@ public class MemberService {
 		
 		
 	}
-	
+
 	
 }//MemberService

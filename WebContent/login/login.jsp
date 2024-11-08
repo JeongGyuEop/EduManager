@@ -20,11 +20,8 @@
 	    <div class="container">
 	 
 	    <%--MemberController서블릿에.. 로그인 처리 요청시! 입력한 id와 패스워드 전달 --%>   
-	      <form class="form-signin" action="<%=contextPath%>/member/loginPro.me" id="join">    
-	        <h2 class="form-signin-heading">로그인 화면</h2>
-	        	<input type="radio" id="stu" name="check" checked>학생
-	        	<input type="radio" id="prof" name="check">교수	     
-	        	<br>   	
+	      <form class="form-signin" action="<%=contextPath%>/member/login.do" id="join" method="get">    
+	        <h2 class="form-signin-heading">로그인 화면</h2> 	
 	        	<label class="sr-only">아이디</label>
 	        		<input type="text" id="id" name="id"  placeholder="아이디" required autofocus>
 	        	<label for="inputPassword" class="sr-only">비밀번호</label>
