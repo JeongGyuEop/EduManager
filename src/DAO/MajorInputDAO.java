@@ -10,6 +10,9 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 public class MajorInputDAO {
+	private static final int success = 1;
+	private static final int failure = 0;
+	
 	Connection con;
 	PreparedStatement pstmt;
 	ResultSet rs;
@@ -44,15 +47,15 @@ public class MajorInputDAO {
         }
     }
     
-	public int majorInput(String newDepartmentName, String newMajorTel) {
+	public int majorInput(String newMajorName, String newMajorTel) {
 		// 반환 값 설정
-		int addResult = 0;
+		int addResult = failure;
 		// db 연동
 		try {
 		con = ds.getConnection();
         sql = "insert into majorinformation (majorname, majortel) values (?, ?)";
         pstmt = con.prepareStatement(sql);
-        pstmt.setString(1, newDepartmentName);
+        pstmt.setString(1, newMajorName);
         pstmt.setString(2, newMajorTel);
         addResult = pstmt.executeUpdate();
         
