@@ -8,6 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -25,7 +29,7 @@ public class MajorDataServlet extends HttpServlet {
 		ResultSet rs = null;
 		String sql = "SELECT majorcode, majorname, majortel FROM majorinformation";
 
-		response.setContentType("text/html; charset=UTF-8");
+		response.setContentType("application/json; charset=UTF-8");
 		PrintWriter out = response.getWriter();
 
 		try {
@@ -39,13 +43,15 @@ public class MajorDataServlet extends HttpServlet {
 			rs = pstmt.executeQuery();
 
 			// 응답으로 학과 정보를 HTML 형식으로 출력
+			JSONArray jsonArray = new JSONArray();
 			while (rs.next()) {
-				out.println("<tr>");
-				out.println("<td>" + rs.getString("majorcode") + "</td>");
-				out.println("<td>" + rs.getString("majorname") + "</td>");
-				out.println("<td>" + rs.getString("majortel") + "</td>");
-				out.println("</tr>");
+			    JSONObject jsonObject = new JSONObject();
+			    jsonObject.put("majorcode", rs.getString("majorcode"));
+			    jsonObject.put("majorname", rs.getString("majorname"));
+			    jsonObject.put("majortel", rs.getString("majortel"));
+			    jsonArray.add(jsonObject);
 			}
+			out.print(jsonArray.toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();
