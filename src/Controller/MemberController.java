@@ -1,13 +1,8 @@
 package Controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Vector;
+
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,14 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-//import Dao.CarDAO;
 import Service.MemberService;
-//import Vo.CarConfirmVo;
-//import Vo.CarListVo;
-//import Vo.CarOrderVo;
+
 
 // 사장 ...
 
@@ -83,63 +72,14 @@ public class MemberController extends HttpServlet {
 
 		//===========================================================================================
 	    
-	    	case "/join.me": //회원 가입 중앙 VIEW 요청
-	    		
-	    		// 부장 ---
-	    		//center = memberservice.serviceJoinName(request);
-	    		//"members/join.jsp
-	    		
-	    		// request 객체에 "members/join.jsp" 중앙화면 뷰 주소 바인딩
-	    		request.setAttribute("center", center);
-	    		
-	    		nextPage = "/main.jsp";
-	    		
-	    		break;
-	    		
-	   //===========================================================================================
-	    		
-	    	case "/joinIdCheck.me": // 아이디 중복 체크 요청!
-	    		
-	    		// 부장 --
-	    		// 입력한 아이디가 DB에 저장되어 있는지 확인하는 작업
-	    		// true -> 중복, false -> 중복 아님 둘 둥 하나를 반환 받음 
-	    		//boolean result = memberservice.serviceOverLappedId(request);
-	    		
-	    		// 아이디 중복결과를 다시 한번 확인하여 
-	    		// join.jsp 파일과 연결된 join.js 파일에 작성해 놓은
-	    		// $.ajax 메소드 내부의
-	    		// success:function의 data 매개변수로 웹브라우저를 거쳐 보낸다!!
-//	    		if(result == true) {
-//	    			out.write("not_usable");
-//	    			return;
-//	    		} else if(result == false) {
-//	    			out.write("usable");
-//	    			return;
-//	    		}
-	    		break;
-	    	
-	   //===========================================================================================
-	    	case "/joinPro.me": // 회원가입 2단계 요청주소와 같다면
-	    		
-	    		// 부장에게 시킴
-	    		//int result1 = memberservice.serviceInsertMember(request);
-	    	
-	    		nextPage = "/main.jsp";
-	    		
-	    		break;
-	    		
-	    //=========================================================================================
 	    	case "/login.me":
 	    		
 	    		// 부장에게 시킴
-	    		//center = memberservice.serviceLoginMember();
+	    		center = memberservice.serviceLoginMember();
 	    		// "members/login.jsp"
 	    		
-//	    		// 임시 경로 설정
-//	    		center = "/naverlogin.jsp";
-	    		
-//	    		// 중앙 화면 VIEW 주소 바인딩
-//	    		request.setAttribute("center", center);
+	    		// 중앙 화면 VIEW 주소 바인딩
+	    		request.setAttribute("center", center);
 	    		
 	    		// 재요청할 전체 메인화면 주소를 저장
 	    		nextPage = "member/login.jsp";
@@ -163,24 +103,24 @@ public class MemberController extends HttpServlet {
 	    		// check 변수의 값이 1 이면 아이디, 비밀번호가 DB에 존재한다.
 	    		//                   0 이면 아이디만 DB에 존재한다.
 	    		//                  -1 이면 아이디 DB에 존재하지 않음
-	    		//int check = memberservice.serviceUserCheck(request);
+	    		int check = memberservice.serviceUserCheck(request);
 	    		
-//	    		if(check == 0) { // 아이디 맞음, 비밀번호 틀림
-//	    			out.println("<script>");
-//	    				out.println("window.alert('비밀번호 틀림');");
-//	    				out.println("history.go(-1);");
-//	    			out.println("</script>");
-//	    			
-//	    			return; // doHandle 메소드를 빠져나가기 위함
-//	    			
-//	    		} else if(check == -1) { // 아이디 틀림
-//	    			out.println("<script>");
-//    					out.println("window.alert('아이디 틀림');");
-//    					out.println("history.go(-1);");
-//    				out.println("</script>");
-//	    		
-//    				return; // doHandle 메소드를 빠져나가기 위함
-//	    		}
+	    		if(check == 0) { // 아이디 맞음, 비밀번호 틀림
+	    			out.println("<script>");
+	    				out.println("window.alert('비밀번호 틀림');");
+	    				out.println("history.go(-1);");
+	    			out.println("</script>");
+	    			
+	    			return; // doHandle 메소드를 빠져나가기 위함
+	    			
+	    		} else if(check == -1) { // 아이디 틀림
+	    			out.println("<script>");
+    					out.println("window.alert('아이디 틀림');");
+    					out.println("history.go(-1);");
+    				out.println("</script>");
+	    		
+    				return; // doHandle 메소드를 빠져나가기 위함
+	    		}
 	    		
 	    		// 재요청할 전체 메인화면 주소를 저장
 	    		nextPage = "/main.jsp";
