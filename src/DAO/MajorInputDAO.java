@@ -1,4 +1,4 @@
-package DAO;
+package src.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,67 +12,69 @@ import javax.sql.DataSource;
 public class MajorInputDAO {
 	private static final int success = 1;
 	private static final int failure = 0;
-	
+
 	Connection con;
 	PreparedStatement pstmt;
 	ResultSet rs;
 	DataSource ds;
-	// sql ÁØºñ
+	// sql ï¿½Øºï¿½
 	String sql = null;
-	// db ¿¬°á
+
+	// db ï¿½ï¿½ï¿½ï¿½
 	public MajorInputDAO() {
 		try {
 			Context ctx = new InitialContext();
 			ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/edumanager");
 		} catch (Exception e) {
-			System.out.println("Ä¿³Ø¼Ç Ç®À» ¾ò´Â µ¥ ½ÇÆÐÇß½À´Ï´Ù: " + e.toString());
+			System.out.println("Ä¿ï¿½Ø¼ï¿½ Ç®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½: " + e.toString());
 		}
 	}
-	// ÀÚ¿øÇØÁ¦ ¸Þ¼Òµå
-	private void closeDatabaseResources(PreparedStatement pstmt, ResultSet rs) {
-        try {
-            if (rs != null) {
-                rs.close();
-            }
-        } catch (Exception e) {
-            System.out.println("ResultSet ÀÚ¿ø ÇØÁ¦ Áß ¿À·ù ¹ß»ý: " + e.toString());
-        }
 
-        try {
-            if (pstmt != null) {
-                pstmt.close();
-            }
-        } catch (Exception e) {
-            System.out.println("PreparedStatement ÀÚ¿ø ÇØÁ¦ Áß ¿À·ù ¹ß»ý: " + e.toString());
-        }
-    }
-    
-	public int majorInput(String newMajorName, String newMajorTel) {
-		// ¹ÝÈ¯ °ª ¼³Á¤
-		int addResult = failure;
-		// db ¿¬µ¿
+	// ï¿½Ú¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼Òµï¿½
+	private void closeDatabaseResources(PreparedStatement pstmt, ResultSet rs) {
 		try {
-		con = ds.getConnection();
-        sql = "insert into majorinformation (majorname, majortel) values (?, ?)";
-        pstmt = con.prepareStatement(sql);
-        pstmt.setString(1, newMajorName);
-        pstmt.setString(2, newMajorTel);
-        addResult = pstmt.executeUpdate();
-        
+			if (rs != null) {
+				rs.close();
+			}
+		} catch (Exception e) {
+			System.out.println("ResultSet ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½: " + e.toString());
+		}
+
+		try {
+			if (pstmt != null) {
+				pstmt.close();
+			}
+		} catch (Exception e) {
+			System.out.println("PreparedStatement ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½: " + e.toString());
+		}
+	}
+
+	public int majorInput(String newMajorName, String newMajorTel) {
+		// ï¿½ï¿½È¯ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		int addResult = failure;
+		// db ï¿½ï¿½ï¿½ï¿½
+		try {
+			con = ds.getConnection();
+			sql = "insert into majorinformation (majorname, majortel) values (?, ?)";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, newMajorName);
+			pstmt.setString(2, newMajorTel);
+			addResult = pstmt.executeUpdate();
+
 		} catch (SQLException e) {
-		    System.out.println("SQL ¿À·ù ¹ß»ý: " + e.getMessage());
-		    e.printStackTrace();
+			System.out.println("SQL ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			closeDatabaseResources(pstmt, rs);
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Connection ÀÚ¿ø ÇØÁ¦ Áß ¿À·ù ¹ß»ý: " + e.getMessage());
-            }
-        }
-		// °ª ¹ÝÈ¯
+			try {
+				if (con != null) {
+					con.close();
+				}
+			} catch (SQLException e) {
+				System.out.println("Connection ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½: " + e.getMessage());
+			}
+		}
+		// ï¿½ï¿½ ï¿½ï¿½È¯
 		return addResult;
 	}
 }

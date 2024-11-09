@@ -1,4 +1,4 @@
-package Controller;
+package src.Controller;
 
 import java.io.IOException;
 
@@ -8,56 +8,54 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import Service.MajorInputService;
-import Service.MajorInputService;
+import src.Service.MajorInputService;
 
 @WebServlet("/DMI/*")
 public class MajorInputController extends HttpServlet {
-    private MajorInputService majorInputService;
+	private MajorInputService majorInputService;
 
-    @Override
-    public void init() throws ServletException {
-        // Àü°ø ÀÔ·Â ¼­ºñ½º ÃÊ±âÈ­
-        majorInputService = new MajorInputService();
-    }
+	@Override
+	public void init() throws ServletException {
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
+		majorInputService = new MajorInputService();
+	}
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    	doHandle(request, response);
-    }
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doHandle(request, response);
+	}
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    	doHandle(request, response);
-    }
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doHandle(request, response);
+	}
 
-    protected void doHandle(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=utf-8");
+	protected void doHandle(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=utf-8");
 
-        String action = request.getPathInfo();
-        
-        String nextPage = null;
+		String action = request.getPathInfo();
 
-        switch (action) {
-            case "/MajorInput.do":
-            	
-                int addResult = majorInputService.majorInput(request);
-                request.setAttribute("addResult", addResult);
-                
-            	
-                nextPage = "/jin/MajorInput.jsp";
-                
-                break;
-                
-            default:
-                System.out.println("jsp ¼Ò½Ç");
-                break;
-        }
-        RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
-        dispatch.forward(request, response);
-    }
+		String nextPage = null;
+
+		switch (action) {
+		case "/MajorInput.do":
+
+			int addResult = majorInputService.majorInput(request);
+			request.setAttribute("addResult", addResult);
+
+			nextPage = "/jin/MajorInput.jsp";
+
+			break;
+
+		default:
+			System.out.println("jsp ï¿½Ò½ï¿½");
+			break;
+		}
+		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
+		dispatch.forward(request, response);
+	}
 }

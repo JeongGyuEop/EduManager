@@ -1,4 +1,4 @@
-package Servlet;
+package src.Servlet;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -33,32 +33,32 @@ public class MajorDataServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 
 		try {
-			// µ¥ÀÌÅÍº£ÀÌ½º ¿¬°á ¼³Á¤ (JNDI »ç¿ë)
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (JNDI ï¿½ï¿½ï¿½)
 			Context ctx = new InitialContext();
 			DataSource ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/edumanager");
 			con = ds.getConnection();
 
-			// SQL Äõ¸® ½ÇÇà
+			// SQL ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
-			// ÀÀ´äÀ¸·Î ÇÐ°ú Á¤º¸¸¦ HTML Çü½ÄÀ¸·Î Ãâ·Â
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ HTML ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 			JSONArray jsonArray = new JSONArray();
 			while (rs.next()) {
-			    JSONObject jsonObject = new JSONObject();
-			    jsonObject.put("majorcode", rs.getString("majorcode"));
-			    jsonObject.put("majorname", rs.getString("majorname"));
-			    jsonObject.put("majortel", rs.getString("majortel"));
-			    jsonArray.add(jsonObject);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("majorcode", rs.getString("majorcode"));
+				jsonObject.put("majorname", rs.getString("majorname"));
+				jsonObject.put("majortel", rs.getString("majortel"));
+				jsonArray.add(jsonObject);
 			}
 			out.print(jsonArray.toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			out.println("<tr><td colspan='3'>µ¥ÀÌÅÍ¸¦ ºÒ·¯¿À´Â Áß ¿À·ù°¡ ¹ß»ýÇß½À´Ï´Ù.</td></tr>");
+			out.println("<tr><td colspan='3'>ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.</td></tr>");
 		} finally {
-			// ÀÚ¿ø ÇØÁ¦
+			// ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 			if (rs != null)
 				try {
 					rs.close();

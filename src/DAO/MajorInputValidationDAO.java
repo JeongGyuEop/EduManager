@@ -1,4 +1,4 @@
-package DAO;
+package src.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,27 +14,27 @@ public class MajorInputValidationDAO {
 	PreparedStatement pstmt;
 	ResultSet rs;
 	DataSource ds;
-	// sql ÁØºñ
+	// sql ï¿½Øºï¿½
 	String sql = null;
 
-	// db ¿¬°á
+	// db ï¿½ï¿½ï¿½ï¿½
 	public MajorInputValidationDAO() {
 		try {
 			Context ctx = new InitialContext();
 			ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/edumanager");
 		} catch (Exception e) {
-			System.out.println("Ä¿³Ø¼Ç Ç®À» ¾ò´Â µ¥ ½ÇÆÐÇß½À´Ï´Ù: " + e.toString());
+			System.out.println("Ä¿ï¿½Ø¼ï¿½ Ç®ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½: " + e.toString());
 		}
 	}
 
-	// ÀÚ¿øÇØÁ¦ ¸Þ¼Òµå
+	// ï¿½Ú¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼Òµï¿½
 	private void closeDatabaseResources(PreparedStatement pstmt, ResultSet rs) {
 		try {
 			if (rs != null) {
 				rs.close();
 			}
 		} catch (Exception e) {
-			System.out.println("ResultSet ÀÚ¿ø ÇØÁ¦ Áß ¿À·ù ¹ß»ý: " + e.toString());
+			System.out.println("ResultSet ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½: " + e.toString());
 		}
 
 		try {
@@ -42,27 +42,27 @@ public class MajorInputValidationDAO {
 				pstmt.close();
 			}
 		} catch (Exception e) {
-			System.out.println("PreparedStatement ÀÚ¿ø ÇØÁ¦ Áß ¿À·ù ¹ß»ý: " + e.toString());
+			System.out.println("PreparedStatement ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½: " + e.toString());
 		}
 	}
 
 	public int majorInputValidation(String newMajorName) {
-		// ¹ÝÈ¯ °ª ¼³Á¤
+		// ï¿½ï¿½È¯ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		String majorName = null;
 		int validationResult = 0;
-		// db ¿¬µ¿
+		// db ï¿½ï¿½ï¿½ï¿½
 		try {
 			con = ds.getConnection();
 			sql = "SELECT majorname FROM majorinformation WHERE majorname = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, newMajorName);
 			rs = pstmt.executeQuery();
-			// Áßº¹µÈ ÀÌ¸§ÀÌ Á¸ÀçÇÒ °æ¿ì
+			// ï¿½ßºï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 			if (rs.next()) {
 				validationResult = -2;
 			}
 		} catch (SQLException e) {
-			System.out.println("SQL ¿À·ù ¹ß»ý: " + e.getMessage());
+			System.out.println("SQL ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½: " + e.getMessage());
 			e.printStackTrace();
 		} finally {
 			closeDatabaseResources(pstmt, rs);
@@ -71,10 +71,10 @@ public class MajorInputValidationDAO {
 					con.close();
 				}
 			} catch (SQLException e) {
-				System.out.println("Connection ÀÚ¿ø ÇØÁ¦ Áß ¿À·ù ¹ß»ý: " + e.getMessage());
+				System.out.println("Connection ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½: " + e.getMessage());
 			}
 		}
-		// °ª ¹ÝÈ¯
+		// ï¿½ï¿½ ï¿½ï¿½È¯
 		return validationResult;
 	}
 }

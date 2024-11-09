@@ -1,4 +1,4 @@
-package Service;
+package src.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -9,15 +9,15 @@ import javax.servlet.http.HttpSession;
 // 부장
 // - 단위 기능 별로 메소드를 만들어서 그 기능을 처리하는 클래스
 public class MemberService {
-	
+
 	// MemberDAO 객체의 주소를 저장할 참조변수
-	//MemberDAO memberDao;
-	
+	// MemberDAO memberDao;
+
 	// 기본 생성자 - 위 memberDao변수에 new MemberDAO() 객체를 만들어서 저장하는 역할
 	public MemberService() {
-		//memberDao = new MemberDAO();
+		// memberDao = new MemberDAO();
 	}
-	
+
 //	//-------
 //	// 회원가입 중앙화면 VIEW 요청
 //	public String serviceJoinName(HttpServletRequest request) {
@@ -94,20 +94,19 @@ public class MemberService {
 //
 //	}
 
-	//-------
+	// -------
 	// 로그아웃 요청
 	public void serviceLogOut(HttpServletRequest request) {
 
 		// 기존에 생성했던 HttpSession 객체 메모리 얻기
 		HttpSession session = request.getSession(false);
 		if (session != null) {
-            session.removeAttribute("userId");
-            session.removeAttribute("userName");
-            session.invalidate(); // 세션 무효화
-            
-        }
-		
+			session.removeAttribute("userId");
+			session.removeAttribute("userName");
+			session.invalidate(); // 세션 무효화
+
+		}
+
 	}
-	
 
 }

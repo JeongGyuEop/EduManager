@@ -1,4 +1,4 @@
-package Service;
+package src.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,19 +21,19 @@ public class MajorInputService {
 		String newMajorName = request.getParameter("MajorNameInput");
 		String newMajorTel = request.getParameter("MajorTelInput");
 
-		// µ¥ÀÌÅÍ À¯È¿¼º °Ë»ç
-		// °ªÀÌ ºñ¾úÀ» °æ¿ì -1À» ¹ÝÈ¯
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¿ï¿½ï¿½ ï¿½Ë»ï¿½
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ -1ï¿½ï¿½ ï¿½ï¿½È¯
 		if (newMajorName == null || newMajorName.trim().isEmpty()) {
 			return errorEmptyField;
 		}
 		if (newMajorTel == null || newMajorTel.trim().isEmpty()) {
 			return errorEmptyField;
 		}
-		// °°Àº ÀÌ¸§ÀÌ ÀÖÀ» °æ¿ì
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		if (majorInputValidationDAO.majorInputValidation(newMajorName) == errorDuplicateName) {
 			return errorDuplicateName;
 		}
-		// Ãß°¡ ÀÛ¾÷
+		// ï¿½ß°ï¿½ ï¿½Û¾ï¿½
 		return majorInputDAO.majorInput(newMajorName, newMajorTel);
 	}
 }
