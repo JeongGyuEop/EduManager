@@ -1,0 +1,74 @@
+/* top-section.css */
+
+/* 헤더 높이 줄이기 */
+header {
+    height: 40px !important;
+    padding: 3px 8px !important;
+}
+
+/* 전체 배경 및 top-section 스타일 */
+.top-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px !important;
+    height: 80px !important;
+    background-color: #f8f9fa;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px !important;
+}
+
+/* 로고 스타일 */
+.top-section .logo img {
+    max-width: 40px !important;
+}
+
+/* 타이틀 및 설명 텍스트 스타일 */
+.top-section .title h1 {
+    font-size: 1.2rem !important;
+    font-weight: bold;
+    color: #007bff;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.top-section .title h1 i {
+    margin-right: 5px !important;
+}
+
+.top-section .title p {
+    margin: 3px 0 0 !important;
+    font-size: 0.8rem !important;
+    color: #6c757d;
+}
+
+/* 검색창 스타일 */
+.top-section .search-bar {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 25px !important;
+    padding: 3px 8px !important;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    height: 30px !important;
+}
+
+.top-section .search-bar input {
+    border: none;
+    outline: none;
+    width: 120px !important;
+    font-size: 0.8rem !important;
+    padding-left: 8px !important;
+    height: 100% !important;
+}
+
+.top-section .search-bar button {
+    border: none;
+    background-color: #007bff;
+    color: white;
+    padding: 3px 10px !important;
+    font-size: 0.8rem !important;
+    border-radius: 20px !important;
+    margin-left: 5px;
+}

@@ -24,45 +24,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   	
-  	<style>
-        /* 전체 페이지 배경 이미지 설정 */
-        .background  {
-        position: fixed;
-            top: 0;
-            left: 0;
-		    width: 100vw;
-		    height: 100vh;
-            background-image: url('../img/background/mainPage_Background.jpeg');
-            background-size: cover;
-            background-position: center;
-            z-index: -1;
-            filter: blur(8px); /* 블러 효과 */
-            background-attachment: fixed; /* 배경 고정 */
-    		overflow: hidden;
-        }
-        
-        /* HTML과 Body의 높이를 100%로 설정 */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
+	<link href="<%=contextPath %>/css/startpage.css" rel="stylesheet">
 
-        /* 콘텐츠 영역 스타일 */
-        .container-content {
-            position: relative;
-            z-index: 1;
-            backdrop-filter: blur(0px); /* 배경과 겹칠 때 배경 효과 유지 */
-        }
-        
-        /* 학사 일정과 공지 사항 상자 크기 조정 */
-        .reduced-height {
-            height: 400px; /* 세로 크기 줄이기 */
-            overflow-y: auto; /* 콘텐츠가 넘칠 경우 스크롤 생성 */
-        }
-        
-    </style>
   </head>
   <body>
   <script>
@@ -166,16 +129,16 @@
 	        
 	    </div>
     
-		<div class="row align-items-md-stretch mt-4" "> <!-- 행 전체에 하단 여백 추가 -->
+		<div class="row align-items-md-stretch mt-4"> <!-- 행 전체에 하단 여백 추가 -->
 		    <!-- 학사 일정 영역 -->
-		    <div class="col-md-7" style="margin-bottom: 100px;"> <!-- 학사 일정 상자에 하단 여백 추가 -->
+		    <div class="col-md-7" style="margin-bottom: 10px;"> <!-- 학사 일정 상자에 하단 여백 추가 -->
 		        <div class="h-100 p-5 bg-body-tertiary rounded-3">
 		            <h2>학사 일정</h2>
 		            <!-- FullCalendar 달력 삽입 -->
 		            <div id="calendar"></div>
 		        </div>
 		    </div>
-		    <div class="col-md-5" style="margin-bottom: 100px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
+		    <div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
 		        <div class="h-100 p-5 bg-body-tertiary border rounded-3">
 		            <h2>공지 사항</h2>
 		            <div>여기에는 공지사항이 들어갈 영역입니다.</div>
@@ -199,7 +162,8 @@
                     { title: '학사 일정 예시', start: '2024-11-10', end: '2024-11-12' },
                     { title: '중간고사', start: '2024-11-15', end: '2024-11-16' }
                 ],
-                height: 500, // 달력 높이를 고정된 값으로 설정
+                height: 'auto', // 달력 높이를 고정된 값으로 설정
+                width: 'auto',
                 locale: 'ko' // 한국어 설정
             });
             calendar.render();

@@ -17,76 +17,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Section</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* 전체 배경 및 top-section 스타일 */
-        .top-section {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            background-color: #f8f9fa;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
+	<link rel="stylesheet" href="<%= contextPath %>/css/starttop.css">
 
-        /* 로고 스타일 */
-        .top-section .logo img {
-            max-width: 60px;
-        }
 
-        /* 타이틀 및 설명 텍스트 스타일 */
-        .top-section .title {
-            text-align: center;
-        }
-
-        .top-section .title h1 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #007bff;
-            margin: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .top-section .title h1 i {
-            margin-right: 8px;
-        }
-
-        .top-section .title p {
-            margin: 5px 0 0;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
-        /* 검색창 스타일 */
-        .top-section .search-bar {
-            display: flex;
-            align-items: center;
-            background-color: white;
-            border-radius: 50px;
-            padding: 5px 10px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .top-section .search-bar input {
-            border: none;
-            outline: none;
-            width: 160px;
-            font-size: 0.9rem;
-            border-radius: 50px;
-            padding-left: 10px;
-        }
-
-        .top-section .search-bar button {
-            border: none;
-            background-color: #007bff;
-            color: white;
-            padding: 5px 12px;
-            font-size: 0.9rem;
-            border-radius: 50px;
-            margin-left: 5px;
-        }
-    </style>
 </head>
 <body>
     <div class="top-section" style="margin-bottom:130px;">
