@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+--><!-- The contents of this file will be loaded for each web application -->
+<Context>
+
+    <!-- Default set of monitored resources. If one of these changes, the    -->
+    <!-- web application will be reloaded.                                   -->
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    <WatchedResource>WEB-INF/tomcat-web.xml</WatchedResource>
+    <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
+
+    <!-- Uncomment this to disable session persistence across Tomcat restarts -->
+    <!--
+    <Manager pathname="" />
+    -->
+    
+    <!-- 커넥션풀(DataSource) 리소스 설정 
+    
+    	name = DataSource를 가져다가 사용할 이름 설정
+    	auth = DataSource를 실행할 인증 주체 톰캣
+    	type = 커넥션풀을 생성하기 위한 클래스
+    	driverClassName = DBMS 종류별 드라이버 파일의 경우
+    	username = 접속할 DB ID
+    	pssword = 접속할 DB 비밀번호
+    	maxActive = 동시에 최대로 DB에 연결할 수 있는 Connection 갯수
+    	maxWait = 새로운 접속이 생길 때까지 기다릴 수 있는 지속 시간
+    	url = 접속할 데이터베이스 서버의 IP 주소와 포트번호 및 SID
+    -->
+    
+<Resource
+    name="jdbc/edumanager"
+    auth="Container"
+    type="javax.sql.DataSource"
+    driverClassName="com.mysql.cj.jdbc.Driver"
+    username="root"
+    password="0000"
+    maxTotal="50"
+    maxWaitMillis="-1"
+    url="jdbc:mysql://localhost:3306/edumanager?useSSL=false&amp;serverTimezone=UTC"/>
+
+
+    
+    
+    <!-- 
+    <Resource
+    	name="jdbc/oracle"
+    	auth="Container"
+    	type="javax.sql.DataSource"
+    	driverClassName="oracle.jdbc.OracleDriver"
+    	username="scott"
+    	password="tiger"
+    	maxActive="50"
+    	maxWait="-1"
+    	url="jdbc:oracle:thin:@localhost:1521:XE"
+    />
+    -->
+</Context>
