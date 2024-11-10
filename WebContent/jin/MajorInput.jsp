@@ -17,7 +17,7 @@
 			loadMajorData(); // 페이지 로드 시 학과 데이터 로드
 			setInterval(loadMajorData, 5000); // 5초마다 loadMajorData 함수 실행
 		};
-
+		//
 		function inputResult() {
 			// controller에서 받는 값 처리
 			var addResult = parseInt("${addResult}", 10);
