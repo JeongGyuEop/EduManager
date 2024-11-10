@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	관리자 센터 페이지입니다.
+	학생 관리 (등록/조회/수정/삭제) 페이지 입니다.
 </body>
 </html>
