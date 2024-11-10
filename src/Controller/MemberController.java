@@ -23,6 +23,7 @@ import org.json.simple.parser.JSONParser;
 
 //import Dao.CarDAO;
 import Service.MemberService;
+import Service.MenuItemService;
 //import Vo.CarConfirmVo;
 //import Vo.CarListVo;
 //import Vo.CarOrderVo;
@@ -59,6 +60,8 @@ public class MemberController extends HttpServlet {
 	
 	protected void doHandle(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
 		
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8"); // MIME TYPE 설정
@@ -119,17 +122,28 @@ public class MemberController extends HttpServlet {
 	    		
 	    		if(role.equals("학생")) {
 	    			// 재요청할 전체 메인화면 주소를 저장
-	    			center = "/member_page/studentcentertest.jsp";
+	    			center = "/view_student/studentHome.jsp";
 	    		}else if(role.equals("교수")) {
 	    			// 재요청할 전체 메인화면 주소를 저장
-	    			center = "/member_page/profcentertest.jsp";
+	    			center = "/view_professor/professorHome.jsp";
 	    		}else if(role.equals("관리자")) {
 	    			// 재요청할 전체 메인화면 주소를 저장
-	    			center = "/member_page/admincentertest.jsp";
+	    			center = "/view_admin/adminHome.jsp";
 	    		}
 	    		
-	    		request.setAttribute("top", "/top.jsp");
+	    		// MenuItemService를 사용하여 역할에 맞는 메뉴 HTML 생성
+	    		MenuItemService menuService = new MenuItemService();
+	    		String contextPath = request.getContextPath();
+	    		
+	    		// MenuItemService.java (서비스)를 호출하여 top메뉴와 sidebar에 표시될 요소를 반환받는다.
+	    		String menuHtml = menuService.generateMenuHtml(role, contextPath);
+	    		
+
+	        	System.out.println(contextPath); // EduManager
+	            System.out.println(menuHtml);
+	    		
 	    		request.setAttribute("center", center);
+	    		session.setAttribute("menuHtml", menuHtml); // 생성된 menuHtml 설정
 	    		
 	    		nextPage = "/main.jsp";
 	    		
@@ -137,32 +151,17 @@ public class MemberController extends HttpServlet {
 	    		
 	    //=========================================================================================
 	    	
-	    	case "/loginPro.me": // 로그인 요청을 한 2단계 요청주소 일 때
+	    	case "/adminPage.bo": // 로그인 요청을 한 2단계 요청주소 일 때
+
+	    		center = request.getParameter("center");
 	    		
-	    		// 부장에게 시킴
-	    		// check 변수의 값이 1 이면 아이디, 비밀번호가 DB에 존재한다.
-	    		//                   0 이면 아이디만 DB에 존재한다.
-	    		//                  -1 이면 아이디 DB에 존재하지 않음
-	    		//int check = memberservice.serviceUserCheck(request);
+	    		session = request.getSession();
+	    	    String selectedMenu = request.getParameter("selectedMenu");
+	    	    if (selectedMenu != null) {
+	    	        session.setAttribute("selectedMenu", selectedMenu);
+	    	    }
 	    		
-//	    		if(check == 0) { // 아이디 맞음, 비밀번호 틀림
-//	    			out.println("<script>");
-//	    				out.println("window.alert('비밀번호 틀림');");
-//	    				out.println("history.go(-1);");
-//	    			out.println("</script>");
-//	    			
-//	    			return; // doHandle 메소드를 빠져나가기 위함
-//	    			
-//	    		} else if(check == -1) { // 아이디 틀림
-//	    			out.println("<script>");
-//    					out.println("window.alert('아이디 틀림');");
-//    					out.println("history.go(-1);");
-//    				out.println("</script>");
-//	    		
-//    				return; // doHandle 메소드를 빠져나가기 위함
-//	    		}
-	    		
-	    		// 재요청할 전체 메인화면 주소를 저장
+	    		request.setAttribute("center", center);
 	    		nextPage = "/main.jsp";
 	    		
 	    		break;
@@ -176,7 +175,7 @@ public class MemberController extends HttpServlet {
 	    		
 	    	    out = response.getWriter();
 	    		// 세션 가져오기
-	    	    HttpSession session = request.getSession(false); // 세션이 없으면 null 반환
+	    	    session = request.getSession(false); // 세션이 없으면 null 반환
 	    	    if (session == null) {
 	    	    	out.println("<html><body>");
 	    	        out.println("<script>");

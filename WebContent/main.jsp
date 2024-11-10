@@ -5,6 +5,7 @@
 
 <%
 	String contextPath = request.getContextPath();
+
 %>       
     
 <!doctype html>
@@ -36,17 +37,21 @@
 	<c:set var="top" value="${requestScope.top}" /> 
 	
 	
-	<c:if test="${top == null }">		
-		<c:set var="top" value="/startpage/starttop.jsp"/>
-	</c:if>
+	<%-- 메인페이지의 top 영역 (보류) - /view_start/starttop.jsp
+	
+		<c:if test="${top == null }">		
+			<c:set var="top" value="/view_start/starttop.jsp"/>
+		</c:if> 
+	--%>
+	
 	<c:if test="${center == null }">		
-		<c:set var="center" value="/startpage/startcenter.jsp"/>
+		<c:set var="center" value="/view_start/startcenter.jsp"/>
 	</c:if>
 	
     <center>
         <table class="full-height-table">
 			<tr align="left">
-				<td height="10%"><jsp:include page="${top}"/></td>
+				<td height="10%"><jsp:include page="top.jsp"/></td>
 			</tr>
 			<tr>
 				<td height="70%" align="center"><jsp:include page="${center}"/>  </td>
