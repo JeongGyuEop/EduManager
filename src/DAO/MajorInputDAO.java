@@ -142,6 +142,7 @@ public class MajorInputDAO {
             pstmt.setString(2, editMajorTel);
             pstmt.setString(3, String.format("%02d", Integer.parseInt(editMajorCode)));
             editResult = pstmt.executeUpdate();
+            System.out.println(editResult);
         } catch (SQLException e) {
             System.out.println("SQL 오류 발생: " + e.getMessage());
             e.printStackTrace();

@@ -56,8 +56,7 @@ public class MajorInputService {
 		// 값이 비었을 경우 deleteMajor를 실행
 		if (editMajorName == null || editMajorName.trim().isEmpty()) {
 	        return majorInputDAO.deleteMajor(editMajorCode);
-	    }
-		if (majorInputValidationDAO.majorSearchValidationCode(editMajorCode) == EXISTS) {
+	    } else if (majorInputValidationDAO.majorSearchValidationCode(editMajorCode) == EXISTS) {
 		    if (majorInputValidationDAO.majorSearchValidationName(editMajorName) != EXISTS) {
 		        // 학과 코드가 존재하고, 학과 이름이 중복되지 않은 경우: 수정 작업을 수행하고 결과 반환
 		        return majorInputDAO.editMajor(editMajorCode, editMajorName, editMajorTel);
@@ -66,6 +65,7 @@ public class MajorInputService {
 		        return EXISTS;
 		    }
 		}
+		
 		// 학과 코드가 존재하지 않는 경우 또는 위의 모든 조건에 맞지 않는 경우: FAILURE 반환
 		return FAILURE;
 	}
