@@ -108,7 +108,7 @@ public class BoardController extends HttpServlet {
 				
 				
 				request.setAttribute("list", list);
-				request.setAttribute("center", "notice/list.jsp");
+				request.setAttribute("center", "common/notice/list.jsp");
 				request.setAttribute("nowPage", nowPage);
 				request.setAttribute("nowBlock", nowBlock);
 				
@@ -134,7 +134,7 @@ public class BoardController extends HttpServlet {
 		     //request내장객체에 조회된 정보 바인딩
 		     request.setAttribute("list", list);
 		     //VIEW중앙화면 주소경로 바인딩
-		     request.setAttribute("center", "notice/list.jsp");
+		     request.setAttribute("center", "common/notice/list.jsp");
 		     
 		     //재요청할 메인 페이지 주소 경로 변수에 저장
 		     nextPage = "/main.jsp";
@@ -153,7 +153,7 @@ public class BoardController extends HttpServlet {
 
 		
 				//글쓰기 중앙화면(VIEW)경로를 request내장객체에 바인딩
-				request.setAttribute("center", "notice/write.jsp");
+				request.setAttribute("center", "common/notice/write.jsp");
 			
 				request.setAttribute("nowPage", request.getParameter("nowPage"));
 				request.setAttribute("nowBlock", request.getParameter("nowBlock"));
@@ -213,7 +213,7 @@ public class BoardController extends HttpServlet {
 				vo = boardservice.serviceBoardRead(notice_id);
 				
 				//조회된 글 하나의 정보를 보여줄 중앙 VIEW 경로  request에 바인딩
-				request.setAttribute("center", "notice/read.jsp");
+				request.setAttribute("center", "common/notice/read.jsp");
 				
 				//조회된 글 하나의 정보(BoardVO객체) request에 바인딩
 				request.setAttribute("vo", vo);
