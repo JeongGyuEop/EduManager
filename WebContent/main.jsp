@@ -33,7 +33,6 @@
 <body>
 
 	<c:set var="center" value="${requestScope.center}" /> 
-<<<<<<< HEAD
 	<c:set var="top" value="${requestScope.top}" /> 
 	
 	
