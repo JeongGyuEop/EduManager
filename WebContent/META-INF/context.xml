@@ -27,19 +27,7 @@
     <!--
     <Manager pathname="" />
     -->
-    
-    <!-- 커넥션풀(DataSource) 리소스 설정 
-    
-    	name = DataSource를 가져다가 사용할 이름 설정
-    	auth = DataSource를 실행할 인증 주체 톰캣
-    	type = 커넥션풀을 생성하기 위한 클래스
-    	driverClassName = DBMS 종류별 드라이버 파일의 경우
-    	username = 접속할 DB ID
-    	pssword = 접속할 DB 비밀번호
-    	maxActive = 동시에 최대로 DB에 연결할 수 있는 Connection 갯수
-    	maxWait = 새로운 접속이 생길 때까지 기다릴 수 있는 지속 시간
-    	url = 접속할 데이터베이스 서버의 IP 주소와 포트번호 및 SID
-    -->
+
     
 	  <Resource
 	    name="jdbc/edumanager"
@@ -47,7 +35,7 @@
 	    type="javax.sql.DataSource"
 	    driverClassName="com.mysql.cj.jdbc.Driver"
 	    username="root"
-	    password="0000"
+	    password="1234"
 	    maxTotal="50"
 	    maxWaitMillis="-1"
 	    url="jdbc:mysql://localhost:3306/edumanager?useSSL=false&amp;serverTimezone=UTC"
