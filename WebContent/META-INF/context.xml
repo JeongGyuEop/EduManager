@@ -27,7 +27,7 @@
     <!--
     <Manager pathname="" />
     -->
-
+<!-- -->
     
 	  <Resource
 	    name="jdbc/edumanager"
