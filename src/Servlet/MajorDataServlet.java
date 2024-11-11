@@ -49,6 +49,7 @@ public class MajorDataServlet extends HttpServlet {
 			    jsonObject.put("majorcode", rs.getString("majorcode"));
 			    jsonObject.put("majorname", rs.getString("majorname"));
 			    jsonObject.put("majortel", rs.getString("majortel"));
+			    
 			    jsonArray.add(jsonObject);
 			}
 			out.print(jsonArray.toString());

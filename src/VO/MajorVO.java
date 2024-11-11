@@ -1,29 +1,42 @@
 package VO;
 
 public class MajorVO {
-    private String MajorName;
-    private int MajorCode;
+	private String majorName;
+	private String majorTel;
+	private int majorCode;
 
-    // Constructor
-    public MajorVO(String majorName, int majorCode) {
-        this.MajorName = majorName;
-        this.MajorCode = majorCode;
-    }
+	public MajorVO() {
+	}
 
-    // Getters and Setters (optional)
-    public String getMajorName() {
-        return MajorName;
-    }
+	// Constructor
+	public MajorVO(String majorName, String majorTel, int majorCode) {
+		this.majorName = majorName;
+		this.majorTel = majorTel;
+		this.majorCode = majorCode;
+	}
 
-    public void setMajorName(String majorName) {
-        MajorName = majorName;
-    }
+	// Getters and Setters
+	public String getMajorName() {
+		return majorName;
+	}
 
-    public int getMajorCode() {
-        return MajorCode;
-    }
+	public void setMajorName(String majorName) {
+		this.majorName = majorName;
+	}
 
-    public void setMajorCode(int majorCode) {
-        MajorCode = majorCode;
-    }
+	public int getMajorCode() {
+		return majorCode;
+	}
+
+	public void setMajorCode(int majorCode) {
+		this.majorCode = majorCode;
+	}
+
+	public String getMajorTel() {
+		return majorTel;
+	}
+
+	public void setMajorTel(String majorTel) {
+		this.majorTel = majorTel;
+	}
 }
