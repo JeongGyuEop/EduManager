@@ -32,7 +32,7 @@
           		<li><a href="#" class="nav-link px-2">정보1</a></li>
           		<li><a href="#" class="nav-link px-2">정보2</a></li>
           		<li><a href="#" class="nav-link px-2">커뮤니티</a></li>
-          		<li><a href="#" class="nav-link px-2">공지사항</a></li>
+          		<li><a href="<%=contextPath %>/Board/list.bo" class="nav-link px-2">공지사항</a></li>
         	</ul>
 
         	<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">

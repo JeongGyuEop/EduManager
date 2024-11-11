@@ -27,19 +27,17 @@
     <!--
     <Manager pathname="" />
     -->
+
     
-  <Resource
-    name="jdbc/edumanager"
-    auth="Container"
-    type="javax.sql.DataSource"
-    driverClassName="com.mysql.cj.jdbc.Driver"
-    username="root"
-    password="0000"
-    maxTotal="50"
-    maxWaitMillis="-1"
-    url="jdbc:mysql://localhost:3306/edumanager?useSSL=false&amp;serverTimezone=UTC"
-    />
-    
-    
-  
+	  <Resource
+	    name="jdbc/edumanager"
+	    auth="Container"
+	    type="javax.sql.DataSource"
+	    driverClassName="com.mysql.cj.jdbc.Driver"
+	    username="root"
+	    password="1234"
+	    maxTotal="50"
+	    maxWaitMillis="-1"
+	    url="jdbc:mysql://localhost:3306/edumanager?useSSL=false&amp;serverTimezone=UTC"
+      />
 </Context>
