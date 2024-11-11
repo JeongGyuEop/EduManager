@@ -30,8 +30,8 @@ public class MenuItemService {
                 new MenuItemVo("학과 관리", "departmentManage.jsp"),
                 new MenuItemVo("강의실 관리", "classroomManage.jsp")
             )),
-            new MenuItemVo("정보 관리", "noticeManage.jsp", Arrays.asList(
-                new MenuItemVo("공지사항 관리", "noticeManage.jsp"),
+            new MenuItemVo("정보 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp", Arrays.asList(
+                new MenuItemVo("공지사항 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp"),
                 new MenuItemVo("학사일정 관리", "scheduleManage.jsp")
             ))
         ));
@@ -81,9 +81,7 @@ public class MenuItemService {
 
 	            htmlLoad.append("<li><a href=\"")
 	                .append(contextPath)
-	                .append("/menu/topside.do?center=")
-	                .append(rolePath) // 역할에 따른 디렉토리 추가
-	                .append(menu.getPage())
+                    .append(menu.getPage())
 	                .append("\">")
 	                .append(menu.getName())
 	                .append("</a>");
@@ -92,9 +90,7 @@ public class MenuItemService {
 	                htmlLoad.append("<ul>");
 	                for (MenuItemVo subMenu : menu.getSubMenus()) {
 	                    htmlLoad.append("<li><a href=\"")
-	                        .append(contextPath)
-	                        .append("/menu/topside.do?center=")  
-	                        .append(rolePath) // 하위 메뉴도 동일한 디렉토리 경로
+	                        .append(contextPath) 
 	                        .append(subMenu.getPage())
 	                        .append("\">")
 	                        .append(subMenu.getName())

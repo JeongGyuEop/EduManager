@@ -186,15 +186,9 @@
 							<tr>
 								<td align="left"><%=vo.getNotice_id()%></td>
 								<td>
-									
-									
-									
 									<a href="javascript:fnRead('<%=vo.getNotice_id() %>')">
 										<%=vo.getTitle() %>
 									</a>
-								</td>
-								
-								
 								
 								<td align="left"><%=vo.getContent()%></td>
 								<td align="left"><%=vo.getCreated_date()%></td>

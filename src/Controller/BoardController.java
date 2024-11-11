@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import Dao.BoardDAO;
 import Service.BoardService;
+import Service.MenuItemService;
 import Vo.BoardVo;
 
 
@@ -58,6 +59,8 @@ public class BoardController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		//웹브라우저로 응답할 데이터 종류 설정 
 		response.setContentType("text/html;charset=utf-8");
+		
+		HttpSession session = request.getSession();
 		
 		//웹브라우저와 연결된 출력 스트림 생성
 		PrintWriter out = response.getWriter();
@@ -105,10 +108,22 @@ public class BoardController extends HttpServlet {
 				String nowPage = request.getParameter("nowPage");
 				String nowBlock = request.getParameter("nowBlock");
 				
-				
-				
+				// MenuItemService를 사용하여 역할에 맞는 메뉴 HTML 생성
+	    		MenuItemService menuService = new MenuItemService();
+	    		String contextPath = request.getContextPath();
+	    		String role =(String)session.getAttribute("role");
+	    		System.out.println(role);
+	    		
+	    		// MenuItemService.java (서비스)를 호출하여 top메뉴와 sidebar에 표시될 요소를 반환받는다.
+	    		String menuHtml = menuService.generateMenuHtml(role, contextPath);
+
+	        	System.out.println(contextPath); // EduManager
+	            System.out.println(menuHtml);
+
+	            center = request.getParameter("center");
+	    		request.setAttribute("center", center);
+	    		
 				request.setAttribute("list", list);
-				request.setAttribute("center", "common/notice/list.jsp");
 				request.setAttribute("nowPage", nowPage);
 				request.setAttribute("nowBlock", nowBlock);
 				
