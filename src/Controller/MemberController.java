@@ -64,7 +64,7 @@ public class MemberController extends HttpServlet {
 	    System.out.println("요청한 2단계 주소: " + action);
 	    
 	    switch(action) {
-	    	case "/main": // CarMain.jsp 메인화면 2단계 요청 주소를 받으면
+	    	case "/main.bo": // CarMain.jsp 메인화면 2단계 요청 주소를 받으면
 	    		
 				nextPage = "/main.jsp";
 				

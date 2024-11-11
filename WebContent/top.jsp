@@ -48,7 +48,7 @@
 		if(userId == null){
 %>
         	<div class="text-end">
-          		<button type="button" class="btn btn-outline-light me-2" onclick="location.href='<%=contextPath%>/member/login.me'">로그인</button>
+          		<button type="button" class="btn btn-outline-light me-2" onclick="location.href='<%=contextPath%>/member/login.do'">로그인</button>
           		<button type="button" class="btn btn-warning">회원가입</button>
         	</div>
 <%
