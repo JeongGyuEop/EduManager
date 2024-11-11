@@ -1,80 +1,94 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%
-	request.setCharacterEncoding("UTF-8");
-	String contextPath = request.getContextPath();
+<% 
+
+	//URL의 selectedMenu 파라미터를 통해 선택된 메뉴를 세션에 저장
+	String selectedMenu= request.getParameter("selectedMenu");
+	if (selectedMenu == null) {
+	    selectedMenu = "홈"; // 기본값을 '홈'으로 설정
+	}
+	if (selectedMenu != null) {
+	    session.setAttribute("selectedMenu", selectedMenu);
+	}
+
+    request.setCharacterEncoding("UTF-8"); 
+    String contextPath = request.getContextPath();
+
+	//Session내장객체 메모리 영역에 session값 얻기 (학생인지, 교수인지, 관리자인지)
+	String userRole = (String)session.getAttribute("role");
+	String userName = (String)session.getAttribute("name");
+	
+    String menuHtml = (String) session.getAttribute("menuHtml");  // Controller에서 전달된 menuHtml
+    
 %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Insert title here</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Section</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<%= contextPath %>/css/top.css">
 </head>
 <body>
-<header class="p-1">
-    <div class="container">
-      	<div class="top-nav" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background-color: #f8f9fa; border-bottom: 1px solid #ddd;">
-        <div class="logo">
-            <img src="img/university_logo.png" alt="University Logo" style="width: 50px;">
-        </div>
-        <div class="menu" style="display: flex; gap: 20px;">
-            <a href="#" style="text-decoration: none; color: #333; font-weight: bold;">홈</a>
-            <a href="#" style="text-decoration: none; color: #333; font-weight: bold;">MY</a>
-            <a href="#" style="text-decoration: none; color: #333; font-weight: bold;">수업</a>
-            <a href="#" style="text-decoration: none; color: #333; font-weight: bold;">수강신청</a>
-            <a href="#" style="text-decoration: none; color: #333; font-weight: bold;">성적</a>
-            <a href="#" style="text-decoration: none; color: #333; font-weight: bold;">학사정보</a>
-        </div>
 
-<%
-		//Session내장객체 메모리 영역에 session값 얻기 (학생인지, 교수인지, 관리자인지)
-		String userId = (String)session.getAttribute("userId");
-		String userName = (String)session.getAttribute("userName");
-		
-		//Session저장된 값이 학생이면?
-		if(userId.equals("학생")){
-			// 위의 a 태그들 중에서 가장 첫번째 값(홈)을 선택해서 그에 맞는 사이드바 값들을 보여준다.
-%>
-		    <div class="side-nav" style="width: 200px; padding: 20px; background-color: #f8f9fa; border-right: 1px solid #ddd; height: 100vh;">
-		        <h4 style="font-weight: bold; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px;">수강신청</h4>
-		        <div class="nav-links" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
-		            <a href="#" style="text-decoration: none; color: #007bff; font-weight: bold;">강의 시간표 조회</a>
-		            <a href="#" style="text-decoration: none; color: #007bff; font-weight: bold;" class="active">예비 수강 신청</a>
-		            <a href="#" style="text-decoration: none; color: #007bff; font-weight: bold;">수강 신청</a>
-		            <a href="#" style="text-decoration: none; color: #007bff; font-weight: bold;">수강 신청 내역 조회</a>
-		        </div>
-		    </div>
-
-<%
-		//Session저장된 값이 교수이면?
-		}else if(userId.equals("교수")){
-%>	
-			
-<%			
-		//Session저장된 값이 관리자이면?
-		} else {
-%>
-	
-<%		
-		}
-%>        
-			<div class="text-end">
-				환영합니다. &nbsp;&nbsp;<b><%=userName%></b> <%=userId %>님!&nbsp;&nbsp;
-          		<button type="button" class="btn btn-primary" onclick="location.href='<%=contextPath%>/member/logout.me'">로그아웃</button>
-        	</div>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex flex-column align-items-center">
+        <div class="container-fluid d-flex justify-content-between align-items-center w-100">
+            <!-- 사이드바 버튼: 로그인된 경우에만 표시 -->
+            <% if (userRole != null) { %>
+                <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            <% } %>
+            <!-- 중앙 제목 -->
+            <a class="navbar-brand mx-auto text-center" href="#" style="position: absolute; left: 50%; transform: translateX(-50%);">
+                <i class="fas fa-graduation-cap"></i> 학사 지원 프로그램
+            </a>
+            <!-- 환영 메시지와 로그아웃 버튼: 로그인된 경우에만 표시 -->
+            <div class="navbar-text ms-auto">
+                <% if (userRole != null) { %>
+                    반갑습니다. &nbsp;&nbsp;<b><%=userName%></b> <%=userRole %>님!&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="location.href='<%=contextPath%>/member/logout.me'">로그아웃</button>
+                <% } else { %>
+                    로그인을 진행해주세요.
+                <% } %>
+            </div>
+        </div>
         
-      	</div>
-     </div>
-  </header>
+        <!-- 아래 줄 바꿈된 메뉴 항목들, 간격 조정 -->
+        <div class="nav-container">
+	        <div class="container-fluid d-flex justify-content-center mt-2">
+			    <ul class="navbar-nav d-flex flex-row justify-content-center"> <!-- 이 부분에 justify-content-center 추가 -->
+					<%= menuHtml %>
+			    </ul>
+			</div>
+		</div>
 
+    </nav>
+
+    <% if (userRole != null) { %>
+	    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+	        <div class="offcanvas-header">
+	            <h5 class="offcanvas-title" id="sidebarLabel">메뉴</h5>
+	            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+	        </div>
+	        <div class="offcanvas-body">
+	            <!-- Sidebar에서 동적으로 서브 메뉴 항목을 표시 -->
+                <ul class="list-group">
+                    <%= menuHtml %>
+                </ul>
+	        </div>
+	    </div>
+    <% } %>
+
+    <!-- Font Awesome and Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
