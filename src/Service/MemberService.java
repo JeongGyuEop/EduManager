@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 
 import Dao.MemberDAO;
 import Vo.MemberVo;
+import Vo.StudentUserVO;
+
 
 // 부장
 // - 단위 기능 별로 메소드를 만들어서 그 기능을 처리하는 클래스
@@ -134,6 +136,12 @@ public class MemberService {
         }
 		
 	}
+	
+	 // 특정 학생 정보 조회 메서드
+    public MemberVo getStudentById(String userId) {
+        return memberDao.getStudentById(userId);
+    }
+    
 	
 
 }

@@ -5,7 +5,6 @@
 
 <%
 	String contextPath = request.getContextPath();
-
 %>       
     
 <!doctype html>
@@ -17,7 +16,7 @@
 	<link rel="stylesheet" type="text/css" href="<%=contextPath %>/css/style.css">
 	<link rel="stylesheet" type="text/css" href="<%=contextPath %>/css/mobile.css" media="screen and (max-width : 568px)">
 	<script type="text/javascript" src="<%=contextPath %>/js/mobile.js"></script>
-	
+
 	<style>
         html, body {
             margin: 0;

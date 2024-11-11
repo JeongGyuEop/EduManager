@@ -24,9 +24,11 @@ import org.json.simple.parser.JSONParser;
 //import Dao.CarDAO;
 import Service.MemberService;
 import Service.MenuItemService;
+import Vo.MemberVo;
 //import Vo.CarConfirmVo;
 //import Vo.CarListVo;
 //import Vo.CarOrderVo;
+import Vo.StudentUserVO;
 
 // 사장 ...
 
@@ -60,7 +62,7 @@ public class MemberController extends HttpServlet {
 	
 	protected void doHandle(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-
+		
         HttpSession session = request.getSession();
 		
 		request.setCharacterEncoding("UTF-8");
@@ -144,6 +146,7 @@ public class MemberController extends HttpServlet {
 	    		
 	    		request.setAttribute("center", center);
 	    		session.setAttribute("menuHtml", menuHtml); // 생성된 menuHtml 설정
+
 	    		
 	    		nextPage = "/main.jsp";
 	    		
@@ -162,11 +165,13 @@ public class MemberController extends HttpServlet {
 	    	    }
 	    		
 	    		request.setAttribute("center", center);
+
 	    		nextPage = "/main.jsp";
 	    		
 	    		break;
 	    		
 	    //=========================================================================================
+	    	
 	    	case "/logout.me": // 로그아웃 요청을 한 2단계 요청주소 일 때
 	    		
 	    		// 부장 시키자
@@ -174,8 +179,10 @@ public class MemberController extends HttpServlet {
 	    		memberservice.serviceLogOut(request);
 	    		
 	    	    out = response.getWriter();
+	    	    
 	    		// 세션 가져오기
 	    	    session = request.getSession(false); // 세션이 없으면 null 반환
+	    	    
 	    	    if (session == null) {
 	    	    	out.println("<html><body>");
 	    	        out.println("<script>");
@@ -197,6 +204,17 @@ public class MemberController extends HttpServlet {
 	    	    
 	    	    break;
 
+	    //==========================================================================================
+	    	    
+	    	case "/editStudent.do": 
+	            	
+	                String userId = request.getParameter("user_id");
+	                MemberVo student = memberservice.getStudentById(userId);
+	                request.setAttribute("student", student);
+	                nextPage = "/editStudent.jsp";
+	                
+	                break;
+	        
 	    //==========================================================================================
 	    	default:
 	    		break;
