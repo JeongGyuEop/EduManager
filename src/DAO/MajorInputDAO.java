@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import VO.MajorVO;
 
 public class MajorInputDAO {
+
     private static final int SUCCESS = 1;
     private static final int FAILURE = 0;
 

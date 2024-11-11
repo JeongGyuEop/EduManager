@@ -9,8 +9,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import Service.MajorInputService;
 import VO.MajorVO;
+
 
 @WebServlet("/MI/*")
 public class MajorInputController extends HttpServlet {
@@ -19,6 +21,7 @@ public class MajorInputController extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		// 전공 입력 서비스 초기화
+
 		majorInputService = new MajorInputService();
 	}
 
@@ -42,6 +45,7 @@ public class MajorInputController extends HttpServlet {
 		String action = request.getPathInfo();
 
 		String nextPage = null;
+
 		switch (action) {
 		case "/MajorInput.do":
 
@@ -51,6 +55,7 @@ public class MajorInputController extends HttpServlet {
 			nextPage = "/jin/MajorInput.jsp";
 
 			break;
+
 		case "/searchMajor.do":
 			// 검색 결과를 가져 옴
 			ArrayList<MajorVO> searchList = majorInputService.searchMajor(request);
@@ -73,6 +78,7 @@ public class MajorInputController extends HttpServlet {
 			break;
 		default:
 			System.out.println("주소 소실");
+
 			break;
 		}
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);

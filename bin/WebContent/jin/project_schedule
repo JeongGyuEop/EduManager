@@ -1,0 +1,12 @@
+2024.11.07.
+	I. 학부 및 학부 등록 jsp, java 파일 생성
+		-i.	학부학과등록.vo생성	x
+		-ii.	학부등록.jsp생성
+		-iii.	학부학과등록.java.controller생성
+		-iv.	학부학과등록.java.service생성
+		-v.	학부등록.java.dao생성
+		-vi.	학과등록.jsp생성
+		-vii.	학과등록.java.dao생성
+		
+2024.11.08.
+	1. 

@@ -13,7 +13,7 @@ public class MajorInputService {
 	private static final int FAILURE = 0;
 	private static final int NONE = -1;
 	private static final int EXISTS = -2;
-	// 1 = ¼º°ø, 0 =½ÇÆĞ, -1 = ¾øÀ½, -2 = ÀÖÀ½
+	// 1 = ì„±ê³µ, 0 =ì‹¤íŒ¨, -1 = ì—†ìŒ, -2 = ìˆìŒ
 
 	MajorInputDAO majorInputDAO;
 	MajorInputValidationDAO majorInputValidationDAO;
@@ -27,19 +27,20 @@ public class MajorInputService {
 		String newMajorName = request.getParameter("MajorNameInput");
 		String newMajorTel = request.getParameter("MajorTelInput");
 
-		// µ¥ÀÌÅÍ À¯È¿¼º °Ë»ç
-		// °ªÀÌ ºñ¾úÀ» °æ¿ì -1À» ¹İÈ¯
+		// å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ì™ì˜™íš¨å ì™ì˜™ å ì‹¯ì‚¼ì˜™
+		// å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ï¿½ å ì™ì˜™å ï¿½ -1å ì™ì˜™ å ì™ì˜™í™˜
 		if (newMajorName == null || newMajorName.trim().isEmpty()) {
 			return NONE;
 		}
 		if (newMajorTel == null || newMajorTel.trim().isEmpty()) {
 			return NONE;
 		}
-		// °°Àº ÀÌ¸§ÀÌ ÀÖÀ» °æ¿ì
+
+		// ê°™ì€ ì´ë¦„ì´ ìˆì„ ê²½ìš°
 		if (majorInputValidationDAO.majorInputValidation(newMajorName) == EXISTS) {
 			return EXISTS;
 		}
-		// Ãß°¡ ÀÛ¾÷
+		// å ìŒ©ê³¤ì˜™ å ìŒœì–µì˜™
 		return majorInputDAO.majorInput(newMajorName, newMajorTel);
 	}
 
@@ -51,21 +52,21 @@ public class MajorInputService {
 		String editMajorCode = request.getParameter("majorCode");
 		String editMajorName = request.getParameter("majorName");
 		String editMajorTel = request.getParameter("majorTel");
-		// µ¥ÀÌÅÍ À¯È¿¼º °Ë»ç
-		// °ªÀÌ ºñ¾úÀ» °æ¿ì deleteMajor¸¦ ½ÇÇà
+		// ë°ì´í„° ìœ íš¨ì„± ê²€ì‚¬
+		// ê°’ì´ ë¹„ì—ˆì„ ê²½ìš° deleteMajorë¥¼ ì‹¤í–‰
 		if (editMajorName == null || editMajorName.trim().isEmpty()) {
 	        return majorInputDAO.deleteMajor(editMajorCode);
 	    }
 		if (majorInputValidationDAO.majorSearchValidationCode(editMajorCode) == EXISTS) {
 		    if (majorInputValidationDAO.majorSearchValidationName(editMajorName) != EXISTS) {
-		        // ÇĞ°ú ÄÚµå°¡ Á¸ÀçÇÏ°í, ÇĞ°ú ÀÌ¸§ÀÌ Áßº¹µÇÁö ¾ÊÀº °æ¿ì: ¼öÁ¤ ÀÛ¾÷À» ¼öÇàÇÏ°í °á°ú ¹İÈ¯
+		        // í•™ê³¼ ì½”ë“œê°€ ì¡´ì¬í•˜ê³ , í•™ê³¼ ì´ë¦„ì´ ì¤‘ë³µë˜ì§€ ì•Šì€ ê²½ìš°: ìˆ˜ì • ì‘ì—…ì„ ìˆ˜í–‰í•˜ê³  ê²°ê³¼ ë°˜í™˜
 		        return majorInputDAO.editMajor(editMajorCode, editMajorName, editMajorTel);
 		    } else if (majorInputValidationDAO.majorSearchValidationName(editMajorName) == EXISTS) {
-		        // ÇĞ°ú ÀÌ¸§ÀÌ ÀÌ¹Ì Á¸ÀçÇÏ´Â °æ¿ì: Áßº¹À» ³ªÅ¸³»´Â EXISTS ¹İÈ¯
+		        // í•™ê³¼ ì´ë¦„ì´ ì´ë¯¸ ì¡´ì¬í•˜ëŠ” ê²½ìš°: ì¤‘ë³µì„ ë‚˜íƒ€ë‚´ëŠ” EXISTS ë°˜í™˜
 		        return EXISTS;
 		    }
 		}
-		// ÇĞ°ú ÄÚµå°¡ Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì ¶Ç´Â À§ÀÇ ¸ğµç Á¶°Ç¿¡ ¸ÂÁö ¾Ê´Â °æ¿ì: FAILURE ¹İÈ¯
+		// í•™ê³¼ ì½”ë“œê°€ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ê²½ìš° ë˜ëŠ” ìœ„ì˜ ëª¨ë“  ì¡°ê±´ì— ë§ì§€ ì•ŠëŠ” ê²½ìš°: FAILURE ë°˜í™˜
 		return FAILURE;
 	}
 }

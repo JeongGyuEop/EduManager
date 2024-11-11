@@ -1,6 +1,7 @@
 package VO;
 
 public class MajorVO {
+
 	private String majorName;
 	private String majorTel;
 	private int majorCode;
