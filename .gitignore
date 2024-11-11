@@ -1,0 +1,8 @@
+/build/
+/.metadata/
+/.recommenders/
+.classpath
+.project
+.settings/
+/build/
+.DS_Store
