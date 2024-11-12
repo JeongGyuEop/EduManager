@@ -38,22 +38,24 @@ public class MenuItemService {
         
         // 학생 메뉴
         roleMenuMap.put("학생", Arrays.asList(
-            new MenuItemVo("강의실", "#", Arrays.asList(
-                new MenuItemVo("수강신청", "courseRegister.jsp"),
-                new MenuItemVo("과제제출", "assignmentSubmit.jsp"),
-                new MenuItemVo("성적조회", "gradeCheck.jsp")
-            )),
+            new MenuItemVo("강의실", "/classroom/studentClassroom.bo?"),
+//            , Arrays.asList(
+//                new MenuItemVo("수강신청", "courseRegister.jsp"),
+//                new MenuItemVo("과제제출", "assignmentSubmit.jsp"),
+//                new MenuItemVo("성적조회", "gradeCheck.jsp")
+//            )),
             new MenuItemVo("마이페이지", "myPage.jsp"),
             new MenuItemVo("공지사항", "notice.jsp")
         ));
 
         // 교수 메뉴
         roleMenuMap.put("교수", Arrays.asList(
-            new MenuItemVo("강의실", "#", Arrays.asList(
-                new MenuItemVo("강의 개설", "lectureOpen.jsp"),
-                new MenuItemVo("과제 관리", "assignmentManage.jsp"),
-                new MenuItemVo("공지사항 등록", "noticeRegister.jsp")
-            )),
+            new MenuItemVo("강의실", "/classroom/professorClassroom.bo?"),
+//            , Arrays.asList(
+//                new MenuItemVo("강의 개설", "lectureOpen.jsp"),
+//                new MenuItemVo("과제 관리", "assignmentManage.jsp"),
+//                new MenuItemVo("공지사항 등록", "noticeRegister.jsp")
+//            )),
             new MenuItemVo("강의 관리", "lectureManage.jsp"),
             new MenuItemVo("학생 관리", "studentManage.jsp")
         ));
