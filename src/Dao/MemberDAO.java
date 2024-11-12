@@ -3,6 +3,7 @@ package Dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,7 @@ public class MemberDAO {
 	public Map<String, String> userCheck(String login_id, String login_pass) {
 		
 		Map<String, String> userInfo = new HashMap<String, String>();
+
 		
 		try {
 			con = ds.getConnection();
@@ -79,6 +81,7 @@ public class MemberDAO {
 	        } else {
 	            userInfo.put("check", "-1"); // 아이디가 DB에 없는 경우 "-1" 반환
 	        }
+
 			
 		} catch (Exception e) {
 			System.out.println("MemberDAO의 userCheck메소드 오류 :  " + e);
@@ -88,10 +91,7 @@ public class MemberDAO {
 		}
 		
 		return userInfo; //MemberService(부장)에게 결과 반환 
+
 	}
-
-	
-
-
 
 }// MemberDAO 클래스

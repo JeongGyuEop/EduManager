@@ -5,7 +5,6 @@
 
 <%
 	String contextPath = request.getContextPath();
-
 %>       
     
 <!doctype html>
