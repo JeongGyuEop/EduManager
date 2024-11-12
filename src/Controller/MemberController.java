@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -18,17 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 //import Dao.CarDAO;
 import Service.MemberService;
 import Service.MenuItemService;
 import Vo.MemberVo;
-//import Vo.CarConfirmVo;
-//import Vo.CarListVo;
-//import Vo.CarOrderVo;
-import Vo.StudentUserVO;
 
 // 사장 ...
 
@@ -203,19 +197,82 @@ public class MemberController extends HttpServlet {
 	    	    out.println("</body></html>");
 	    	    
 	    	    break;
-
-	    //==========================================================================================
 	    	    
-	    	case "/editStudent.do": 
+	    // ==============================================================================	    	    
+	    	
+	    	case "/studentRegister.do":
+	            // 학생 등록 서비스 호출
+	            int result = memberservice.registerStudent(request);
+	            //request.setAttribute("result", result);
+	            
+	            if (result == 1) {
+	                request.setAttribute("message", "학생 정보가 성공적으로 추가되었습니다.");
+	            } else {
+	                request.setAttribute("message", "학생 정보를 추가하는 데 실패했습니다.");
+	            }
+	            
+	            center = "/view_admin/studentManager/viewStudentList.jsp";
+	            
+	            request.setAttribute("center", center);
+	            nextPage = "/main.jsp";
+	            break;
+
+	    	    
+	    	    
+	    	    
+	    //========================================================================================== 	    
+	    	
+	    	
+	    	case "/viewStudentList.do": // 전체 학생 조회
+				List<MemberVo> students = memberservice.getAllStudents();
+				request.setAttribute("students", students);
+				nextPage = "/view_admin/studentManager/viewStudentList.jsp";
+				break;
+				
+		//========================================================================================== 	    
+		    	
+	    	case "/studentManage.bo": // 전체 학생 조회
+	    		
+	    		center = request.getParameter("center");
+	    		
+	    		request.setAttribute("center", center);
+	    		
+				nextPage = "/main.jsp";
+				break;
+	    	
+	    	    
+	     //==========================================================================================	    
+	    	
+	    	case "/editStudent.do": // 학생 정보 수정 
 	            	
 	                String userId = request.getParameter("user_id");
 	                MemberVo student = memberservice.getStudentById(userId);
 	                request.setAttribute("student", student);
-	                nextPage = "/editStudent.jsp";
+	                nextPage = "/view_admin/studentManager/editStudent.jsp";
 	                
 	                break;
 	        
 	    //==========================================================================================
+	    	case "/viewStudent.do": 
+				userId = request.getParameter("user_id");
+				student = memberservice.getStudentById(userId);
+				request.setAttribute("student", student);
+				nextPage = "/view_admin/studentManager/viewStudent.jsp";
+				break;
+	    //==========================================================================================	
+	    	case "/updateStudent.do": //수정했을때 보여주는 메세지
+				boolean isUpdated = memberservice.updateStudent(request);
+				String updateMessage = isUpdated ? "학생 정보가 성공적으로 수정되었습니다." : "학생 정보 수정에 실패했습니다.";
+				response.sendRedirect(request.getContextPath() + "/member/viewStudentList.do?message=" + URLEncoder.encode(updateMessage, "UTF-8"));
+				return;
+	    //==========================================================================================	
+	    	case "/deleteStudent.do": //학생 정보 삭제
+				String studentId = request.getParameter("student_id");
+				boolean isDeleted = memberservice.deleteStudent(studentId);
+				String deleteMessage = isDeleted ? "학생 정보가 성공적으로 삭제되었습니다." : "학생 정보 삭제에 실패했습니다.";
+				response.sendRedirect(request.getContextPath() + "/member/viewStudentList.do?message=" + URLEncoder.encode(deleteMessage, "UTF-8"));
+				return;
+
 	    	default:
 	    		break;
 	    }

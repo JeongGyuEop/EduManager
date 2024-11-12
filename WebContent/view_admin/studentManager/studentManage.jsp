@@ -57,7 +57,7 @@ function result(){
 </head>
 <body>
     <h2>학 생 등 록</h2>
-        <form action="<%=contextPath %>/studentUser/studentRegister.do" method="post">
+        <form action="<%=contextPath %>/member/studentRegister.do" method="post">
         <table>
             <tr>
                 <td><label for="student_id">학 생  I D:</label></td>
@@ -101,14 +101,16 @@ function result(){
                 <td><input type="email" id="email" name="email" required></td>
             </tr>
             <tr>
-                <td><label for="role">역할:</label></td>
+            	<input type="hidden" id="role" name="role" value="학생">
+            
+                <!-- <td><label for="role">역할:</label></td>
                 <td>
                     <select id="role" name="role" required>
                         <option value="학생" selected>학생</option>
                         <option value="교수">교수</option>
                         <option value="관리자">관리자</option>
                     </select>
-                </td>
+                </td> -->
             </tr>
             <tr>
                 <td><label for="majorcode">학 과 번 호:</label></td>

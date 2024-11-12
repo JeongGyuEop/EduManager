@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="Vo.StudentUserVO" %>
+<%@ page import="Vo.MemberVo" %>
 <%@ page import="java.util.List" %>
 <html>
 <head>
@@ -21,7 +21,7 @@
 <body>
 <h2>전체 학생 목록</h2>
 
-<form action="${pageContext.request.contextPath}/studentUser/viewStudentList.do" method="get" style="text-align: center; margin-bottom: 20px;">
+<form action="${pageContext.request.contextPath}/member/viewStudentList.do" method="get" style="text-align: center; margin-bottom: 20px;">
     <input type="submit" value="전체 조회">
 </form>
 
@@ -41,9 +41,9 @@
     </tr>
 
     <%
-        List<StudentUserVO> students = (List<StudentUserVO>) request.getAttribute("students");
+        List<MemberVo> students = (List<MemberVo>) request.getAttribute("students");
         if (students != null && !students.isEmpty()) {
-            for (StudentUserVO student : students) {
+            for (MemberVo student : students) {
     %>
                 <tr>
                     <td><%= student.getStudent_id() %></td>
@@ -53,12 +53,11 @@
                     <td><%= student.getGrade() %></td>
                     <td><%= student.getAdmission_date() %></td>
                     <td><%= student.getStatus() %></td>
-                    <td><a href="viewStudent.do?user_id=<%= student.getUser_id() %>">상세보기</a></td>
-                    <td><a href="editStudent.do?user_id=<%= student.getUser_id() %>">수정</a></td>
-                     <td>
-                        <a href="deleteStudent.do?student_id=<%= student.getStudent_id() %>" 
-                           onclick="return confirmDelete();">삭제</a>
-                    </td>
+                    <td><a href="${pageContext.request.contextPath}/member/viewStudent.do?user_id=<%= student.getUser_id() %>">상세보기</a></td>
+					<td><a href="${pageContext.request.contextPath}/member/editStudent.do?user_id=<%= student.getUser_id() %>">수정</a></td>
+					<td><a href="${pageContext.request.contextPath}/member/deleteStudent.do?student_id=<%= student.getStudent_id() %>" 
+       onclick="return confirmDelete();">삭제</a></td>
+                    
                 </tr>
     <%
             }
