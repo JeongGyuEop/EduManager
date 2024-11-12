@@ -31,7 +31,7 @@ public class MenuItemService {
                 new MenuItemVo("강의실 관리", "classroomManage.jsp")
             )),
             new MenuItemVo("정보 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp", Arrays.asList(
-                    new MenuItemVo("공지사항 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp"),
+                new MenuItemVo("공지사항 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp"),
                 new MenuItemVo("학사일정 관리", "scheduleManage.jsp")
             ))
         ));
