@@ -30,30 +30,32 @@ public class MenuItemService {
                 new MenuItemVo("학과 관리", "departmentManage.jsp"),
                 new MenuItemVo("강의실 관리", "classroomManage.jsp")
             )),
-            new MenuItemVo("정보 관리", "noticeManage.jsp", Arrays.asList(
-                new MenuItemVo("공지사항 관리", "noticeManage.jsp"),
+            new MenuItemVo("정보 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp", Arrays.asList(
+                new MenuItemVo("공지사항 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp"),
                 new MenuItemVo("학사일정 관리", "scheduleManage.jsp")
             ))
         ));
         
         // 학생 메뉴
         roleMenuMap.put("학생", Arrays.asList(
-            new MenuItemVo("강의실", "#", Arrays.asList(
-                new MenuItemVo("수강신청", "courseRegister.jsp"),
-                new MenuItemVo("과제제출", "assignmentSubmit.jsp"),
-                new MenuItemVo("성적조회", "gradeCheck.jsp")
-            )),
+            new MenuItemVo("강의실", "/classroom/studentClassroom.bo?"),
+//            , Arrays.asList(
+//                new MenuItemVo("수강신청", "courseRegister.jsp"),
+//                new MenuItemVo("과제제출", "assignmentSubmit.jsp"),
+//                new MenuItemVo("성적조회", "gradeCheck.jsp")
+//            )),
             new MenuItemVo("마이페이지", "myPage.jsp"),
             new MenuItemVo("공지사항", "notice.jsp")
         ));
 
         // 교수 메뉴
         roleMenuMap.put("교수", Arrays.asList(
-            new MenuItemVo("강의실", "#", Arrays.asList(
-                new MenuItemVo("강의 개설", "lectureOpen.jsp"),
-                new MenuItemVo("과제 관리", "assignmentManage.jsp"),
-                new MenuItemVo("공지사항 등록", "noticeRegister.jsp")
-            )),
+            new MenuItemVo("강의실", "/classroom/professorClassroom.bo?"),
+//            , Arrays.asList(
+//                new MenuItemVo("강의 개설", "lectureOpen.jsp"),
+//                new MenuItemVo("과제 관리", "assignmentManage.jsp"),
+//                new MenuItemVo("공지사항 등록", "noticeRegister.jsp")
+//            )),
             new MenuItemVo("강의 관리", "lectureManage.jsp"),
             new MenuItemVo("학생 관리", "studentManage.jsp")
         ));
@@ -69,7 +71,7 @@ public class MenuItemService {
 		if (menus != null) {
 	        htmlLoad.append("<ul>");
 	        for (MenuItemVo menu : menus) {
-	            // 역할에 따른 디렉토리 경로 설정
+//	            // 역할에 따른 디렉토리 경로 설정
 //	            String rolePath = "";
 //	            if ("관리자".equals(userRole)) {
 //	                rolePath = "/view_admin/";

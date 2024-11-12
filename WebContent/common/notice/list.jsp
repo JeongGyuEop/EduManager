@@ -257,7 +257,7 @@
 				
 				if(nowBlock > 0){
 		%>			
-				    <a href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock-1%>&nowPage=<%=((nowBlock-1)*pagePerBlock)%>">
+				    <a href="<%=contextPath%>/Board/list.bo?nowBlock=<%=nowBlock-1%>&nowPage=<%=((nowBlock-1)*pagePerBlock)%>">
 					◀ 이전 <%=pagePerBlock %>개
 					</a>
 		<%	
@@ -268,7 +268,7 @@
 				for(int i=0;   i<pagePerBlock;    i++){
 		%>			
 				&nbsp;&nbsp;
-				<a href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock)+i%>">
+				<a href="<%=contextPath%>/Board/list.bo?nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock)+i%>">
 					<%=(nowBlock * pagePerBlock)+i+1%>
 					<%
 						if((nowBlock * pagePerBlock)+i+1 == totalPage){
@@ -283,7 +283,7 @@
 				
 				if(totalBlock > nowBlock + 1){
 		%>			
-				 <a href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock+1%>&nowPage=<%=(nowBlock+1)*pagePerBlock%>">
+				 <a href="<%=contextPath%>/Board/list.bo?nowBlock=<%=nowBlock+1%>&nowPage=<%=(nowBlock+1)*pagePerBlock%>">
 					▶ 다음 <%=pagePerBlock%>개 	
 				 </a>
 		<%			
