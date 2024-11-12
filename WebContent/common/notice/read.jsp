@@ -104,7 +104,7 @@
 									<%--목록 이미지 버튼 --%>
 									<input type="button" 
 											id="list" 
-											onclick="location.href='<%=contextPath%>/Board/list.bo?nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>'"
+											onclick="location.href='<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>'"
 											value="목록" />&nbsp;
 								</div>
 							</td>

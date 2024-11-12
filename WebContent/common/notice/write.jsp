@@ -107,7 +107,7 @@
 			event.preventDefault(); //a태그  href속성의 주소요청 기본이벤트 차단
 			
 			//board테이블에 저장된 모든 글 조회 요청!
-			location.href="<%=contextPath%>/Board/list.bo?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>";
+			location.href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>";
 		});
 	
 	    //새글 정보를 입력하고 등록 이미지를 감싸고 있는 <a>를 선택해서 클릭이벤트 등록
@@ -141,7 +141,7 @@
 	    					
 	    					if(result){
 	    						//board테이블에 저장된 모든 글 조회 요청! 
-	    						location.href="<%=contextPath%>/Board/list.bo";
+	    						location.href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp";
 	    					}
 	    					
 	    					
