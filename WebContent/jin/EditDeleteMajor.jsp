@@ -12,74 +12,103 @@
 <script src="https://code.jquery.com/jquery-latest.min.js" crossorigin="anonymous"></script>
 <script type="text/javascript">
 $(document).ready(function () {
-    // 여러 이벤트를 연결하기 위해 jQuery 사용
+    // 모든 input에 대해 keydown과 blur 이벤트 핸들러 설정
     $(document).on("keydown blur", "input", function(event) {
-        // 공통 동작 수행 함수 호출
         handleInputEvent(event, $(this));
     });
 });
 
 // 입력 이벤트를 처리하는 공통 함수
 function handleInputEvent(event, $input) {
+    var td = $input.closest("td")[0];
     if (event.type === "keydown" && event.key === "Enter") {
         // 엔터키가 눌렸을 때 업데이트 수행
-        updateAllValues($input.closest("td")[0]);
+        updateAllValues(td);
     } else if (event.type === "blur") {
         // 포커스가 해제되었을 때에도 동일한 업데이트 수행
-        updateAllValues($input.closest("td")[0]);
+        updateAllValues(td);
     }
 }
 
-function makeEditable(td) {
-    // td의 기존 텍스트 값을 가져옵니다.
-    var originalValue = td.innerText;
-
-    // 새로운 input 엘리먼트를 생성합니다.
-    var input = document.createElement("input");
-    input.type = "text";
-    input.value = originalValue;
-
-    // td 내부를 비우고 input을 넣습니다.
-    td.innerHTML = "";
-    td.appendChild(input);
-
-    // input에 포커스를 줍니다.
-    input.focus();
-}
-
 function updateAllValues(td) {
-    // 수정된 값을 가져옵니다.
     var input = td.querySelector("input");
-    var updatedValue = input.value;
+    if (!input) {
+        console.error("Input element not found");
+        return;
+    }
 
-    // td 내부에 수정된 값만 남기고 input을 제거합니다.
+    var updatedValue = input.value.trim();
+    var originalValue = td.getAttribute("data-original-value");
+
+    // 유효성 검사 필요 여부 결정
+    if (td.cellIndex === 2) { // 전화번호 칸이라면
+        if (!validateForm(updatedValue)) {
+            // 유효하지 않으면 원래 값으로 복원
+            td.innerHTML = originalValue;
+            return;
+        }
+    }
+
+    // 유효하면 td에 값을 업데이트
     td.innerHTML = updatedValue;
 
-    // 수정된 값을 테이블에서 가져옵니다.
+    // 데이터 수집
     var row = td.parentElement;
-    var majorCode = row.cells[0].innerText;
-    var majorName = row.cells[1].innerText;
-    var majorTel = row.cells[2].innerText;
+    var majorCode = row.cells[0].innerText.trim();  // 학과 코드
+    var majorName = row.cells[1].innerText.trim();  // 학과 이름
+    var majorTel = row.cells[2].innerText.trim();   // 학과 전화번호
 
-    // 변경된 값을 가지고 서블릿 호출
+    // XHR 요청 보내기
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "<%=contextPath%>/MI/editMajor.do", true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     // 학과 코드, 학과 이름, 전화 번호 전달
     var params = "majorCode=" + encodeURIComponent(majorCode)
-            + "&majorName=" + encodeURIComponent(majorName) + "&majorTel="
-            + encodeURIComponent(majorTel);
-
+               + "&majorName=" + encodeURIComponent(majorName)
+               + "&majorTel=" + encodeURIComponent(majorTel);
+    console.log(params);
     xhr.send(params);
 
     xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            console.log("Update successful");
-            location.reload(); // 알림 후 페이지 새로 고침
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                console.log("Update successful");
+                location.reload();
+            } else {
+                console.error("Update failed. Status: " + xhr.status);
+                alert("업데이트에 실패했습니다. 다시 시도해 주세요.");
+                // 업데이트 실패 시 원래 값으로 되돌림
+                td.innerHTML = originalValue;
+            }
         }
     };
 }
+
+function validateForm(telNumber) {
+    const telRegex = /^\d{2,3}-\d{3,4}-\d{4}$/;
+
+    if (!telRegex.test(telNumber)) {
+        alert("유효한 전화번호 형식을 입력해 주세요. 예: 02-123-1234");
+        return false;
+    }
+    return true;
+}
+
+function makeEditable(td) {
+    var originalValue = td.innerText.trim();
+
+    var input = document.createElement("input");
+    input.type = "text";
+    input.value = originalValue;
+
+    td.innerHTML = "";
+    td.appendChild(input);
+    td.setAttribute("data-original-value", originalValue); // 원래 값을 저장해 둠
+
+    input.focus();
+}
+
 </script>
 </head>
 <body>

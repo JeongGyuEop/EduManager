@@ -10,164 +10,277 @@ import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import VO.MajorVO;
 
 public class MajorInputDAO {
+	Connection con;
+	PreparedStatement pstmt;
+	ResultSet rs;
+	DataSource ds;
+	// sql å ìŒ”ë¸ì˜™
+	String sql = null;
+	// ìœ íš¨ì„± ê²€ì‚¬ ê²°ê³¼
+	private static final int SUCCESS = 1;
+	private static final int FAILURE = 0;
+	private static final int NONE = -1;
+	private static final int EXISTS = -2;
+	// 1 = ì„±ê³µ, 0 =ì‹¤íŒ¨, -1 = ì—†ìŒ, -2 = ìˆìŒ
+	int validationResult = NONE;
+	// db ì—°ê²°
+	public MajorInputDAO() {
+		try {
+			Context ctx = new InitialContext();
+			ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/edumanager");
+		} catch (Exception e) {
+			System.out.println("ì»¤ë„¥ì…˜ í’€ì„ ì–»ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤: " + e.toString());
+		}
+	}
 
-    private static final int SUCCESS = 1;
-    private static final int FAILURE = 0;
+	// ìì›í•´ì œ ë©”ì†Œë“œ (Connection í¬í•¨)
+	private void closeDatabaseResources(Connection con, PreparedStatement pstmt, ResultSet rs) {
+		try {
+			if (rs != null) {
+				rs.close();
+			}
+		} catch (Exception e) {
+			System.out.println("ResultSet ìì› í•´ì œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + e.toString());
+		}
 
-    DataSource ds;
+		try {
+			if (pstmt != null) {
+				pstmt.close();
+			}
+		} catch (Exception e) {
+			System.out.println("PreparedStatement ìì› í•´ì œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + e.toString());
+		}
 
-    // db ¿¬°á
-    public MajorInputDAO() {
-        try {
-            Context ctx = new InitialContext();
-            ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/edumanager");
-        } catch (Exception e) {
-            System.out.println("Ä¿³Ø¼Ç Ç®À» ¾ò´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù: " + e.toString());
-        }
-    }
+		try {
+			if (con != null) {
+				con.close();
+			}
+		} catch (Exception e) {
+			System.out.println("Connection ìì› í•´ì œ ì¤‘ ì˜¤ë¥˜ ë°œìƒ: " + e.toString());
+		}
+	}
 
-    // ÀÚ¿øÇØÁ¦ ¸Ş¼Òµå (Connection Æ÷ÇÔ)
-    private void closeDatabaseResources(Connection con, PreparedStatement pstmt, ResultSet rs) {
-        try {
-            if (rs != null) {
-                rs.close();
-            }
-        } catch (Exception e) {
-            System.out.println("ResultSet ÀÚ¿ø ÇØÁ¦ Áß ¿À·ù ¹ß»ı: " + e.toString());
-        }
+	public int majorInputValidation(String newMajorName) {
+		// db ì—°ë™
+		validationResult = NONE;
+		try {
+			con = ds.getConnection();
+			sql = "SELECT majorname FROM majorinformation WHERE majorname = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, newMajorName);
+			rs = pstmt.executeQuery();
+			// å ìŒ©ë¸ì˜™å ì™ì˜™ å ì‹±ëªŒì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ï¿½
+			if (rs.next()) {
+				validationResult = EXISTS;
+			}
+		} catch (SQLException e) {
+			System.out.println("SQL ì˜¤ë¥˜ ë°œìƒ: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, rs);
+		}
+		// ê°’ ë°˜í™˜
+		return validationResult;
+	}
 
-        try {
-            if (pstmt != null) {
-                pstmt.close();
-            }
-        } catch (Exception e) {
-            System.out.println("PreparedStatement ÀÚ¿ø ÇØÁ¦ Áß ¿À·ù ¹ß»ı: " + e.toString());
-        }
+	public int majorSearchValidationCode(String editMajorCode) {
+		System.out.println("majorSearchValidationCode" + editMajorCode);
+		validationResult = NONE;
+		try {
+			con = ds.getConnection();
+			sql = "SELECT majorcode FROM majorinformation WHERE majorcode = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, String.format("%02d", Integer.parseInt(editMajorCode)));
+			rs = pstmt.executeQuery();
+			// ì¤‘ë³µëœ ì´ë¦„ì´ ì¡´ì¬í•  ê²½ìš°
+			if (rs.next()) {
+				validationResult = EXISTS;
+			}
+		} catch (SQLException e) {
+			System.out.println("SQL ì˜¤ë¥˜ ë°œìƒ: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, rs);
+		}
+		// ê°’ ë°˜í™˜
+		return validationResult;
+	}
 
-        try {
-            if (con != null) {
-                con.close();
-            }
-        } catch (Exception e) {
-            System.out.println("Connection ÀÚ¿ø ÇØÁ¦ Áß ¿À·ù ¹ß»ı: " + e.toString());
-        }
-    }
+	public int majorSearchValidationName(String editMajorName) {
+		System.out.println("majorSearchValidationName" + editMajorName);
+		validationResult = NONE;
+		try {
+			con = ds.getConnection();
+			sql = "SELECT majorname FROM majorinformation WHERE majorname = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, editMajorName);
+			rs = pstmt.executeQuery();
+			// ì¤‘ë³µëœ ì´ë¦„ì´ ì¡´ì¬í•  ê²½ìš°
+			if (rs.next()) {
+				validationResult = EXISTS;
+			}
+		} catch (SQLException e) {
+			System.out.println("SQL ì˜¤ë¥˜ ë°œìƒ: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, rs);
+		}
+		// ê°’ ë°˜í™˜
+		return validationResult;
+	}
 
-    public int majorInput(String newMajorName, String newMajorTel) {
-        int addResult = FAILURE;
-        Connection con = null;
-        PreparedStatement pstmt = null;
+	public int majorInput(String newMajorName, String newMajorTel) {
+		int addResult = FAILURE;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 
-        try {
-            con = ds.getConnection();
-            String sql = "insert into majorinformation (majorname, majortel) values (?, ?)";
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, newMajorName);
-            pstmt.setString(2, newMajorTel);
-            addResult = pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("SQL ¿À·ù ¹ß»ı: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            closeDatabaseResources(con, pstmt, null);
-        }
+		try {
+			con = ds.getConnection();
+			String sql = "insert into majorinformation (majorname, majortel) values (?, ?)";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, newMajorName);
+			pstmt.setString(2, newMajorTel);
+			addResult = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("SQL ì˜¤ë¥˜ ë°œìƒ: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, null);
+		}
 
-        return addResult;
-    }
+		return addResult;
+	}
 
-    public ArrayList<MajorVO> searchMajor(HttpServletRequest request) {
-        ArrayList<MajorVO> searchList = new ArrayList<>();
-        String searchKeyWord = request.getParameter("searchMajor");
+	public ArrayList<MajorVO> searchMajor(HttpServletRequest request) {
+		ArrayList<MajorVO> searchList = new ArrayList<>();
+		String searchKeyWord = request.getParameter("searchMajor");
 
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 
-        try {
-            con = ds.getConnection();
+		try {
+			con = ds.getConnection();
 
-            // Å°¿öµå°¡ ¼ıÀÚÀÎÁö È®ÀÎ
-            boolean isNumeric = false;
-            try {
-                Integer.parseInt(searchKeyWord);
-                isNumeric = true;
-            } catch (NumberFormatException e) {
-                isNumeric = false;
-            }
+			// í‚¤ì›Œë“œê°€ ìˆ«ìì¸ì§€ í™•ì¸
+			boolean isNumeric = false;
+			try {
+				Integer.parseInt(searchKeyWord);
+				isNumeric = true;
+			} catch (NumberFormatException e) {
+				isNumeric = false;
+			}
 
-            // ¼ıÀÚÀÏ ¶§¿Í ¹®ÀÚÀÏ ¶§ÀÇ Äõ¸® ÀÛ¼º
-            if (isNumeric) {
-                // ¼ıÀÚ¶ó¸é majorcode·Î °Ë»ö
-                String sql = "SELECT * FROM majorinformation WHERE majorcode = ?";
-                pstmt = con.prepareStatement(sql);
-                pstmt.setInt(1, Integer.parseInt(searchKeyWord));
-            } else {
-                // ¹®ÀÚ¶ó¸é majornameÀ¸·Î LIKE °Ë»ö
-                String sql = "SELECT * FROM majorinformation WHERE majorname LIKE ?";
-                pstmt = con.prepareStatement(sql);
-                pstmt.setString(1, "%" + searchKeyWord + "%");
-            }
+			// ìˆ«ìì¼ ë•Œì™€ ë¬¸ìì¼ ë•Œì˜ ì¿¼ë¦¬ ì‘ì„±
+			if (isNumeric) {
+				// ìˆ«ìë¼ë©´ majorcodeë¡œ ê²€ìƒ‰
+				String sql = "SELECT * FROM majorinformation WHERE majorcode = ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setInt(1, Integer.parseInt(searchKeyWord));
+			} else {
+				// ë¬¸ìë¼ë©´ majornameìœ¼ë¡œ LIKE ê²€ìƒ‰
+				String sql = "SELECT * FROM majorinformation WHERE majorname LIKE ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, "%" + searchKeyWord + "%");
+			}
 
-            rs = pstmt.executeQuery();
+			rs = pstmt.executeQuery();
 
-            while (rs.next()) {
-                MajorVO vo = new MajorVO();
-                vo.setMajorCode(rs.getInt("majorcode"));
-                vo.setMajorName(rs.getString("majorname"));
-                vo.setMajorTel(rs.getString("majortel"));
-                searchList.add(vo);
-            }
-        } catch (SQLException e) {
-            System.out.println("SQL ¿À·ù ¹ß»ı: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            closeDatabaseResources(con, pstmt, rs);
-        }
+			while (rs.next()) {
+				MajorVO vo = new MajorVO();
+				vo.setMajorCode(rs.getInt("majorcode"));
+				vo.setMajorName(rs.getString("majorname"));
+				vo.setMajorTel(rs.getString("majortel"));
+				searchList.add(vo);
+			}
+		} catch (SQLException e) {
+			System.out.println("SQL ì˜¤ë¥˜ ë°œìƒ: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, rs);
+		}
 
-        return searchList;
-    }
+		return searchList;
+	}
 
-    public int editMajor(String editMajorCode, String editMajorName, String editMajorTel) {
-        int editResult = FAILURE;
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        try {
-            con = ds.getConnection();
-            String sql = "UPDATE majorinformation SET majorname=?, majortel=? WHERE majorcode=?";
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, editMajorName);
-            pstmt.setString(2, editMajorTel);
-            pstmt.setString(3, String.format("%02d", Integer.parseInt(editMajorCode)));
-            editResult = pstmt.executeUpdate();
-            System.out.println(editResult);
-        } catch (SQLException e) {
-            System.out.println("SQL ¿À·ù ¹ß»ı: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            closeDatabaseResources(con, pstmt, null);
-        }
-        return editResult;
-    }
+	public int editMajor(String editMajorCode, String editMajorName, String editMajorTel) {
+		System.out.println("editMajor" + editMajorCode);
+		System.out.println("editMajor" + editMajorName);
+		System.out.println("editMajor" + editMajorTel);
+
+		int editResult = FAILURE;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			String sql = "UPDATE majorinformation SET majorname=?, majortel=? WHERE majorcode=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, editMajorName);
+			pstmt.setString(2, editMajorTel);
+			pstmt.setString(3, String.format("%02d", Integer.parseInt(editMajorCode)));
+			editResult = pstmt.executeUpdate();
+			System.out.println("editMajor" + editResult);
+		} catch (SQLException e) {
+			System.out.println("SQL ì˜¤ë¥˜ ë°œìƒ: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, null);
+		}
+		return editResult;
+	}
 
 	public int deleteMajor(String editMajorCode) {
+		System.out.println("deleteMajor" + editMajorCode);
 		int deleteResult = FAILURE;
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        try {
-            con = ds.getConnection();
-            String sql = "DELETE FROM majorinformation WHERE majorcode = ?";
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, String.format("%02d", Integer.parseInt(editMajorCode)));
-            deleteResult = pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("SQL ¿À·ù ¹ß»ı: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            closeDatabaseResources(con, pstmt, null);
-        }
-        return deleteResult;
-    }
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		try {
+			con = ds.getConnection();
+			String sql = "DELETE FROM majorinformation WHERE majorcode = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, String.format("%02d", Integer.parseInt(editMajorCode)));
+			deleteResult = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("SQL ì˜¤ë¥˜ ë°œìƒ: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, null);
+		}
+		return deleteResult;
+	}
+
+	public JSONArray fetchMajor() {
+		String sql = "SELECT majorcode, majorname, majortel FROM majorinformation";
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		JSONArray jsonArray = new JSONArray();
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("majorcode", rs.getString("majorcode"));
+				jsonObject.put("majorname", rs.getString("majorname"));
+				jsonObject.put("majortel", rs.getString("majortel"));
+				jsonArray.add(jsonObject);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, null);
+		}
+		return jsonArray;
+	}
 }

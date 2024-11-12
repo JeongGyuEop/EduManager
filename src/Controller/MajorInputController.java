@@ -1,6 +1,8 @@
 package Controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -10,9 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONArray;
+
 import Service.MajorInputService;
 import VO.MajorVO;
-
 
 @WebServlet("/MI/*")
 public class MajorInputController extends HttpServlet {
@@ -61,21 +64,30 @@ public class MajorInputController extends HttpServlet {
 			ArrayList<MajorVO> searchList = majorInputService.searchMajor(request);
 			// 검색이 성공하면 그대로 뿌려주고,
 			request.setAttribute("searchList", searchList);
-			
+
 			nextPage = "/jin/EditDeleteMajor.jsp";
-			
+
 			break;
 		case "/editMajor.do":
-			
-			int deleteResult = majorInputService.editMajor(request);
-			if(deleteResult == 1) {
-				request.setAttribute("deleteResult", deleteResult);
-				nextPage = "/jin/EditDeleteMajor.jsp";
-			} else if (deleteResult == -2) {
-				request.setAttribute("deleteResult", deleteResult);
-				nextPage = "/jin/EditDeleteMajor.jsp";
-			}
+			int deleteResult = majorInputService.editMajorService(request);
+			System.out.println("editMajor.do" + deleteResult);
+			request.setAttribute("deleteResult", deleteResult);
+			nextPage = "/jin/EditDeleteMajor.jsp";
 			break;
+		case "/fetchMajorData":
+			JSONArray majorData;
+			try {
+				majorData = majorInputService.fetchMajorService();
+				response.setContentType("application/json; charset=UTF-8");
+				PrintWriter out = response.getWriter();
+				out.print(majorData.toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				PrintWriter out = response.getWriter();
+				out.println("<tr><td colspan='3'>데이터를 불러오는 도중 오류가 발생했습니다.</td></tr>");
+			}
+			return;
 		default:
 			System.out.println("주소 소실");
 

@@ -47,12 +47,13 @@
             var xhr = new XMLHttpRequest();
             var contextPath = "<%=request.getContextPath()%>";
 
-		xhr.open("GET", contextPath + "/fetchMajorData", true);
+		xhr.open("GET", contextPath + "/MI/fetchMajorData", true);
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == 4) {
 				isLoading = false;
 				if (xhr.status == 200) {
 					let data = JSON.parse(xhr.responseText);
+		            console.log(data); // 서버에서 받아온 데이터 출력
 					updateMajorTable(data);
 				} else {
 					console.error("데이터 로드 중 오류 발생: " + xhr.status);
@@ -61,33 +62,27 @@
 		};
 		xhr.send();
 	}
+    	function updateMajorTable(data) {
+    		let tbody = document.querySelector("#major-table tbody");
+    		tbody.innerHTML = "";
 
-	// 테이블 업데이트 함수
-	function updateMajorTable(data) {
-		let tbody = document.querySelector("#major-table tbody");
-		tbody.innerHTML = "";
-
-		data.forEach(function(major) {
-			let row = tbody.insertRow();
-			let majorcode = major.majorcode;
-			row.insertCell(0).innerText = majorcode;
-			row.insertCell(1).innerText = major.majorname;
-			row.insertCell(2).innerText = major.majortel;
-		});
-
-		updateMajorCount();
-	}
-
-	// 총 학과 수 업데이트 함수
-	function updateMajorCount() {
-		const totalMajor = document.querySelector("#major-table tbody").children.length;
-		const tfoot = document.querySelector("#major-table tfoot");
-		if (totalMajor > 0) {
-			tfoot.innerHTML = `<tr><th colspan='4'>**대학교에는 총 ${totalMajor}개의 학과가 있습니다!</th></tr>`;
-		} else {
-			tfoot.innerHTML = `<tr><th colspan='4'>학과 정보가 없습니다!</th></tr>`;
-		}
-	}
+    		data.forEach(function(major) {
+    			let row = tbody.insertRow();
+    			let majorcode = major.majorcode;
+    			row.insertCell(0).innerText = majorcode;
+    			row.insertCell(1).innerText = major.majorname;
+    			row.insertCell(2).innerText = major.majortel;
+    		});
+    		updateMajorCount(tbody.querySelectorAll("tr").length);
+    	}
+    	function updateMajorCount(totalMajor) {
+    		const tfoot = document.querySelector("#major-table tfoot");
+    		if (totalMajor > 0) {
+    			tfoot.innerHTML = "<tr><th colspan='4'>조은대학교에는 총 " + totalMajor + "개의 학과가 있습니다!</th></tr>";
+    		} else {
+    			tfoot.innerHTML = `<tr><th colspan='4'>학과 정보가 없습니다!</th></tr>`;
+    		}
+    	}
 </script>
 </head>
 
