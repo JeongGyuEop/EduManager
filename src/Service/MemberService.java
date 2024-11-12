@@ -1,7 +1,5 @@
 package Service;
 
-import java.sql.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,124 +11,129 @@ import Vo.MemberVo;
 // 부장
 // - 단위 기능 별로 메소드를 만들어서 그 기능을 처리하는 클래스
 public class MemberService {
-
+	
 	// MemberDAO 객체의 주소를 저장할 참조변수
 	MemberDAO memberDao;
-
+	
 	// 기본 생성자 - 위 memberDao변수에 new MemberDAO() 객체를 만들어서 저장하는 역할
 	public MemberService() {
 		memberDao = new MemberDAO();
 	}
+	
+	//로그인 요청 
+		public Map<String, String> serviceUserCheck(HttpServletRequest request) {
+			
+			
+			//요청한 값 얻기(로그인 요청시 입력한 아이디, 비밀번호 request에서 얻기)
+			String login_id = request.getParameter("id");
+			String login_pass = request.getParameter("pass");
+			
+			Map<String, String> userInfo = memberDao.userCheck(login_id, login_pass);
+			
+			//HttpSession메모리 얻기
+			HttpSession session = request.getSession();
+			
+			// check 값이 "1"인 경우에만 role과 name을 세션에 저장
+		    if ("1".equals(userInfo.get("check"))) {
+				//HttpSession메모리에 입력한 아이디 바인딩
+			    session.setAttribute("role", userInfo.get("role"));
+			    session.setAttribute("name", userInfo.get("name"));
+			    session.setAttribute("id", login_id);
+			}
+		
+			return userInfo;
+		}	
+	
+//	//-------
+//	// 회원가입 중앙화면 VIEW 요청
+//	public String serviceJoinName(HttpServletRequest request) {
+//		// members/join.jsp 중앙화면 뷰 주소를 얻어 MemberController로 반환
+//		return request.getParameter("center");
+//	}
+//
+//	//-------
+//	// 아이디 중복 체크 요청
+//	public boolean serviceOverLappedId(HttpServletRequest request) {
+//
+//		// 요청한 아이디 얻기
+//		String id = request.getParameter("id");
+//		
+//		// 입력한 아이디가 DB에 저장되어 있는지 확인하는 작업을 MemberDAO의 메소드를 호출해서 명령
+//		return memberDao.overlappedId(id);
+//				// true 또는 false를 반환받아 다시 MemberController에 반환
+//	}
+//
+//	//-------
+//	// 회원등록(가입) 요청
+//	public int serviceInsertMember(HttpServletRequest request) {
+//
+//		// 요청한 값 얻기
+//		String user_id = request.getParameter("id");
+//		String user_pass = request.getParameter("pass");
+//		String user_name = request.getParameter("name");
+//		int user_age = Integer.parseInt(request.getParameter("age"));
+//		String user_gender = request.getParameter("gender");
+//		
+//		String address1 = request.getParameter("address1");
+//		String address2 = request.getParameter("address2");
+//		String address3 = request.getParameter("address3");
+//		String address4 = request.getParameter("address4");
+//		String address5 = request.getParameter("address5");
+//		String user_address = address1 + address2 + address3 + address4 + address5;
+//		
+//		String user_email = request.getParameter("email");
+//		String user_tel = request.getParameter("tel");
+//		String user_hp = request.getParameter("hp");
+//		
+//		MemberVo vo = new MemberVo(user_id, user_pass, user_name,
+//								user_age, user_gender, user_address, user_email, user_tel, user_hp);
+//		
+//		return memberDao.insertMember(vo);
+//		
+//	}
+//
+//	
+//	//-------
+//	// 로그인을 하기 위해 아이디 비밀번호를 입력할 수 있는 중앙화면 VIEW 요청
+//	public String serviceLoginMember() {
+//		
+//		return "members/login.jsp";
+//		
+//	}
+//
+//	//-------
+//	// 로그인 요청
+//	public int serviceUserCheck(HttpServletRequest request) {
+//
+//		// 요청한 값 얻기
+//		String login_id = request.getParameter("id");
+//		String login_pass = request.getParameter("pass");
+//		
+//		// check 변수값이 1이면 입력한 아이디, 비밀번호가 DB에 존재함
+//		
+//		// HttpSession 메모리 얻기
+//		HttpSession session = request.getSession();
+//		// HttpSession 메모리에 입력한 아이디 바인딩
+//		session.setAttribute("id", login_id);
+//		
+//		return memberDao.userCheck(login_id, login_pass);
+//
+//	}
 
-	// 로그인 요청
-	public Map<String, String> serviceUserCheck(HttpServletRequest request) {
-
-		// 요청한 값 얻기(로그인 요청시 입력한 아이디, 비밀번호 request에서 얻기)
-		String login_id = request.getParameter("id");
-		String login_pass = request.getParameter("pass");
-
-		Map<String, String> userInfo = memberDao.userCheck(login_id, login_pass);
-
-		// HttpSession메모리 얻기
-		HttpSession session = request.getSession();
-
-		// check 값이 "1"인 경우에만 role과 name을 세션에 저장
-		if ("1".equals(userInfo.get("check"))) {
-			// HttpSession메모리에 입력한 아이디 바인딩
-			session.setAttribute("role", userInfo.get("role"));
-			session.setAttribute("name", userInfo.get("name"));
-			session.setAttribute("id", login_id);
-		}
-
-		return userInfo;
-	}
-
-	// -------
+	//-------
 	// 로그아웃 요청
 	public void serviceLogOut(HttpServletRequest request) {
 
 		// 기존에 생성했던 HttpSession 객체 메모리 얻기
 		HttpSession session = request.getSession(false);
 		if (session != null) {
-			session.removeAttribute("userId");
-			session.removeAttribute("userName");
-			session.invalidate(); // 세션 무효화
-
-		}
-
+            session.removeAttribute("userId");
+            session.removeAttribute("userName");
+            session.invalidate(); // 세션 무효화
+            
+        }
+		
 	}
+	
 
-	// ===================================================================================
-	// 전체 학생 목록 조회 메서드
-	public List<MemberVo> getAllStudents() {
-		return memberDao.getAllStudents();
-	}
-
-	// ===================================================================================
-	// 특정 학생 정보 조회 메서드
-	public MemberVo getStudentById(String userId) {
-		return memberDao.getStudentById(userId);
-	}
-
-	// ===================================================================================
-	// 학생 등록 메서드
-	public int registerStudent(HttpServletRequest request) {
-		// user 테이블 관련 필드
-		String user_id = request.getParameter("user_id");
-		String user_pw = request.getParameter("user_pw");
-		String user_name = request.getParameter("user_name");
-		Date birthDate = Date.valueOf(request.getParameter("birthDate"));
-		String gender = request.getParameter("gender");
-		String address = request.getParameter("address");
-		String phone = request.getParameter("phone");
-		String email = request.getParameter("email");
-		String role = request.getParameter("role");
-
-		// student_info 테이블 관련 필드
-		String student_id = request.getParameter("student_id");
-		String majorcode = request.getParameter("majorcode");
-		int grade = Integer.parseInt(request.getParameter("grade"));
-		Date admission_date = Date.valueOf(request.getParameter("admission_date"));
-		String status = request.getParameter("status");
-
-		// VO 객체 생성 및 설정
-		MemberVo student = new MemberVo(user_id, user_pw, user_name, birthDate, gender, address, phone, email, role,
-				student_id, majorcode, grade, admission_date, status);
-
-		// DAO 메서드 호출하여 데이터 삽입
-		return memberDao.insertStudent(student);
-	}
-
-	// ===================================================================================
-	// 학생 정보 수정 메서드
-	public boolean updateStudent(HttpServletRequest request) {
-		// request에서 수정할 필드 값들을 가져옴
-		String userId = request.getParameter("user_id");
-		String userPw = request.getParameter("user_pw");
-		String userName = request.getParameter("user_name");
-		Date birthDate = Date.valueOf(request.getParameter("birthDate"));
-		String gender = request.getParameter("gender");
-		String address = request.getParameter("address");
-		String phone = request.getParameter("phone");
-		String email = request.getParameter("email");
-		String role = request.getParameter("role");
-		String studentId = request.getParameter("student_id");
-		String majorcode = request.getParameter("majorcode");
-		int grade = Integer.parseInt(request.getParameter("grade"));
-		Date admissionDate = Date.valueOf(request.getParameter("admission_date"));
-		String status = request.getParameter("status");
-
-		// VO 객체에 값 설정
-		MemberVo student = new MemberVo(userId, userPw, userName, birthDate, gender, address, phone, email, role,
-				studentId, majorcode, grade, admissionDate, status);
-
-		// DAO 메서드 호출하여 업데이트 수행
-		return memberDao.updateStudent(student);
-	}
-
-	// ===================================================================================
-	// 학생 정보 삭제 메서드
-	public boolean deleteStudent(String studentId) {
-		return memberDao.deleteStudent(studentId);
-	}
 }
