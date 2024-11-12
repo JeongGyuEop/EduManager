@@ -2,7 +2,9 @@ package Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
+import javax.el.ListELResolver;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,14 +13,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import Service.ClassroomService;
+
 
 @WebServlet("/classroom/*")
 public class ClassroomController extends HttpServlet {
 	
+	ClassroomService classroomservice;
 	
 	@Override
 	public void init() throws ServletException {
-		
+		classroomservice = new ClassroomService();
 	}
 	
 	// doGet doPost 메소드 오버라이딩
@@ -54,6 +59,8 @@ public class ClassroomController extends HttpServlet {
 	    String action = request.getPathInfo(); // 2단계 요청주소
 	    System.out.println("요청한 2단계 주소: " + action);
 	    
+	    ArrayList list = null;
+	    
 	    switch(action) {
 
 		//==========================================================================================
@@ -74,23 +81,35 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    		center = "/view_classroom/courseRegister.jsp";
 	    		
+	    		String majorCode = (String)session.getAttribute("majorcode");
+	    		
+	    		// 학과 이름 조회
+	    		String majorName = classroomservice.serviceGetMajor(majorCode);
+	    		System.out.println(majorName);
+	    		
+	    		// 강의실 정보 조회
+	    		list = classroomservice.serviceGetClassInfo();
+	    		
 //				로그인할 때 session 값으로 저장한 값
 //	    		session.setAttribute("role", userInfo.get("role"));
 //	    		session.setAttribute("name", userInfo.get("name"));
 //	    		session.setAttribute("id", login_id);
 	    		
+	    		request.setAttribute("majorname", majorName);
+	    		request.setAttribute("rooms", list);
 	    		request.setAttribute("classroomCenter", center);
-	    		
 	    		
 				nextPage = "/view_classroom/classroom.jsp";
 				
 				break;
 				
 		//==========================================================================================
-				
-				
-				
-				
+			
+			// 수강 등록을 했을 때 전달 받는 2단계 경로 
+	    	case "/course_register.do":
+	    		
+	    		
+	    		
 		//==========================================================================================
 				
 	    	default:
