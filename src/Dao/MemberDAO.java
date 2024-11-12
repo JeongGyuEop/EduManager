@@ -59,7 +59,11 @@ public class MemberDAO {
 		try {
 			con = ds.getConnection();
 			
-			String sql = "select * from user where user_id=?";
+			String sql = "select * from user u "
+					+ "left join professor_info p on u.user_id = p.user_id "
+					+ "left join student_info s on u.user_id = s.user_id "
+					+ "where u.user_id = ?";
+			
 			
 			pstmt = con.prepareStatement(sql);
 			
@@ -73,6 +77,20 @@ public class MemberDAO {
 	                userInfo.put("role", rs.getString("role"));
 	                userInfo.put("name", rs.getString("user_name"));
 	                userInfo.put("check", "1"); // 아이디와 비밀번호 일치 시 "1" 반환
+	                userInfo.put("majorcode", rs.getString("majorcode"));
+	                
+	                // role에 따라 추가 정보를 저장
+	                if ("교수".equals(rs.getString("role"))) {
+	                    userInfo.put("professor_id", rs.getString("professor_id"));
+	                    userInfo.put("employment_date", rs.getString("employment_date"));
+	                    // 필요한 교수의 고유 정보를 추가로 저장
+	                } else if ("학생".equals(rs.getString("role"))) {
+	                    userInfo.put("student_id", rs.getString("student_id"));
+	                    userInfo.put("grade", rs.getString("grade"));
+	                    userInfo.put("admission_date", rs.getString("admission_date"));
+	                    userInfo.put("status", rs.getString("status"));
+	                    // 필요한 학생의 고유 정보를 추가로 저장
+	                }
 	            } else {
 	                userInfo.put("check", "0"); // 비밀번호 불일치 시 "0" 반환
 	            }

@@ -58,17 +58,13 @@ public class ClassroomController extends HttpServlet {
 
 		//==========================================================================================
 	    
-	    	case "/studentClassroom.bo": // 학생 계정의 강의실 화면 2단계 요청 주소를 받으면
+	    	case "/classroom.bo": // 학생 계정의 강의실 화면 2단계 요청 주소를 받으면
 	    		
-				nextPage = "/view_classroom/studentClassroom.jsp";
-				
-				break;
-				
-		//==========================================================================================
-			    
-	    	case "/professorClassroom.bo": // 교수 계정의 강의실 화면 2단계 요청 주소를 받으면
+	    		center = request.getParameter("classroomCenter");
 	    		
-				nextPage = "/view_classroom/professorClassroom.jsp";
+	    		request.setAttribute("classroomCenter", center);
+	    		
+				nextPage = "/view_classroom/classroom.jsp";
 				
 				break;
 				
@@ -76,12 +72,24 @@ public class ClassroomController extends HttpServlet {
 				
 	    	case "/course_register.bo": // 수강관리 화면을 보여주는 요청을 받으면
 	    		
+	    		center = "/view_classroom/courseRegister.jsp";
 	    		
-				nextPage = "/view_classroom/professorClassroom.jsp";
+//				로그인할 때 session 값으로 저장한 값
+//	    		session.setAttribute("role", userInfo.get("role"));
+//	    		session.setAttribute("name", userInfo.get("name"));
+//	    		session.setAttribute("id", login_id);
+	    		
+	    		request.setAttribute("classroomCenter", center);
+	    		
+	    		
+				nextPage = "/view_classroom/classroom.jsp";
 				
 				break;
 				
 		//==========================================================================================
+				
+				
+				
 				
 		//==========================================================================================
 				

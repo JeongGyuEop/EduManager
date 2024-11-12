@@ -38,6 +38,7 @@ public class MemberService {
 				//HttpSession메모리에 입력한 아이디 바인딩
 			    session.setAttribute("role", userInfo.get("role"));
 			    session.setAttribute("name", userInfo.get("name"));
+			    session.setAttribute("majorcode", userInfo.get("majorcode"));
 			    session.setAttribute("id", login_id);
 			}
 		
