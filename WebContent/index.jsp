@@ -8,6 +8,5 @@
 
 <script>
 	// main.jsp 메인 화면 요청
-	location.href="<%=request.getContextPath()%>/member/main.bo";
-
+	location.href="<%=contextPath%>/member/main.bo";
 </script>

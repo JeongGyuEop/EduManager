@@ -83,7 +83,7 @@ public class MenuItemService {
 
 	            htmlLoad.append("<li><a href=\"")
 	                .append(contextPath)
-                    .append(menu.getPage())
+	                .append(menu.getPage())
 	                .append("\">")
 	                .append(menu.getName())
 	                .append("</a>");
@@ -92,7 +92,7 @@ public class MenuItemService {
 	                htmlLoad.append("<ul>");
 	                for (MenuItemVo subMenu : menu.getSubMenus()) {
 	                    htmlLoad.append("<li><a href=\"")
-	                        .append(contextPath) 
+	                        .append(contextPath)
 	                        .append(subMenu.getPage())
 	                        .append("\">")
 	                        .append(subMenu.getName())
