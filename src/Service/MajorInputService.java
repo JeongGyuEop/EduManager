@@ -27,8 +27,6 @@ public class MajorInputService {
 		String newMajorName = request.getParameter("MajorNameInput");
 		String newMajorTel = request.getParameter("MajorTelInput");
 
-		// 占쏙옙占쏙옙占쏙옙 占쏙옙효占쏙옙 占싯삼옙
-		// 占쏙옙占쏙옙 占쏙옙占쏙옙占� 占쏙옙占� -1占쏙옙 占쏙옙환
 		if (newMajorName == null || newMajorName.trim().isEmpty()) {
 			return NONE;
 		}
@@ -40,7 +38,6 @@ public class MajorInputService {
 		if (majorInputDAO.majorInputValidation(newMajorName) == EXISTS) {
 			return EXISTS;
 		}
-		// 占쌩곤옙 占쌜억옙
 		return majorInputDAO.majorInput(newMajorName, newMajorTel);
 	}
 
