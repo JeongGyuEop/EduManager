@@ -25,64 +25,7 @@ public class MemberVo {
 	private Date birthDate;
 	private String gender, address, phone, email, role;
 	
-    // student_info 테이블 관련 필드 (자식 테이블)
-    private String student_id;   // 학번
-    private String majorcode;    // 학과 코드 (외래 키)
-    private int grade;           // 학년
-    private Date admission_date; // 입학일
-    private String status;       // 상태 (재학, 휴학, 졸업, 자퇴)
-
-
-	public String getStudent_id() {
-		return student_id;
-	}
-
-
-	public void setStudent_id(String student_id) {
-		this.student_id = student_id;
-	}
-
-
-	public String getMajorcode() {
-		return majorcode;
-	}
-
-
-	public void setMajorcode(String majorcode) {
-		this.majorcode = majorcode;
-	}
-
-
-	public int getGrade() {
-		return grade;
-	}
-
-
-	public void setGrade(int grade) {
-		this.grade = grade;
-	}
-
-
-	public Date getAdmission_date() {
-		return admission_date;
-	}
-
-
-	public void setAdmission_date(Date admission_date) {
-		this.admission_date = admission_date;
-	}
-
-
-	public String getStatus() {
-		return status;
-	}
-
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-
+	
 	public MemberVo() {}
 
 
@@ -112,26 +55,6 @@ public class MemberVo {
 		this.phone = phone;
 		this.email = email;
 		this.role = role;
-	}
-
-	public MemberVo(String user_id, String user_pw, String user_name, Date birthDate, String gender,
-			String address, String phone, String email, String role, String student_id, String majorcode, int grade,
-			Date admission_date, String status) {
-		super();
-		this.user_id = user_id;
-		this.user_pw = user_pw;
-		this.user_name = user_name;
-		this.birthDate = birthDate;
-		this.gender = gender;
-		this.address = address;
-		this.phone = phone;
-		this.email = email;
-		this.role = role;
-		this.student_id = student_id;
-		this.majorcode = majorcode;
-		this.grade = grade;
-		this.admission_date = admission_date;
-		this.status = status;
 	}
 
 	public String getUser_id() {
@@ -223,48 +146,5 @@ public class MemberVo {
 		this.role = role;
 	}
 
-	
-	 // toString 메서드
-    @Override
-    public String toString() {
-        return "MemberVo{" +
-                "user_id='" + user_id + '\'' +
-                ", user_pw='" + user_pw + '\'' +
-                ", user_name='" + user_name + '\'' +
-                ", birthDate=" + birthDate +
-                ", gender='" + gender + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", role='" + role + '\'' +
-                ", student_id='" + student_id + '\'' +
-                ", majorcode='" + majorcode + '\'' +
-                ", grade=" + grade +
-                ", admission_date=" + admission_date +
-                ", status='" + status + '\'' +
-                '}';
-    }
-
-    // 이메일 유효성 검사 메서드
-    public boolean isEmailValid() {
-        return email != null && email.contains("@") && email.contains(".");
-    }
-
-    // 전화번호 유효성 검사 메서드
-    public boolean isPhoneValid() {
-        return phone != null && phone.matches("\\d+");
-    }
-
-    // 객체 유효성 검사 메서드
-    public boolean isValid() {
-        return user_id != null && !user_id.isEmpty() &&
-               user_pw != null && !user_pw.isEmpty() &&
-               user_name != null && !user_name.isEmpty() &&
-               email != null && isEmailValid() &&
-               phone != null && isPhoneValid();
-    }
-	
-	
-	
 	
 }

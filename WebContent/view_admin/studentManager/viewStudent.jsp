@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="Vo.MemberVo" %>
+<%@ page import="Vo.StudentVo" %>
 <html>
 <head>
     <title>학생 상세 정보</title>
@@ -8,11 +8,11 @@
 <h2>학생 상세 정보</h2>
 
 <%
-MemberVo student = (MemberVo)request.getAttribute("student");
+StudentVo student = (StudentVo)request.getAttribute("student");
     if (student == null) {
 %>
         <p style="color: red;">학생 정보를 불러오는 데 문제가 발생했습니다.</p>
-         <a href="${pageContext.request.contextPath}/member/viewStudentList.do">목록으로 돌아가기</a>
+         <a href="${pageContext.request.contextPath}/student/viewStudentList.do">목록으로 돌아가기</a>
 <%
     } else {
 %>

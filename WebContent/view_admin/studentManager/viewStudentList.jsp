@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="Vo.MemberVo" %>
+<%@ page import="Vo.StudentVo" %>
 <%@ page import="java.util.List" %>
 <html>
 <head>
@@ -21,7 +21,7 @@
 <body>
 <h2>전체 학생 목록</h2>
 
-<form action="${pageContext.request.contextPath}/member/viewStudentList.do" method="get" style="text-align: center; margin-bottom: 20px;">
+<form action="${pageContext.request.contextPath}/student/viewStudentList.do" method="get" style="text-align: center; margin-bottom: 20px;">
     <input type="submit" value="전체 조회">
 </form>
 
@@ -41,9 +41,9 @@
     </tr>
 
     <%
-        List<MemberVo> students = (List<MemberVo>) request.getAttribute("students");
+        List<StudentVo> students = (List<StudentVo>) request.getAttribute("students");
         if (students != null && !students.isEmpty()) {
-            for (MemberVo student : students) {
+            for (StudentVo student : students) {
     %>
                 <tr>
                     <td><%= student.getStudent_id() %></td>
