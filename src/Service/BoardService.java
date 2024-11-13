@@ -69,12 +69,3 @@ public class BoardService {
 
 		
 }
-
-
-
-
-
-
-
-
-

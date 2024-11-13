@@ -8,15 +8,6 @@ import java.sql.Date;
 //또는
 //DB의  Fileboard테이블에 입력한 새글 정보를 추가하기  위해 임시로 저장할 용도
 
-/*
- 	notice_id 		int AI PK
-	title			varchar(100)
-	content			text
-	created_date	date
-	author_id 		varchar(50)
- 
- */
-
 public class BoardVo {
 
 	//변수
@@ -134,11 +125,3 @@ public class BoardVo {
 
 	
 }
-
-
-
-
-
-
-
-

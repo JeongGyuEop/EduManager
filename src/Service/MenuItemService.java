@@ -21,8 +21,8 @@ public class MenuItemService {
 		
 		// 관리자 메뉴
         roleMenuMap.put("관리자", Arrays.asList(
-            new MenuItemVo("사용자 관리", "studentManage.jsp", Arrays.asList(
-                new MenuItemVo("학생관리", "studentManage.jsp"),
+            new MenuItemVo("사용자 관리", "/member/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp", Arrays.asList(
+                new MenuItemVo("학생관리", "/member/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp"),
                 new MenuItemVo("교수관리", "professorManage.jsp"),
                 new MenuItemVo("관리자 관리", "adminManage.jsp")
             )),

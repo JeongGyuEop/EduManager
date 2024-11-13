@@ -74,21 +74,6 @@ public class BoardController extends HttpServlet {
 		//클라이언트가 BoardController로 요청한 전체 주소 중에서
 		//2단계 요청한 주소 얻어 action변수에 저장
 		String action = request.getPathInfo();
-		// "/list.bo"  <- DB의 Board테이블에 저장된 모든 글목록 조회 요청!
-		// "/searchlist.bo" <- DB의 Board테이블에 저장된 글목록을 조회하되 
-		//					     입력한 검색기준열값과 검색어를 포함하는 글목록 조회 요청!
-		// "/write.bo" <- 새글입력화면 VIEW(중앙화면) 요청! 
-		// "/writePro.bo" <- 입력한 새글 정보를 DB의 Board테이블에 추가 요청!
-		// "/read.bo"   <- list.jsp요청화면에서 조회된 글제목 하나를 클릭했을때
-		//                 글번호를 이용해 글 하나를 조회 해서 중앙화면에 보여줘~~ 요청!
-		// "/password.do" <- 글상세화면(read.jsp)에서 글 수정또는 글삭제를 위해 
-		//                   글 비밀번호를 입력 해서 DB의 Board테이블에 저장된 비밀번호와 비교해서
-		//					 비밀번호가 저장되어있느냐 , 저장되어 있지 안느냐? 판단 AJAX요청!
-		// "/updateBoard.do" <- 글상세 화면(read.jsp)에서 수정할 글 내용입력하고
-		//						수정버튼을 눌러 ajax로 수정요청! 했을때
-		// "/deleteBoard.do" <- 글상세 화면(read.jsp)에서 글삭제 버튼을 눌러 ajax삭제요청했을때 
-		// "/reply.do" <- 주글에 대한 답변글을 작성할수 있는 화면 요청
-		// "/replyPro.do" <- 주글에 대한 답변글 DB의 Board테이블에 추가 요청
 
 		System.out.println("요청한 2단계 주소 : " + action);
 		
@@ -341,20 +326,3 @@ public class BoardController extends HttpServlet {
 	
 	}//doHandle메소드 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
