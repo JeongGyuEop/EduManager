@@ -8,48 +8,49 @@ import java.sql.Date;
 //또는
 //DB의  Fileboard테이블에 입력한 새글 정보를 추가하기  위해 임시로 저장할 용도
 
-/* notice table
- 	notice_id 		int AI PK
-	title			varchar(100)
-	content			text
-	created_date	date
-	author_id 		varchar(50)
- */
-
-/* academic_schedule table
-	schedule_id int AI PK 
-	event_name varchar(100) 
-	start_date date 
-	end_date date 
-	description text
- */
-
 public class BoardVo {
 
-	// notice table 변수
-	private int notice_id;
-	private String author_id, title, content;
-	private Date created_date;
+	// 변수
+	private int notice_id, b_group, b_level;
+	private String author_id, title, content, event_name, description;
+	private Date created_date, start_date, end_date;
 
-	// academic_schedule table 변수
-	private String event_name, description;
-	private Date start_date, end_date;
+	@Override
+	public String toString() {
+		return "BoardVo{" + "notice_id=" + notice_id + ", title='" + title + '\'' + ", content='" + content + '\''
+				+ ", author_id='" + author_id + '\'' + ", created_date=" + created_date + ", b_group=" + b_group
+				+ ", b_level=" + b_level + '}';
+	}
 
 	// 생성자
 	public BoardVo() {
 	}
 
-	public BoardVo(int notice_id, String author_id, String title, String content) {
+	public BoardVo(int notice_id, String author_id, String title, String content, Date created_date) {
 		super();
 		this.notice_id = notice_id;
 		this.author_id = author_id;
 		this.title = title;
 		this.content = content;
+		this.created_date = created_date;
 	}
 
-	public BoardVo(int notice_id, String author_id, String title, String content, Date created_date) {
+	public BoardVo(int notice_id, int b_group, int b_level, String author_id, String title, String content) {
 		super();
 		this.notice_id = notice_id;
+		this.b_group = b_group;
+		this.b_level = b_level;
+		this.author_id = author_id;
+		this.title = title;
+		this.content = content;
+	}
+
+	public BoardVo(int notice_id, int b_group, int b_level, String author_id, String title, String content,
+			Date created_date) {
+		super();
+		this.notice_id = notice_id;
+		this.b_group = b_group;
+		this.b_level = b_level;
 		this.author_id = author_id;
 		this.title = title;
 		this.content = content;
@@ -92,18 +93,6 @@ public class BoardVo {
 		return content;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public Date getCreated_date() {
-		return created_date;
-	}
-
-	public void setCreated_date(Date created_date) {
-		this.created_date = created_date;
-	}
-
 	public String getEvent_name() {
 		return event_name;
 	}
@@ -134,6 +123,34 @@ public class BoardVo {
 
 	public void setEnd_date(Date end_date) {
 		this.end_date = end_date;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Date getCreated_date() {
+		return created_date;
+	}
+
+	public void setCreated_date(Date created_date) {
+		this.created_date = created_date;
+	}
+
+	public int getB_group() {
+		return b_group;
+	}
+
+	public void setB_group(int b_group) {
+		this.b_group = b_group;
+	}
+
+	public int getB_level() {
+		return b_level;
+	}
+
+	public void setB_level(int b_level) {
+		this.b_level = b_level;
 	}
 
 }

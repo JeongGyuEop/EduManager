@@ -4,331 +4,305 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import Vo.BoardVo;
 
-//MVC중에서 M을 얻기 위한 클래스 
-
-//DB와 연결하여 비즈니스로직 처리하는 클래스 
-//사원 
 public class BoardDAO {
 
-	Connection con;
-	PreparedStatement pstmt;
-	ResultSet rs;
-	DataSource ds;
+    Connection con;
+    PreparedStatement pstmt;
+    ResultSet rs;
+    DataSource ds;
 
-	// 컨넥션풀 얻는 생성자
-	public BoardDAO() {
-		try {
-			Context ctx = new InitialContext();
-			ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/edumanager");
+    // 생성자: 커넥션 풀을 초기화합니다.
+    public BoardDAO() {
+        try {
+            Context ctx = new InitialContext();
+            ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/edumanager");
+        } catch (Exception e) {
+            System.out.println("커넥션풀 얻기 실패 : " + e.toString());
+        }
+    }
 
-		} catch (Exception e) {
-			System.out.println("커넥션풀 얻기 실패 : " + e.toString());
-		}
-	}
+    // 자원 해제: 사용한 Connection, PreparedStatement, ResultSet을 해제합니다.
+    private void closeResource() {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	// 자원해제(Connection, PreparedStatment, ResultSet)기능의 메소드
-	private void closeResource() {
-		try {
-			if (con != null) {
-				con.close();
-			}
-			if (pstmt != null) {
-				pstmt.close();
-			}
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    // 모든 게시글을 조회하여 반환하는 메소드
+    public ArrayList<BoardVo> boardListAll() {
+        String sql = "SELECT * FROM notice ORDER BY b_group ASC";
+        ArrayList<BoardVo> list = new ArrayList<>();
 
-	// 현재 DB의 board테이블에 저장된 모든 게시글들 조회
-	public ArrayList boardListAll() {
+        try {
+            con = ds.getConnection();
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
 
-		String sql = null;
+            // 조회된 결과를 반복하여 리스트에 추가
+            while (rs.next()) {
+                BoardVo vo = new BoardVo(
+                    rs.getInt("notice_id"),
+                    rs.getInt("b_group"),
+                    rs.getInt("b_level"),
+                    rs.getString("author_id"),
+                    rs.getString("title"),
+                    rs.getString("content"),
+                    rs.getDate("created_date")
+                );
+                list.add(vo);
+            }
+        } catch (Exception e) {
+            System.out.println("BoardDAO의 boardListAll메소드에서 오류 ");
+            e.printStackTrace();
+        } finally {
+            closeResource();
+        }
+        return list;
+    }
 
-		ArrayList list = new ArrayList();
+    // 검색 조건에 따라 게시글 목록을 조회하는 메소드
+    public ArrayList<BoardVo> boardList(String key, String word) {
+        String sql;
+        ArrayList<BoardVo> list = new ArrayList<>();
 
-		try {
-			con = ds.getConnection();// DB연결
-			sql = "select * from notice";
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
+        // 검색어가 있는 경우 조건에 따라 SQL 설정
+        if (!word.equals("")) {
+            if (key.equals("titleContent")) {
+                sql = "SELECT * FROM notice WHERE title LIKE ? OR content LIKE ? ORDER BY b_group ASC";
+            } else {
+                sql = "SELECT * FROM notice WHERE author_id LIKE ? ORDER BY b_group ASC";
+            }
+        } else {
+            sql = "SELECT * FROM notice ORDER BY b_group ASC";
+        }
 
-			// 조회된 ResultSet의 정보를 레코드 단위로 얻어서
-			// BoardVo객체에 레코드 정보를 반복해서 저장하고
-			// BoardVo객체들을 ArrayList배열에 반복해서 추가
-			while (rs.next()) {
-				BoardVo vo = new BoardVo(rs.getInt("notice_id"), rs.getString("author_id"), rs.getString("title"),
-						rs.getString("content"), rs.getDate("created_date"));
-				list.add(vo);
-			}
-		} catch (Exception e) {
-			System.out.println("BoardDAO의 boardListAll메소드에서 오류 ");
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
-		return list;
-	}
+        try {
+            con = ds.getConnection();
+            pstmt = con.prepareStatement(sql);
 
-	// 선택한 option의 value값(검색기준열의값)과 입력한 검색어 단어가 포함된 글목록 조회
-	public ArrayList boardList(String key, String word) {
+            // SQL에 파라미터 설정
+            if (!word.equals("")) {
+                if (key.equals("titleContent")) {
+                    pstmt.setString(1, "%" + word + "%");
+                    pstmt.setString(2, "%" + word + "%");
+                } else {
+                    pstmt.setString(1, "%" + word + "%");
+                }
+            }
 
-		String sql = null;
+            rs = pstmt.executeQuery();
 
-		ArrayList list = new ArrayList();
+            // 조회된 결과를 반복하여 리스트에 추가
+            while (rs.next()) {
+                BoardVo vo = new BoardVo(
+                    rs.getInt("notice_id"),
+                    rs.getInt("b_group"),
+                    rs.getInt("b_level"),
+                    rs.getString("author_id"),
+                    rs.getString("title"),
+                    rs.getString("content"),
+                    rs.getDate("created_date")
+                );
+                list.add(vo);
+            }
+        } catch (Exception e) {
+            System.out.println("BoardDAO의 boardList메소드에서 오류");
+            e.printStackTrace();
+        } finally {
+            closeResource();
+        }
+        return list;
+    }
 
-		// 검색어를 입력했다면?
-		if (!word.equals("")) {
+    // 새 게시글을 추가하는 메소드
+    public int insertBoard(BoardVo vo) {
+        int result = 0;
+        String sql;
 
-			// 검색기준열의 값 제목+내용 선택했다면?
-			if (key.equals("titleContent")) {
+        try {
+            con = ds.getConnection();
 
-				sql = "select * from notice " + "where title like  '%" + word + "%' " + "OR content like '%" + word
-						+ "%' ";
+            // 기존 글들의 그룹 값을 증가시킴
+            sql = "UPDATE notice SET b_group = b_group + 1";
+            pstmt = con.prepareStatement(sql);
+            pstmt.executeUpdate();
 
-			} else {// 검색기준열의 값 작성자 선택했다면?
+            // 새로운 글을 삽입
+            sql = "INSERT INTO notice (title, content, created_date, author_id, b_group, b_level) VALUES (?, ?, NOW(), ?, 0, 0)";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, vo.getTitle());
+            pstmt.setString(2, vo.getContent());
+            pstmt.setString(3, vo.getAuthor_id());
 
-				sql = "select * from notice " + " where author_id like '%" + word + "%' ";
-			}
+            result = pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("BoardDAO의 insertBoard메소드에서 오류");
+            e.printStackTrace();
+        } finally {
+            closeResource();
+        }
+        return result;
+    }
 
-		} else {// 검색어를 입력하지 않았다면?
-				// 모든 글의 열목록 조회
-			sql = "select * from notice ";
+    // 특정 글 번호로 게시글을 조회하는 메소드
+    public BoardVo boardRead(String notice_id) {
+        BoardVo vo = null;
+        String sql = "SELECT * FROM notice WHERE notice_id=?";
 
-		}
+        try {
+            con = ds.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, Integer.parseInt(notice_id));
+            rs = pstmt.executeQuery();
 
-		try {
-			con = ds.getConnection();// DB연결
+            if (rs.next()) {
+                vo = new BoardVo(
+                    rs.getInt("notice_id"),
+                    rs.getInt("b_group"),
+                    rs.getInt("b_level"),
+                    rs.getString("author_id"),
+                    rs.getString("title"),
+                    rs.getString("content"),
+                    rs.getDate("created_date")
+                );
+            }
+        } catch (Exception e) {
+            System.out.println("BoardDAO의 boardRead메소드에서 오류");
+            e.printStackTrace();
+        } finally {
+            closeResource();
+        }
+        return vo;
+    }
 
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
+    // 수정시 입력한 글 정보를 DB에 UPDATE(열의 값을 수정)하는 메소드
+    public int updateBoard(String notice_id, String title, String content) {
+        int result = 0;
+        String sql = "UPDATE notice SET title=?, content=? WHERE notice_id=?";
 
-			// 조회된 ResultSet의 정보를 레코드 단위로 얻어서
-			// BoardVo객체에 레코드 정보를 반복해서 저장하고
-			// BoardVo객체들을 ArrayList배열에 반복해서 추가
-			while (rs.next()) {
-				BoardVo vo = new BoardVo(rs.getInt("notice_id"), rs.getString("author_id"), rs.getString("title"),
-						rs.getString("content"), rs.getDate("created_date"));
-				list.add(vo);
-			}
+        try {
+            con = ds.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, title);
+            pstmt.setString(2, content);
+            pstmt.setInt(3, Integer.parseInt(notice_id));
 
-		} catch (Exception e) {
-			System.out.println("BoardDAO의 boardList메소드 ");
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
+            result = pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("BoardDAO의 updateBoard메소드에서 오류");
+            e.printStackTrace();
+        } finally {
+            closeResource();
+        }
+        return result;
+    }
 
-		return list; // BoardService부장에게 리턴(보고)
-	}
+    // 삭제할 글번호를 매개변수로 받아 글(레코드)삭제후 삭제에 성공하면 "삭제성공" 반환 실패하면 "삭제실패" 반환 하는 메소드
+    public String deleteBoard(String delete_idx) {
+        String result;
+        String sql = "DELETE FROM notice WHERE notice_id=?";
 
-	// 입력한 새글 정보를 DB의 board테이블에 추가insert 시키는 기능의 메소드
-	public int insertBoard(BoardVo vo) {
+        try {
+            con = ds.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, Integer.parseInt(delete_idx));
+            int val = pstmt.executeUpdate();
 
-		int result = 0;
-		String sql = null;
+            result = (val == 1) ? "삭제성공" : "삭제실패";
+        } catch (Exception e) {
+            System.out.println("BoardDAO의 deleteBoard메소드에서 오류");
+            e.printStackTrace();
+            result = "삭제실패";
+        } finally {
+            closeResource();
+        }
+        return result;
+    }
 
-		try {
-			con = ds.getConnection(); // DB연결
+    // 답글을 추가하는 메소드
+    public void replyInsertBoard(String super_notice_id, String reply_writer, String reply_title, String reply_content, String reply_id) {
+        String sql;
+        try {
+            con = ds.getConnection();
 
-//			  //주글 insert 규칙2. 두번째 글부터 추가되는 글들의 pos(b_group)를 1증가 시킨다.
-//			  sql = "update board set b_group = b_group + 1";
-//			  pstmt = con.prepareStatement(sql);
-//			  pstmt.executeUpdate();
+            // 부모 글의 그룹과 레벨을 조회
+            sql = "SELECT b_group, b_level FROM notice WHERE notice_id=?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, Integer.parseInt(super_notice_id));
+            rs = pstmt.executeQuery();
+            rs.next();
+            int b_group = rs.getInt("b_group");
+            int b_level = rs.getInt("b_level");
 
-			sql = "INSERT INTO notice (title, content, created_date, author_id)" + " VALUES (?, ?, NOW(), ?)";
+            // b_group 업데이트
+            sql = "UPDATE notice SET b_group = b_group + 1 WHERE b_group > ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, b_group);
+            pstmt.executeUpdate();
 
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, vo.getTitle());
-			pstmt.setString(2, vo.getContent());
-			pstmt.setString(3, vo.getAuthor_id());
+            // 답글을 삽입
+            sql = "INSERT INTO notice (title, content, created_date, author_id, b_group, b_level) VALUES (?, ?, NOW(), ?, ?, ?)";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, reply_title);
+            pstmt.setString(2, reply_content);
+            pstmt.setString(3, reply_id);
+            pstmt.setInt(4, b_group + 1);
+            pstmt.setInt(5, b_level + 1);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("BoardDAO의 replyInsertBoard메소드에서 오류");
+            e.printStackTrace();
+        } finally {
+            closeResource();
+        }
+    }
 
-			result = pstmt.executeUpdate();// insert 성공하면 1 반환 실패하면 0반환
+    // 특정 기간 내의 이벤트를 조회하는 메소드
+    public List<BoardVo> getEvents(String startDate, String endDate) {
+        List<BoardVo> events = new ArrayList<>();
+        String sql = "SELECT schedule_id, event_name, description, start_date, end_date FROM academic_schedule WHERE start_date <= ? AND end_date >= ?";
 
-		} catch (Exception e) {
-			System.out.println("BoardDAO의 insertBoard메소드");
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
+        try {
+            con = ds.getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, endDate);
+            pstmt.setString(2, startDate);
+            rs = pstmt.executeQuery();
 
-		return result; // 1 또는 0을 반환(리턴) BoardService에게
-	}
-
-	// 글번호를 이용해 글하나 조회
-	public BoardVo boardRead(String notice_id) {
-
-		BoardVo vo = null;
-		String sql = null;
-
-		try {
-			con = ds.getConnection();
-			sql = "select * from notice where notice_id=?";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, Integer.parseInt(notice_id));
-			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				// ResultSet에서 조회된 레코드의 모든 열값을 얻어
-				// BoardVo객체 생성후 각변수에 저장
-				vo = new BoardVo(rs.getInt("notice_id"), rs.getString("author_id"), rs.getString("title"),
-						rs.getString("content"), rs.getDate("created_date"));
-			}
-		} catch (Exception e) {
-			System.out.println("BoardDAO의 boardRead메소드");
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
-
-		return vo;
-
-	}
-
-	// 수정시 입력한 글 정보를 DB에 UPDATE(열의 값을 수정)하는 메소드
-	public int updateBoard(String notice_id_2, String title_, String content_) {
-		int result = 0;
-
-		try {
-			// DB연결
-			con = ds.getConnection();
-			// Board테이블의 b_idx열의 값이 매개변수로 전달받은 수정할 글번호이면
-			// 글번호가 저장된 레코드의 b_email열의 값, b_title열의 값, b_content열의 값을
-			// 우리가 수정시 입력한 값들로 변경해라(UPDATE)
-			String sql = "update notice set " + "title=?, content=? " + "where notice_id=?";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, title_);
-			pstmt.setString(2, content_);
-			pstmt.setInt(3, Integer.parseInt(notice_id_2));
-
-			result = pstmt.executeUpdate();// UPDATE성공하면 성공한 레코드 갯수 1반환
-											// UPDAte실패하면 실패했으므로 레코드 갯수 0 반환
-
-		} catch (Exception e) {
-			System.out.println("BoardDAO의 updateBoard메소드");
-			e.printStackTrace();
-		} finally {
-			// 커넥션 객체 커넥션풀로 반납
-			// Resultset객체 사용후 제거
-			// PreparedStatement객체 사용후 제거
-			closeResource();
-		}
-
-		return result; // 1또는 0 반환
-	}
-
-	// 삭제할 글번호를 매개변수로 받아 글(레코드)삭제후
-	// 삭제에 성공하면 "삭제성공" 반환 실패하면 "삭제실패" 반환 하는 메소드
-	public String deleteBoard(String delete_idx) {
-
-		// "삭제성공" 또는 "삭제실패" 메세지 저장할 변수
-		String result = null;
-
-		try {
-			con = ds.getConnection();
-			// Board테이블의 b_idx열(글번호가 저장되는 열)의 값이 매개변수로 전달받은 글번호와 같으면?
-			// 글번호가 저장된 행(글 하나의 정보 레코드)삭제
-			String sql = "DELETE FROM notice";
-			sql += " WHERE notice_id=?";
-			/*
-			 * DELETE FROM 테이블 명 WHERE 조건
-			 */
-			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, Integer.parseInt(delete_idx));
-
-			int val = pstmt.executeUpdate();
-
-			if (val == 1)
-				result = "삭제성공";
-			else
-				result = "삭제실패";
-
-		} catch (Exception e) {
-			System.out.println("BoardDAO의 deleteBoard메소드");
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
-		return result;
-	}
-
-//작성한 답변들을 DB의 Board테이블에 INSERT
-//규칙1. 답변글을 추가하는 주글(부모글)의
-//      b_group열의 값보다 큰 값이 저장된 다른주글의 b_grop열의 값을 1증가시킨다
-
-//규칙2. 추가(INSERT)하는 답변글은 주글(부모들)의 b_grop열값을 가져와 +1을 해서 insert한다
-//규칙3. 추가(INSERT)하는 답변글은 주글(부모들)의 b_level열값을 가져와 +1을 해서 insert한다
-
-//	public void replyInsertBoard(String super_b_idx, 
-//								 String reply_id, 
-//								 String reply_name, String reply_email,
-//								 String reply_title, String reply_content, 
-//								 String reply_pass) {
-//		String sql = null;
-//		
-//		try {
-//			con = ds.getConnection();//커넥션풀 공간에서 DB와 미리연결을 맺은 Connection얻기
-//			
-//			//1. 부모글의 글번호를 이용해 답변을 다는 부모글의 b_group열값과 b_level열값 조회
-//			sql = "SELECT b_group, b_level FROM BOARD "
-//				+ "WHERE b_idx=?";
-//			pstmt = con.prepareStatement(sql);
-//			pstmt.setInt(1, Integer.parseInt(super_b_idx));
-//			rs = pstmt.executeQuery();
-//			rs.next();
-//			String b_group = rs.getString("b_group");//추가할 답변글의 부모글의 조회된 b_group
-//			String b_level = rs.getString("b_level");//추가할 답변들의 부모글의 조회된 b_level
-
-//2.		
-//규칙1. 답변글을 추가하는 주글(부모글)의
-//	      b_group열의 값보다 큰 값이 저장된 다른주글의 b_grop열의 값을 1증가시킨다	
-
-//			sql = "UPDATE BOARD SET b_group=b_group+1 "
-//			    + "WHERE b_group > '"+b_group+"'";
-//			
-//			pstmt = con.prepareStatement(sql);
-//			pstmt.executeUpdate();
-
-//3.	
-//답변글 DB에  INSERT			
-//규칙2. 추가(INSERT)하는 답변글은 주글(부모들)의 b_grop열값을 가져와 +1을 해서 insert한다
-//규칙3. 추가(INSERT)하는 답변글은 주글(부모들)의 b_level열값을 가져와 +1을 해서 insert한다			
-
-//			  sql = "insert into board(b_idx, b_id, b_pw, b_name,"
-//							  	  + " b_email, b_title, b_content, b_group, b_level, b_date, b_cnt )"
-//								  + " values(border_b_idx.nextVal, ?,?,?,?,?,?,?,?,sysdate,0)";	
-//			pstmt = con.prepareStatement(sql);
-//			pstmt.setString(1, reply_id);//답변글 작성자 로그인한 아이디
-//			pstmt.setString(2, reply_pass);//작성한 답변글 비밀번호
-//			pstmt.setString(3, reply_name);//답변글 작성자 명
-//			pstmt.setString(4, reply_email);//답변글 작성자 이메일 주소 
-//			pstmt.setString(5, reply_title);//작성한 답변글 제목
-//			pstmt.setString(6, reply_content);//작성한 답변글 내용
-//			//규칙2.
-//			//답변글의 b_group열의 값은 주글(부모글) b_group열값에 + 1 한 값을 INSERT
-//			pstmt.setInt(7, Integer.parseInt(b_group) + 1); 
-//			//규칙3.
-//			//답변글의 b_level열의 값은 주글(부모글) b_level열값에 + 1 한 값을 INSERT
-//			pstmt.setInt(8, Integer.parseInt(b_level) + 1);
-//			
-//			pstmt.executeUpdate();
-//			
-//		} catch (Exception e) {
-//			System.out.println("BoardDAO의 replyInsertBoard메소드");
-//			e.printStackTrace();
-//		} finally {
-//			closeResource();
-//		}
-//	}
-// academic_schedule --------------------------------------------------------------
-	
-}// BoardDAO클래스
+            // 조회된 결과를 반복하여 리스트에 추가
+            while (rs.next()) {
+                BoardVo event = new BoardVo();
+                event.setNotice_id(rs.getInt("schedule_id"));
+                event.setEvent_name(rs.getString("event_name"));
+                event.setDescription(rs.getString("description"));
+                event.setStart_date(rs.getDate("start_date"));
+                event.setEnd_date(rs.getDate("end_date"));
+                events.add(event);
+            }
+        } catch (Exception e) {
+            System.out.println("BoardDAO의 getEvents메소드에서 오류");
+            e.printStackTrace();
+        } finally {
+            closeResource();
+        }
+        return events;
+    }
+}
