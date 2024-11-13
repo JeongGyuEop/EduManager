@@ -18,9 +18,16 @@ public class ClassroomService {
 		return classroomdao.getMajorNameInfo(majorCode);
 	}
 
+	//-------------
 	// 강의실 정보를 모두 조회해서 가져오는 기능의 함수
 	public ArrayList serviceGetClassInfo() {
 		return classroomdao.getClassroomAllInfo();
+	}
+
+	//-------------
+	// 강의를 등록하기 위해 DAO를 호출하는 함수
+	public int serviceRegisterInsertCourse(String course_name, String majorcode, String room_id, String professor_id) {
+		return classroomdao.registerInsertCourse(course_name, majorcode, room_id, professor_id);
 	}
 
 }

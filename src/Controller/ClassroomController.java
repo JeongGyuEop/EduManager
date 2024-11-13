@@ -2,6 +2,7 @@ package Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import javax.el.ListELResolver;
@@ -46,6 +47,8 @@ public class ClassroomController extends HttpServlet {
 		
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8"); // MIME TYPE 설정
+		
+		String contextPath = request.getContextPath();
 		
 		//웹브라우저로 출력할 출력 스트림 생성
 	    PrintWriter out = null;
@@ -105,11 +108,45 @@ public class ClassroomController extends HttpServlet {
 				
 		//==========================================================================================
 			
-			// 수강 등록을 했을 때 전달 받는 2단계 경로 
+			// 강의 등록을 했을 때 전달 받는 2단계 경로 
 	    	case "/course_register.do":
 	    		
+	    		String course_name = request.getParameter("course_name");
+	    		String majorcode = (String) session.getAttribute("majorcode");
+	    		String room_id = request.getParameter("room_id");
+	    		String professor_id = request.getParameter("professor_id");
+	    		
+	    		int result = classroomservice.serviceRegisterInsertCourse(course_name, majorcode, room_id, professor_id); 
+	    		
+	    		if(result == 1) {
+				    response.sendRedirect(contextPath +"/classroom/course_search.bo?message="
+				    		+ URLEncoder.encode("강의 등록이 완료되었습니다.", "UTF-8") + "&classroomCenter=/view_classroom/courseSearch.jsp");
+				    return;
+				} else {
+					// 실패 시 message 파라미터만 포함하여 리다이렉트
+				    response.sendRedirect(contextPath +"/classroom/course_register.bo?message=" 
+				                          + URLEncoder.encode("강의 등록에 실패했습니다. 다시 입력해 주세요.", "UTF-8"));
+				    return;
+				}
 	    		
 	    		
+		//==========================================================================================
+			    
+	    	case "/course_search.bo": // 교수 강의 조회 화면 2단계 요청 주소를 받으면
+	    		
+	    		majorCode = (String)session.getAttribute("majorcode");
+	    		
+//	    		list = classroomservice.
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		request.setAttribute("classroomCenter", center);
+	    		
+				nextPage = "/view_classroom/classroom.jsp";
+				
+				break;
+						
+				
 		//==========================================================================================
 				
 	    	default:

@@ -100,10 +100,44 @@ public class ClassroomDAO {
 			System.out.println("ClassroomDAO의 getClassroomAllInfo메소드에서 오류 ");
 			e.printStackTrace();
 		} finally {
-			closeResource();
+			closeResource(); // 자원 해제
 		}
 		
 		return list;
+	}
+
+	
+	//------------
+	// DB의 classroom 테이블에 교수가 등록한 강의를 저장
+	public int registerInsertCourse(String course_name, String majorcode, String room_id, String professor_id) {
+
+		int result = 0;
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			sql = "INSERT INTO course (course_name, professor_id, majorcode, room_id) VALUES (?, ?, ?, ?)";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, course_name);
+            pstmt.setString(2, professor_id);
+            pstmt.setString(3, majorcode);
+            pstmt.setString(4, room_id);
+            
+			result = pstmt.executeUpdate();
+			
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 registerInsertCourse메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return result;
 	}
 
 }
