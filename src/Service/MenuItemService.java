@@ -71,7 +71,7 @@ public class MenuItemService {
 		if (menus != null) {
 	        htmlLoad.append("<ul>");
 	        for (MenuItemVo menu : menus) {
-//	            // 역할에 따른 디렉토리 경로 설정
+	            // 역할에 따른 디렉토리 경로 설정
 //	            String rolePath = "";
 //	            if ("관리자".equals(userRole)) {
 //	                rolePath = "/view_admin/";
