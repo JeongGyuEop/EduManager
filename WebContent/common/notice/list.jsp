@@ -16,7 +16,7 @@
 
     // 아래의 검색어를 입력하지 않고  검색버튼을 눌렀을때
     // 검색어 입력하지 않으면  검색어를 입력하세요!  체크 하는 함수 
-	/* function fnSearch(){
+	function fnSearch(){
     	
     	//입력한 검색어 얻기 
 		var word = document.getElementById("word").value;
@@ -37,7 +37,7 @@
 			//BoardController로 입력한 검색어에 관한 글목록 조회 요청을 함 
 			document.frmSearch.submit();
 		}
-	} */
+	}
 	
     //조회된 화면에서  글제목 하나를 클릭했을때  글번호를 매개변수로 받아서
     //아래에 작성된 <form>를 이용해 글번호에 해당되는 글 하나의 정보를 조회 요청!
