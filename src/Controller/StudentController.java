@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 //import Dao.CarDAO;
 import Service.StudentService;
 import Service.MenuItemService;
@@ -154,36 +153,35 @@ public class StudentController extends HttpServlet {
 			return;
 
 		// ==========================================================================================
-			
-			 // 마이페이지 이동 처리
+
+		// 마이페이지 이동 처리
 		case "/myPage.bo":
-		    String sessionUserId = (String) session.getAttribute("id");
-		    StudentVo member = studentservice.getStudentById(sessionUserId);
-		    request.setAttribute("member", member);
-		    center = "/view_admin/studentManager/myPage.jsp";
-		    request.setAttribute("center", center);
-		    nextPage = "/main.jsp";
-		    break;
+			String sessionUserId = (String) session.getAttribute("id");
+			StudentVo member = studentservice.getStudentById(sessionUserId);
+			request.setAttribute("member", member);
+			center = "/view_admin/studentManager/myPage.jsp";
+			request.setAttribute("center", center);
+			nextPage = "/main.jsp";
+			break;
 
+		// 학생 본인 정보 수정 처리
+		case "/updateMyInfo.do":
+			// ==
+			String userPw = request.getParameter("user_pw");
+			if (userPw == null || userPw.trim().isEmpty()) {
+				// 비밀번호가 비어 있는 경우 에러 메시지를 설정하고 마이페이지로 리다이렉트
+				response.sendRedirect(request.getContextPath() + "/student/myPage.bo?error="
+						+ URLEncoder.encode("비밀번호를 입력해주세요.", "UTF-8"));
+				return;
+			}
+			// ==
 
-       // 학생 본인 정보 수정 처리
-       case "/updateMyInfo.do":
-       	//==
-       	String userPw = request.getParameter("user_pw");
-           if (userPw == null || userPw.trim().isEmpty()) {
-               // 비밀번호가 비어 있는 경우 에러 메시지를 설정하고 마이페이지로 리다이렉트
-               response.sendRedirect(request.getContextPath() + "/member/myPage.bo?error=" + URLEncoder.encode("비밀번호를 입력해주세요.", "UTF-8"));
-               return;
-           }
-       	//==
-       	
-       	
-       	boolean isMyInfoUpdated = studentservice.updateMyInfo(request);
-           String myInfoMessage = isMyInfoUpdated ? "정보가 성공적으로 수정되었습니다." : "권한이 없거나 수정에 실패했습니다.";
-           response.sendRedirect(request.getContextPath() + "/member/myPage.do?message="
-                   + URLEncoder.encode(myInfoMessage, "UTF-8"));
-           return;
-			
+			boolean isMyInfoUpdated = studentservice.updateMyInfo(request);
+			String myInfoMessage = isMyInfoUpdated ? "정보가 성공적으로 수정되었습니다." : "권한이 없거나 수정에 실패했습니다.";
+			response.sendRedirect(request.getContextPath() + "/student/myPage.do?message="
+					+ URLEncoder.encode(myInfoMessage, "UTF-8"));
+			return;
+
 		default:
 			break;
 		}

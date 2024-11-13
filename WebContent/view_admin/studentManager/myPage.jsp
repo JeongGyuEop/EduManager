@@ -1,3 +1,4 @@
+<%@page import="Vo.StudentVo"%>
 <%@page import="Vo.MemberVo"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -43,10 +44,10 @@
     <h2>학생 정보 수정</h2>
     <%
         // Controller에서 전달된 사용자 정보 가져오기
-        MemberVo member = (MemberVo) request.getAttribute("member");
+        StudentVo member = (StudentVo) request.getAttribute("member");
         if (member != null) { 
     %>
-        <form name="myForm" action="updateMyInfo.do" method="post" onsubmit="return validateForm();">
+        <form name="myForm" action="/student/updateMyInfo.do" method="post" onsubmit="return validateForm();">
             <label>아이디</label>
             <input type="text" name="user_id" value="<%= member.getUser_id() %>" readonly>
             <br>
