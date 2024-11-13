@@ -13,6 +13,8 @@ String contextPath = request.getContextPath();
 
 %>
 
+<link rel="stylesheet" type="text/css" href="../css/professoradd.css">
+
 
 </head>
 <body>
@@ -21,77 +23,78 @@ String contextPath = request.getContextPath();
 
 
 
-<form action="<%=contextPath%>/prosess/professor.do" class="form" method="get" >
+<form action="<%=contextPath%>/prosess/professor.do" class="form-container" method="get">
+
+	
+		<input style="width:165px;" type="hidden" name="role" value="교수" class="form-control">
+	
 		
 	<table border="1">
+	
 	<tr>
 		<th bgcolor="#D3D3D3">아이디</th>
-		<td><input type="text" name="user_id"></td>		
+		<td><input type="text" name="user_id" class="form-control"></td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">비밀번호</th>
-		<td><input type="text" name="user_pw"></td>		
+		<td><input type="text" name="user_pw" class="form-control"></td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">사번</th>
-		<td><input type="text" name="professor_id"></td>		
+		<td><input type="text" name="professor_id" class="form-control"></td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">이름</th>
-		<td><input type="text" name="p_name"></td>		
+		<td><input type="text" name="p_name" class="form-control"></td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">생년월일</th>
-		<td><input style="width:165px;" type="date" name="p_birthDate"></td>		
+		<td><input style="width:165px;" type="date" name="p_birthDate" class="form-control"></td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">성별</th>
 		<td>
-		<input type="radio" name="p_gender" value="남">남성
-		<input type="radio" name="p_gender" value="여">여성
+		<input type="radio" name="p_gender" value="남" class="form-control">남성
+		<input type="radio" name="p_gender" value="여" class="form-control">여성
 		</td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">주소</th>
 		<td>
-			<input type="text" id="sample4_postcode" name="address1" class="form-control" placeholder="우편번호">
-			<input type="button" onclick="sample4_execDaumPostcode()" value="우편번호 찾기" class="form-control"><br>
+			<input type="text" id="sample4_postcode" name="address1" class="form-control" placeholder="우편번호" class="form-control">
+			<input type="button" onclick="sample4_execDaumPostcode()" value="우편번호 찾기" class="form-control" class="form-control"><br>
 			
-			<input type="text" id="sample4_roadAddress" name="address2" placeholder="도로명주소" class="form-control">
-			<input type="text" id="sample4_jibunAddress" placeholder="지번주소" name="address3" class="form-control">
+			<input type="text" id="sample4_roadAddress" name="address2" placeholder="도로명주소" class="form-control" class="form-control">
+			<input type="text" id="sample4_jibunAddress" placeholder="지번주소" name="address3" class="form-control" class="form-control">
 			
 			<span id="guide" style="color:#999;display:none"></span><br>
 			
-			<input type="text" id="sample4_detailAddress" placeholder="상세주소" name="address4" class="form-control">
-			<input type="text" id="sample4_extraAddress" placeholder="참고항목"  name="address5" class="form-control">
+			<input type="text" id="sample4_detailAddress" placeholder="상세주소" name="address4" class="form-control" class="form-control">
+			<input type="text" id="sample4_extraAddress" placeholder="참고항목"  name="address5" class="form-control" class="form-control">
 		</td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">전화번호</th>
-		<td><input type="text" name="p_phone"></td>		
+		<td><input type="text" name="p_phone" class="form-control"></td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">학과번호</th>
-		<td><input type="text" name="majorcode"></td>		
+		<td><input type="text" name="majorcode" class="form-control"></td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">이메일</th>
-		<td><input type="text" name="p_email"></td>		
+		<td><input type="text" name="p_email" class="form-control"></td>		
 	</tr>
 	<tr>
 		<th bgcolor="#D3D3D3">고용일</th>
-		<td><input style="width:165px;" type="date" name="p_employDate"></td>		
+		<td><input style="width:165px;" type="date" name="p_employDate" class="form-control"></td>		
 	</tr>
-	<tr>
-		<td colspan="2">
-		<input style="width:165px;" type="hidden" name="role" value="교수">
-		</td>		
-	</tr>
+	
 	
 	
 	</table>
 	
-	<input type="submit" value="등록" >
+	<input type="submit" value="등록"  class="form-control">
 	
 </form>
 
