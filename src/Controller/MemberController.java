@@ -264,6 +264,15 @@ public class MemberController extends HttpServlet {
 			return;
 
 		// ==========================================================================================
+		
+			// MemberController.java
+		case "/updateMyInfo.do":
+			 boolean isMyInfoUpdated = memberservice.updateMyInfo(request);
+		        String myInfoMessage = isMyInfoUpdated ? "정보가 성공적으로 수정되었습니다." : "권한이 없거나 수정에 실패했습니다.";
+		        response.sendRedirect(request.getContextPath() + "/member/myPage.do?message=" + URLEncoder.encode(myInfoMessage, "UTF-8"));
+		        return;
+
+	
 		default:
 			break;
 		}

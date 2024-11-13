@@ -173,7 +173,7 @@ public class MemberDAO {
 	}
 
 	// =========================================================================================================
-	// 특정 학생 검색해서 조회이긴한데 구현은 안됨. 하지만 있어도 상관없기에 일단 넣어둠 나중에 추가할 수 있으면 추가하면 될 듯
+	// 학생상세정보 보기
 	public MemberVo getStudentById(String userId) {
 		MemberVo student = null;
 		String query = "SELECT u.user_id, u.user_pw, u.user_name, u.birthDate, u.gender, u.address, u.phone, "
@@ -291,4 +291,26 @@ public class MemberDAO {
 		}
 		return isDeleted;
 	}
+	//=====================================================================
+	// 학생이 로그인한 후 마이페이지에서 자신의 정보를 수정하는 메서드 
+	public boolean updateStudentInfo(MemberVo student) {
+	    String sql = "UPDATE user SET user_pw = ?, address = ?, phone = ?, email = ? WHERE user_id = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, student.getUser_pw());
+	        pstmt.setString(2, student.getAddress());
+	        pstmt.setString(3, student.getPhone());
+	        pstmt.setString(4, student.getEmail());
+
+	        int rows = pstmt.executeUpdate();
+	        return rows > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
+	
+	
+	
 }// MemberDAO 클래스
