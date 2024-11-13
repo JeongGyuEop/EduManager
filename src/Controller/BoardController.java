@@ -227,6 +227,30 @@ public class BoardController extends HttpServlet {
 				nextPage="/main.jsp";
 				
 			    break;
+			    
+			case "/roleCheck.do": //글 수정 또는 삭제를 위해 입력한 글의 비밀번호가
+				 //DB에 존재하는지 체크 요청
+				//요청한 값 2개 얻기
+				
+				String notice_id_3 = request.getParameter("notice_id");
+				String role_ = (String)session.getAttribute("role");
+				
+				System.out.println(role_);
+				//부장 호출
+				//글을 수정, 삭제 하기 위한  수정버튼과 삭제버튼 활성화를 위해
+				//입력한 글의 비밀번호가 DB에 있는지 체크가 위해 호출!
+				boolean resultRole = boardservice.serviceRoleCheck(notice_id_3,role_);
+				//true :입력한 글의 비밀번호가 DB에 존재함
+				//false:입력한 글의 비밀번호가 DB에 존재하지 않음 
+				
+				if(resultRole == true) {
+					out.write("관리자맞음");
+					return;
+				}else {//false
+					out.write("관리자아님");
+					return;
+				}
+			    
 			
 			case "/updateBoard.do": //글 수정 요청 
 				

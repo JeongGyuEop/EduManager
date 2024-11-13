@@ -67,5 +67,10 @@ public class BoardService {
 		boarddao.replyInsertBoard(super_notice_id, reply_writer, reply_title, reply_content, reply_id);
 	}
 
+	public boolean serviceRoleCheck(String notice_id_3, String role_) {
+		
+		return boarddao.roleCheck(notice_id_3, role_);
+	}
+
 		
 }

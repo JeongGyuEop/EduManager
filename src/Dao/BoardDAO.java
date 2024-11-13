@@ -333,4 +333,35 @@ public void replyInsertBoard(String super_notice_id, String reply_writer, String
 	}
 	
 	}
+public boolean roleCheck(String notice_id_3, String role_) {
+	
+	boolean result3 = false;
+	
+	try {
+		con = ds.getConnection();//DB연결
+		 
+		 
+		 String sql = "select * from user "
+				    +" where role = ?  ";
+		 pstmt = con.prepareStatement(sql);
+		 pstmt.setString(1, role_);//입력해서 전달받은 글의 비밀번호
+		 
+		 rs = pstmt.executeQuery();
+		 
+		 if(rs.next()) {//입력한 비밀번호로 한줄이 조회되니 비밀번호가 저장되어 있음
+			 result3 = true;
+		 }else {
+			 result3 = false;
+		 } 
+		
+		
+	} catch (Exception e) {
+		System.out.println("BoardDAO의 roleCheck 메소드 오류: ");
+		e.printStackTrace();
+	}finally {
+		closeResource();
+	}
+	
+	return result3;
+}
 }
