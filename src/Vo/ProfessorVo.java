@@ -1,8 +1,8 @@
-package ProfessorVO;
+package Vo;
 
 import java.sql.Date;
 
-public class ProfessorVO {
+public class ProfessorVo {
 
 	//user테이블
 	private String user_id;  //교수아이디(사번)
@@ -22,10 +22,10 @@ public class ProfessorVO {
 	
 	
 	//기본생성자
-	public ProfessorVO() {}
+	public ProfessorVo() {}
 
 	// date 뺀 생성자
-	public ProfessorVO(String user_id, String user_pw, String user_name, String gender, String address, String phone,
+	public ProfessorVo(String user_id, String user_pw, String user_name, String gender, String address, String phone,
 			String email, String role, String professor_id, String majorcode) {
 		super();
 		this.user_id = user_id;
@@ -42,7 +42,7 @@ public class ProfessorVO {
 
 	
 	//전체 생성자
-	public ProfessorVO(String user_id, String user_pw, String user_name, Date brithDate, String gender, String address,
+	public ProfessorVo(String user_id, String user_pw, String user_name, Date brithDate, String gender, String address,
 			String phone, String email, String role, String professor_id, String majorcode, Date employDate) {
 		super();
 		this.user_id = user_id;

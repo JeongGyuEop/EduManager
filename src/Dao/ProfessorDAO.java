@@ -1,4 +1,4 @@
-package ProfessorDAO;
+package Dao;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -13,11 +13,11 @@ import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
-import ProfessorVO.ProfessorVO;
+import Vo.ProfessorVo;
 
 
 
-public class ProfessorDao {
+public class ProfessorDAO {
 
 	//변수
 		//데이터베이스 작업관련 객체들을 저장할 변수들
@@ -28,7 +28,7 @@ public class ProfessorDao {
 
 		
 	//컨넥션풀 얻는 생성자
-		public ProfessorDao() {
+		public ProfessorDAO() {
 			try {
 				Context ctx = new InitialContext();
 				ds = (DataSource)ctx.lookup("java:/comp/env/jdbc/edumanager");
@@ -51,7 +51,7 @@ public class ProfessorDao {
 
 	
 	// 새 회원 추가
-		 public int insertProfessor(ProfessorVO vo) {
+		 public int insertProfessor(ProfessorVo vo) {
 		        
 			 int result = 0;  // 기본값은 실패(false)
 			 
@@ -112,9 +112,9 @@ public class ProfessorDao {
 		
 			
 		 // 교수 목록 조회 메서드
-		    public List<ProfessorVO> getProfessorList(String prof_id, String majorCode) {
+		    public List<ProfessorVo> getProfessorList(String prof_id, String majorCode) {
 
-		        List<ProfessorVO> professorList = new ArrayList<>();
+		        List<ProfessorVo> professorList = new ArrayList<>();
 		        
 		        try {
 		            con = ds.getConnection();
@@ -151,7 +151,7 @@ public class ProfessorDao {
 		            rs = pstmt.executeQuery();
 
 		            while (rs.next()) {
-		                ProfessorVO professor = new ProfessorVO();
+		                ProfessorVo professor = new ProfessorVo();
 		                
 		                professor.setProfessor_id(rs.getString("professor_id"));
 		                professor.setUser_name(rs.getString("user_name"));
@@ -178,7 +178,7 @@ public class ProfessorDao {
 
 		    
 		 // 교수 정보 수정 메소드
-		    public boolean updateProfessor(ProfessorVO professor) {
+		    public boolean updateProfessor(ProfessorVo professor) {
 		        boolean isUpdated = false;
 		        
 		        String sql = "UPDATE user u "

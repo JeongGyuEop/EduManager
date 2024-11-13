@@ -1,4 +1,4 @@
-<%@page import="ProfessorVO.ProfessorVO"%>
+<%@page import="Vo.ProfessorVo"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -13,7 +13,7 @@
 <%
 request.setCharacterEncoding("UTF-8");
 String contextPath = request.getContextPath();
-List<ProfessorVO> professorList = (List<ProfessorVO>) request.getAttribute("professor");
+List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("professor");
 %>
 
 <style>
@@ -135,7 +135,7 @@ List<ProfessorVO> professorList = (List<ProfessorVO>) request.getAttribute("prof
 
 
     <div class="form-container">
-        <form action="<%=contextPath%>/prosess/professorquiry.do" class="form" method="get">
+        <form action="<%=contextPath%>/professor/professorquiry.do" class="form" method="get">
             <div>
                 <label for="professor_id">사번</label>
                 <input type="text" id="professor_id" name="professor_id" maxlength="50" required="required">
@@ -149,7 +149,7 @@ List<ProfessorVO> professorList = (List<ProfessorVO>) request.getAttribute("prof
             </div>
         </form>
 
-        <form action="<%=contextPath%>/prosess/professorquiry.do" class="form" method="get">
+        <form action="<%=contextPath%>/professor/professorquiry.do" class="form" method="get">
             <div>
                 <input type="submit"  value="전체조회">
             </div>
@@ -176,7 +176,7 @@ List<ProfessorVO> professorList = (List<ProfessorVO>) request.getAttribute("prof
            <tbody>
            
 <% if (professorList != null && !professorList.isEmpty()) { %>
-    <% for (ProfessorVO vo : professorList) { %>
+    <% for (ProfessorVo vo : professorList) { %>
 			<tr id="professor-row-<%= vo.getProfessor_id() %>">
 			    <td><input type="text" name="professor_id" class="professor-id" value="<%= vo.getProfessor_id() %>" readonly /></td>
 			    <td><input type="text" name="user_name" value="<%= vo.getUser_name() %>" disabled /></td>

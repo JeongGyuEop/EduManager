@@ -15,7 +15,6 @@ String contextPath = request.getContextPath();
 
 <link rel="stylesheet" type="text/css" href="../css/professoradd.css">
 
-
 </head>
 <body>
 
@@ -23,7 +22,7 @@ String contextPath = request.getContextPath();
 
 
 
-<form action="<%=contextPath%>/prosess/professor.do" class="form-container" method="get">
+<form action="<%=contextPath%>/professor/professor.do" class="form-container" method="get">
 
 	
 		<input style="width:165px;" type="hidden" name="role" value="교수" class="form-control">
@@ -54,8 +53,8 @@ String contextPath = request.getContextPath();
 	<tr>
 		<th bgcolor="#D3D3D3">성별</th>
 		<td>
-		<input type="radio" name="p_gender" value="남" class="form-control">남성
-		<input type="radio" name="p_gender" value="여" class="form-control">여성
+		<input type="radio" name="p_gender" value="남"  checked>남성
+		<input type="radio" name="p_gender" value="여" >여성
 		</td>		
 	</tr>
 	<tr>
