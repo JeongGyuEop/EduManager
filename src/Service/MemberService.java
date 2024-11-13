@@ -136,7 +136,7 @@ public class MemberService {
 	
 	//============================================================================
 	// 학생이 본인 정보를 업데이트를 하는 메서드
-	// MemberService.java
+	
 	public boolean updateMyInfo(HttpServletRequest request) {
 	    HttpSession session = request.getSession();
 	    String sessionUserId = (String) session.getAttribute("id"); // 세션에서 사용자 ID 가져오기
@@ -151,6 +151,12 @@ public class MemberService {
 
 	    // 수정할 필드 값 가져오기
 	    String userPw = request.getParameter("user_pw");
+	    //==
+	    if (userPw == null || userPw.trim().isEmpty()) {
+	        // 비밀번호가 비어 있는 경우 false 반환
+	        return false;
+	    }
+	    //==
 	    String phone = request.getParameter("phone");
 	    String email = request.getParameter("email");
 	    String address = request.getParameter("address");

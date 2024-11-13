@@ -44,7 +44,7 @@ public class MenuItemService {
 //                new MenuItemVo("과제제출", "assignmentSubmit.jsp"),
 //                new MenuItemVo("성적조회", "gradeCheck.jsp")
 //            )),
-            new MenuItemVo("마이페이지", "myPage.jsp"),
+            new MenuItemVo("마이페이지", "/member/myPage.bo?center=/view_admin/studentManager/myPage.jsp"),
             new MenuItemVo("공지사항", "notice.jsp")
         ));
 

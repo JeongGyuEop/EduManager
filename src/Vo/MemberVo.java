@@ -224,7 +224,45 @@ public class MemberVo {
 	}
 
 	
-	
+	 // toString 메서드
+    @Override
+    public String toString() {
+        return "MemberVo{" +
+                "user_id='" + user_id + '\'' +
+                ", user_pw='" + user_pw + '\'' +
+                ", user_name='" + user_name + '\'' +
+                ", birthDate=" + birthDate +
+                ", gender='" + gender + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                ", student_id='" + student_id + '\'' +
+                ", majorcode='" + majorcode + '\'' +
+                ", grade=" + grade +
+                ", admission_date=" + admission_date +
+                ", status='" + status + '\'' +
+                '}';
+    }
+
+    // 이메일 유효성 검사 메서드
+    public boolean isEmailValid() {
+        return email != null && email.contains("@") && email.contains(".");
+    }
+
+    // 전화번호 유효성 검사 메서드
+    public boolean isPhoneValid() {
+        return phone != null && phone.matches("\\d+");
+    }
+
+    // 객체 유효성 검사 메서드
+    public boolean isValid() {
+        return user_id != null && !user_id.isEmpty() &&
+               user_pw != null && !user_pw.isEmpty() &&
+               user_name != null && !user_name.isEmpty() &&
+               email != null && isEmailValid() &&
+               phone != null && isPhoneValid();
+    }
 	
 	
 	

@@ -321,14 +321,20 @@ public class MemberDAO {
 	//=====================================================================
 	// 학생이 로그인한 후 마이페이지에서 자신의 정보를 수정하는 메서드 
 	public boolean updateStudentInfo(MemberVo student) {
-	    String sql = "UPDATE user SET user_pw = ?, address = ?, phone = ?, email = ? WHERE user_id = ?";
+	    String sql = "UPDATE "
+	    		+ "user SET user_pw = ?, "
+	    		+ "address = ?, "
+	    		+ "phone = ?, "
+	    		+ "email = ? "
+	    		+ "WHERE user_id = ?";
 	    try (Connection conn = getConnection();
 	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 	        pstmt.setString(1, student.getUser_pw());
 	        pstmt.setString(2, student.getAddress());
 	        pstmt.setString(3, student.getPhone());
 	        pstmt.setString(4, student.getEmail());
-
+	        pstmt.setString(5, student.getUser_id());
+	        
 	        int rows = pstmt.executeUpdate();
 	        return rows > 0;
 	    } catch (Exception e) {

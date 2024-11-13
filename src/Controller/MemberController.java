@@ -114,6 +114,9 @@ public class MemberController extends HttpServlet {
 
 			// 로그인 성공 (check 값이 "1"인 경우)
 			String role = userInfo.get("role");
+			
+			
+			
 
 			if (role.equals("학생")) {
 				// 재요청할 전체 메인화면 주소를 저장
@@ -264,18 +267,39 @@ public class MemberController extends HttpServlet {
 			return;
 
 		// ==========================================================================================
-		
-			// MemberController.java
-		case "/updateMyInfo.do":
-			 boolean isMyInfoUpdated = memberservice.updateMyInfo(request);
-		        String myInfoMessage = isMyInfoUpdated ? "정보가 성공적으로 수정되었습니다." : "권한이 없거나 수정에 실패했습니다.";
-		        response.sendRedirect(request.getContextPath() + "/member/myPage.do?message=" + URLEncoder.encode(myInfoMessage, "UTF-8"));
-		        return;
+			 // 마이페이지 이동 처리
+		case "/myPage.bo":
+		    String sessionUserId = (String) session.getAttribute("id");
+		    MemberVo member = memberservice.getStudentById(sessionUserId);
+		    request.setAttribute("member", member);
+		    center = "/view_admin/studentManager/myPage.jsp";
+		    request.setAttribute("center", center);
+		    nextPage = "/main.jsp";
+		    break;
 
-	
-		default:
-			break;
-		}
+
+        // 학생 본인 정보 수정 처리
+        case "/updateMyInfo.do":
+        	//==
+        	String userPw = request.getParameter("user_pw");
+            if (userPw == null || userPw.trim().isEmpty()) {
+                // 비밀번호가 비어 있는 경우 에러 메시지를 설정하고 마이페이지로 리다이렉트
+                response.sendRedirect(request.getContextPath() + "/member/myPage.bo?error=" + URLEncoder.encode("비밀번호를 입력해주세요.", "UTF-8"));
+                return;
+            }
+        	//==
+        	
+        	
+        	boolean isMyInfoUpdated = memberservice.updateMyInfo(request);
+            String myInfoMessage = isMyInfoUpdated ? "정보가 성공적으로 수정되었습니다." : "권한이 없거나 수정에 실패했습니다.";
+            response.sendRedirect(request.getContextPath() + "/member/myPage.do?message="
+                    + URLEncoder.encode(myInfoMessage, "UTF-8"));
+            return;
+
+        default:
+            nextPage = "/main.jsp";
+            break;
+    }
 
 		// 디스패처 방식 포워딩(재요청)
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
