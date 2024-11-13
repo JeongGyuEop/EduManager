@@ -17,6 +17,7 @@ import Dao.BoardDAO;
 import Service.BoardService;
 import Service.MenuItemService;
 import Vo.BoardVo;
+import Vo.MemberVo;
 
 
 
@@ -158,13 +159,12 @@ public class BoardController extends HttpServlet {
 				
 			case "/write.bo"://새글을 입력할수 있는 화면 요청
 				
-//				HttpSession session = request.getSession();
-//				String memberid = (String)session.getAttribute("id");
+				String memberid = (String)session.getAttribute("id");
 				
 				//부장호출
 				//새글을 입력할수 있는 화면에 로그인한 사람(글쓰는 사람)의 정보를 보여주기 위해
 				//조회 해 오자 
-//				MemberVo membervo = boardservice.serviceMemberOne(memberid);
+				MemberVo membervo = boardservice.serviceMemberOne(memberid);
 
 		
 				//글쓰기 중앙화면(VIEW)경로를 request내장객체에 바인딩
@@ -281,67 +281,54 @@ public class BoardController extends HttpServlet {
 				
 				return;
 				
-//			case "/reply.do":
-//				//요청한 주글(부모글) 글번호 얻는다
-//				String b_idx__ = request.getParameter("b_idx");
-//				//요청한 답변글을 작성할 사람의 아이디 얻는다
-//				String reply_id_ = request.getParameter("id");
-//				
-//				//부장호출
-//				//로그인한 회원이 주글에 대한 답변그을 작성할수 있도록 하기 위해
-//				//로그인 한 회원 아이디를 BoardService의 메소드 호출시 매개변수로 전달해
-//				//아이디 에 해당하는 회원정보를 조회함
-//				MemberVo reply_vo = boardservice.serviceMemberOne(reply_id_);
-//				
-//				//부모글번호와 조회한 답변글 작성자 정보를  request에 바인딩
-//				request.setAttribute("b_idx", b_idx__); //주글(부모) 글번호 
-//				request.setAttribute("vo", reply_vo);//답변글 작성하는 사람 정보 
-//				
-//				//중앙화면(답변글을 작성할수 있는 중앙 VIEW) 경로를  request에 바인딩
-//				request.setAttribute("center", "board/reply.jsp");
-//				
-//				nextPage="/CarMain.jsp";
-//				
-//				break;
+			case "/reply.do":
+				//요청한 주글(부모글) 글번호 얻는다
+				String notice_id_ = request.getParameter("notice_id");
+				//요청한 답변글을 작성할 사람의 아이디 얻는다
+				String reply_id_ = request.getParameter("id");
+				
+				//부장호출
+				//로그인한 회원이 주글에 대한 답변그을 작성할수 있도록 하기 위해
+				//로그인 한 회원 아이디를 BoardService의 메소드 호출시 매개변수로 전달해
+				//아이디 에 해당하는 회원정보를 조회함
+				MemberVo reply_vo = boardservice.serviceMemberOne(reply_id_);
+				
+				//부모글번호와 조회한 답변글 작성자 정보를  request에 바인딩
+				request.setAttribute("notice_id", notice_id_); //주글(부모) 글번호 
+				request.setAttribute("vo", reply_vo);//답변글 작성하는 사람 정보 
+				
+				//중앙화면(답변글을 작성할수 있는 중앙 VIEW) 경로를  request에 바인딩
+				request.setAttribute("center", "common/notice/reply.jsp");
+				
+				nextPage="/main.jsp";
+				
+				break;
 			
 				 //주글에 대한 답변글 DB의 Board테이블에 추가 요청
-//			case "/replyPro.do":	
-//				
-//			//요청한 값들( 주글(부모글) 글번호  + 작성한 추가할 답변글 정보   ) 얻기
-//				
-//				//주글(부모글) 글번호 
-//				String super_b_idx = request.getParameter("super_b_idx");
-//				//답변글 작성자 아이디 
-//				String reply_id = request.getParameter("id");
-//				//답변글 작성자 이름
-//				String reply_name = request.getParameter("writer");
-//				//답변글 작성자 이메일
-//				String reply_email = request.getParameter("email");
-//				//답변글 제목
-//				String reply_title = request.getParameter("title");
-//				//답변글 내용
-//				String reply_content = request.getParameter("content");
-//				//답변글의 비밀번호
-//				String reply_pass = request.getParameter("pass");
-//				
-//			//부장님 호출!!!
-//				//DB의 Board테이블에 입력한 답변글 정보 추가 요청
-//				boardservice.serviceReplyInsertBoard(super_b_idx,
-//													 reply_id,
-//													 reply_name,
-//													 reply_email,
-//													 reply_title,
-//													 reply_content,
-//													 reply_pass);
-//				
-//				//답변글  추가에 성공하면 
-//				//다시 전체 글목록 조회 해서 보여주기 위한 재요청 주소를 
-//				//nextPage변수에 저장
-//				nextPage = "/Board/list.bo";
-//				
-//				break;
-//				
+			case "/replyPro.do":	
 				
+			//요청한 값들( 주글(부모글) 글번호  + 작성한 추가할 답변글 정보   ) 얻기
+				
+				//주글(부모글) 글번호 
+				String super_notice_id = request.getParameter("super_notice_id");
+				String reply_writer = request.getParameter("writer");
+				String reply_title = request.getParameter("title");
+				String reply_content = request.getParameter("content");
+				
+				String reply_id = (String)session.getAttribute("id");
+				
+				
+				//부장님 호출
+
+						boardservice.serviceReplyInsertBoard(super_notice_id, reply_writer, reply_title, reply_content, reply_id);
+
+//				
+				//답변글  추가에 성공하면 
+				//다시 전체 글목록 조회 해서 보여주기 위한 재요청 주소를 
+				//nextPage변수에 저장
+				nextPage = "/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock)";
+				
+				break;
 				
 			default:
 				break;

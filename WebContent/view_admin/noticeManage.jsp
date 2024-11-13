@@ -167,14 +167,8 @@
 							</tr>
 					<%		
 						}else{//board테이블에서 조회된 게시글이 있다면?
-							
+						
 							for(int i=beginPerPage;  i<(beginPerPage+numPerPage);  i++){
-							  
-							/* 	out.println(i);  //1페이지 번호 또는 자유게시판 메뉴 클릭시   0,  1 , 2,  3, 4
-								                 //2페이지 번호 클릭시 5, 6, 7, 8, 9
-								                 
-								out.println(beginPerPage+numPerPage);
-								out.println("-------------------------<br>"); */
 								
 								if(i == totalRecord){
 									break;
@@ -188,6 +182,19 @@
 							<tr>
 								<td align="left"><%=vo.getNotice_id()%></td>
 								<td>
+								
+								
+								<%
+									int width = 0; //답변글에 대한 이미지level.gif의 들여 쓰기 너비width값 
+
+									if(vo.getB_level() > 0){//답변글들		
+										width = vo.getB_level() * 10;
+								%>
+									<img src="<%=contextPath%>/common/notice/images/level.gif" 
+											 width="<%=width%>" height="15">
+											 
+									<img src="<%=contextPath%>/common/notice/images/re.gif">
+								<%	} %>
 									<a href="javascript:fnRead('<%=vo.getNotice_id() %>')">
 										<%=vo.getTitle() %>
 									</a>

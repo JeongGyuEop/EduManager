@@ -93,5 +93,32 @@ public class MemberDAO {
 		return userInfo; //MemberService(부장)에게 결과 반환 
 
 	}
+	
+	//로그인한 회원 아이디를 이용해 회원정보 조회
+		//이유 : 글작성 화면에 조회한 회원정보를 보여주기 위해 
+		public MemberVo memberOne(String reply_id_) {
+		
+			MemberVo vo = null;
+			
+			try {
+				 con = ds.getConnection();//DB연결
+				 
+				 String sql = "select user_name, user_id from user where user_id=?";
+				 pstmt = con.prepareStatement(sql);
+				 pstmt.setString(1, reply_id_);
+				 rs = pstmt.executeQuery();
+				 if(rs.next()) {//로그인한 아이디로 조회한 행이 있으면?
+					 vo = new MemberVo();
+					 vo.setUser_name(rs.getString("user_name"));
+					 vo.setUser_id(rs.getString("user_id"));
+				 }	
+			} catch (Exception e) {
+				System.out.println("MemberDAO의 memberOne메소드");
+				e.printStackTrace();
+			} finally {
+				closeResource();
+			}
+			return vo;//BoardService로 리턴(보고)
+		}
 
 }// MemberDAO 클래스

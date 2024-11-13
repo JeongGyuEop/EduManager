@@ -30,16 +30,6 @@
 </head>
 <body>
 	<table width="80%" border="0" cellspacing="0" cellpadding="0">
-		<tr height="40">
-
-		</tr>
-		<tr>
-			<td colspan="3">
-				<div align="center">
-					<img src="<%=contextPath%>/board/images/line_870.gif" width="870" height="4">
-				</div>
-			</td>
-		</tr>
 		<tr>
 			<td colspan="3">
 				<div align="center">
@@ -96,7 +86,7 @@
 								<%--삭제하기 --%>	
 									<input type="button" id="delete" onclick="javascript:deletePro('<%=notice_id%>');" value="삭제" />&nbsp;&nbsp; 
 								<%--답변달기 --%>
-								<%-- 	<input type="image" src="<%=contextPath%>/board/images/reply.gif" id="reply" />&nbsp;&nbsp;  --%>
+									<input type="button" id="reply" value="답변" />&nbsp;&nbsp;
 								</div>
 							</td>
 							<td width="10%">

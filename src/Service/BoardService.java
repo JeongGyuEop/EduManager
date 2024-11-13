@@ -3,16 +3,25 @@ package Service;
 import java.util.ArrayList;
 
 import Dao.BoardDAO;
+import Dao.MemberDAO;
 import Vo.BoardVo;
+import Vo.MemberVo;
 
 //단위 기능의 메소드들을 가지고 있는 클래스 
 //부장
 public class BoardService {
 
 	BoardDAO boarddao;
+	MemberDAO memberdao;
 	
 	public BoardService() {
 		boarddao = new BoardDAO();
+		memberdao = new MemberDAO();
+	}
+	
+	//회원 아이디를 매개변수로 받아서 회원 한명을 조회 후 반환하는 기능의 메소드
+	public MemberVo serviceMemberOne(String reply_id_) {
+		return memberdao.memberOne(reply_id_);
 	}
 	
 	//작성한 새글 정보 하나를 DB의 board테이블에 추가(INSERT)기능의 메소드
@@ -53,21 +62,10 @@ public class BoardService {
 		return boarddao.deleteBoard(delete_idx);
 	}
 
-//	//DB의 Board테이블에 입력한 답변글 추가 하기 위해 호출!
-//	public void serviceReplyInsertBoard(String super_b_idx, String reply_id, 
-//										String reply_name, String reply_email,
-//										String reply_title, String reply_content, 
-//										String reply_pass) {
-//		
-//		boarddao.replyInsertBoard(super_b_idx,
-//								  reply_id,
-//								  reply_name,
-//								  reply_email,
-//								  reply_title,
-//								  reply_content,
-//								  reply_pass);
-//		
-//	}
+	//DB의 Board테이블에 입력한 답변글 추가 하기 위해 호출!
+	public void serviceReplyInsertBoard(String super_notice_id, String reply_writer, String reply_title, String reply_content, String reply_id) {
+		boarddao.replyInsertBoard(super_notice_id, reply_writer, reply_title, reply_content, reply_id);
+	}
 
 		
 }
