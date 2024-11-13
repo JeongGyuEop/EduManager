@@ -16,8 +16,9 @@
 
     // 아래의 검색어를 입력하지 않고  검색버튼을 눌렀을때
     // 검색어 입력하지 않으면  검색어를 입력하세요!  체크 하는 함수 
-	/* function fnSearch(){
-    	
+
+	function fnSearch(){
+
     	//입력한 검색어 얻기 
 		var word = document.getElementById("word").value;
 		
@@ -37,7 +38,8 @@
 			//BoardController로 입력한 검색어에 관한 글목록 조회 요청을 함 
 			document.frmSearch.submit();
 		}
-	} */
+
+	}
 	
     //조회된 화면에서  글제목 하나를 클릭했을때  글번호를 매개변수로 받아서
     //아래에 작성된 <form>를 이용해 글번호에 해당되는 글 하나의 정보를 조회 요청!
@@ -165,14 +167,8 @@
 							</tr>
 					<%		
 						}else{//board테이블에서 조회된 게시글이 있다면?
-							
+						
 							for(int i=beginPerPage;  i<(beginPerPage+numPerPage);  i++){
-							  
-							/* 	out.println(i);  //1페이지 번호 또는 자유게시판 메뉴 클릭시   0,  1 , 2,  3, 4
-								                 //2페이지 번호 클릭시 5, 6, 7, 8, 9
-								                 
-								out.println(beginPerPage+numPerPage);
-								out.println("-------------------------<br>"); */
 								
 								if(i == totalRecord){
 									break;
@@ -186,10 +182,23 @@
 							<tr>
 								<td align="left"><%=vo.getNotice_id()%></td>
 								<td>
+								
+								
+								<%
+									int width = 0; //답변글에 대한 이미지level.gif의 들여 쓰기 너비width값 
+
+									if(vo.getB_level() > 0){//답변글들		
+										width = vo.getB_level() * 10;
+								%>
+									<img src="<%=contextPath%>/common/notice/images/level.gif" 
+											 width="<%=width%>" height="15">
+											 
+									<img src="<%=contextPath%>/common/notice/images/re.gif">
+								<%	} %>
 									<a href="javascript:fnRead('<%=vo.getNotice_id() %>')">
 										<%=vo.getTitle() %>
 									</a>
-								
+								</td>
 								<td align="left"><%=vo.getContent()%></td>
 								<td align="left"><%=vo.getCreated_date()%></td>
 								<td align="left"><%=vo.getAuthor_id()%></td>
@@ -257,6 +266,8 @@
 				
 				if(nowBlock > 0){
 		%>			
+
+
 				    <a href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock-1%>&nowPage=<%=((nowBlock-1)*pagePerBlock)%>">
 					◀ 이전 <%=pagePerBlock %>개
 					</a>
@@ -268,6 +279,7 @@
 				for(int i=0;   i<pagePerBlock;    i++){
 		%>			
 				&nbsp;&nbsp;
+
 				<a href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock)+i%>">
 					<%=(nowBlock * pagePerBlock)+i+1%>
 					<%
@@ -283,20 +295,15 @@
 				
 				if(totalBlock > nowBlock + 1){
 		%>			
+
 				 <a href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock+1%>&nowPage=<%=(nowBlock+1)*pagePerBlock%>">
 					▶ 다음 <%=pagePerBlock%>개 	
 				 </a>
 		<%			
 				}
 				
-				
-				
 			}//바깥쪽 if닫기 
 		%>
-		
-		
-		
-		
 		
 		</td> 
 	</tr>

@@ -57,7 +57,7 @@ public class BoardDAO {
 		
 		try {
 			con = ds.getConnection();//DB연결
-			sql = "select * from notice";
+			sql = "select * from notice order by b_group asc";
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
@@ -66,6 +66,8 @@ public class BoardDAO {
 			//BoardVo객체들을 ArrayList배열에 반복해서  추가
 			while(rs.next()) {
 				BoardVo vo = new BoardVo(rs.getInt("notice_id"),
+										 rs.getInt("b_group"),
+										 rs.getInt("b_level"),
 										 rs.getString("author_id"),
 										 rs.getString("title"), 
 										 rs.getString("content"), 
@@ -96,17 +98,20 @@ public class BoardDAO {
 				
 				sql = "select * from notice "
 					+ "where title like  '%"+word+"%' "
-					+ "OR content like '%"+word+"%' ";
+					+ "OR content like '%"+word+"%' "
+					+ "order by b_group asc";
 				
 			}else {//검색기준열의 값 작성자 선택했다면?
 				
 				sql = "select * from notice "
-				    + " where author_id like '%"+word+"%' ";
+				    + " where author_id like '%"+word+"%' "
+				    + "order by b_group asc";
 			} 
 					
 		}else {//검색어를 입력하지 않았다면?
 			//모든 글의 열목록 조회
-			sql = "select * from notice ";
+			sql = "select * from notice "
+					+ "order by b_group asc";
 			
 		}
 		
@@ -121,10 +126,12 @@ public class BoardDAO {
 			//BoardVo객체들을 ArrayList배열에 반복해서  추가
 			while(rs.next()) {
 				BoardVo vo = new BoardVo(rs.getInt("notice_id"),
-										 rs.getString("author_id"),
-										 rs.getString("title"), 
-										 rs.getString("content"), 
-										 rs.getDate("created_date"));
+						 rs.getInt("b_group"),
+						 rs.getInt("b_level"),
+						 rs.getString("author_id"),
+						 rs.getString("title"), 
+						 rs.getString("content"), 
+						 rs.getDate("created_date"));
 				list.add(vo);			
 			}			
 			
@@ -148,13 +155,13 @@ public class BoardDAO {
 		try {
 			  con = ds.getConnection(); //DB연결
 			  
-//			  //주글 insert 규칙2. 두번째 글부터 추가되는 글들의 pos(b_group)를 1증가 시킨다.
-//			  sql = "update board set b_group = b_group + 1";
-//			  pstmt = con.prepareStatement(sql);
-//			  pstmt.executeUpdate();
+			  //주글 insert 규칙2. 두번째 글부터 추가되는 글들의 pos(b_group)를 1증가 시킨다.
+			  sql = "update notice set b_group = b_group + 1";
+			  pstmt = con.prepareStatement(sql);
+			  pstmt.executeUpdate();
 			  
-			  sql = "INSERT INTO notice (title, content, created_date, author_id)"
-			           + " VALUES (?, ?, NOW(), ?)";
+			  sql = "INSERT INTO notice (title, content, created_date, author_id, b_group, b_level)"
+			           + " VALUES (?, ?, NOW(), ?, 0, 0)";
 			  
 			  pstmt = con.prepareStatement(sql);
 			  pstmt.setString(1, vo.getTitle());
@@ -189,11 +196,13 @@ public class BoardDAO {
 			if(rs.next()) {
 				//ResultSet에서 조회된 레코드의 모든 열값을 얻어
 				//BoardVo객체 생성후 각변수에 저장
-				vo = new BoardVo(rs.getInt("notice_id"), 
-								 rs.getString("author_id"),
-								 rs.getString("title"),
-								 rs.getString("content"),
-								 rs.getDate("created_date"));
+				vo = new BoardVo(rs.getInt("notice_id"),
+						 rs.getInt("b_group"),
+						 rs.getInt("b_level"),
+						 rs.getString("author_id"),
+						 rs.getString("title"), 
+						 rs.getString("content"), 
+						 rs.getDate("created_date"));
 			}
 		} catch (Exception e) {
 			System.out.println("BoardDAO의 boardRead메소드");
@@ -283,89 +292,45 @@ public class BoardDAO {
 	
 //규칙2. 추가(INSERT)하는 답변글은 주글(부모들)의 b_grop열값을 가져와 +1을 해서 insert한다
 //규칙3. 추가(INSERT)하는 답변글은 주글(부모들)의 b_level열값을 가져와 +1을 해서 insert한다
+public void replyInsertBoard(String super_notice_id, String reply_writer, String reply_title, String reply_content, String reply_id) {
+	String sql = null;
+	try {
+	    con = ds.getConnection();
+
+	    // 부모 글 정보 조회
+	    sql = "SELECT b_group, b_level FROM notice WHERE notice_id=?";
+	    pstmt = con.prepareStatement(sql);
+	    pstmt.setInt(1, Integer.parseInt(super_notice_id));
+	    rs = pstmt.executeQuery();
+	    rs.next();
+	    int b_group = rs.getInt("b_group");
+	    int b_level = rs.getInt("b_level");
+
+	    // b_group 업데이트
+	    sql = "UPDATE notice SET b_group = b_group + 1 WHERE b_group > ?";
+	    pstmt = con.prepareStatement(sql);
+	    pstmt.setInt(1, b_group);
+	    pstmt.executeUpdate();
+
+	    // 답변글 삽입
+	    sql = "insert into notice(title, content, created_date, author_id, b_group, b_level)"
+	          + " values(?,?,NOW(),?,?,?)";
+	    pstmt = con.prepareStatement(sql);
+	    pstmt.setString(1, reply_title);
+	    pstmt.setString(2, reply_content);
+	    pstmt.setString(3, reply_id);
+	    pstmt.setInt(4, b_group + 1);
+	    pstmt.setInt(5, b_level + 1);
+	    pstmt.executeUpdate();
+
+	    
+
+	} catch (Exception e) {
+		System.out.println("BoardDAO의 replyInsertBoard메소드");
+		e.printStackTrace();
+	} finally {
+	    closeResource();
+	}
 	
-	
-//	public void replyInsertBoard(String super_b_idx, 
-//								 String reply_id, 
-//								 String reply_name, String reply_email,
-//								 String reply_title, String reply_content, 
-//								 String reply_pass) {
-//		String sql = null;
-//		
-//		try {
-//			con = ds.getConnection();//커넥션풀 공간에서 DB와 미리연결을 맺은 Connection얻기
-//			
-//			//1. 부모글의 글번호를 이용해 답변을 다는 부모글의 b_group열값과 b_level열값 조회
-//			sql = "SELECT b_group, b_level FROM BOARD "
-//				+ "WHERE b_idx=?";
-//			pstmt = con.prepareStatement(sql);
-//			pstmt.setInt(1, Integer.parseInt(super_b_idx));
-//			rs = pstmt.executeQuery();
-//			rs.next();
-//			String b_group = rs.getString("b_group");//추가할 답변글의 부모글의 조회된 b_group
-//			String b_level = rs.getString("b_level");//추가할 답변들의 부모글의 조회된 b_level
-	
-	
-//2.		
-//규칙1. 답변글을 추가하는 주글(부모글)의
-//	      b_group열의 값보다 큰 값이 저장된 다른주글의 b_grop열의 값을 1증가시킨다	
-			
-	
-//			sql = "UPDATE BOARD SET b_group=b_group+1 "
-//			    + "WHERE b_group > '"+b_group+"'";
-//			
-//			pstmt = con.prepareStatement(sql);
-//			pstmt.executeUpdate();
-			
-	
-//3.	
-//답변글 DB에  INSERT			
-//규칙2. 추가(INSERT)하는 답변글은 주글(부모들)의 b_grop열값을 가져와 +1을 해서 insert한다
-//규칙3. 추가(INSERT)하는 답변글은 주글(부모들)의 b_level열값을 가져와 +1을 해서 insert한다			
-	
-	
-//			  sql = "insert into board(b_idx, b_id, b_pw, b_name,"
-//							  	  + " b_email, b_title, b_content, b_group, b_level, b_date, b_cnt )"
-//								  + " values(border_b_idx.nextVal, ?,?,?,?,?,?,?,?,sysdate,0)";	
-//			pstmt = con.prepareStatement(sql);
-//			pstmt.setString(1, reply_id);//답변글 작성자 로그인한 아이디
-//			pstmt.setString(2, reply_pass);//작성한 답변글 비밀번호
-//			pstmt.setString(3, reply_name);//답변글 작성자 명
-//			pstmt.setString(4, reply_email);//답변글 작성자 이메일 주소 
-//			pstmt.setString(5, reply_title);//작성한 답변글 제목
-//			pstmt.setString(6, reply_content);//작성한 답변글 내용
-//			//규칙2.
-//			//답변글의 b_group열의 값은 주글(부모글) b_group열값에 + 1 한 값을 INSERT
-//			pstmt.setInt(7, Integer.parseInt(b_group) + 1); 
-//			//규칙3.
-//			//답변글의 b_level열의 값은 주글(부모글) b_level열값에 + 1 한 값을 INSERT
-//			pstmt.setInt(8, Integer.parseInt(b_level) + 1);
-//			
-//			pstmt.executeUpdate();
-//			
-//		} catch (Exception e) {
-//			System.out.println("BoardDAO의 replyInsertBoard메소드");
-//			e.printStackTrace();
-//		} finally {
-//			closeResource();
-//		}
-//	}
-
-}//BoardDAO클래스 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	}
+}
