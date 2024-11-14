@@ -50,10 +50,36 @@ function result(){
         alert("이미 존재하는 학과명입니다.");
     } */
 }
-	
-	
-
 </script>
+
+<!-- 다음 주소 API 스크립트 추가 -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+    function sample4_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var roadAddr = data.roadAddress; // 도로명 주소
+                var extraRoadAddr = ''; // 참고 항목
+
+                // 법정동명과 건물명 추가
+                if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                    extraRoadAddr += data.bname;
+                }
+                if (data.buildingName !== '' && data.apartment === 'Y') {
+                    extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                if (extraRoadAddr !== '') {
+                    extraRoadAddr = ' (' + extraRoadAddr + ')';
+                }
+
+                // 최종 주소를 하나의 필드에 입력
+                document.getElementById('address').value = roadAddr + extraRoadAddr;
+            }
+        }).open();
+    }
+</script>
+
+
 </head>
 <body>
     <h2>학 생 등 록</h2>
@@ -89,9 +115,14 @@ function result(){
                 </td>
             </tr>
             <tr>
-                <td><label for="address">주소:</label></td>
-                <td><input type="text" id="address" name="address" required></td>
-            </tr>
+    		<td><label for="address">주소:</label></td>
+    			<td>
+       			 	<div style="display: flex; align-items: center;">
+            			<input type="text" id="address" name="address" placeholder="주소" required style="flex: 1;">
+            			<input type="button" onclick="sample4_execDaumPostcode()" value="우편번호 찾기" style="margin-left: 5px;">
+        			</div>
+    			</td>
+			</tr>
             <tr>
                 <td><label for="phone">전화번호:</label></td>
                 <td><input type="text" id="phone" name="phone" required></td>

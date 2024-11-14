@@ -94,9 +94,9 @@ public class StudentController extends HttpServlet {
 				request.setAttribute("message", "학생 정보를 추가하는 데 실패했습니다.");
 			}
 
-			center = "/view_admin/studentManager/viewStudentList.jsp";
-
-			request.setAttribute("center", center);
+//			center = "/view_admin/studentManager/viewStudentList.jsp";
+//
+//			request.setAttribute("center", center);
 			nextPage = "/main.jsp";
 			break;
 
@@ -105,12 +105,16 @@ public class StudentController extends HttpServlet {
 		case "/viewStudentList.do": // 전체 학생 조회
 			List<StudentVo> students = studentservice.getAllStudents();
 			request.setAttribute("students", students);
-			nextPage = "/view_admin/studentManager/viewStudentList.jsp";
+			
+			center = "/view_admin/studentManager/viewStudentList.jsp";
+
+			request.setAttribute("center", center);
+			nextPage = "/main.jsp";
 			break;
 
 		// ==========================================================================================
 
-		case "/studentManage.bo": // 전체 학생 조회
+		case "/studentManage.bo": //  학생 등록 조회
 
 			center = request.getParameter("center");
 
@@ -126,6 +130,7 @@ public class StudentController extends HttpServlet {
 			String userId = request.getParameter("user_id");
 			StudentVo student = studentservice.getStudentById(userId);
 			request.setAttribute("student", student);
+			
 			nextPage = "/view_admin/studentManager/editStudent.jsp";
 
 			break;
@@ -172,7 +177,7 @@ public class StudentController extends HttpServlet {
        	String userPw = request.getParameter("user_pw");
            if (userPw == null || userPw.trim().isEmpty()) {
                // 비밀번호가 비어 있는 경우 에러 메시지를 설정하고 마이페이지로 리다이렉트
-               response.sendRedirect(request.getContextPath() + "/member/myPage.bo?error=" + URLEncoder.encode("비밀번호를 입력해주세요.", "UTF-8"));
+               response.sendRedirect(request.getContextPath() + "/student/myPage.bo?error=" + URLEncoder.encode("비밀번호를 입력해주세요.", "UTF-8"));
                return;
            }
        	//==
@@ -180,7 +185,7 @@ public class StudentController extends HttpServlet {
        	
        	boolean isMyInfoUpdated = studentservice.updateMyInfo(request);
            String myInfoMessage = isMyInfoUpdated ? "정보가 성공적으로 수정되었습니다." : "권한이 없거나 수정에 실패했습니다.";
-           response.sendRedirect(request.getContextPath() + "/member/myPage.do?message="
+           response.sendRedirect(request.getContextPath() + "/student/myPage.bo?message="
                    + URLEncoder.encode(myInfoMessage, "UTF-8"));
            return;
 			

@@ -26,6 +26,7 @@
 </form>
 
 
+
 <table border="1" style="width: 80%; margin: auto; text-align: center;">
     <tr>
         <th>학번</th>
@@ -53,10 +54,9 @@
                     <td><%= student.getGrade() %></td>
                     <td><%= student.getAdmission_date() %></td>
                     <td><%= student.getStatus() %></td>
-                    <td><a href="${pageContext.request.contextPath}/member/viewStudent.do?user_id=<%= student.getUser_id() %>">상세보기</a></td>
-					<td><a href="${pageContext.request.contextPath}/member/editStudent.do?user_id=<%= student.getUser_id() %>">수정</a></td>
-					<td><a href="${pageContext.request.contextPath}/member/deleteStudent.do?student_id=<%= student.getStudent_id() %>" 
-       onclick="return confirmDelete();">삭제</a></td>
+                    <td><a href="${pageContext.request.contextPath}/student/viewStudent.do?user_id=<%= student.getUser_id() %>">상세보기</a></td>
+					<td><a href="${pageContext.request.contextPath}/student/editStudent.do?user_id=<%= student.getUser_id() %>">수정</a></td>
+					<td><a href="${pageContext.request.contextPath}/student/deleteStudent.do?student_id=<%= student.getStudent_id() %>" onclick="return confirmDelete();">삭제</a></td>
                     
                 </tr>
     <%
