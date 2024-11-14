@@ -11,7 +11,8 @@ import java.sql.Date;
 public class BoardVo {
 
 	// 변수
-	private int notice_id, b_group, b_level;
+	private int notice_id, b_group, b_level, schedule_id;
+
 	private String author_id, title, content, event_name, description;
 	private Date created_date, start_date, end_date;
 
@@ -57,8 +58,9 @@ public class BoardVo {
 		this.created_date = created_date;
 	}
 
-	public BoardVo(String event_name, String description, Date start_date, Date end_date) {
+	public BoardVo(int schedule_id, String event_name, String description, Date start_date, Date end_date) {
 		super();
+		this.schedule_id = schedule_id;
 		this.event_name = event_name;
 		this.description = description;
 		this.start_date = start_date;
@@ -71,6 +73,14 @@ public class BoardVo {
 
 	public void setNotice_id(int notice_id) {
 		this.notice_id = notice_id;
+	}
+
+	public int getSchedule_id() {
+		return schedule_id;
+	}
+
+	public void setSchedule_id(int schedule_id) {
+		this.schedule_id = schedule_id;
 	}
 
 	public String getAuthor_id() {

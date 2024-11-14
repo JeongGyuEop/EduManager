@@ -1,6 +1,7 @@
 package Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import Dao.BoardDAO;
 import Dao.MemberDAO;
@@ -67,5 +68,11 @@ public class BoardService {
 		boarddao.replyInsertBoard(super_notice_id, reply_writer, reply_title, reply_content, reply_id);
 	}
 
-		
+	public List<BoardVo> serviceGetAcademicSchedules(String year, String month) {
+        if (year != null && month != null && !year.isEmpty() && !month.isEmpty()) {
+            return boarddao.getEvents(year, month);
+        } else {
+            return boarddao.getEvents("1900-01-01", "2100-12-31"); // 모든 일정 조회
+        }
+    }		
 }

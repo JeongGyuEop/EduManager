@@ -1,3 +1,9 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+    String contextPath = request.getContextPath();
+%>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -44,7 +50,7 @@
                 events: function(fetchInfo, successCallback, failureCallback) {
                     // 이벤트 데이터를 서버에서 가져오는 AJAX 요청
                     $.ajax({
-                        url: '<%=request.getContextPath()%>/BoardController/boardCalendar.bo', // 이벤트 데이터를 가져올 URL
+                    	url: '<%=request.getContextPath()%>/Board/boardCalendar.bo',
                         type: 'GET', // 요청 방식은 GET
                         dataType: 'json', // 반환 데이터 타입은 JSON
                         data: {
