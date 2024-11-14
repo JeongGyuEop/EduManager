@@ -35,9 +35,6 @@ String userId = (String) session.getAttribute("professor_id");
 <link href="<%=contextPath %>/css/classroom_style.css" rel="stylesheet" />
 </head>
 <body>
-<body class="sb-nav-fixed">
-	<div id="layoutSidenav">
-		<div id="layoutSidenav_content">
 			<main>
 				<div class="container-fluid px-4">
 					<h1 class="mt-4">수강 등록</h1>
@@ -87,7 +84,5 @@ String userId = (String) session.getAttribute("professor_id");
 					</div>
 				</div>
 			</main>
-		</div>
-	</div>
 </body>
 </html>

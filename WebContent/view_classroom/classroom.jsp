@@ -4,6 +4,7 @@
 <%
 	String contextPath = request.getContextPath();
 	String role = (String) session.getAttribute("role");
+	String profName = (String) session.getAttribute("name");
 
 %>    
 
@@ -29,17 +30,20 @@
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
             
-            <!-- Navbar-->
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="<%=contextPath%>/member/main.bo?center=view_professor/professorHome.jsp">강의실 나가기</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="<%=contextPath%>/member/logout.me">로그아웃</a></li>
-                    </ul>
-                </li>
-            </ul>
+			<!-- Navbar-->
+			    <ul class="navbar-nav ms-auto d-flex align-items-center">
+			        <li class="nav-item">
+			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> 교수님!</p>
+			        </li>
+			        <li class="nav-item dropdown">
+			            <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+			            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+			                <li><a class="dropdown-item" href="<%=contextPath%>/member/main.bo?center=view_professor/professorHome.jsp">강의실 나가기</a></li>
+			                <li><hr class="dropdown-divider" /></li>
+			                <li><a class="dropdown-item" href="<%=contextPath%>/member/logout.me">로그아웃</a></li>
+			            </ul>
+			        </li>
+			    </ul>
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -59,55 +63,37 @@
                             </a>
                             <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_register.bo">수강 등록</a>
-                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo">수강 조회(수정/삭제)</a>
+                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_register.bo?classroomCenter=/view_classroom/courseRegister.jsp">수강 등록</a>
+                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo?classroomCenter=/view_classroom/courseSearch.jsp">수강 조회(수정/삭제)</a>
                                 </nav>
                             </div>
 							
 							<!-- 사이드바 나의 수업 영역 -->
-                            <div class="sb-sidenav-menu-heading">My Course</div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                수업 1
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="layout-static.html"></a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">과제</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                                수업 2
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                        Authentication
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="login.html">Login</a>
-                                            <a class="nav-link" href="register.html">Register</a>
-                                            <a class="nav-link" href="password.html">Forgot Password</a>
-                                        </nav>
-                                    </div>
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                        Error
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="401.html">401 Page</a>
-                                            <a class="nav-link" href="404.html">404 Page</a>
-                                            <a class="nav-link" href="500.html">500 Page</a>
-                                        </nav>
-                                    </div>
-                                </nav>
-                            </div>
+                            <!-- 사이드바 나의 수업 영역 -->
+							<div class="sb-sidenav-menu-heading">My Courses</div>
+							
+							<%-- <%
+							    List<CourseVo> courseList = (List<CourseVo>) request.getAttribute("courseList");
+							    if (courseList != null) {
+							        int courseIndex = 1;
+							        for (CourseVo course : courseList) {
+							%> --%>
+							<%--             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCourse<%= courseIndex %>" aria-expanded="false" aria-controls="collapseCourse<%= courseIndex %>">
+							                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+							                <%= course.getCourseName() %> <!-- 강의 이름 표시 -->
+							                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+							            </a>
+							            <div class="collapse" id="collapseCourse<%= courseIndex %>" aria-labelledby="headingCourse<%= courseIndex %>" data-bs-parent="#sidenavAccordion">
+							                <nav class="sb-sidenav-menu-nested nav">
+							                    <a class="nav-link" href="assignment.html">과제</a> <!-- 과제 링크 예시 -->
+							                    <a class="nav-link" href="material.html">자료</a> <!-- 강의 자료 링크 예시 -->
+							                </nav>
+							            </div> --%>
+							<%-- <%
+							            courseIndex++;
+							        }
+							    }
+							%> --%>
                             
                             <!-- 사이드바 성적 조회 영역 -->
                             <div class="sb-sidenav-menu-heading">SCORE</div>

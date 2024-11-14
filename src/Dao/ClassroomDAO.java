@@ -10,6 +10,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import Vo.ClassroomVo;
+import Vo.CourseVo;
 
 
 public class ClassroomDAO {
@@ -74,9 +75,9 @@ public class ClassroomDAO {
 
 	//------------
 	// DB의 classroom 테이블에 저장된 모든 열 조회
-	public ArrayList getClassroomAllInfo() {
+	public ArrayList<ClassroomVo> getClassroomAllInfo() {
 		
-		ArrayList list = new ArrayList();
+		ArrayList<ClassroomVo> list = new ArrayList<ClassroomVo>();
 		ClassroomVo vo;
 		
 		try {
@@ -138,6 +139,121 @@ public class ClassroomDAO {
 		}
 		
 		return result;
+	}
+
+	//------------
+	// 해당 교수의 강의를 DB에서 찾아 반환하는 함수
+	public ArrayList<CourseVo> courseSearch(String professor_id) {
+		
+		System.out.println(professor_id);
+		
+		ArrayList<CourseVo> courseList = new ArrayList<CourseVo>();
+		CourseVo course;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			String sql = "select c.course_id, c.course_name, r.room_id, r.capacity, r.equipment from course c "
+					   + "inner join classroom r on c.room_id = r.room_id "
+					   + "where professor_id=?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, professor_id);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				course = new CourseVo();
+				course.setCourse_id(rs.getString("course_id"));
+				course.setCourse_name(rs.getString("course_name"));
+				
+				// ClassroomVo 객체 생성 후 강의실 정보를 설정
+				ClassroomVo classroom = new ClassroomVo();
+				classroom.setRoom_id(rs.getString("room_id"));
+				classroom.setCapacity(rs.getInt("capacity"));
+				classroom.setEquipment(rs.getString("equipment"));
+				
+				// CourseVo에 ClassroomVo 객체를 설정
+				course.setClassroom(classroom);
+
+				courseList.add(course);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 courseSearch메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return courseList;
+	}
+
+	//-----------
+	// DB에서 강의를 삭제하는 함
+	public int courseDelete(String course_id) {
+		
+		int result = 0;
+		
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			sql = "DELETE FROM course WHERE course_id=?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, course_id);
+            
+			result = pstmt.executeUpdate();
+			System.out.println(result);
+			
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 courseDelete메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return result;
+		
+	}
+
+	public int updateCourse(String course_id, String course_name, String room_id) {
+		
+		int result = 0;
+		
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			sql = "UPDATE course SET "
+					+ "course_name=?, room_id=? "
+					+ "WHERE course_id=?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, course_name);
+			pstmt.setString(2, room_id);
+			pstmt.setString(3, course_id);
+            
+			result = pstmt.executeUpdate();
+			
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 courseDelete메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return result;
+		
 	}
 
 }
