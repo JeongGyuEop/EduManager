@@ -1,7 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%
-    String contextPath = request.getContextPath();
+	String contextPath = request.getContextPath();
 %>
 <!DOCTYPE html>
 <html>
@@ -9,24 +10,21 @@
 <meta charset="UTF-8">
 <title>EditDeleteMajor</title>
 <!-- jQuery 최신 버전 추가 -->
-<script src="https://code.jquery.com/jquery-latest.min.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"
+	crossorigin="anonymous"></script>
 <script type="text/javascript">
-$(document).ready(function () {
-    // 모든 input에 대해 keydown과 blur 이벤트 핸들러 설정
-    $(document).on("keydown blur", "input", function(event) {
-        handleInputEvent(event, $(this));
-    });
-});
-
-// 입력 이벤트를 처리하는 공통 함수
 function handleInputEvent(event, $input) {
     var td = $input.closest("td")[0];
-    if (event.type === "keydown" && event.key === "Enter") {
+    if (event.type === "keydown" && (event.key === "Enter" || event.which === 13 || event.keyCode === 13)) {
         // 엔터키가 눌렸을 때 업데이트 수행
+        event.stopPropagation(); // 이벤트 전파 중지
+        event.preventDefault();  // 기본 동작 방지
         updateAllValues(td);
     } else if (event.type === "blur") {
-        // 포커스가 해제되었을 때에도 동일한 업데이트 수행
-        updateAllValues(td);
+        // 이미 엔터키로 처리된 경우가 아니면 업데이트 수행
+        if (!event.defaultPrevented) {
+            updateAllValues(td);
+        }
     }
 }
 
@@ -40,17 +38,22 @@ function updateAllValues(td) {
     var updatedValue = input.value.trim();
     var originalValue = td.getAttribute("data-original-value");
 
+    // td.cellIndex 값을 확인
+    console.log("td.cellIndex:", td.cellIndex);
+
     // 유효성 검사 필요 여부 결정
     if (td.cellIndex === 2) { // 전화번호 칸이라면
         if (!validateForm(updatedValue)) {
             // 유효하지 않으면 원래 값으로 복원
             td.innerHTML = originalValue;
+            td.setAttribute("onclick", "makeEditable(this)"); // onclick 핸들러 복원
             return;
         }
     }
 
     // 유효하면 td에 값을 업데이트
     td.innerHTML = updatedValue;
+    td.setAttribute("onclick", "makeEditable(this)"); // onclick 핸들러 복원
 
     // 데이터 수집
     var row = td.parentElement;
@@ -80,12 +83,15 @@ function updateAllValues(td) {
                 alert("업데이트에 실패했습니다. 다시 시도해 주세요.");
                 // 업데이트 실패 시 원래 값으로 되돌림
                 td.innerHTML = originalValue;
+                td.setAttribute("onclick", "makeEditable(this)"); // onclick 핸들러 복원
             }
         }
     };
 }
 
 function validateForm(telNumber) {
+    telNumber = telNumber.trim();
+    console.log("validateForm called with telNumber:", telNumber);
     const telRegex = /^\d{2,3}-\d{3,4}-\d{4}$/;
 
     if (!telRegex.test(telNumber)) {
@@ -96,7 +102,11 @@ function validateForm(telNumber) {
 }
 
 function makeEditable(td) {
-    var originalValue = td.innerText.trim();
+    var originalValue = td.getAttribute("data-original-value");
+    if (originalValue === null) {
+        originalValue = td.textContent.trim(); // td.textContent 사용
+        td.setAttribute("data-original-value", originalValue);
+    }
 
     var input = document.createElement("input");
     input.type = "text";
@@ -104,7 +114,11 @@ function makeEditable(td) {
 
     td.innerHTML = "";
     td.appendChild(input);
-    td.setAttribute("data-original-value", originalValue); // 원래 값을 저장해 둠
+
+    // 이벤트 핸들러 직접 추가
+    $(input).on("keydown", function(event) {
+        handleInputEvent(event, $(this));
+    });
 
     input.focus();
 }
@@ -112,29 +126,29 @@ function makeEditable(td) {
 </script>
 </head>
 <body>
-    <h3>수정 및 삭제할 학과 이름 또는 학과 번호를 입력해주세요.</h3>
-    <form action="<%=contextPath%>/MI/searchMajor.do" method="get">
-        <label for="searchMajor">학과 이름 또는 학과 번호:</label>
-        <input type="text" id="searchMajor" name="searchMajor" placeholder="학과 이름 또는 번호를 입력하세요">
-        <input type="submit" value="검색">
-    </form>
+	<h3>수정 및 삭제할 학과 이름 또는 학과 번호를 입력해주세요.</h3>
+	<form action="<%=contextPath%>/MI/searchMajor.do" method="get">
+		<label for="searchMajor">학과 이름 또는 학과 번호:</label> <input type="text"
+			id="searchMajor" name="searchMajor" placeholder="학과 이름 또는 번호를 입력하세요">
+		<input type="submit" value="검색">
+	</form>
 
-    <h4>검색 결과</h4>
-    <p>수정 : 학과 이름 또는 전화 번호 클릭</p>
-    <p>삭제 : 학과 이름을 공백으로 두면 해당 학과를 삭제</p>
-    <table border="1">
-        <tr>
-            <th>학과 코드</th>
-            <th>학과 이름</th>
-            <th>학과 전화번호</th>
-        </tr>
-        <c:forEach var="major" items="${searchList}">
-            <tr>
-                <td>${major.majorCode}</td>
-                <td onclick="makeEditable(this)">${major.majorName}</td>
-                <td onclick="makeEditable(this)">${major.majorTel}</td>
-            </tr>
-        </c:forEach>
-    </table>
+	<h4>검색 결과</h4>
+	<p>수정 : 학과 이름 또는 전화 번호 클릭</p>
+	<p>삭제 : 학과 이름을 공백으로 두면 해당 학과를 삭제</p>
+	<table border="1">
+		<tr>
+			<th>학과 코드</th>
+			<th>학과 이름</th>
+			<th>학과 전화번호</th>
+		</tr>
+		<c:forEach var="major" items="${searchList}">
+			<tr>
+				<td>${major.majorCode}</td>
+				<td onclick="makeEditable(this)">${major.majorName}</td>
+				<td onclick="makeEditable(this)">${major.majorTel}</td>
+			</tr>
+		</c:forEach>
+	</table>
 </body>
 </html>

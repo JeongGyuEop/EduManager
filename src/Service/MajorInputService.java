@@ -61,20 +61,18 @@ public class MajorInputService {
 
 		// majorCode가 존재하는지 여부를 미리 저장하여 사용
 		boolean isCodeExists = (majorInputDAO.majorSearchValidationCode(editMajorCode) == EXISTS);
-		boolean isNameExists = (majorInputDAO.majorSearchValidationName(editMajorName) != EXISTS);
+		boolean isNameExists = (majorInputDAO.majorSearchValidationName(editMajorName) == EXISTS);
 
-		if (isCodeExists) {
-			if (isNameExists) {
-				// 학과 코드가 존재하고, 학과 이름이 중복되지 않은 경우: 수정 작업을 수행하고 결과 반환
-				return majorInputDAO.editMajor(editMajorCode, editMajorName, editMajorTel);
-			} else {
-				// 학과 이름이 이미 존재하는 경우: 중복을 나타내는 EXISTS 반환
-				return EXISTS;
-			}
+		if (isCodeExists && !isNameExists) {
+		    // 코드가 존재하고 이름이 존재하지 않음 (중복 아님), 수정 작업 진행
+		    return majorInputDAO.editMajor(editMajorCode, editMajorName, editMajorTel);
+		} else if (isNameExists) {
+		    // 이름이 존재함 (중복), 수정 작업 불가
+		    return EXISTS;
+		} else {
+		    // 코드가 존재하지 않거나 기타 실패
+		    return FAILURE;
 		}
-
-		// 학과 코드가 존재하지 않는 경우 또는 위의 모든 조건에 맞지 않는 경우: FAILURE 반환
-		return FAILURE;
 	}
 
 	public JSONArray fetchMajorService() throws SQLException {
