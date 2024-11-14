@@ -228,6 +228,18 @@ public class ClassroomController extends HttpServlet {
 				    return;
 				}
 				
+	    //==========================================================================================
+				
+	    	case "/roomManage.bo":
+	    		
+	    		center = request.getParameter("center");
+	    		
+	    		request.setAttribute("center", center);
+	    		
+				nextPage = "/main.jsp";
+	    		
+	    		break;		
+	    		
 		//==========================================================================================
 				
 	    	default:
