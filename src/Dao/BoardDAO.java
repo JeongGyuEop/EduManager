@@ -254,7 +254,7 @@ public class BoardDAO {
 	
 	//삭제할 글번호를 매개변수로 받아 글(레코드)삭제후 
 	//삭제에 성공하면 "삭제성공" 반환 실패하면 "삭제실패" 반환 하는 메소드
-	public String deleteBoard(String delete_idx) {
+	public String deleteBoard(String delete_notice_id) {
 		
 		//"삭제성공" 또는 "삭제실패" 메세지 저장할 변수
 		String result = null;
@@ -270,7 +270,7 @@ public class BoardDAO {
 							WHERE 조건
 							*/
 			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, Integer.parseInt(delete_idx));
+			pstmt.setInt(1, Integer.parseInt(delete_notice_id));
 			
 			int val = pstmt.executeUpdate();
 			
@@ -325,43 +325,13 @@ public void replyInsertBoard(String super_notice_id, String reply_writer, String
 
 	    
 
-	} catch (Exception e) {
-		System.out.println("BoardDAO의 replyInsertBoard메소드");
-		e.printStackTrace();
-	} finally {
-	    closeResource();
-	}
+		} catch (Exception e) {
+			System.out.println("BoardDAO의 replyInsertBoard메소드");
+			e.printStackTrace();
+		} finally {
+		    closeResource();
+		}
 	
 	}
-public boolean roleCheck(String notice_id_3, String role_) {
-	
-	boolean result3 = false;
-	
-	try {
-		con = ds.getConnection();//DB연결
-		 
-		 
-		 String sql = "select * from user "
-				    +" where role = ?  ";
-		 pstmt = con.prepareStatement(sql);
-		 pstmt.setString(1, role_);//입력해서 전달받은 글의 비밀번호
-		 
-		 rs = pstmt.executeQuery();
-		 
-		 if(rs.next()) {//입력한 비밀번호로 한줄이 조회되니 비밀번호가 저장되어 있음
-			 result3 = true;
-		 }else {
-			 result3 = false;
-		 } 
-		
-		
-	} catch (Exception e) {
-		System.out.println("BoardDAO의 roleCheck 메소드 오류: ");
-		e.printStackTrace();
-	}finally {
-		closeResource();
-	}
-	
-	return result3;
-}
+
 }

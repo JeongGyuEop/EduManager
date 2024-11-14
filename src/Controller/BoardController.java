@@ -125,6 +125,7 @@ public class BoardController extends HttpServlet {
 			 //요청한 값 얻기 (조회를 위해 선택한 Option의 값 , 입력한 검색어)
 			 String key = request.getParameter("key");
 			 String word = request.getParameter("word");
+			 String role_ = (String)session.getAttribute("role");
 				
 				
 			 //부장 호출
@@ -134,8 +135,15 @@ public class BoardController extends HttpServlet {
 		     //VIEW중앙화면에 조회된 글목록을 보여주기 위해
 		     //request내장객체에 조회된 정보 바인딩
 		     request.setAttribute("list", list);
-		     //VIEW중앙화면 주소경로 바인딩
-		     request.setAttribute("center", "common/notice/list.jsp");
+		     
+		     if(role_.equals("관리자")) {
+			     //VIEW중앙화면 주소경로 바인딩
+			     request.setAttribute("center", "view_admin/noticeManage.jsp");
+		     }else if(role_.equals("교수")){
+		    	 request.setAttribute("center", "view_professor/noticeProfessor.jsp");
+		     }else {
+		    	 request.setAttribute("center", "view_student/noticeStudent.jsp");
+		     }
 		     
 		     //재요청할 메인 페이지 주소 경로 변수에 저장
 		     nextPage = "/main.jsp";
@@ -227,31 +235,7 @@ public class BoardController extends HttpServlet {
 				nextPage="/main.jsp";
 				
 			    break;
-			    
-			case "/roleCheck.do": //글 수정 또는 삭제를 위해 입력한 글의 비밀번호가
-				 //DB에 존재하는지 체크 요청
-				//요청한 값 2개 얻기
-				
-				String notice_id_3 = request.getParameter("notice_id");
-				String role_ = (String)session.getAttribute("role");
-				
-				System.out.println(role_);
-				//부장 호출
-				//글을 수정, 삭제 하기 위한  수정버튼과 삭제버튼 활성화를 위해
-				//입력한 글의 비밀번호가 DB에 있는지 체크가 위해 호출!
-				boolean resultRole = boardservice.serviceRoleCheck(notice_id_3,role_);
-				//true :입력한 글의 비밀번호가 DB에 존재함
-				//false:입력한 글의 비밀번호가 DB에 존재하지 않음 
-				
-				if(resultRole == true) {
-					out.write("관리자맞음");
-					return;
-				}else {//false
-					out.write("관리자아님");
-					return;
-				}
-			    
-			
+			    	
 			case "/updateBoard.do": //글 수정 요청 
 				
 				//글 수정시 입력한 값 얻기
@@ -278,13 +262,13 @@ public class BoardController extends HttpServlet {
 				
 			case "/deleteBoard.do": //글 삭제  2단계 요청 주소일때 
 				//삭제를 위해 요청한 글번호 얻기
-				String delete_idx = request.getParameter("notice_id");
+				String delete_notice_id = request.getParameter("notice_id");
 				
 				//부장 호출
 				//글삭제 요청!시 삭제할 글번호를 전달해 
 				//삭제에 성공하면 "삭제성공" 메세지 반환받고,
 				//삭제에 실패하면 "삭제실패" 메세지를 반환받자
-				String result__ = boardservice.serviceDeleteBoard(delete_idx);
+				String result__ = boardservice.serviceDeleteBoard(delete_notice_id);
 				
 				out.write(result__); //AJAX
 				
@@ -326,6 +310,7 @@ public class BoardController extends HttpServlet {
 				
 				String reply_id = (String)session.getAttribute("id");
 				
+				String role_1 = (String)session.getAttribute("role");
 				
 				//부장님 호출
 
@@ -335,7 +320,14 @@ public class BoardController extends HttpServlet {
 				//답변글  추가에 성공하면 
 				//다시 전체 글목록 조회 해서 보여주기 위한 재요청 주소를 
 				//nextPage변수에 저장
-				nextPage = "/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock)";
+				 if(role_1.equals("관리자")) {
+					 nextPage = "/Board/list.bo?center=/view_admin/noticeManage.jsp";
+			     }else if(role_1.equals("교수")){
+			    	 nextPage = "/Board/list.bo?center=/view_professor/noticeProfessor.jsp";
+			     }else {
+			    	 nextPage = "/Board/list.bo?center=/view_student/noticeStudent.jsp";
+			     }
+				
 				
 				break;
 				

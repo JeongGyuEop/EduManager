@@ -56,10 +56,10 @@ public class BoardService {
 	}
 
 	// 글 삭제 요청 DELETE 하기 위한 메소드 호출!
-	public String serviceDeleteBoard(String delete_idx) {
+	public String serviceDeleteBoard(String delete_notice_id) {
 		
 			   //삭제에 성공하면 "삭제성공" 반환 실패하면 "삭제실패" 반환 
-		return boarddao.deleteBoard(delete_idx);
+		return boarddao.deleteBoard(delete_notice_id);
 	}
 
 	//DB의 Board테이블에 입력한 답변글 추가 하기 위해 호출!
@@ -67,10 +67,7 @@ public class BoardService {
 		boarddao.replyInsertBoard(super_notice_id, reply_writer, reply_title, reply_content, reply_id);
 	}
 
-	public boolean serviceRoleCheck(String notice_id_3, String role_) {
-		
-		return boarddao.roleCheck(notice_id_3, role_);
-	}
+
 
 		
 }
