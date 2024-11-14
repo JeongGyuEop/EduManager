@@ -1,6 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
     String contextPath = request.getContextPath();
 %>
@@ -10,17 +9,11 @@
 <head>
     <meta charset="utf-8">
     <title>학사 일정</title>
-    <!-- Bootstrap CSS 추가 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FullCalendar CSS 추가 -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-    <!-- Bootstrap JS 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- FullCalendar JS 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <!-- FullCalendar 한국어 로케일 설정을 위한 추가 스크립트 -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
-    <!-- jQuery 라이브러리 추가 (AJAX 요청을 위해 사용) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -28,53 +21,50 @@
     <div class="container mt-5">
         <div class="h-100 p-5 bg-body-tertiary rounded-3">
             <h2>학사 일정</h2>
-            <!-- FullCalendar가 표시될 div 요소 -->
             <div id="calendar"></div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 캘린더가 삽입될 요소를 가져옴
+            // 캘린더를 표시할 요소를 선택하고 FullCalendar 초기화
             const calendarEl = document.getElementById('calendar');
-            
-            // FullCalendar 인스턴스를 생성
             const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth', // 초기 화면을 월간 달력으로 설정
-                headerToolbar: { // 캘린더 헤더 툴바 설정
-                    left: 'prev,next today', // 왼쪽에 이전, 다음, 오늘 버튼 배치
-                    center: 'title', // 중앙에 타이틀 배치
-                    right: 'dayGridMonth,dayGridWeek' // 오른쪽에 월간, 주간 보기 버튼 배치
+                initialView: 'dayGridMonth', // 기본 보기 형식 설정 (월간 보기)
+                headerToolbar: {
+                    left: 'prev,next today', // 이전, 다음, 오늘 버튼 표시
+                    center: 'title', // 캘린더 제목을 중앙에 표시
+                    right: 'dayGridMonth,timeGridWeek' // 월간 및 주간 보기 버튼 표시
                 },
                 locale: 'ko', // 한국어 로케일 설정
                 events: function(fetchInfo, successCallback, failureCallback) {
-                    // 이벤트 데이터를 서버에서 가져오는 AJAX 요청
+                    // 서버로부터 이벤트 데이터를 가져오는 함수
                     $.ajax({
-                    	url: '<%=request.getContextPath()%>/Board/boardCalendar.bo',
-                        type: 'GET', // 요청 방식은 GET
-                        dataType: 'json', // 반환 데이터 타입은 JSON
+                        url: '<%=contextPath%>/Board/boardCalendar.bo', // 이벤트 데이터를 가져올 URL
+                        type: 'GET',
+                        dataType: 'json',
                         data: {
-                            start: fetchInfo.startStr, // 요청 시작 날짜
-                            end: fetchInfo.endStr, // 요청 종료 날짜
-                            action: 'getEvents' // 요청 액션명 지정
+                            start: fetchInfo.startStr, // 요청할 이벤트의 시작 날짜
+                            end: fetchInfo.endStr, // 요청할 이벤트의 종료 날짜
+                            action: 'getEvents' // 서버에서의 동작 지정
                         },
                         success: function(response) {
-                            successCallback(response); // 성공 시 이벤트 데이터를 캘린더에 전달
+                            successCallback(response); // 이벤트 데이터를 성공적으로 가져온 경우 콜백 호출
                         },
-                        error: function() {
-                            failureCallback(); // 실패 시 콜백 함수 호출
+                        error: function(xhr, status, error) {
+                            console.error('이벤트 데이터를 불러오는 중 오류 발생:', error); // 오류 로그 출력
+                            failureCallback(); // 이벤트 로드 실패 콜백 호출
+                            alert('일정 데이터를 불러오는 데 실패했습니다. 나중에 다시 시도해주세요.'); // 사용자에게 오류 알림
                         }
                     });
                 },
                 eventClick: function(info) {
-                    // 이벤트 클릭 시 알림 창으로 일정 정보 표시
+                    // 일정 클릭 시 일정의 제목과 설명을 알림창으로 표시
                     alert('일정: ' + info.event.title + '\n설명: ' + info.event.extendedProps.description);
                 },
-                height: 'auto' // 캘린더 높이를 자동으로 설정
+                height: 'auto' // 캘린더의 높이를 자동으로 설정하여 컨테이너에 맞춤
             });
-            
-            // 캘린더 렌더링
-            calendar.render();
+            calendar.render(); // 캘린더 렌더링
         });
     </script>
 </body>
