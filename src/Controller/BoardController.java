@@ -2,11 +2,8 @@ package Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.time.YearMonth;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
@@ -17,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import Dao.BoardDAO;
 import Service.BoardService;
@@ -87,6 +83,7 @@ public class BoardController extends HttpServlet {
 
 		String startDate = null;
 		String endDate = null;
+	    String month = null;
 
 		// 액션에 따라 분기 처리
 		switch (action) {
@@ -233,7 +230,7 @@ public class BoardController extends HttpServlet {
 			}
 			return;
 		case "/viewSchedule":
-            String month = request.getParameter("month");
+            month = request.getParameter("month");
             if (month != null && !month.isEmpty()) {
                 boardservice.processViewSchedule(request);
             }
@@ -241,16 +238,20 @@ public class BoardController extends HttpServlet {
             break;
 		case "/addSchedule":
 			boardservice.addSchedule(request);
-			nextPage = "/jin/calendarEdit.jsp";
-			break;
+			startDate = request.getParameter("startDate");
+		    month = startDate.substring(0, 7);
+		    response.sendRedirect(request.getContextPath() + "/Board/viewSchedule?month=" + month);
+			return;
 		case "/updateSchedule":
 			boardservice.updateSchedule(request);
-			nextPage = "/jin/calendarEdit.jsp";
-			break;
+			month = request.getParameter("month");
+			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule?month=" + URLEncoder.encode(month, "UTF-8"));
+			return;
 		case "/deleteSchedule":
 			boardservice.deleteSchedule(request);
-			nextPage = "/jin/calendarEdit.jsp";
-			break;
+			month = request.getParameter("month");
+			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule?month=" + URLEncoder.encode(month, "UTF-8"));
+			return;
 		default:
 			break;
 		}

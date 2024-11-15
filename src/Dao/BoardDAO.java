@@ -367,7 +367,7 @@ public class BoardDAO {
             closeResource();
         }
     }
-
+    
     public void updateSchedule(ScheduleVo schedule) {
         String sql = "UPDATE academic_schedule SET event_name = ?, start_date = ?, end_date = ?, description = ? WHERE schedule_id = ?";
         try {
