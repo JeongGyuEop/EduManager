@@ -264,11 +264,11 @@
 	            if (role === "관리자") {
 	                $("#update").css("visibility", "visible");
 	                $("#delete").css("visibility", "visible");
-	                /* $("#reply").css("visibility", "visible"); */
+	                $("#reply").css("visibility", "visible");
 	            } else {
 	                $("#update").css("visibility", "hidden");
 	                $("#delete").css("visibility", "hidden");
-	                /* $("#reply").css("visibility", "hidden"); */
+	                $("#reply").css("visibility", "hidden");
 
 	                // 제목과 내용 입력창 비활성화
 	                $("#title").prop("disabled", true);
@@ -291,10 +291,8 @@
 	             
 	             if (role === "관리자") {
 	                 url = "<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>";
-	             } else if (role === "학생") {
-	                 url = "<%=contextPath%>/Board/list.bo?center=/view_student/noticeStudent.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>";
-	             } else if (role === "교수") {
-	                 url = "<%=contextPath%>/Board/list.bo?center=/view_professor/noticeProfessor.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>";
+	             } else {
+	                 url = "<%=contextPath%>/Board/list.bo?center=/common/notice/list.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>";
 	             } 
 	             
 	             // 설정된 URL로 이동

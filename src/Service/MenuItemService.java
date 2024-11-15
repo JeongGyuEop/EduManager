@@ -45,7 +45,7 @@ public class MenuItemService {
 //                new MenuItemVo("성적조회", "gradeCheck.jsp")
 //            )),
             new MenuItemVo("마이페이지", "myPage.jsp"),
-            new MenuItemVo("공지사항", "/Board/list.bo?center=/view_student/noticeStudent.jsp")
+            new MenuItemVo("공지사항", "/Board/list.bo?center=/common/notice/list.jsp")
         ));
 
         // 교수 메뉴
@@ -56,7 +56,7 @@ public class MenuItemService {
 //                new MenuItemVo("과제 관리", "assignmentManage.jsp"),
 //                new MenuItemVo("공지사항 등록", "noticeRegister.jsp")
 //            )),
-            new MenuItemVo("공지 사항", "/Board/list.bo?center=/view_professor/noticeProfessor.jsp"),
+            new MenuItemVo("공지 사항", "/Board/list.bo?center=/common/notice/list.jsp"),
             new MenuItemVo("학생 관리", "studentManage.jsp")
         ));
         
