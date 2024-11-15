@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 //import Dao.CarDAO;
 import Service.StudentService;
 import Service.MenuItemService;
@@ -169,17 +168,16 @@ public class StudentController extends HttpServlet {
 			return;
 
 		// ==========================================================================================
-			
-			 // 마이페이지 이동 처리
-		case "/myPage.bo":
-		    String sessionUserId = (String) session.getAttribute("id");
-		    StudentVo member = studentservice.getStudentById(sessionUserId);
-		    request.setAttribute("member", member);
-		    center = "/view_admin/studentManager/myPage.jsp";
-		    request.setAttribute("center", center);
-		    nextPage = "/main.jsp";
-		    break;
 
+		// 마이페이지 이동 처리
+		case "/myPage.bo":
+			String sessionUserId = (String) session.getAttribute("id");
+			StudentVo member = studentservice.getStudentById(sessionUserId);
+			request.setAttribute("member", member);
+			center = "/view_admin/studentManager/myPage.jsp";
+			request.setAttribute("center", center);
+			nextPage = "/main.jsp";
+			break;
 
        // 학생 본인 정보 수정 처리
        case "/updateMyInfo.do":
