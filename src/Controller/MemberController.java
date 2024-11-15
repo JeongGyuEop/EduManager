@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 //import Dao.CarDAO;
 import Service.MemberService;
 import Service.MenuItemService;
+
 import Vo.MemberVo;
 //import Vo.CarConfirmVo;
 //import Vo.CarListVo;
@@ -31,7 +31,6 @@ import Vo.MemberVo;
 
 @WebServlet("/member/*")
 public class MemberController extends HttpServlet {
-
 	// 부장
 	MemberService memberservice;
 
@@ -118,16 +117,22 @@ public class MemberController extends HttpServlet {
 			
 			
 
-			if (role.equals("학생")) {
-				// 재요청할 전체 메인화면 주소를 저장
-				center = "/view_student/studentHome.jsp";
-			} else if (role.equals("교수")) {
-				// 재요청할 전체 메인화면 주소를 저장
-				center = "/view_professor/professorHome.jsp";
-			} else if (role.equals("관리자")) {
-				// 재요청할 전체 메인화면 주소를 저장
-				center = "/view_admin/adminHome.jsp";
-			}
+			if(role.equals("학생")) {
+    			// 재요청할 전체 메인화면 주소를 저장
+    			center = "/view_student/studentHome.jsp";
+
+			    session.setAttribute("student_id", userInfo.get("student_id"));
+			    
+    		}else if(role.equals("교수")) {
+    			// 재요청할 전체 메인화면 주소를 저장
+    			center = "/view_professor/professorHome.jsp";
+
+			    session.setAttribute("professor_id", userInfo.get("professor_id"));
+			    
+    		}else if(role.equals("관리자")) {
+    			// 재요청할 전체 메인화면 주소를 저장
+    			center = "/view_admin/adminHome.jsp";
+    		}
 
 			// MenuItemService를 사용하여 역할에 맞는 메뉴 HTML 생성
 			MenuItemService menuService = new MenuItemService();
