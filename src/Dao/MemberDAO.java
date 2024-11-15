@@ -147,5 +147,5 @@ public class MemberDAO {
 			}
 			return vo;//BoardService로 리턴(보고)
 		}
-
+	
 }// MemberDAO 클래스

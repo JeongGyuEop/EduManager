@@ -113,6 +113,9 @@ public class MemberController extends HttpServlet {
 
 			// 로그인 성공 (check 값이 "1"인 경우)
 			String role = userInfo.get("role");
+			
+			
+			
 
 			if(role.equals("학생")) {
     			// 재요청할 전체 메인화면 주소를 저장
@@ -197,9 +200,11 @@ public class MemberController extends HttpServlet {
 			break;
 
 		// ==========================================================================================
-		default:
-			break;
-		}
+
+        default:
+            nextPage = "/main.jsp";
+            break;
+    }
 
 		// 디스패처 방식 포워딩(재요청)
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
