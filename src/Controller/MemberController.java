@@ -114,16 +114,22 @@ public class MemberController extends HttpServlet {
 			// 로그인 성공 (check 값이 "1"인 경우)
 			String role = userInfo.get("role");
 
-			if (role.equals("학생")) {
-				// 재요청할 전체 메인화면 주소를 저장
-				center = "/view_student/studentHome.jsp";
-			} else if (role.equals("교수")) {
-				// 재요청할 전체 메인화면 주소를 저장
-				center = "/view_professor/professorHome.jsp";
-			} else if (role.equals("관리자")) {
-				// 재요청할 전체 메인화면 주소를 저장
-				center = "/view_admin/adminHome.jsp";
-			}
+			if(role.equals("학생")) {
+    			// 재요청할 전체 메인화면 주소를 저장
+    			center = "/view_student/studentHome.jsp";
+
+			    session.setAttribute("student_id", userInfo.get("student_id"));
+			    
+    		}else if(role.equals("교수")) {
+    			// 재요청할 전체 메인화면 주소를 저장
+    			center = "/view_professor/professorHome.jsp";
+
+			    session.setAttribute("professor_id", userInfo.get("professor_id"));
+			    
+    		}else if(role.equals("관리자")) {
+    			// 재요청할 전체 메인화면 주소를 저장
+    			center = "/view_admin/adminHome.jsp";
+    		}
 
 			// MenuItemService를 사용하여 역할에 맞는 메뉴 HTML 생성
 			MenuItemService menuService = new MenuItemService();
@@ -189,78 +195,6 @@ public class MemberController extends HttpServlet {
 			out.println("</body></html>");
 
 			break;
-
-		// ==============================================================================
-
-		case "/studentRegister.do":
-			// 학생 등록 서비스 호출
-			int result = memberservice.registerStudent(request);
-			// request.setAttribute("result", result);
-
-			if (result == 1) {
-				request.setAttribute("message", "학생 정보가 성공적으로 추가되었습니다.");
-			} else {
-				request.setAttribute("message", "학생 정보를 추가하는 데 실패했습니다.");
-			}
-
-			center = "/view_admin/studentManager/viewStudentList.jsp";
-
-			request.setAttribute("center", center);
-			nextPage = "/main.jsp";
-			break;
-
-		// ==========================================================================================
-
-		case "/viewStudentList.do": // 전체 학생 조회
-			List<MemberVo> students = memberservice.getAllStudents();
-			request.setAttribute("students", students);
-			nextPage = "/view_admin/studentManager/viewStudentList.jsp";
-			break;
-
-		// ==========================================================================================
-
-		case "/studentManage.bo": // 전체 학생 조회
-
-			center = request.getParameter("center");
-
-			request.setAttribute("center", center);
-
-			nextPage = "/main.jsp";
-			break;
-
-		// ==========================================================================================
-
-		case "/editStudent.do": // 학생 정보 수정
-
-			String userId = request.getParameter("user_id");
-			MemberVo student = memberservice.getStudentById(userId);
-			request.setAttribute("student", student);
-			nextPage = "/view_admin/studentManager/editStudent.jsp";
-
-			break;
-
-		// ==========================================================================================
-		case "/viewStudent.do":
-			userId = request.getParameter("user_id");
-			student = memberservice.getStudentById(userId);
-			request.setAttribute("student", student);
-			nextPage = "/view_admin/studentManager/viewStudent.jsp";
-			break;
-		// ==========================================================================================
-		case "/updateStudent.do": // 수정했을때 보여주는 메세지
-			boolean isUpdated = memberservice.updateStudent(request);
-			String updateMessage = isUpdated ? "학생 정보가 성공적으로 수정되었습니다." : "학생 정보 수정에 실패했습니다.";
-			response.sendRedirect(request.getContextPath() + "/member/viewStudentList.do?message="
-					+ URLEncoder.encode(updateMessage, "UTF-8"));
-			return;
-		// ==========================================================================================
-		case "/deleteStudent.do": // 학생 정보 삭제
-			String studentId = request.getParameter("student_id");
-			boolean isDeleted = memberservice.deleteStudent(studentId);
-			String deleteMessage = isDeleted ? "학생 정보가 성공적으로 삭제되었습니다." : "학생 정보 삭제에 실패했습니다.";
-			response.sendRedirect(request.getContextPath() + "/member/viewStudentList.do?message="
-					+ URLEncoder.encode(deleteMessage, "UTF-8"));
-			return;
 
 		// ==========================================================================================
 		default:

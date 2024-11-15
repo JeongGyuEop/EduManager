@@ -21,14 +21,14 @@ public class MenuItemService {
 		
 		// 관리자 메뉴
         roleMenuMap.put("관리자", Arrays.asList(
-            new MenuItemVo("사용자 관리", "/member/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp", Arrays.asList(
-                new MenuItemVo("학생관리", "/member/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp"),
-                new MenuItemVo("교수관리", "professorManage.jsp"),
+            new MenuItemVo("사용자 관리", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp", Arrays.asList(
+                new MenuItemVo("학생관리", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp"),
+                new MenuItemVo("교수관리", "/professor/professorAdd.bo?center=/view_admin/professorManager/professoradd.jsp"),
                 new MenuItemVo("관리자 관리", "adminManage.jsp")
             )),
             new MenuItemVo("학사 관리", "departmentManage.jsp", Arrays.asList(
                 new MenuItemVo("학과 관리", "departmentManage.jsp"),
-                new MenuItemVo("강의실 관리", "classroomManage.jsp")
+                new MenuItemVo("강의실 관리", "/classroom/roomManage.bo?center=/view_admin/classroomManage.jsp")
             )),
             new MenuItemVo("정보 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp", Arrays.asList(
                 new MenuItemVo("공지사항 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp"),
@@ -38,7 +38,7 @@ public class MenuItemService {
         
         // 학생 메뉴
         roleMenuMap.put("학생", Arrays.asList(
-            new MenuItemVo("강의실", "/classroom/studentClassroom.bo?"),
+            new MenuItemVo("강의실", "/classroom/classroom.bo?classroomCenter=studentMyCourse.jsp"),
 //            , Arrays.asList(
 //                new MenuItemVo("수강신청", "courseRegister.jsp"),
 //                new MenuItemVo("과제제출", "assignmentSubmit.jsp"),
@@ -50,7 +50,7 @@ public class MenuItemService {
 
         // 교수 메뉴
         roleMenuMap.put("교수", Arrays.asList(
-            new MenuItemVo("강의실", "/classroom/professorClassroom.bo?"),
+            new MenuItemVo("강의실", "/classroom/classroom.bo?classroomCenter=professorMyCourse.jsp"),
 //            , Arrays.asList(
 //                new MenuItemVo("강의 개설", "lectureOpen.jsp"),
 //                new MenuItemVo("과제 관리", "assignmentManage.jsp"),

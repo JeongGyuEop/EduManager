@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="Vo.MemberVo" %>
+<%@ page import="Vo.StudentVo" %>
 <%@ page import="java.util.List" %>
 <html>
 <head>
@@ -41,9 +41,9 @@
     </tr>
 
     <%
-        List<MemberVo> students = (List<MemberVo>) request.getAttribute("students");
+        List<StudentVo> students = (List<StudentVo>) request.getAttribute("students");
         if (students != null && !students.isEmpty()) {
-            for (MemberVo student : students) {
+            for (StudentVo student : students) {
     %>
                 <tr>
                     <td><%= student.getStudent_id() %></td>
