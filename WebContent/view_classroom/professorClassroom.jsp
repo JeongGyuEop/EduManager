@@ -112,7 +112,7 @@
                             <div class="sb-sidenav-menu-heading">SCORE</div>
                             <a class="nav-link" href="charts.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                성적 조회
+                                성적 관리
                             </a>
                             <a class="nav-link" href="tables.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
