@@ -1,5 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+
+<%
+	request.setCharacterEncoding("UTF-8");
+	String contextPath = request.getContextPath();
+
+%>
+
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -63,7 +70,7 @@
     <div class="container" id="custom-container">
         <h2 class="header-title"><i class="fas fa-chalkboard"></i> 강의실 등록</h2>
         
-        <form action="registerClassroom" method="post">
+        <form action="<%=contextPath %>/classroom/roomRegister.do" method="post">
             <div class="form-group">
                 <label for="roomId"><i class="fas fa-door-open form-icon"></i>강의실 ID</label>
                 <input type="text" class="form-control" id="roomId" name="room_id" required placeholder="예: R101">

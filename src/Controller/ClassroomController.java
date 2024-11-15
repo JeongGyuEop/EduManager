@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.el.ListELResolver;
 import javax.servlet.RequestDispatcher;
@@ -238,7 +239,21 @@ public class ClassroomController extends HttpServlet {
 	    		
 				nextPage = "/main.jsp";
 	    		
-	    		break;		
+	    		break;	
+	    		
+	    //==========================================================================================
+				
+	    	case "/roomRegister.do":
+	    		
+	    		room_id = (String) request.getParameter("room_id");
+	    		String capacity = (String) request.getParameter("capacity");
+	    		String[] equipment = request.getParameterValues("equipment[]");
+	    		
+	    		System.out.println(room_id);
+	    		System.err.println(capacity);
+	    		System.out.println(Arrays.toString(equipment));
+	    		
+	    		break;
 	    		
 		//==========================================================================================
 				
