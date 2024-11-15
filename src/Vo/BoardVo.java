@@ -4,9 +4,9 @@ import java.sql.Date;
 
 public class BoardVo {
 
-    private int notice_id, b_group, b_level, schedule_id;
-    private String author_id, title, content, event_name, description;
-    private Date created_date, start_date, end_date;
+    private int notice_id, b_group, b_level;
+    private String author_id, title, content;
+    private Date created_date;
 
     @Override
     public String toString() {
@@ -55,15 +55,6 @@ public class BoardVo {
         this.created_date = created_date;
     }
 
-    // 일정 이벤트를 위한 생성자
-    public BoardVo(int schedule_id, String event_name, String description, Date start_date, Date end_date) {
-        this.schedule_id = schedule_id;
-        this.event_name = event_name;
-        this.description = description;
-        this.start_date = start_date;
-        this.end_date = end_date;
-    }
-
     // Getter 및 Setter 메서드들
     public int getNotice_id() {
         return notice_id;
@@ -71,14 +62,6 @@ public class BoardVo {
 
     public void setNotice_id(int notice_id) {
         this.notice_id = notice_id;
-    }
-
-    public int getSchedule_id() {
-        return schedule_id;
-    }
-
-    public void setSchedule_id(int schedule_id) {
-        this.schedule_id = schedule_id;
     }
 
     public String getAuthor_id() {
@@ -103,38 +86,6 @@ public class BoardVo {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public String getEvent_name() {
-        return event_name;
-    }
-
-    public void setEvent_name(String event_name) {
-        this.event_name = event_name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getStart_date() {
-        return start_date;
-    }
-
-    public void setStart_date(Date start_date) {
-        this.start_date = start_date;
-    }
-
-    public Date getEnd_date() {
-        return end_date;
-    }
-
-    public void setEnd_date(Date end_date) {
-        this.end_date = end_date;
     }
 
     public Date getCreated_date() {

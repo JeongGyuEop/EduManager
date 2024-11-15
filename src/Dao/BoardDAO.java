@@ -13,6 +13,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import Vo.BoardVo;
+import Vo.ScheduleVo;
 
 public class BoardDAO {
 
@@ -249,8 +250,8 @@ public class BoardDAO {
 	}
 
 	// 월별 일정 조회 메서드
-	public List<BoardVo> getEventsByMonth(String year, String month) {
-		List<BoardVo> events = new ArrayList<>();
+	public List<ScheduleVo> getEventsByMonth(String year, String month) {
+		List<ScheduleVo> events = new ArrayList<>();
 		String EndDay = String.valueOf(YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).lengthOfMonth());
 		String monthStart = year + "-" + String.format("%02d", Integer.parseInt(month)) + "-01";
 		String monthEnd = year + "-" + String.format("%02d", Integer.parseInt(month)) + "-" + EndDay;
@@ -264,7 +265,7 @@ public class BoardDAO {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				BoardVo event = new BoardVo();
+				ScheduleVo event = new ScheduleVo();
 				event.setSchedule_id(rs.getInt("schedule_id"));
 				event.setEvent_name(rs.getString("event_name"));
 				event.setDescription(rs.getString("description"));
@@ -282,8 +283,8 @@ public class BoardDAO {
 	}
 
 	// 특정 기간의 일정 조회 메서드
-	public List<BoardVo> getEvents(String startDate, String endDate) {
-		List<BoardVo> events = new ArrayList<>();
+	public List<ScheduleVo> getEvents(String startDate, String endDate) {
+		List<ScheduleVo> events = new ArrayList<>();
 		String sql = "SELECT * FROM academic_schedule WHERE start_date <= ? AND end_date >= ?";
 		try {
 			con = ds.getConnection();
@@ -309,19 +310,13 @@ public class BoardDAO {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				BoardVo event = new BoardVo();
-				String scheduleIdStr = rs.getString("schedule_id");
-				try {
-					int scheduleId = Integer.parseInt(scheduleIdStr);
-					event.setSchedule_id(scheduleId);
-				} catch (NumberFormatException e) {
-					System.out.println("Invalid schedule_id format: " + scheduleIdStr);
-					continue;
-				}
-				event.setEvent_name(rs.getString("event_name"));
-				event.setDescription(rs.getString("description"));
-				event.setStart_date(rs.getDate("start_date"));
-				event.setEnd_date(rs.getDate("end_date"));
+				ScheduleVo event = new ScheduleVo(
+		                rs.getInt("schedule_id"),
+		                rs.getString("event_name"),
+		                rs.getString("description"),
+		                rs.getDate("start_date"),
+		                rs.getDate("end_date")
+		            );
 				events.add(event);
 			}
 		} catch (SQLException e) {
@@ -333,6 +328,7 @@ public class BoardDAO {
 		} finally {
 			closeResource();
 		}
+		System.out.println(events);
 		return events;
 	}
 
@@ -353,7 +349,7 @@ public class BoardDAO {
         return true;
     }
 
-    public void insertSchedule(BoardVo schedule) {
+    public void insertSchedule(ScheduleVo schedule) {
         String sql = "INSERT INTO academic_schedule (event_name, start_date, end_date, description) VALUES (?, ?, ?, ?)";
         try {
             con = ds.getConnection();
@@ -372,7 +368,7 @@ public class BoardDAO {
         }
     }
 
-    public void updateSchedule(BoardVo schedule) {
+    public void updateSchedule(ScheduleVo schedule) {
         String sql = "UPDATE academic_schedule SET event_name = ?, start_date = ?, end_date = ?, description = ? WHERE schedule_id = ?";
         try {
             con = ds.getConnection();

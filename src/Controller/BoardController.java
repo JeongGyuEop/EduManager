@@ -24,6 +24,7 @@ import Service.BoardService;
 import Service.MenuItemService;
 import Vo.BoardVo;
 import Vo.MemberVo;
+import Vo.ScheduleVo;
 
 @WebServlet("/Board/*")
 public class BoardController extends HttpServlet {
@@ -201,18 +202,20 @@ public class BoardController extends HttpServlet {
 			startDate = request.getParameter("start");
 			endDate = request.getParameter("end");
 			try {
-				List<BoardVo> eventList = boardservice.getEvents(startDate, endDate);
+				List<ScheduleVo> eventList = boardservice.getEvents(startDate, endDate);
 				Gson gson = new Gson();
 				List<JsonObject> jsonEvents = new ArrayList<>();
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				for (BoardVo event : eventList) {
+				for (ScheduleVo event : eventList) {
 					JsonObject jsonEvent = new JsonObject();
 					jsonEvent.addProperty("title", event.getEvent_name());
 					jsonEvent.addProperty("start", dateFormat.format(event.getStart_date()));
 					jsonEvent.addProperty("end", dateFormat.format(event.getEnd_date()));
+					jsonEvent.addProperty("description", event.getDescription());					
 					jsonEvents.add(jsonEvent);
 				}
 				String jsonResponse = gson.toJson(jsonEvents);
+				System.out.println(jsonResponse);
 				response.setContentType("application/json;charset=UTF-8");
 				out.print(jsonResponse);
 				out.flush();

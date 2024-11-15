@@ -1,6 +1,6 @@
+<%@page import="Vo.ScheduleVo"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
-<%@ page import="Vo.BoardVo" %>
 <%
     String contextPath = request.getContextPath();
 %>
@@ -116,9 +116,9 @@
             </thead>
             <tbody>
                 <%
-                    List<BoardVo> scheduleList = (List<BoardVo>) request.getAttribute("scheduleList");
+                    List<ScheduleVo> scheduleList = (List<ScheduleVo>) request.getAttribute("scheduleList");
                     if (scheduleList != null) {
-                        for (BoardVo schedule : scheduleList) {
+                        for (ScheduleVo schedule : scheduleList) {
                 %>
                     <tr>
                         <td><input type="checkbox" name="deleteIds" value="<%= schedule.getSchedule_id() %>"></td>

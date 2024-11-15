@@ -10,6 +10,7 @@ import Dao.BoardDAO;
 import Dao.MemberDAO;
 import Vo.BoardVo;
 import Vo.MemberVo;
+import Vo.ScheduleVo;
 
 public class BoardService {
 
@@ -63,7 +64,7 @@ public class BoardService {
 	}
 
 	// 일정 이벤트 조회 서비스 (캘린더)
-	public List<BoardVo> getEvents(String startDate, String endDate) throws Exception {
+	public List<ScheduleVo> getEvents(String startDate, String endDate) throws Exception {
 		return boarddao.getEvents(startDate, endDate);
 	}
 	
@@ -74,7 +75,7 @@ public class BoardService {
             if (parts.length == 2) {
                 String year = parts[0];
                 String monthPart = parts[1];
-                List<BoardVo> scheduleList = boarddao.getEventsByMonth(year, monthPart);
+                List<ScheduleVo> scheduleList = boarddao.getEventsByMonth(year, monthPart);
                 request.setAttribute("scheduleList", scheduleList);
             }
         }
@@ -87,7 +88,7 @@ public class BoardService {
 		String content = request.getParameter("content");
 
 		if (boarddao.isValidSchedule(title, startDate, endDate, content)) {
-			BoardVo newSchedule = new BoardVo();
+			ScheduleVo newSchedule = new ScheduleVo();
 			newSchedule.setEvent_name(title);
 			newSchedule.setStart_date(Date.valueOf(startDate));
 			newSchedule.setEnd_date(Date.valueOf(endDate));
@@ -107,7 +108,7 @@ public class BoardService {
 		String content = request.getParameter("content");
 
 		if (boarddao.isValidSchedule(title, startDate, endDate, content)) {
-			BoardVo updatedSchedule = new BoardVo();
+			ScheduleVo updatedSchedule = new ScheduleVo();
 			updatedSchedule.setSchedule_id(scheduleId);
 			updatedSchedule.setEvent_name(title);
 			updatedSchedule.setStart_date(Date.valueOf(startDate));
