@@ -56,7 +56,7 @@
                         data: {
                             start: fetchInfo.startStr, // 요청 시작 날짜
                             end: fetchInfo.endStr, // 요청 종료 날짜
-                            action: 'getEvents' // 요청 액션명 지정
+                            action: 'json' // 요청 액션명 지정
                         },
                         success: function(response) {
                             successCallback(response); // 성공 시 이벤트 데이터를 캘린더에 전달

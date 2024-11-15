@@ -3,8 +3,10 @@ package Controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.time.YearMonth;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -172,30 +174,50 @@ public class BoardController extends HttpServlet {
 			break;
 
 		case "/boardCalendar.bo":
-			// 캘린더 이벤트를 JSON 형식으로 가져와 데이터를 클라이언트에 반환합니다.
-			startDate = request.getParameter("start");
-			endDate = request.getParameter("end");
-			List<BoardVo> eventList = boardDAO.getEvents(startDate, endDate);
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			StringBuilder json = new StringBuilder();
+		    // 클라이언트에서 보낸 요청 파라미터(start, end) 가져오기
+		    String startDateStr = request.getParameter("start");
+		    String endDateStr = request.getParameter("end");
 
-			json.append("[");
-			for (int i = 0; i < eventList.size(); i++) {
-				BoardVo event = eventList.get(i);
-				json.append("{");
-				json.append("\"title\":\"").append(escapeJson(event.getEvent_name())).append("\",");
-				json.append("\"start\":\"").append(escapeJson(dateFormat.format(event.getStart_date()))).append("\",");
-				json.append("\"end\":\"").append(escapeJson(dateFormat.format(event.getEnd_date()))).append("\"");
-				json.append("}");
-				if (i != eventList.size() - 1) {
-					json.append(",");
-				}
-			}
-			json.append("]");
-			response.setContentType("application/json;charset=UTF-8");
-			out.print(json.toString());
-			out.flush();
-			return;
+		    try {
+		        // 날짜 형식을 ISO_OFFSET_DATE_TIME으로 변환
+		        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+		        ZonedDateTime startDateZ = ZonedDateTime.parse(startDateStr, formatter);
+		        ZonedDateTime endDateZ = ZonedDateTime.parse(endDateStr, formatter);
+
+		        // DAO를 통해 이벤트 목록을 가져옵니다.
+		        YearMonth yearMonth = YearMonth.of(startDateZ.getYear(), startDateZ.getMonthValue());
+		        String monthStart = yearMonth.atDay(1).toString();
+		        String monthEnd = yearMonth.atEndOfMonth().toString();
+		        List<BoardVo> eventList = boardDAO.getEvents(monthStart, monthEnd);
+		        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		        StringBuilder json = new StringBuilder();
+
+		        json.append("[");
+		        for (int i = 0; i < eventList.size(); i++) {
+		            BoardVo getEvents = eventList.get(i);
+		            json.append("{");
+		            json.append("\"title\":\"").append(escapeJson(getEvents.getEvent_name())).append("\",");
+		            json.append("\"start\":\"").append(escapeJson(dateFormat.format(getEvents.getStart_date()))).append("\",");
+		            json.append("\"end\":\"").append(escapeJson(dateFormat.format(getEvents.getEnd_date()))).append("\"");
+		            json.append("}");
+		            if (i != eventList.size() - 1) {
+		                json.append(",");
+		            }
+		        }
+		        json.append("]");
+
+		        // 응답 Content-Type 설정
+		        response.setContentType("application/json;charset=UTF-8");
+
+		        // PrintWriter로 응답 작성
+		        out = response.getWriter();
+		        out.print(json.toString());
+		        out.flush();
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "날짜 파싱 중 오류가 발생했습니다.");
+		    }
+		    return;
 
 		case "/boardCalendarSearch.bo":
 		    String year = request.getParameter("year");
