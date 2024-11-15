@@ -115,16 +115,22 @@ public class MemberController extends HttpServlet {
 			// 로그인 성공 (check 값이 "1"인 경우)
 			String role = userInfo.get("role");
 
-			if (role.equals("학생")) {
-				// 재요청할 전체 메인화면 주소를 저장
-				center = "/view_student/studentHome.jsp";
-			} else if (role.equals("교수")) {
-				// 재요청할 전체 메인화면 주소를 저장
-				center = "/view_professor/professorHome.jsp";
-			} else if (role.equals("관리자")) {
-				// 재요청할 전체 메인화면 주소를 저장
-				center = "/view_admin/adminHome.jsp";
-			}
+			if(role.equals("학생")) {
+    			// 재요청할 전체 메인화면 주소를 저장
+    			center = "/view_student/studentHome.jsp";
+
+			    session.setAttribute("student_id", userInfo.get("student_id"));
+			    
+    		}else if(role.equals("교수")) {
+    			// 재요청할 전체 메인화면 주소를 저장
+    			center = "/view_professor/professorHome.jsp";
+
+			    session.setAttribute("professor_id", userInfo.get("professor_id"));
+			    
+    		}else if(role.equals("관리자")) {
+    			// 재요청할 전체 메인화면 주소를 저장
+    			center = "/view_admin/adminHome.jsp";
+    		}
 
 			// MenuItemService를 사용하여 역할에 맞는 메뉴 HTML 생성
 			MenuItemService menuService = new MenuItemService();
