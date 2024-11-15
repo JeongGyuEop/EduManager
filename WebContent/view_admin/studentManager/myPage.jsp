@@ -1,15 +1,9 @@
 <%@page import="Vo.StudentVo"%>
-<<<<<<< HEAD
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
     request.setCharacterEncoding("utf-8");
     String contextPath = request.getContextPath();
 %>
-=======
-<%@page import="Vo.MemberVo"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
->>>>>>> abd29d5bb0b69308d1759bc337864305c6292911
 <!DOCTYPE html>
 <html>
 <head>
