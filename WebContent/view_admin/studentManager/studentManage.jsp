@@ -57,7 +57,7 @@ function result(){
 </head>
 <body>
     <h2>학 생 등 록</h2>
-        <form action="<%=contextPath %>/member/studentRegister.do" method="post">
+        <form action="<%=contextPath %>/student/studentRegister.do" method="post">
         <table>
             <tr>
                 <td><label for="student_id">학 생  I D:</label></td>

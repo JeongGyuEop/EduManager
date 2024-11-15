@@ -313,8 +313,7 @@ public class BoardController extends HttpServlet {
 				String role_1 = (String)session.getAttribute("role");
 				
 				//부장님 호출
-
-						boardservice.serviceReplyInsertBoard(super_notice_id, reply_writer, reply_title, reply_content, reply_id);
+				boardservice.serviceReplyInsertBoard(super_notice_id, reply_writer, reply_title, reply_content, reply_id);
 
 //				
 				//답변글  추가에 성공하면 
