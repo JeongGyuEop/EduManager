@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="Vo.StudentVo" %>
+
+
 <html>
 <head>
     <title>학생 상세 정보</title>

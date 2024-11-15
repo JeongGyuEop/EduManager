@@ -198,6 +198,8 @@ public class StudentDAO {
 			pstmt.setString(12, student.getStudent_id());
 
 			int rowsUpdated = pstmt.executeUpdate();
+			
+			System.out.println(rowsUpdated);
 			isUpdated = rowsUpdated > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();

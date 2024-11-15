@@ -17,6 +17,18 @@
                 }
             };
     	</script>
+    	
+    	<script>
+    // URL 파라미터로 전달된 메시지 표시
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('message')) {
+            alert(urlParams.get('message'));
+        }
+    };
+</script>
+    	
+    	
 </head>
 <body>
 <h2>전체 학생 목록</h2>
