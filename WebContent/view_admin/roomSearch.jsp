@@ -3,8 +3,8 @@
 <%@ page import="java.util.ArrayList" %>
 
 <%
-	request.setCharacterEncoding("UTF-8");
-	String contextPath = request.getContextPath();
+    request.setCharacterEncoding("UTF-8");
+    String contextPath = request.getContextPath();
 %>
 
 <!DOCTYPE html>
@@ -15,55 +15,106 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
         .table-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
         }
-        .table thead th {
-            background-color: #d6e9c6;
-            color: #333;
-        }
-        .table tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-        .btn-edit, .btn-complete {
-            font-size: 0.9em;
-            padding: 5px 10px;
-        }
+
         .header-title {
             text-align: center;
-            margin-bottom: 20px;
             font-weight: bold;
-            font-size: 1.5em;
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .table thead th {
+            background-color: #e9ecef;
+            color: #495057;
+            text-align: center;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn-edit, .btn-complete, .btn-delete {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 5px;
+        }
+
+        .btn-edit {
+            background-color: #17a2b8;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-edit:hover {
+            background-color: #138496;
+        }
+
+        .btn-complete {
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-complete:hover {
+            background-color: #218838;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-check-label {
+            margin-bottom: 0;
         }
     </style>
 </head>
 <body>
     <div class="table-container">
         <h2 class="header-title">강의실 목록</h2>
-
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
                     <th scope="col">강의실 ID</th>
                     <th scope="col">수용 인원</th>
                     <th scope="col">장비</th>
-                    <th scope="col" class="text-center">수정</th>
+                    <th scope="col">수정</th>
+                    <th scope="col">삭제</th>
                 </tr>
             </thead>
             <tbody>
                 <%
                     ArrayList<ClassroomVo> courseList = (ArrayList<ClassroomVo>) request.getAttribute("roomList");
-                    
+
                     if (courseList != null && !courseList.isEmpty()) {
                         for (ClassroomVo classroom : courseList) {
                 %>
                 <tr id="row-<%= classroom.getRoom_id() %>">
-                    <td><%= classroom.getRoom_id() %></td>
+                    <td class="text-center"><%= classroom.getRoom_id() %></td>
                     <td>
                         <input type="number" class="form-control" id="capacity-<%= classroom.getRoom_id() %>" value="<%= classroom.getCapacity() %>" disabled>
                     </td>
@@ -89,8 +140,11 @@
                         <span id="equipment-display-<%= classroom.getRoom_id() %>"><%= classroom.getEquipment() %></span>
                     </td>
                     <td class="text-center">
-                        <button class="btn btn-success btn-edit" id="edit-btn-<%= classroom.getRoom_id() %>" onclick="enableEdit('<%= classroom.getRoom_id() %>')">수정</button>
-                        <button class="btn btn-primary btn-complete" id="complete-btn-<%= classroom.getRoom_id() %>" onclick="updateRoom('<%= classroom.getRoom_id() %>')" style="display: none;">수정 완료</button>
+                        <button class="btn btn-edit" id="edit-btn-<%= classroom.getRoom_id() %>" onclick="enableEdit('<%= classroom.getRoom_id() %>')">수정</button>
+                        <button class="btn btn-complete" id="complete-btn-<%= classroom.getRoom_id() %>" onclick="updateRoom('<%= classroom.getRoom_id() %>')" style="display: none;">완료</button>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-delete" onclick="deleteRoom('<%= classroom.getRoom_id() %>')">삭제</button>
                     </td>
                 </tr>
                 <%
@@ -98,7 +152,7 @@
                     } else {
                 %>
                 <tr>
-                    <td colspan="4" class="text-center">조회할 강의실 정보가 없습니다.</td>
+                    <td colspan="5" class="text-center">조회할 강의실 정보가 없습니다.</td>
                 </tr>
                 <%
                     }
@@ -109,47 +163,63 @@
 
     <script>
         function enableEdit(roomId) {
-            // 수용 인원과 장비 옵션 활성화
             $("#capacity-" + roomId).prop("disabled", false);
             $("#equipment-options-" + roomId).show();
             $("#equipment-display-" + roomId).hide();
-
-            // 버튼 변경
             $("#edit-btn-" + roomId).hide();
             $("#complete-btn-" + roomId).show();
         }
 
         function updateRoom(roomId) {
             var capacity = $("#capacity-" + roomId).val();
-            
-            // 선택된 장비들을 배열로 수집
             var equipment = [];
             $("#equipment-options-" + roomId + " input:checked").each(function() {
                 equipment.push($(this).val());
             });
 
             $.ajax({
-                url: "<%=contextPath%>/classroom/updateRoom.do",  // 서버에서 처리할 URL
+                url: "<%=contextPath%>/classroom/updateRoom.do",
                 method: "POST",
                 data: {
                     room_id: roomId,
                     capacity: capacity,
-                    equipment: equipment.join(",")  // 배열을 문자열로 변환
+                    equipment: equipment.join(",")
                 },
                 success: function(response) {
                     if (response === "success") {
-                        alert("강의실 정보가 성공적으로 수정되었습니다.");
+                        alert("강의실 정보가 수정되었습니다.");
                         $("#capacity-" + roomId).prop("disabled", true);
                         $("#equipment-options-" + roomId).hide();
                         $("#equipment-display-" + roomId).text(equipment.join(", ")).show();
                         $("#edit-btn-" + roomId).show();
                         $("#complete-btn-" + roomId).hide();
                     } else {
-                        alert("수정에 실패했습니다. 다시 시도해 주세요.");
+                        alert("수정 실패");
                     }
                 },
-                error: function(xhr, status, error) {
-                    alert("수정 중 오류가 발생했습니다. 다시 시도해 주세요.");
+                error: function() {
+                    alert("오류 발생");
+                }
+            });
+        }
+
+        function deleteRoom(roomId) {
+            if (!confirm("강의실을 삭제하시겠습니까?")) return;
+
+            $.ajax({
+                url: "<%=contextPath%>/classroom/deleteRoom.do",
+                method: "POST",
+                data: { room_id: roomId },
+                success: function(response) {
+                    if (response === "success") {
+                        alert("강의실이 삭제되었습니다.");
+                        $("#row-" + roomId).remove();
+                    } else {
+                        alert("삭제 실패");
+                    }
+                },
+                error: function() {
+                    alert("오류 발생");
                 }
             });
         }

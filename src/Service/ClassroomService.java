@@ -68,5 +68,11 @@ public class ClassroomService {
 		return classroomdao.updateRoom(room_id, capacity, room_equipment);
 	}
 
+	//-------------
+	// 관리자가 강의실의 정보를 삭제하기 위해 DAO를 호출하는 함수
+	public int serviceDeleteRoom(String room_id) {
+		return classroomdao.deleteRoom(room_id);
+	}
+
 
 }

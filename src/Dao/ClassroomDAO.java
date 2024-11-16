@@ -205,7 +205,6 @@ public class ClassroomDAO {
 			pstmt.setString(1, course_id);
             
 			result = pstmt.executeUpdate();
-			System.out.println(result);
 			
 			return result;
 			
@@ -350,7 +349,6 @@ public class ClassroomDAO {
 			pstmt.setString(3, room_id);
             
 			result = pstmt.executeUpdate();
-			System.out.println(result);
 			
 			return result;
 			
@@ -363,6 +361,37 @@ public class ClassroomDAO {
 		
 		return result;
 		
+	}
+
+	//-----------
+	// 관리자가 강의실의 정보를 DB에서 삭제하기 위해 호출하는 함수
+	public int deleteRoom(String room_id) {
+		
+		int result = 0;
+		
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			sql = "DELETE FROM classroom WHERE room_id=?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, room_id);
+            
+			result = pstmt.executeUpdate();
+			
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 deleteRoom메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return result;
 	}
 
 }

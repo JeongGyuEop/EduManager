@@ -224,7 +224,7 @@ public class ClassroomController extends HttpServlet {
 				    return;
 				} else {
 					// 실패 시 message 파라미터만 포함하여 리다이렉트
-				    response.sendRedirect(contextPath +"/classroom/course_register.bo?message=" 
+				    response.sendRedirect(contextPath +"/classroom/course_search.bo?message=" 
 				                      + URLEncoder.encode("강의 삭제에 실패했습니다.", "UTF-8") + "&classroomCenter=/view_classroom/courseSearch.jsp");
 				    return;
 				}
@@ -297,8 +297,37 @@ public class ClassroomController extends HttpServlet {
 	    	        return;
 	    		}
 	    		
-	    		
 	    		break;
+	    		
+	    //==========================================================================================
+				
+	    	case "/deleteRoom.do":
+	    		
+	    		room_id = request.getParameter("room_id");
+	    		
+	    		result = classroomservice.serviceDeleteRoom(room_id); 
+
+//	    		if(result == 1) {
+//				    response.sendRedirect(contextPath +"/classroom/roomSearch.bo?message="
+//				    		+ URLEncoder.encode("강의실이 정상적으로 삭제되었습니다.", "UTF-8") + "&center=/view_admin/roomSearch.jsp");
+//				    return;
+//				} else {
+//					// 실패 시 message 파라미터만 포함하여 리다이렉트
+//				    response.sendRedirect(contextPath +"/classroom/roomSearch.bo?message=" 
+//				                      + URLEncoder.encode("강의실 삭제에 실패했습니다.", "UTF-8") + "&center=/view_admin/roomSearch.jsp");
+//				    return;
+//				}
+	    		
+	    	    out = response.getWriter();
+	    		if(result == 1) {
+	    	        out.write("success");
+	    	        out.flush();
+	    	        return;
+	    		} else {
+	    	        out.write("non-success");
+	    	        out.flush();
+	    	        return;
+	    		}
 	    		
 		//==========================================================================================
 				
