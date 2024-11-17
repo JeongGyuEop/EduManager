@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 //import Dao.CarDAO;
 import Service.MemberService;
 import Service.MenuItemService;
+
 import Vo.MemberVo;
 //import Vo.CarConfirmVo;
 //import Vo.CarListVo;
@@ -31,7 +31,6 @@ import Vo.MemberVo;
 
 @WebServlet("/member/*")
 public class MemberController extends HttpServlet {
-
 	// 부장
 	MemberService memberservice;
 
@@ -114,6 +113,9 @@ public class MemberController extends HttpServlet {
 
 			// 로그인 성공 (check 값이 "1"인 경우)
 			String role = userInfo.get("role");
+			
+			
+			
 
 			if(role.equals("학생")) {
     			// 재요청할 전체 메인화면 주소를 저장
@@ -198,9 +200,11 @@ public class MemberController extends HttpServlet {
 			break;
 
 		// ==========================================================================================
-		default:
-			break;
-		}
+
+        default:
+            nextPage = "/main.jsp";
+            break;
+    }
 
 		// 디스패처 방식 포워딩(재요청)
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);

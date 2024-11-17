@@ -39,7 +39,6 @@
 	    maxTotal="50"
 	    maxWaitMillis="-1"
 	    url="jdbc:mysql://localhost:3306/edumanager?useSSL=false&amp;serverTimezone=UTC"
-
 	/>
 	    
 </Context>

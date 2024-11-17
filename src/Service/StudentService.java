@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import Dao.StudentDAO;
+import Vo.MemberVo;
 import Vo.StudentVo;
 
 // 부장
@@ -96,4 +97,45 @@ public class StudentService {
 	public boolean deleteStudent(String studentId) {
 		return studentDao.deleteStudent(studentId);
 	}
+	
+	
+	//============================================================================
+		// 학생이 본인 정보를 업데이트를 하는 메서드
+		
+		public boolean updateMyInfo(HttpServletRequest request) {
+		    HttpSession session = request.getSession();
+		    String sessionUserId = (String) session.getAttribute("id"); // 세션에서 사용자 ID 가져오기
+		    String role = (String) session.getAttribute("role"); // 세션에서 사용자 역할 가져오기
+
+		    // 로그인된 학생 본인만 수정할 수 있도록 제한
+		    String userId = request.getParameter("user_id");
+		    if (!"학생".equals(role) || !sessionUserId.equals(userId)) {
+		        // 권한이 없거나 다른 학생의 정보를 수정하려고 할 때 false 반환
+		        return false;
+		    }
+
+		    // 수정할 필드 값 가져오기
+		    String userPw = request.getParameter("user_pw");
+		    //==
+		    if (userPw == null || userPw.trim().isEmpty()) {
+		        // 비밀번호가 비어 있는 경우 false 반환
+		        return false;
+		    }
+		    //==
+		    String phone = request.getParameter("phone");
+		    String email = request.getParameter("email");
+		    String address = request.getParameter("address");
+
+		    // VO 객체에 필요한 값 설정
+		    MemberVo student = new MemberVo();
+		    student.setUser_id(userId);
+		    student.setUser_pw(userPw);
+		    student.setPhone(phone);
+		    student.setEmail(email);
+		    student.setAddress(address);
+
+		    // DAO 메서드를 호출하여 본인 정보 업데이트
+		    return studentDao.updateStudentInfo(student);
+		}
+
 }
