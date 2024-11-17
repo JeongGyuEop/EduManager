@@ -21,15 +21,26 @@ public class MenuItemService {
 		
 		// 관리자 메뉴
         roleMenuMap.put("관리자", Arrays.asList(
-            new MenuItemVo("사용자 관리", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp", Arrays.asList(
-                new MenuItemVo("학생관리", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp"),
-                new MenuItemVo("교수관리", "/professor/professorAdd.bo?center=/view_admin/professorManager/professoradd.jsp"),
-                new MenuItemVo("관리자 관리", "adminManage.jsp")
+        		
+            new MenuItemVo("사용자 관리", "/#", Arrays.asList(
+            	new MenuItemVo("학생 등록", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp"),
+                new MenuItemVo("학생 조회", "/student/viewStudentList.do?"),
+                
+                new MenuItemVo("교수 등록", "/professor/professorAdd.bo?center=/view_admin/professorManager/professoradd.jsp"),
+                new MenuItemVo("교수 조회", "/professor/professorquiry.do?center=/view_admin/professorManager/professorinquiry.jsp"),
+                
+                new MenuItemVo("관리자 등록", "#"),
+                new MenuItemVo("관리자 조회", "#")
             )),
+            
             new MenuItemVo("학사 관리", "departmentManage.jsp", Arrays.asList(
                 new MenuItemVo("학과 관리", "departmentManage.jsp"),
-                new MenuItemVo("강의실 관리", "/classroom/roomRegister.bo?center=/view_admin/roomRegister.jsp")
+
+            	new MenuItemVo("강의실 등록", "/classroom/roomRegister.bo?center=/view_admin/roomRegister.jsp"),
+            	new MenuItemVo("강의실 조회", "/classroom/roomSearch.bo?center=/view_admin/roomSearch.jsp")
+            	
             )),
+            
             new MenuItemVo("정보 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp", Arrays.asList(
                 new MenuItemVo("공지사항 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp"),
                 new MenuItemVo("학사일정 관리", "scheduleManage.jsp")
@@ -97,6 +108,21 @@ public class MenuItemService {
 	                        .append("\">")
 	                        .append(subMenu.getName())
 	                        .append("</a></li>");
+	                    
+	                    // 하위 메뉴의 하위 메뉴 처리
+	                    if (!subMenu.getSubMenus().isEmpty()) {
+	                        htmlLoad.append("<ul>");
+	                        for (MenuItemVo subSubMenu : subMenu.getSubMenus()) {
+	                            htmlLoad.append("<li><a href=\"")
+	                                .append(contextPath)
+	                                .append(subSubMenu.getPage())
+	                                .append("\">")
+	                                .append(subSubMenu.getName())
+	                                .append("</a></li>");
+	                        }
+	                        htmlLoad.append("</ul>");
+	                    }
+	                    
 	                }
 	                htmlLoad.append("</ul>");
 	            }

@@ -4,6 +4,10 @@
 <%
     request.setCharacterEncoding("UTF-8");
     String contextPath = request.getContextPath();
+    
+    String id = (String)session.getAttribute("id");
+    String role = (String)session.getAttribute("role");
+    String name = (String)session.getAttribute("name");
 %>
     
 <!doctype html>
@@ -113,6 +117,8 @@
 	        <!-- 로그인 박스 -->
 	        <div class="col-md-4">
 	            <div class="h-100 p-5 bg-light border rounded-3 d-flex flex-column justify-content-center">
+			
+			<%  if(id == null) {  %>
 	                <h2>로그인</h2>
 	                <form action="<%=contextPath%>/member/login.do" method="post">
 	                    <div class="mb-3 d-flex align-items-center">
@@ -125,6 +131,9 @@
 	                    </div>
 	                    <button type="submit" class="btn btn-primary w-100">로그인</button>
 	                </form>
+			<%  } else {  %>    
+					반갑습니다. <br> <%=name %> <%=role %>님!
+			<%  }  %>     
 	            </div>
 	        </div>
 	        

@@ -12,74 +12,74 @@
 <head>
     <meta charset="UTF-8">
     <title>강의실 목록</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
     <style>
         body {
-            background-color: #f4f6f9;
+            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
         }
 
-        .table-container {
-            max-width: 1000px;
-            margin: 50px auto;
+        #classroom-list-container {
+            max-width: 900px;
             background-color: #ffffff;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+            margin: 50px auto;
         }
 
-        .header-title {
-            text-align: center;
+        #classroom-list-title {
+            font-size: 28px;
             font-weight: bold;
-            font-size: 2em;
-            margin-bottom: 30px;
-            color: #333;
-        }
-
-        .table thead th {
-            background-color: #e9ecef;
-            color: #495057;
+            color: #4a90e2;
             text-align: center;
+            margin-bottom: 20px;
         }
 
-        .table tbody tr:hover {
-            background-color: #f8f9fa;
+        #classroom-list-table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
         }
 
-        .btn-edit, .btn-complete, .btn-delete {
-            font-size: 0.9rem;
-            padding: 6px 12px;
-            border-radius: 5px;
+        #classroom-list-table th, #classroom-list-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
         }
 
-        .btn-edit {
-            background-color: #17a2b8;
-            color: #ffffff;
-            border: none;
+        #classroom-list-table th {
+            background-color: #4a90e2;
+            color: white;
+            font-weight: bold;
         }
 
-        .btn-edit:hover {
-            background-color: #138496;
+        #classroom-list-table tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
 
-        .btn-complete {
-            background-color: #28a745;
-            color: #ffffff;
-            border: none;
+        #classroom-list-table tr:hover {
+            background-color: #f1f1f1;
         }
 
-        .btn-complete:hover {
-            background-color: #218838;
+        .btn-link {
+            color: #4a90e2;
+            text-decoration: none;
+            cursor: pointer;
         }
-
-        .btn-delete {
-            background-color: #dc3545;
-            color: #ffffff;
-            border: none;
+        .btn-link:hover {
+            text-decoration: underline;
         }
-
-        .btn-delete:hover {
-            background-color: #c82333;
+        .action-link {
+            font-weight: bold;
         }
 
         .form-check {
@@ -91,19 +91,32 @@
         .form-check-label {
             margin-bottom: 0;
         }
+
+        .capacity-input {
+            width: 80px;
+            text-align: center;
+        }
+
+        .equipment-options {
+            text-align: left;
+        }
+
+        .equipment-display {
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <div class="table-container">
-        <h2 class="header-title">강의실 목록</h2>
-        <table class="table table-bordered table-hover">
+    <div id="classroom-list-container">
+        <h2 id="classroom-list-title"><i class="fas fa-chalkboard-teacher"></i> 강의실 목록</h2>
+        <table id="classroom-list-table">
             <thead>
-                <tr>
-                    <th scope="col">강의실 ID</th>
-                    <th scope="col">수용 인원</th>
-                    <th scope="col">장비</th>
-                    <th scope="col">수정</th>
-                    <th scope="col">삭제</th>
+                <tr id="table-header">
+                    <th id="header-room-id">강의실 ID</th>
+                    <th id="header-capacity">수용 인원</th>
+                    <th id="header-equipment">장비</th>
+                    <th id="header-edit">수정</th>
+                    <th id="header-delete">삭제</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,13 +126,13 @@
                     if (courseList != null && !courseList.isEmpty()) {
                         for (ClassroomVo classroom : courseList) {
                 %>
-                <tr id="row-<%= classroom.getRoom_id() %>">
-                    <td class="text-center"><%= classroom.getRoom_id() %></td>
-                    <td>
-                        <input type="number" class="form-control" id="capacity-<%= classroom.getRoom_id() %>" value="<%= classroom.getCapacity() %>" disabled>
+                <tr id="row-<%= classroom.getRoom_id() %>" class="classroom-row">
+                    <td class="room-id"><%= classroom.getRoom_id() %></td>
+                    <td class="capacity">
+                        <input type="number" class="capacity-input" id="capacity-<%= classroom.getRoom_id() %>" value="<%= classroom.getCapacity() %>" disabled>
                     </td>
-                    <td>
-                        <div id="equipment-options-<%= classroom.getRoom_id() %>" style="display: none;">
+                    <td class="equipment">
+                        <div id="equipment-options-<%= classroom.getRoom_id() %>" class="equipment-options" style="display: none;">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="equipment1-<%= classroom.getRoom_id() %>" value="프로젝터">
                                 <label class="form-check-label" for="equipment1-<%= classroom.getRoom_id() %>">프로젝터</label>
@@ -137,22 +150,22 @@
                                 <label class="form-check-label" for="equipment4-<%= classroom.getRoom_id() %>">컴퓨터실</label>
                             </div>
                         </div>
-                        <span id="equipment-display-<%= classroom.getRoom_id() %>"><%= classroom.getEquipment() %></span>
+                        <span id="equipment-display-<%= classroom.getRoom_id() %>" class="equipment-display"><%= classroom.getEquipment() %></span>
                     </td>
-                    <td class="text-center">
-                        <button class="btn btn-edit" id="edit-btn-<%= classroom.getRoom_id() %>" onclick="enableEdit('<%= classroom.getRoom_id() %>')">수정</button>
-                        <button class="btn btn-complete" id="complete-btn-<%= classroom.getRoom_id() %>" onclick="updateRoom('<%= classroom.getRoom_id() %>')" style="display: none;">완료</button>
+                    <td class="edit-action">
+                        <a class="btn-link action-link" href="javascript:void(0);" id="edit-btn-<%= classroom.getRoom_id() %>" onclick="enableEdit('<%= classroom.getRoom_id() %>')">수정</a>
+                        <a class="btn-link action-link" href="javascript:void(0);" id="complete-btn-<%= classroom.getRoom_id() %>" onclick="updateRoom('<%= classroom.getRoom_id() %>')" style="display: none;">완료</a>
                     </td>
-                    <td class="text-center">
-                        <button class="btn btn-delete" onclick="deleteRoom('<%= classroom.getRoom_id() %>')">삭제</button>
+                    <td class="delete-action">
+                        <a class="btn-link action-link" href="javascript:void(0);" onclick="deleteRoom('<%= classroom.getRoom_id() %>')">삭제</a>
                     </td>
                 </tr>
                 <%
                         }
                     } else {
                 %>
-                <tr>
-                    <td colspan="5" class="text-center">조회할 강의실 정보가 없습니다.</td>
+                <tr id="no-data-row">
+                    <td colspan="5">조회할 강의실 정보가 없습니다.</td>
                 </tr>
                 <%
                     }

@@ -241,7 +241,6 @@ public class ProfessorController extends HttpServlet {
 			// 전체 교수 조회	        
 		case "/professorAdd.bo":  
 			
-				
 				center = request.getParameter("center");
 				
 				request.setAttribute("center", center);
