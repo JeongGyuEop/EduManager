@@ -73,7 +73,8 @@
 	<!-- 배경 이미지 -->
     <div class="background" ></div>
     
-	<div class="container" >
+	<div class="container" style="margin-top: 100px">
+	
 	
 	    <div class="row align-items-stretch">
 	    

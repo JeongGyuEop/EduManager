@@ -13,12 +13,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EveryOne</title>
-<link rel="stylesheet" type="text/css"
+<%-- <link rel="stylesheet" type="text/css"
 	href="<%=contextPath%>/css/style.css">
 <link rel="stylesheet" type="text/css"
 	href="<%=contextPath%>/css/mobile.css"
 	media="screen and (max-width : 568px)">
-<script type="text/javascript" src="<%=contextPath%>/js/mobile.js"></script>
+<script type="text/javascript" src="<%=contextPath%>/js/mobile.js"></script> --%>
 
 <style>
 html, body {
