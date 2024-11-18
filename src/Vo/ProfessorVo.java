@@ -8,7 +8,7 @@ public class ProfessorVo {
 	private String user_id;  //교수아이디(사번)
 	private String user_pw;   //교수비밀번호(전화번호)
 	private String user_name;   //교수이름
-	private Date brithDate;  //생년월일
+	private Date birthDate;  //생년월일
 	private String gender;  //성별
 	private String address ;  //주소
 	private String phone;    //전화번호
@@ -42,13 +42,13 @@ public class ProfessorVo {
 
 	
 	//전체 생성자
-	public ProfessorVo(String user_id, String user_pw, String user_name, Date brithDate, String gender, String address,
+	public ProfessorVo(String user_id, String user_pw, String user_name, Date birthDate, String gender, String address,
 			String phone, String email, String role, String professor_id, String majorcode, Date employDate) {
 		super();
 		this.user_id = user_id;
 		this.user_pw = user_pw;
 		this.user_name = user_name;
-		this.brithDate = brithDate;
+		this.birthDate = birthDate;
 		this.gender = gender;
 		this.address = address;
 		this.phone = phone;
@@ -86,12 +86,12 @@ public class ProfessorVo {
 		this.user_name = user_name;
 	}
 
-	public Date getBrithDate() {
-		return brithDate;
+	public Date getBirthDate() {
+		return birthDate;
 	}
 
-	public void setBrithDate(Date brithDate) {
-		this.brithDate = brithDate;
+	public void setBirthDate(Date birthDate) {
+		this.birthDate = birthDate;
 	}
 
 	public String getGender() {

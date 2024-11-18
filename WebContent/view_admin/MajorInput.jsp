@@ -14,20 +14,22 @@
     <link rel="stylesheet" type="text/css" href="<%=contextPath%>/css/majorCSS.css">
     <script type="text/javascript">
         window.onload = function () {
-            inputResult();
+            inputResult();  
             loadMajorData(); // 페이지 로드 시 학과 데이터 로드
-            setInterval(loadMajorData, 7800);
         };
 
+        // form 제출 핸들러
+        function handleSubmit() {
+            
+            return validateForm(); // validateForm()의 결과에 따라 제출 여부 결정
+        }
+        
         // controller에서 받는 값 처리 함수
         function inputResult() {
-            var addResult = parseInt("${addResult}", 10);
+            var addResult = parseInt(${addResult}, 10);
             if (isNaN(addResult)) return;
 
             switch (addResult) {
-                case -1:
-                    alert("학과 이름 및 번호를 입력해 주세요.");
-                    break;
                 case 0:
                     alert("데이터베이스에 추가하는 데 실패했습니다. 다시 시도해 주세요.");
                     break;
@@ -37,6 +39,8 @@
                 case -2:
                     alert("이미 존재하는 학과명입니다.");
                     break;
+                default:
+                	break;
             }
         }
 
@@ -49,7 +53,7 @@
             var xhr = new XMLHttpRequest();
             var contextPath = "<%=request.getContextPath()%>";
 
-            xhr.open("GET", contextPath + "/MI/fetchMajorData", true);
+            xhr.open("GET", contextPath + "/major/fetchMajorData", true);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
                     isLoading = false;
@@ -92,8 +96,8 @@
 
 <body>
     <div>
-        <form class="form-container" action="<%=contextPath%>/MI/MajorInput.do" method="get"
-            onsubmit="return validateForm()">
+        <form class="form-container" action="<%=contextPath%>/major/MajorInput.do" method="get"
+            onsubmit="return handleSubmit()">
             <label for="MajorNameInput">신규 학과명:</label>
             <input type="text"
                 id="MajorNameInput" name="MajorNameInput" placeholder="**학과"
@@ -110,7 +114,7 @@
             <h3>학과 정보</h3>
         </div>
         <div>
-            <a href="<%=contextPath%>/jin/EditDeleteMajor.jsp"
+            <a href="<%=contextPath%>/view_admin/EditDeleteMajor.jsp"
                 onclick="openCustomPopup(this.href); return false;">수정 및 삭제</a>
         </div>
     </div>

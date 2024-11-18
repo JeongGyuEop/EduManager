@@ -29,12 +29,13 @@ public class MenuItemService {
                 new MenuItemVo("교수 등록", "/professor/professorAdd.bo?center=/view_admin/professorManager/professoradd.jsp"),
                 new MenuItemVo("교수 조회", "/professor/professorquiry.do?center=/view_admin/professorManager/professorinquiry.jsp"),
                 
-                new MenuItemVo("관리자 등록", "#"),
-                new MenuItemVo("관리자 조회", "#")
+                new MenuItemVo("관리자 등록", "/admin/adminjoin.bo?center=/view_admin/adminManager/adminjoin.jsp"),
+                new MenuItemVo("관리자 조회", "/admin/managerview.do?center=/view_admin/adminManager/adminquiry.jsp")
             )),
             
             new MenuItemVo("학사 관리", "departmentManage.jsp", Arrays.asList(
-                new MenuItemVo("학과 관리", "departmentManage.jsp"),
+                new MenuItemVo("학과 관리", "/major/MajorInput.do"),
+                new MenuItemVo("학과 수정/삭제", "/major/searchMajor.do"),
 
             	new MenuItemVo("강의실 등록", "/classroom/roomRegister.bo?center=/view_admin/roomRegister.jsp"),
             	new MenuItemVo("강의실 조회", "/classroom/roomSearch.bo?center=/view_admin/roomSearch.jsp")
@@ -43,7 +44,7 @@ public class MenuItemService {
             
             new MenuItemVo("정보 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp", Arrays.asList(
                 new MenuItemVo("공지사항 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp"),
-                new MenuItemVo("학사일정 관리", "scheduleManage.jsp")
+                new MenuItemVo("학사일정 관리", "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp")
             ))
         ));
         
@@ -56,7 +57,8 @@ public class MenuItemService {
 //                new MenuItemVo("성적조회", "gradeCheck.jsp")
 //            )),
             new MenuItemVo("마이페이지", "/student/myPage.bo?center=/view_admin/studentManager/myPage.jsp"),
-            new MenuItemVo("공지사항", "notice.jsp")
+            new MenuItemVo("공지사항", "notice.jsp"),
+            new MenuItemVo("학사일정", "/Board/boardCalendar.bo")
         ));
 
         // 교수 메뉴

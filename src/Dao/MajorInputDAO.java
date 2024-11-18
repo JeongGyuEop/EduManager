@@ -75,7 +75,6 @@ public class MajorInputDAO {
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, newMajorName);
 			rs = pstmt.executeQuery();
-			// 占쌩븝옙占쏙옙 占싱몌옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占�
 			if (rs.next()) {
 				validationResult = EXISTS;
 			}

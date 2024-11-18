@@ -143,9 +143,7 @@
 		    <!-- 학사 일정 영역 -->
 		    <div class="col-md-7" style="margin-bottom: 10px;"> <!-- 학사 일정 상자에 하단 여백 추가 -->
 		        <div class="h-100 p-5 bg-body-tertiary rounded-3">
-		            <h2>학사 일정</h2>
-		            <!-- FullCalendar 달력 삽입 -->
-		            <div id="calendar"></div>
+		            <jsp:include page="/common/calendar.jsp" />
 		        </div>
 		    </div>
 		    <div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
@@ -157,7 +155,6 @@
 		</div>
     
 </div>
-
   <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -179,6 +176,6 @@
             });
             calendar.render();
         });
-    </script>
+    </script> 
 </body>
 </html>
