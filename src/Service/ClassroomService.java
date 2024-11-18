@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Dao.ClassroomDAO;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
+import Vo.StudentVo;
 
 public class ClassroomService {
 
@@ -48,6 +49,24 @@ public class ClassroomService {
 	// 교수의 강의를 수정하기 위해 DAO를 호출하는
 	public int serviceUpdateCourse(String course_id, String course_name, String room_id) {
 		return classroomdao.updateCourse(course_id, course_name, room_id);
+	}
+
+	// 교수의 강의를 수강하는 학생 조회
+	public ArrayList<StudentVo> serviceStudentSearch(String course_id_) {
+		return classroomdao.studentSearch(course_id_);
+	}
+
+	//성적 등록 
+	public void serviceGradeInsert(String course_id_, String student_id, String total) {
+		classroomdao.gradeInsert(course_id_, student_id, total);
+	}
+
+	public void serviceGradeUpdate(String student_id_, String total_) {
+		classroomdao.gradeUpdate(student_id_, total_);
+	}
+
+	public ArrayList<StudentVo> serviceGradeSearch(String student_id_1) {
+		return classroomdao.gradeSearch(student_id_1);
 	}
 
 

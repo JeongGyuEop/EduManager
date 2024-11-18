@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 
 import Vo.ClassroomVo;
 import Vo.CourseVo;
+import Vo.StudentVo;
 
 
 public class ClassroomDAO {
@@ -254,6 +255,155 @@ public class ClassroomDAO {
 		
 		return result;
 		
+	}
+
+	public ArrayList<StudentVo> studentSearch(String course_id_) {
+		
+		ArrayList<StudentVo> studentList = new ArrayList<StudentVo>();
+		
+		StudentVo student;
+		
+		CourseVo course;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			String sql = "SELECT m.majorname, s.student_id, u.user_name "
+					+ "FROM enrollment e "
+					+ "JOIN student_info s ON e.student_id = s.student_id "
+					+ "JOIN user u ON s.user_id = u.user_id "
+					+ "LEFT JOIN majorinformation m ON s.majorcode = m.majorcode "
+					+ "WHERE e.course_id = ? ";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, course_id_);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				student = new StudentVo();
+				student.setStudent_id(rs.getString("student_id"));
+				student.setUser_name(rs.getString("user_name"));
+				
+				course = new CourseVo();
+				course.setMajorname(rs.getString("majorname"));
+				
+				student.setCourse(course);
+
+				studentList.add(student);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 studentSearch메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return studentList;
+	}
+
+	public void gradeInsert(String course_id_, String student_id, String total) {
+		
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			sql = "INSERT INTO grade (student_id, course_id, score) VALUES (?, ?, ?)";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, student_id);
+            pstmt.setString(2, course_id_);
+            pstmt.setFloat(3, Float.parseFloat(total));
+            
+			pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 registerInsertCourse메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		
+	}
+
+	public void gradeUpdate(String student_id_, String total_) {
+		
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			sql = "UPDATE grade SET "
+					+ "score=? "
+					+ "WHERE student_id=?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, total_);
+			pstmt.setString(2, student_id_);
+            
+			pstmt.executeUpdate();
+			
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 gradeUpdate메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+	}
+
+	public ArrayList<StudentVo> gradeSearch(String student_id_1) {
+		
+		ArrayList<StudentVo> studentList = new ArrayList<StudentVo>();
+		
+		StudentVo student;
+		
+		CourseVo course;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			String sql = "SELECT g.student_id, c.course_id, c.course_name, g.score, m.majorname "
+						+ "FROM grade g "
+						+ "JOIN course c ON g.course_id = c.course_id "
+						+ "JOIN student_info s ON g.student_id = s.student_id "
+						+ "JOIN majorinformation m ON s.majorcode = m.majorcode "
+						+ "WHERE g.student_id = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, student_id_1);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				student = new StudentVo();
+				student.setStudent_id(rs.getString("student_id"));
+				student.setScore(rs.getFloat("score"));
+				
+				course = new CourseVo();
+				course.setCourse_id(rs.getString("course_id"));
+				course.setCourse_name(rs.getString("course_name"));
+				course.setMajorname(rs.getString("majorname"));
+				
+				student.setCourse(course);
+
+				studentList.add(student);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 gradeSearch메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return studentList;
 	}
 
 }

@@ -31,7 +31,10 @@ public class StudentVo {
     private int grade;           // 학년
     private Date admission_date; // 입학일
     private String status;       // 상태 (재학, 휴학, 졸업, 자퇴)
-
+    
+    private Float score; // 성적 총점 
+    
+    private CourseVo Course; // CourseVo 객체 포함
 
 	public String getStudent_id() {
 		return student_id;
@@ -134,6 +137,13 @@ public class StudentVo {
 		this.status = status;
 	}
 
+	
+	
+	public StudentVo(CourseVo course) {
+		this.Course = course;
+	}
+
+
 	public String getUser_id() {
 		return user_id;
 	}
@@ -221,6 +231,26 @@ public class StudentVo {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+
+	public CourseVo getCourse() {
+		return Course;
+	}
+
+
+	public void setCourse(CourseVo course) {
+		Course = course;
+	}
+
+
+	public Float getScore() {
+		return score;
+	}
+
+
+	public void setScore(Float score) {
+		this.score = score;
 	}
 
 	

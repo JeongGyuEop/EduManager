@@ -19,8 +19,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import Service.ClassroomService;
+import Service.StudentService;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
+import Vo.StudentVo;
 
 
 @WebServlet("/classroom/*")
@@ -257,6 +259,84 @@ public class ClassroomController extends HttpServlet {
 	    		
 		//==========================================================================================
 				
+	    	case "/student_search.bo": //강의명 클릭시 조회될 학생목록
+	    		
+	    		ArrayList<StudentVo> studentList = new ArrayList<StudentVo>();
+	    		
+	    		String course_id_ = (String) request.getParameter("course_id");	    
+	    		
+	    		session.setAttribute("course_id", course_id_);
+//	    		
+	    		studentList = classroomservice.serviceStudentSearch(course_id_);
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		session.setAttribute("studentList", studentList);
+	    		request.setAttribute("classroomCenter", center);
+	    		
+				nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		break;
+	    		
+	    //==========================================================================================
+
+	    	case "/grade_register.do":
+	    		
+	    		studentList = (ArrayList<StudentVo>) session.getAttribute("studentList");
+	    		
+	    		session.setAttribute("studentList", studentList);
+	    		
+	    		course_id_ = (String) session.getAttribute("course_id");
+	    		String student_id = (String) request.getParameter("student_id");
+	    		String total = (String)request.getParameter("total");
+	    		
+	    		session.setAttribute("total", total);
+	    		
+	    		classroomservice.serviceGradeInsert(course_id_, student_id, total);
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		request.setAttribute("classroomCenter", center);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		break;
+	    		
+   	    //==========================================================================================
+	    		
+	    	case "/grade_edit.do":
+
+	    		String student_id_ = (String) request.getParameter("student_id");
+	    		String total_ = (String) request.getParameter("total");
+	    		
+	    		classroomservice.serviceGradeUpdate(student_id_, total_);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		break;
+	    		
+	    //==========================================================================================
+		
+	    	case "/grade_search.bo":
+	    		
+	    		ArrayList<StudentVo> studentList_ = new ArrayList<StudentVo>();
+	    			  
+	    		String student_id_1 = (String) session.getAttribute("student_id");
+	    		
+	    		studentList_ = classroomservice.serviceGradeSearch(student_id_1);
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		session.setAttribute("studentList", studentList_);
+	    		request.setAttribute("classroomCenter", center);
+	    		
+				nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		
+	    		break;
+	    
+  	    //==========================================================================================
+	    		
 	    	default:
 	    		break;
 	    }
