@@ -257,6 +257,7 @@ public class ClassroomDAO {
 		
 	}
 
+	// 학생 조회 
 	public ArrayList<StudentVo> studentSearch(String course_id_) {
 		
 		ArrayList<StudentVo> studentList = new ArrayList<StudentVo>();
@@ -269,12 +270,14 @@ public class ClassroomDAO {
 			
 			con = ds.getConnection();
 			
-			String sql = "SELECT m.majorname, s.student_id, u.user_name "
-					+ "FROM enrollment e "
-					+ "JOIN student_info s ON e.student_id = s.student_id "
-					+ "JOIN user u ON s.user_id = u.user_id "
-					+ "LEFT JOIN majorinformation m ON s.majorcode = m.majorcode "
-					+ "WHERE e.course_id = ? ";
+			String sql = "SELECT m.majorname, s.student_id, u.user_name, "
+						+ "g.midtest_score, g.finaltest_score, g.assignment_score, g.score "
+						+ "FROM enrollment e "
+						+ "JOIN student_info s ON e.student_id = s.student_id "
+						+ "JOIN  user u ON s.user_id = u.user_id "
+						+ "LEFT JOIN majorinformation m ON s.majorcode = m.majorcode "
+						+ "LEFT JOIN grade g ON g.student_id = s.student_id AND g.course_id = e.course_id "
+						+ "WHERE e.course_id = ?;";
 			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, course_id_);
@@ -284,6 +287,10 @@ public class ClassroomDAO {
 				student = new StudentVo();
 				student.setStudent_id(rs.getString("student_id"));
 				student.setUser_name(rs.getString("user_name"));
+				student.setMidtest_score(rs.getInt("midtest_score"));
+				student.setFinaltest_score(rs.getInt("finaltest_score"));
+				student.setAssignment_score(rs.getInt("assignment_score"));
+				student.setScore(rs.getFloat("score"));
 				
 				course = new CourseVo();
 				course.setMajorname(rs.getString("majorname"));
@@ -303,7 +310,8 @@ public class ClassroomDAO {
 		return studentList;
 	}
 
-	public void gradeInsert(String course_id_, String student_id, String total) {
+	//성적 등록
+	public void gradeInsert(String course_id_, String student_id, String total, String midtest_score, String finaltest_score, String assignment_score) {
 		
 		String sql = null;
 		
@@ -311,12 +319,15 @@ public class ClassroomDAO {
 			
 			con = ds.getConnection();
 			
-			sql = "INSERT INTO grade (student_id, course_id, score) VALUES (?, ?, ?)";
+			sql = "INSERT INTO grade (student_id, course_id, score, midtest_score, finaltest_score, assignment_score) VALUES (?, ?, ?, ?, ?, ?)";
 			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, student_id);
             pstmt.setString(2, course_id_);
             pstmt.setFloat(3, Float.parseFloat(total));
+            pstmt.setInt(4, Integer.parseInt(midtest_score));
+            pstmt.setInt(5, Integer.parseInt(finaltest_score));
+            pstmt.setInt(6, Integer.parseInt(assignment_score));
             
 			pstmt.executeUpdate();
 			
@@ -329,8 +340,10 @@ public class ClassroomDAO {
 		
 		
 	}
-
-	public void gradeUpdate(String student_id_, String total_) {
+	
+	// 성적 수정
+	public void gradeUpdate(String course_id_, String student_id, String total, String midtest_score, String finaltest_score,
+			String assignment_score) {
 		
 		String sql = null;
 		
@@ -338,13 +351,16 @@ public class ClassroomDAO {
 			
 			con = ds.getConnection();
 			
-			sql = "UPDATE grade SET "
-					+ "score=? "
-					+ "WHERE student_id=?";
-			
+			sql = "UPDATE grade SET midtest_score = ?, finaltest_score = ?, assignment_score = ?, score = ? " +
+	                "WHERE student_id = ? AND course_id = ?";
+					
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, total_);
-			pstmt.setString(2, student_id_);
+			pstmt.setString(1, midtest_score);
+			pstmt.setString(2, finaltest_score);
+			pstmt.setString(3, assignment_score);
+			pstmt.setString(4, total);
+			pstmt.setString(5, student_id);
+			pstmt.setString(6, course_id_);
             
 			pstmt.executeUpdate();
 			
@@ -358,6 +374,7 @@ public class ClassroomDAO {
 		
 	}
 
+	// 성적 조회
 	public ArrayList<StudentVo> gradeSearch(String student_id_1) {
 		
 		ArrayList<StudentVo> studentList = new ArrayList<StudentVo>();
@@ -370,7 +387,7 @@ public class ClassroomDAO {
 			
 			con = ds.getConnection();
 			
-			String sql = "SELECT g.student_id, c.course_id, c.course_name, g.score, m.majorname "
+			String sql = "SELECT g.student_id, c.course_id, c.course_name, g.score, m.majorname, g.midtest_score, g.finaltest_score, assignment_score "
 						+ "FROM grade g "
 						+ "JOIN course c ON g.course_id = c.course_id "
 						+ "JOIN student_info s ON g.student_id = s.student_id "
@@ -385,6 +402,9 @@ public class ClassroomDAO {
 				student = new StudentVo();
 				student.setStudent_id(rs.getString("student_id"));
 				student.setScore(rs.getFloat("score"));
+				student.setMidtest_score(rs.getInt("midtest_score"));
+				student.setFinaltest_score(rs.getInt("finaltest_score"));
+				student.setAssignment_score(rs.getInt("assignment_score"));
 				
 				course = new CourseVo();
 				course.setCourse_id(rs.getString("course_id"));
@@ -404,6 +424,62 @@ public class ClassroomDAO {
 		}
 		
 		return studentList;
+	}
+
+	// 이미 성적이 있는지 조회
+	public boolean gradeExists(String course_id_, String student_id) {
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			String sql = "SELECT COUNT(*) FROM grade WHERE student_id = ? AND course_id = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, student_id);
+			pstmt.setString(2, course_id_);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				return rs.getInt(1) > 0;
+			}
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 gradeExists메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		
+		
+		return false;
+	}
+
+	//성적 삭제
+	public void gradeDelete(String course_id_, String student_id) {
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			sql = "DELETE FROM grade WHERE student_id = ? AND course_id = ?";
+					
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, student_id);
+			pstmt.setString(2, course_id_);
+            
+			pstmt.executeUpdate();
+			
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 gradeUpdate메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
 	}
 
 }

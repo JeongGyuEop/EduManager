@@ -31,7 +31,7 @@
 </head>
 <body class="bg-light">
     <main class="container my-5">
-        <h2 class="text-center mb-4">학생 목록</h2>
+        <h2 class="text-center mb-4">성적 목록</h2>
         <div class="card shadow-sm">
             <div class="card-body">
                 <table class="table table-bordered table-hover text-center align-middle">
@@ -41,6 +41,9 @@
                             <th scope="col">학 번</th>
                             <th scope="col">과 목</th>
                             <th scope="col">과목 번호</th>
+                            <th scope="col">중간 고사</th>
+                            <th scope="col">기말 고사</th>
+                            <th scope="col">과 제</th>
                             <th scope="col">총 점</th>
                             <th scope="col">등 급</th>
                         </tr>
@@ -54,6 +57,9 @@
                             <td class="student_id"><%=student.getStudent_id()%></td>
                             <td><%=student.getCourse().getCourse_name()%></td>
                             <td><%=student.getCourse().getCourse_id()%></td>
+                            <td><%=student.getMidtest_score()%></td>
+                            <td><%=student.getFinaltest_score()%></td>
+                            <td><%=student.getAssignment_score()%></td>
                             <td class="total"><%=student.getScore()%></td>
                             <td class="grade"></td>
                         </tr>

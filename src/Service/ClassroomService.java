@@ -57,16 +57,31 @@ public class ClassroomService {
 	}
 
 	//성적 등록 
-	public void serviceGradeInsert(String course_id_, String student_id, String total) {
-		classroomdao.gradeInsert(course_id_, student_id, total);
+	public void serviceGradeInsert(String course_id_, String student_id, String total, String midtest_score, String finaltest_score, String assignment_score) {
+		classroomdao.gradeInsert(course_id_, student_id, total,midtest_score, finaltest_score ,assignment_score);
 	}
 
-	public void serviceGradeUpdate(String student_id_, String total_) {
-		classroomdao.gradeUpdate(student_id_, total_);
-	}
-
+	//성적 조회
 	public ArrayList<StudentVo> serviceGradeSearch(String student_id_1) {
 		return classroomdao.gradeSearch(student_id_1);
+	}
+
+	// 이미 성적이 있는지 조회 
+	public boolean isGradeExists(String course_id_, String student_id) {
+		return classroomdao.gradeExists(course_id_, student_id);
+	}
+
+	// 성적 수정
+	public void serviceGradeUpdate(String course_id_, String student_id, String total, String midtest_score, String finaltest_score,
+			String assignment_score) {
+		
+		classroomdao.gradeUpdate(course_id_, student_id, total, midtest_score, finaltest_score, assignment_score);
+	}
+
+	// 성적 삭제
+	public void serviceGradeDelete(String course_id_, String student_id) {
+		classroomdao.gradeDelete(course_id_, student_id);
+		
 	}
 
 

@@ -33,7 +33,7 @@
 			<!-- Navbar-->
 			    <ul class="navbar-nav ms-auto d-flex align-items-center">
 			        <li class="nav-item">
-			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> 교수님!</p>
+			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
 			        </li>
 			        <li class="nav-item dropdown">
 			            <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>

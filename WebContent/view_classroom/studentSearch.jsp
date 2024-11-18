@@ -50,24 +50,38 @@
                             <th scope="col">과 제</th>
                             <th scope="col">총 점</th>
                             <th scope="col">등 록</th>
+                            <th scope="col">수 정</th>
+                            <th scope="col">삭 제</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
                         <%
                         for (StudentVo student : studentList) {
+                        	System.out.println(student);
                         %>
                         <tr>
 							<td><%=student.getCourse().getMajorname()%></td>
                             <td id="student_id"><%=student.getStudent_id()%></td>
                             <td><%=student.getUser_name()%></td>
-                            <td><input type="text" id="midtest" name="midtest" class="input"></td>
-                            <td><input type="text" id="finaltest" name="finaltest" class="input"></td>
-                            <td><input type="text" id="assignment" name="assignment" class="input"></td>
-                            <td><input type="text" id="total" name="total" value="" class="input"></td>
+                            <td><input type="text" id="midtest" name="midtest" class="input" value="<%=student.getMidtest_score()%>"></td>
+                            <td><input type="text" id="finaltest" name="finaltest" class="input" value="<%=student.getFinaltest_score()%>"></td>
+                            <td><input type="text" id="assignment" name="assignment" class="input" value="<%=student.getAssignment_score()%>"></td>
+                            <td><input type="text" id="total" name="total" value="" class="input" value="<%=student.getScore()%>"></td>
                             <td>
                                 <button id="registerBtn-<%= student.getStudent_id() %>" 
                                         class="btn btn-green register-btn" 
                                         onclick="registerGrade('<%= student.getStudent_id() %>')">등록</button>
+                            </td>
+                             <td>
+                                <button id="registerBtn-<%= student.getStudent_id() %>" 
+                                        class="btn btn-green register-btn" 
+                                        onclick="updateGrade('<%= student.getStudent_id() %>')">수정</button>
+                            </td>
+                             <td>
+                                <button id="registerBtn-<%= student.getStudent_id() %>" 
+                                        class="btn btn-green register-btn" 
+                                        onclick="deleteGrade('<%= student.getStudent_id() %>')">삭제</button>
                             </td>
                         </tr>
                         <%
@@ -115,13 +129,63 @@
                     total: total 
                 },
                 success: function (response) {
-                    alert('등록 완료');
+                    alert(response);
                 },
                 error: function () {
                     alert('등록 중 오류가 발생했습니다.');
                 }
             });
         }
+        
+     // 수정 버튼 클릭 이벤트 처리
+        function updateGrade(studentId) {
+            const row = $('#registerBtn-' + studentId).closest('tr');
+            const midtest = $(row).find('input[name="midtest"]').val();
+            const finaltest = $(row).find('input[name="finaltest"]').val();
+            const assignment = $(row).find('input[name="assignment"]').val();
+            const total = $(row).find('input[name="total"]').val();
+
+            $.ajax({
+                url: '<%=contextPath%>/classroom/grade_update.do?classroomCenter=/view_classroom/studentSearch.jsp',
+                type: 'POST',
+                data: { 
+                    student_id: studentId, 
+                    midtest: midtest, 
+                    finaltest: finaltest, 
+                    assignment: assignment, 
+                    total: total 
+                },
+                success: function (response) {
+                    alert(response);
+                },
+                error: function () {
+                    alert('수정 중 오류가 발생했습니다.');
+                }
+            });
+        }
+        
+        // 삭제 버튼 클릭 이벤트 처리
+        function deleteGrade(studentId) {
+            const row = $('#registerBtn-' + studentId).closest('tr');
+            
+            if (confirm("정말 삭제하시겠습니까?")) { // 삭제 확인 메시지
+	            $.ajax({
+	                url: '<%=contextPath%>/classroom/grade_delete.do?classroomCenter=/view_classroom/studentSearch.jsp',
+	                type: 'POST',
+	                data: { 
+	                    student_id: studentId
+	                },
+	                success: function (response) {
+	                    alert(response);
+	                    location.reload(); // 페이지 새로고침하여 변경사항 반영
+	                },
+	                error: function () {
+	                    alert('삭제 중 오류가 발생했습니다.');
+	                }
+	            });
+            }
+        }
+        
 
     </script>
 </body>

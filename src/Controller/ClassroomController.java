@@ -280,7 +280,7 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    //==========================================================================================
 
-	    	case "/grade_register.do":
+	    	case "/grade_register.do": // 교수가 성적 등록
 	    		
 	    		studentList = (ArrayList<StudentVo>) session.getAttribute("studentList");
 	    		
@@ -289,35 +289,34 @@ public class ClassroomController extends HttpServlet {
 	    		course_id_ = (String) session.getAttribute("course_id");
 	    		String student_id = (String) request.getParameter("student_id");
 	    		String total = (String)request.getParameter("total");
+	    		String midtest_score = (String) request.getParameter("midtest");
+	    		String finaltest_score = (String) request.getParameter("finaltest");
+	    		String assignment_score = (String) request.getParameter("assignment");
+	    		
 	    		
 	    		session.setAttribute("total", total);
-	    		
-	    		classroomservice.serviceGradeInsert(course_id_, student_id, total);
-	    		
 	    		center = request.getParameter("classroomCenter");
 	    		
 	    		request.setAttribute("classroomCenter", center);
 	    		
 	    		nextPage = "/view_classroom/classroom.jsp";
 	    		
-	    		break;
+	    		boolean isGradeExists = classroomservice.isGradeExists(course_id_, student_id);
+	    		
+	    		if(isGradeExists) {// 이미 해당 학생의 성적이 등록되어 있는 경우
+	    			 response.getWriter().write("이미 성적이 등록된 학생입니다.");
+	    			 return;
+	    		} else {
+
+		    		classroomservice.serviceGradeInsert(course_id_, student_id, total, midtest_score, finaltest_score, assignment_score);
+		    		response.getWriter().write("성적이 성공적으로 등록되었습니다."); // 성공 메시지 반환
+		    		return;
+	    		}
+	    		
 	    		
    	    //==========================================================================================
-	    		
-	    	case "/grade_edit.do":
-
-	    		String student_id_ = (String) request.getParameter("student_id");
-	    		String total_ = (String) request.getParameter("total");
-	    		
-	    		classroomservice.serviceGradeUpdate(student_id_, total_);
-	    		
-	    		nextPage = "/view_classroom/classroom.jsp";
-	    		
-	    		break;
-	    		
-	    //==========================================================================================
 		
-	    	case "/grade_search.bo":
+	    	case "/grade_search.bo": // 학생이 성적 조회
 	    		
 	    		ArrayList<StudentVo> studentList_ = new ArrayList<StudentVo>();
 	    			  
@@ -337,6 +336,83 @@ public class ClassroomController extends HttpServlet {
 	    
   	    //==========================================================================================
 	    		
+	    	case "/grade_update.do": //교수가 성적 수정
+	    		
+	    		studentList = (ArrayList<StudentVo>) session.getAttribute("studentList");
+	    		
+	    		session.setAttribute("studentList", studentList);
+	    		
+	    		course_id_ = (String) session.getAttribute("course_id");
+	    		student_id = (String) request.getParameter("student_id");
+	    		total = (String)request.getParameter("total");
+	    		midtest_score = (String) request.getParameter("midtest");
+	    		finaltest_score = (String) request.getParameter("finaltest");
+	    		assignment_score = (String) request.getParameter("assignment");
+	    		
+	    		session.setAttribute("total", total);
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		request.setAttribute("classroomCenter", center);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    	
+	    		
+	    		// 입력값 검증
+	    	    try {
+	    	    	int midtest = Integer.parseInt(midtest_score);
+		    		int finaltest = Integer.parseInt(finaltest_score);
+		    		int assignment = Integer.parseInt(assignment_score);
+
+	    	        // 점수 범위 확인 (0~100)
+	    	        if (midtest < 0 || midtest > 100 || finaltest < 0 || finaltest > 100 || assignment < 0 || assignment > 100) {
+	    	            response.getWriter().write("점수는 0에서 100 사이여야 합니다.");
+	    	            return;
+	    	        }
+	    	        classroomservice.serviceGradeUpdate(course_id_, student_id, total, midtest_score, finaltest_score, assignment_score );
+	    	        response.getWriter().write("성적이 성공적으로 수정되었습니다.");
+	    	        return;
+	    	    } catch (NumberFormatException e) {
+	    	        // 숫자가 아닌 값이 입력된 경우
+	    	        response.getWriter().write("유효한 숫자를 입력해주세요.");
+	    	    }
+	    		
+	    		
+	    		
+	    		break;
+	    		
+	    		
+	    //==========================================================================================
+	    		
+	    	case "/grade_delete.do": //교수가 성적 삭제
+	    		
+	    		studentList = (ArrayList<StudentVo>) session.getAttribute("studentList");
+	    		
+	    		session.setAttribute("studentList", studentList);
+	    		
+	    		course_id_ = (String) session.getAttribute("course_id");
+	    		student_id = (String) request.getParameter("student_id");
+	    		
+	    		System.out.println(course_id_);
+	    		System.out.println(student_id);
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		request.setAttribute("classroomCenter", center);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    	      
+		       	classroomservice.serviceGradeDelete(course_id_, student_id);
+		       	
+		        response.getWriter().write("성적이 성공적으로 삭제되었습니다.");
+		        return;
+	    	    
+	    		
+	    		
+	    //==========================================================================================
+
 	    	default:
 	    		break;
 	    }

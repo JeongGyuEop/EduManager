@@ -1,4 +1,4 @@
-<%@page import="Vo.MemberVo"%>
+<%@page import="Vo.StudentVo"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -10,7 +10,7 @@
 
 <%
     // request에서 학생 정보를 가져오기
-    MemberVo student = (MemberVo) request.getAttribute("student");
+   StudentVo student = (StudentVo) request.getAttribute("student");
 %>
 
 <form action="${pageContext.request.contextPath}/member/updateStudent.do" method="post">
