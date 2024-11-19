@@ -146,8 +146,6 @@ public class ClassroomDAO {
 	// 해당 교수의 강의를 DB에서 찾아 반환하는 함수
 	public ArrayList<CourseVo> courseSearch(String professor_id) {
 		
-		System.out.println(professor_id);
-		
 		ArrayList<CourseVo> courseList = new ArrayList<CourseVo>();
 		CourseVo course;
 		
@@ -191,7 +189,7 @@ public class ClassroomDAO {
 	}
 
 	//-----------
-	// DB에서 강의를 삭제하는 함
+	// DB에서 강의를 삭제하는 함수
 	public int courseDelete(String course_id) {
 		
 		int result = 0;
@@ -208,7 +206,6 @@ public class ClassroomDAO {
 			pstmt.setString(1, course_id);
             
 			result = pstmt.executeUpdate();
-			System.out.println(result);
 			
 			return result;
 			
@@ -223,6 +220,8 @@ public class ClassroomDAO {
 		
 	}
 
+	//-----------
+	// 교수가 강의를 수정하기 위한 함수
 	public int updateCourse(String course_id, String course_name, String room_id) {
 		
 		int result = 0;
@@ -247,7 +246,7 @@ public class ClassroomDAO {
 			return result;
 			
 		} catch (Exception e) {
-			System.out.println("ClassroomDAO의 courseDelete메소드에서 오류 ");
+			System.out.println("ClassroomDAO의 updateCourse메소드에서 오류 ");
 			e.printStackTrace();
 		} finally {
 			closeResource(); // 자원 해제
@@ -257,123 +256,262 @@ public class ClassroomDAO {
 		
 	}
 
-	// 학생 조회 
-	public ArrayList<StudentVo> studentSearch(String course_id_) {
-		
-		ArrayList<StudentVo> studentList = new ArrayList<StudentVo>();
-		
-		StudentVo student;
-		
-		CourseVo course;
+	//----------
+	// classroom 테이블에 강의실을 등록하기 위한 함수
+	public int roomRegister(String room_id, String capacity, String[] equipment) {
+
+		int result = 0;
+		String sql = null;
 		
 		try {
 			
 			con = ds.getConnection();
 			
-			String sql = "SELECT m.majorname, s.student_id, u.user_name, "
-						+ "g.midtest_score, g.finaltest_score, g.assignment_score, g.score "
-						+ "FROM enrollment e "
-						+ "JOIN student_info s ON e.student_id = s.student_id "
-						+ "JOIN  user u ON s.user_id = u.user_id "
-						+ "LEFT JOIN majorinformation m ON s.majorcode = m.majorcode "
-						+ "LEFT JOIN grade g ON g.student_id = s.student_id AND g.course_id = e.course_id "
-						+ "WHERE e.course_id = ?;";
+			// equipment 배열을 문자열로 변환
+	        String equipmentStr = String.join(",", equipment);
+			
+			sql = "INSERT INTO classroom (room_id, capacity, equipment)VALUES (?, ?, ?)";
 			
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, course_id_);
+	        pstmt.setString(1, room_id);
+	        pstmt.setString(2, capacity);
+	        pstmt.setString(3, equipmentStr);
+            
+			result = pstmt.executeUpdate();
+			
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 roomRegister메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return result;
+		
+	}
+			
+	//-----------
+	// 관리자가 강의실 조회하기 위한 함수 
+	public ArrayList<ClassroomVo> roomShearch() {
+		
+		ArrayList<ClassroomVo> courseList = new ArrayList<ClassroomVo>();
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			String sql = "select * from classroom";
+			
+			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-				student = new StudentVo();
-				student.setStudent_id(rs.getString("student_id"));
-				student.setUser_name(rs.getString("user_name"));
-				student.setMidtest_score(rs.getInt("midtest_score"));
-				student.setFinaltest_score(rs.getInt("finaltest_score"));
-				student.setAssignment_score(rs.getInt("assignment_score"));
-				student.setScore(rs.getFloat("score"));
 				
-				course = new CourseVo();
-				course.setMajorname(rs.getString("majorname"));
-				
-				student.setCourse(course);
+				// ClassroomVo 객체 생성 후 강의실 정보를 설정
+				ClassroomVo classroom = new ClassroomVo();
+				classroom.setRoom_id(rs.getString("room_id"));
+				classroom.setCapacity(rs.getInt("capacity"));
+				classroom.setEquipment(rs.getString("equipment"));
 
-				studentList.add(student);
+				courseList.add(classroom);
 			}
 			
 		} catch (Exception e) {
-			System.out.println("ClassroomDAO의 studentSearch메소드에서 오류 ");
+			System.out.println("ClassroomDAO의 roomSearch메소드에서 오류 ");
 			e.printStackTrace();
 		} finally {
 			closeResource(); // 자원 해제
 		}
 		
-		return studentList;
+		return courseList;
 	}
 
-	//성적 등록
-	public void gradeInsert(String course_id_, String student_id, String total, String midtest_score, String finaltest_score, String assignment_score) {
+	//-----------
+	// 관리자가 강의실의 정보를 수정하기 위해 호출하는 함수
+	public int updateRoom(String room_id, String capacity, String room_equipment) {
+		
+		int result = 0;
 		
 		String sql = null;
 		
 		try {
 			
 			con = ds.getConnection();
-			
-			sql = "INSERT INTO grade (student_id, course_id, score, midtest_score, finaltest_score, assignment_score) VALUES (?, ?, ?, ?, ?, ?)";
+			sql = "UPDATE classroom SET "
+					+ "capacity=?, equipment=? "
+					+ "WHERE room_id=?";
 			
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, student_id);
-            pstmt.setString(2, course_id_);
-            pstmt.setFloat(3, Float.parseFloat(total));
-            pstmt.setInt(4, Integer.parseInt(midtest_score));
-            pstmt.setInt(5, Integer.parseInt(finaltest_score));
-            pstmt.setInt(6, Integer.parseInt(assignment_score));
+			pstmt.setInt(1, Integer.parseInt(capacity));
+			pstmt.setString(2, room_equipment);
+			pstmt.setString(3, room_id);
             
-			pstmt.executeUpdate();
+			result = pstmt.executeUpdate();
+			
+			return result;
 			
 		} catch (Exception e) {
-			System.out.println("ClassroomDAO의 registerInsertCourse메소드에서 오류 ");
+			System.out.println("ClassroomDAO의 updateCourse메소드에서 오류 ");
 			e.printStackTrace();
 		} finally {
 			closeResource(); // 자원 해제
 		}
+		return result;
 		
-		
-	}
+		}
 	
-	// 성적 수정
-	public void gradeUpdate(String course_id_, String student_id, String total, String midtest_score, String finaltest_score,
-			String assignment_score) {
-		
-		String sql = null;
-		
-		try {
+		//-----------
+		// 관리자가 강의실의 정보를 DB에서 삭제하기 위해 호출하는 함수
+		public int deleteRoom(String room_id) {
 			
-			con = ds.getConnection();
+			int result = 0;
 			
-			sql = "UPDATE grade SET midtest_score = ?, finaltest_score = ?, assignment_score = ?, score = ? " +
-	                "WHERE student_id = ? AND course_id = ?";
-					
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, midtest_score);
-			pstmt.setString(2, finaltest_score);
-			pstmt.setString(3, assignment_score);
-			pstmt.setString(4, total);
-			pstmt.setString(5, student_id);
-			pstmt.setString(6, course_id_);
-            
-			pstmt.executeUpdate();
+			String sql = null;
 			
+			try {
+				
+				con = ds.getConnection();
+				
+				sql = "DELETE FROM classroom WHERE room_id=?";
+				
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, room_id);
+	            
+				result = pstmt.executeUpdate();
+				
+				return result;
+				
+			} catch (Exception e) {
+				System.out.println("ClassroomDAO의 deleteRoom메소드에서 오류 ");
+				e.printStackTrace();
+			} finally {
+				closeResource(); // 자원 해제
+			}
 			
-		} catch (Exception e) {
-			System.out.println("ClassroomDAO의 gradeUpdate메소드에서 오류 ");
-			e.printStackTrace();
-		} finally {
-			closeResource(); // 자원 해제
+			return result;
 		}
 		
-	}
+		
+	
+	// 학생 조회 
+		 public ArrayList<StudentVo> studentSearch(String course_id_) {
+			
+				ArrayList<StudentVo> studentList = new ArrayList<StudentVo>();
+				
+				StudentVo student;
+				
+				CourseVo course;
+				
+				try {
+					
+					con = ds.getConnection();
 
+					String sql = "SELECT m.majorname, s.student_id, u.user_name, "
+								+ "g.midtest_score, g.finaltest_score, g.assignment_score, g.score "
+								+ "FROM enrollment e "
+								+ "JOIN student_info s ON e.student_id = s.student_id "
+								+ "JOIN  user u ON s.user_id = u.user_id "
+								+ "LEFT JOIN majorinformation m ON s.majorcode = m.majorcode "
+								+ "LEFT JOIN grade g ON g.student_id = s.student_id AND g.course_id = e.course_id "
+								+ "WHERE e.course_id = ?;";
+				
+					pstmt = con.prepareStatement(sql);
+					pstmt.setString(1, course_id_);
+					rs = pstmt.executeQuery();
+				
+					while(rs.next()) {
+						student = new StudentVo();
+						student.setStudent_id(rs.getString("student_id"));
+						student.setUser_name(rs.getString("user_name"));
+						student.setMidtest_score(rs.getInt("midtest_score"));
+						student.setFinaltest_score(rs.getInt("finaltest_score"));
+						student.setAssignment_score(rs.getInt("assignment_score"));
+						student.setScore(rs.getFloat("score"));
+						
+						course = new CourseVo();
+						course.setMajorname(rs.getString("majorname"));
+						
+						student.setCourse(course);
+
+						studentList.add(student);
+					}
+				
+				} catch (Exception e) {
+					System.out.println("ClassroomDAO의 studentSearch메소드에서 오류 ");
+					e.printStackTrace();
+				}finally {
+					closeResource();
+				}
+			
+				return studentList;
+			}
+
+			//성적 등록
+			public void gradeInsert(String course_id_, String student_id, String total, String midtest_score, String finaltest_score, String assignment_score) {
+
+				String sql = null;
+				
+				try {
+					con = ds.getConnection();
+					
+					
+					sql = "INSERT INTO grade (student_id, course_id, score, midtest_score, finaltest_score, assignment_score) VALUES (?, ?, ?, ?, ?, ?)";
+				
+					pstmt = con.prepareStatement(sql);
+					pstmt.setString(1, student_id);
+					pstmt.setString(2, course_id_);
+					pstmt.setFloat(3, Float.parseFloat(total));
+					pstmt.setInt(4, Integer.parseInt(midtest_score));
+					pstmt.setInt(5, Integer.parseInt(finaltest_score));
+					pstmt.setInt(6, Integer.parseInt(assignment_score));
+	            
+					pstmt.executeUpdate();
+				
+			} catch (Exception e) {
+				System.out.println("ClassroomDAO의 registerInsertCourse메소드에서 오류 ");
+				e.printStackTrace();
+			}finally {
+				closeResource();
+			}
+
+		
+		}
+		
+		// 성적 수정
+		public void gradeUpdate(String course_id_, String student_id, String total, String midtest_score, String finaltest_score,
+				String assignment_score) {
+		
+			String sql = null;
+			
+			try {
+				con = ds.getConnection();
+			
+				sql = "UPDATE grade SET midtest_score = ?, finaltest_score = ?, assignment_score = ?, score = ? " +
+						"WHERE student_id = ? AND course_id = ?";
+					
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, midtest_score);
+				pstmt.setString(2, finaltest_score);
+				pstmt.setString(3, assignment_score);
+				pstmt.setString(4, total);
+				pstmt.setString(5, student_id);
+				pstmt.setString(6, course_id_);
+	        
+				pstmt.executeUpdate();
+			
+			} catch (Exception e) {
+				System.out.println("ClassroomDAO의 gradeUpdate메소드에서 오류 ");
+				e.printStackTrace();
+			} finally {
+				closeResource(); // 자원 해제
+			}
+		}
+		
+
+		
+		 
 	// 성적 조회
 	public ArrayList<StudentVo> gradeSearch(String student_id_1) {
 		
@@ -451,8 +589,6 @@ public class ClassroomDAO {
 			closeResource(); // 자원 해제
 		}
 		
-		
-		
 		return false;
 	}
 
@@ -476,10 +612,8 @@ public class ClassroomDAO {
 		} catch (Exception e) {
 			System.out.println("ClassroomDAO의 gradeUpdate메소드에서 오류 ");
 			e.printStackTrace();
-		} finally {
-			closeResource(); // 자원 해제
+		}finally {
+			closeResource();
 		}
-		
 	}
-
 }

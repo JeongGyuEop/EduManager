@@ -147,9 +147,4 @@ public class MemberVo {
 	}
 
 	
-	
-	
-	
-	
-	
 }
