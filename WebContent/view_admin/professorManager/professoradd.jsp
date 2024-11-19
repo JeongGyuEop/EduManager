@@ -131,7 +131,7 @@
                 </tr>
                 <tr>
                     <th><label for="professor_id">사번</label></th>
-                    <td><input type="text" id="professor_id" name="professor_id" required></td>		
+                    <td><input type="text" id="professor_id" name="professor_id" placeholder="P000"  required></td>		
                 </tr>
                 <tr>
                     <th><label for="p_name">이름</label></th>

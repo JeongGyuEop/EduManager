@@ -272,6 +272,16 @@ public class BoardController extends HttpServlet {
 			month = request.getParameter("month");
 			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + URLEncoder.encode(month, "UTF-8"));
 			return;
+		
+		
+//----------- 중고 책 거래 -----------------------------------------------------------------------------------------------------------------------
+		
+		case "/bookPostUpload":	
+			
+			
+		
+		
+//----------- 중고 책 거래 -----------------------------------------------------------------------------------------------------------------------		
 		default:
 			break;
 		}
