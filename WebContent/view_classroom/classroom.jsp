@@ -20,7 +20,47 @@
         <title>강의실 메인 페이지</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="<%=contextPath %>/css/classroom_styles.css" rel="stylesheet" />
-        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
+        <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: '<%=contextPath%>/classroom/courseNameSearch.do', // 실제 서버 URL 경로로 변경 필요
+                method: 'GET',
+                dataType: 'json',
+                success: function(courseList) {
+                	console.log(courseList);  // 클라이언트 측에서 받아진 데이터 확인
+                	
+                    if (courseList && courseList.length > 0) {
+                        let courseIndex = 1;
+                        courseList.forEach(course => {
+                        	console.log(course.courseName);
+                        	console.log(course);
+                            let courseHtml = 
+	                            '<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCourse' + courseIndex + '" aria-expanded="false" aria-controls="collapseCourse' + courseIndex + '">' +
+	                            	'<div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>' +
+	                            	course.courseName + ' <!-- 강의 이름 표시 -->' +
+	                            	'<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>' +
+	                            '</a>' +
+	                            '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
+	                            	'<nav class="sb-sidenav-menu-nested nav">' +
+	                            		'<a class="nav-link" href="assignment.html">과제</a>' +
+	                            		'<a class="nav-link" href="material.html">자료</a>' +
+	                            	'</nav>' +
+	                            '</div>';
+                            $('#courseTargetElement').append(courseHtml);
+                            console.log("Appended HTML: ", courseHtml); // 추가된 HTML을 콘솔에 출력
+
+                            courseIndex++;
+                        });
+                    }
+                },
+                error: function(error) {
+                    console.error('Error fetching course list:', error);
+                }
+            });
+        });
+        </script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -69,31 +109,9 @@
                             </div>
 							
 							<!-- 사이드바 나의 수업 영역 -->
-                            <!-- 사이드바 나의 수업 영역 -->
 							<div class="sb-sidenav-menu-heading">My Courses</div>
-							
-							<%-- <%
-							    List<CourseVo> courseList = (List<CourseVo>) request.getAttribute("courseList");
-							    if (courseList != null) {
-							        int courseIndex = 1;
-							        for (CourseVo course : courseList) {
-							%> --%>
-							<%--             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCourse<%= courseIndex %>" aria-expanded="false" aria-controls="collapseCourse<%= courseIndex %>">
-							                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-							                <%= course.getCourseName() %> <!-- 강의 이름 표시 -->
-							                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-							            </a>
-							            <div class="collapse" id="collapseCourse<%= courseIndex %>" aria-labelledby="headingCourse<%= courseIndex %>" data-bs-parent="#sidenavAccordion">
-							                <nav class="sb-sidenav-menu-nested nav">
-							                    <a class="nav-link" href="assignment.html">과제</a> <!-- 과제 링크 예시 -->
-							                    <a class="nav-link" href="material.html">자료</a> <!-- 강의 자료 링크 예시 -->
-							                </nav>
-							            </div> --%>
-							<%-- <%
-							            courseIndex++;
-							        }
-							    }
-							%> --%>
+							<!-- AJAX로 동적 생성되는 강의 목록 -->
+                            <div id="courseTargetElement"></div>
                             
                             <!-- 사이드바 성적 조회 영역 -->
                             <div class="sb-sidenav-menu-heading">SCORE</div>
@@ -187,8 +205,6 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="../assets/demo/chart-area-demo.js"></script>
-        <script src="../assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="../js/datatables-simple-demo.js"></script>
     </body>

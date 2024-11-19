@@ -158,6 +158,36 @@ public class ClassroomController extends HttpServlet {
 				break;
 						
 		//==========================================================================================
+			    
+	    	case "/courseNameSearch.do": // 교수 강의 조회 화면 2단계 요청 주소를 받으면
+	    		
+	    		ArrayList<CourseVo> courseListAjax = new ArrayList<CourseVo>();
+	    		
+	    		professor_id = (String) session.getAttribute("professor_id");
+	    		
+	    		courseListAjax = classroomservice.serviceCourseSearch(professor_id);
+	    		
+	    		// JSON 응답 설정
+	    	    response.setContentType("application/json; charset=UTF-8");
+	    	    out = response.getWriter();
+	    	    
+	    	    JSONArray courseArray = new JSONArray();
+	    	    if (courseListAjax != null && !courseListAjax.isEmpty()) {
+
+	    	        // 강의 목록을 JSON 배열로 변환
+	    	        for (CourseVo course : courseListAjax) {
+	    	            JSONObject courseJson = new JSONObject();
+	    	            courseJson.put("courseName", course.getCourse_name()); // 강의 이름 추가
+	    	            courseArray.add(courseJson); // 배열에 추가
+	    	        }
+	    	    }
+	    	    // JSON 응답 반환
+	    	    out.print(courseArray);
+	    	    out.flush();
+	    	    out.close();
+	    	    return;
+				
+		//==========================================================================================
 				
 	    	case "/updateCourse.do":
 	    		// 요청으로부터 파라미터 받기
