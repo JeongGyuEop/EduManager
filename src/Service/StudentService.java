@@ -1,6 +1,7 @@
 package Service;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +16,10 @@ import Vo.StudentVo;
 // - 단위 기능 별로 메소드를 만들어서 그 기능을 처리하는 클래스
 public class StudentService {
 
-	// MemberDAO 객체의 주소를 저장할 참조변수
+	// StudentDAO 객체의 주소를 저장할 참조변수
 	StudentDAO studentDao;
 
-	// 기본 생성자 - 위 memberDao변수에 new MemberDAO() 객체를 만들어서 저장하는 역할
+	// 기본 생성자 - 위 studentDao변수에 new StudentDAO() 객체를 만들어서 저장하는 역할
 	public StudentService() {
 		studentDao = new StudentDAO();
 	}
@@ -137,5 +138,91 @@ public class StudentService {
 		    // DAO 메서드를 호출하여 본인 정보 업데이트
 		    return studentDao.updateStudentInfo(student);
 		}
+		
+		  // ============================================================================
+		// 강의 평가 등록 메서드
+		
+		public boolean insertEvaluation(HttpServletRequest request) {
 
+		    try {
+		        // request에서 평가 데이터 가져오기
+		    	String studentId = request.getParameter("student_id"); // 로그인한 학생 ID 가져오기
+		        String courseId = request.getParameter("course_id");
+		        int rating = Integer.parseInt(request.getParameter("rating"));
+		        String comments = request.getParameter("comments");
+
+		        // VO 객체 생성 및 값 설정
+		        StudentVo evaluation = new StudentVo();
+		        evaluation.setStudent_id(studentId);
+		        evaluation.setCourseId(courseId);
+		        evaluation.setRating(rating);
+		        evaluation.setComments(comments);
+
+		        // DAO 메서드 호출하여 평가 등록
+		        int result = studentDao.insertEvaluation(evaluation);
+		        return result > 0; // 실행 결과가 1 이상일 경우 true 반환
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return false; // 오류 발생 시 false 반환
+		    }
+		}
+		// StudentService 클래스에 추가
+		public List<StudentVo> getCourseList(String user_id) {
+		    return studentDao.getAllCourses(user_id); // DAO 메서드 호출
+		}
+
+
+		// ===================================================================================
+		// 특정 학생의 강의 평가 조회 메서드
+		public List<StudentVo> getEvaluationsByStudentId(String studentId) {
+		    return studentDao.getEvaluationsByStudentId(studentId);
+		}
+
+		// ===================================================================================
+		// 특정 강의 평가 조회 메서드
+		public StudentVo getEvaluationById(int evaluationId) {
+		    return studentDao.getEvaluationById(evaluationId);
+		}
+
+		// ===================================================================================
+		// 강의 평가 수정 메서드
+		public boolean updateEvaluation(HttpServletRequest request) {
+		    try {
+		        int evaluationId = Integer.parseInt(request.getParameter("evaluation_id"));
+		        String courseId = request.getParameter("course_id");
+		        int rating = Integer.parseInt(request.getParameter("rating"));
+		        String comments = request.getParameter("comments");
+
+		        // VO 객체 생성 및 값 설정
+		        StudentVo evaluation = new StudentVo();
+		        evaluation.setEvaluationId(evaluationId);
+		        evaluation.setCourseId(courseId);
+		        evaluation.setRating(rating);
+		        evaluation.setComments(comments);
+
+		        // DAO 메서드 호출하여 평가 수정
+		        int result = studentDao.updateEvaluation(evaluation);
+		        return result > 0; // 실행 결과가 1 이상일 경우 true 반환
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return false; // 오류 발생 시 false 반환
+		    }
+		}
+
+
+		// ===================================================================================
+		// 강의 평가 삭제 메서드
+		public boolean deleteEvaluation(int evaluationId) {
+		    try {
+		        int result = studentDao.deleteEvaluation(evaluationId);
+		        return result > 0; // 실행 결과가 1 이상일 경우 true 반환
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return false; // 오류 발생 시 false 반환
+		    }
+		}
+
+
+	    
+	  
 }
