@@ -21,8 +21,10 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td><label for="image">이미지:</label> <input type="file"
-						id="image" name="image" accept="image/*"></td>
+					<td><label for="preview-image">이미지 미리보기</label>
+						<div>
+							<!-- 임시 directory에서 이미지를 가져올 곳 -->
+						</div></td>
 				</tr>
 				<tr>
 					<td><label for="content">내용:</label> <textarea id="content"
@@ -36,6 +38,10 @@
 							<option value="일반 중고책 거래">일반 중고책 거래</option>
 							<!-- 추가적인 옵션을 여기에 넣으세요 -->
 					</select></td>
+				</tr>
+				<tr>
+					<td><label for="image">이미지:</label> <input type="file"
+						id="image" name="image" accept="image/*"></td>
 				</tr>
 				<tr>
 					<td>
