@@ -109,7 +109,7 @@ public class ProfessorController extends HttpServlet {
 			vo.setUser_pw(user_pw);
 			vo.setProfessor_id(professor_id);
 			vo.setUser_name(p_name);
-			vo.setBrithDate(Date.valueOf(p_birthDate));
+			vo.setBirthDate(Date.valueOf(p_birthDate));
 			vo.setGender(p_gender);
 			vo.setAddress(p_address);
 			vo.setPhone(p_phone);
@@ -184,12 +184,12 @@ public class ProfessorController extends HttpServlet {
 			professor.setProfessor_id(professorId);
 			professor.setUser_name(name);
 			professor.setMajorcode(majorcode);
-			professor.setBrithDate(birthDate); // String을 Date로 변환
+			professor.setBirthDate(birthDate); // String을 Date로 변환
 			professor.setGender(gender);
 			professor.setAddress(address);
 			professor.setPhone(phone);
 			professor.setEmail(email);
-			professor.setEmployDate(birthDate); // String을 Date로 변환
+			professor.setEmployDate(employDate); // String을 Date로 변환
 
 			// 교수 정보를 업데이트
 			boolean isUpdated = prosessservice.updateProfessor(professor);
@@ -241,7 +241,6 @@ public class ProfessorController extends HttpServlet {
 			// 전체 교수 조회	        
 		case "/professorAdd.bo":  
 			
-				
 				center = request.getParameter("center");
 				
 				request.setAttribute("center", center);

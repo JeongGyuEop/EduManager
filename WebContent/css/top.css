@@ -14,7 +14,7 @@
 		.navbar {
 		    display: flex; /* flexbox를 사용하여 중앙 정렬 */
 		    justify-content: center;
-		    margin-bottom: 150px;
+		    /* margin-bottom: 150px; */
 		    text-align: center;
 		}
 		

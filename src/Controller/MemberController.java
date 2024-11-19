@@ -141,8 +141,8 @@ public class MemberController extends HttpServlet {
 			// MenuItemService.java (서비스)를 호출하여 top메뉴와 sidebar에 표시될 요소를 반환받는다.
 			String menuHtml = menuService.generateMenuHtml(role, contextPath);
 
-			System.out.println(contextPath); // EduManager
-			System.out.println(menuHtml);
+//			System.out.println(contextPath); // EduManager
+//			System.out.println(menuHtml);
 
 			request.setAttribute("center", center);
 			session.setAttribute("menuHtml", menuHtml); // 생성된 menuHtml 설정

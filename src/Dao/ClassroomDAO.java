@@ -145,8 +145,6 @@ public class ClassroomDAO {
 	// 해당 교수의 강의를 DB에서 찾아 반환하는 함수
 	public ArrayList<CourseVo> courseSearch(String professor_id) {
 		
-		System.out.println(professor_id);
-		
 		ArrayList<CourseVo> courseList = new ArrayList<CourseVo>();
 		CourseVo course;
 		
@@ -190,7 +188,7 @@ public class ClassroomDAO {
 	}
 
 	//-----------
-	// DB에서 강의를 삭제하는 함
+	// DB에서 강의를 삭제하는 함수
 	public int courseDelete(String course_id) {
 		
 		int result = 0;
@@ -207,7 +205,6 @@ public class ClassroomDAO {
 			pstmt.setString(1, course_id);
             
 			result = pstmt.executeUpdate();
-			System.out.println(result);
 			
 			return result;
 			
@@ -222,6 +219,8 @@ public class ClassroomDAO {
 		
 	}
 
+	//-----------
+	// 교수가 강의를 수정하기 위한 함수
 	public int updateCourse(String course_id, String course_name, String room_id) {
 		
 		int result = 0;
@@ -246,7 +245,7 @@ public class ClassroomDAO {
 			return result;
 			
 		} catch (Exception e) {
-			System.out.println("ClassroomDAO의 courseDelete메소드에서 오류 ");
+			System.out.println("ClassroomDAO의 updateCourse메소드에서 오류 ");
 			e.printStackTrace();
 		} finally {
 			closeResource(); // 자원 해제
@@ -254,6 +253,145 @@ public class ClassroomDAO {
 		
 		return result;
 		
+	}
+
+	//----------
+	// classroom 테이블에 강의실을 등록하기 위한 함수
+	public int roomRegister(String room_id, String capacity, String[] equipment) {
+
+		int result = 0;
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			// equipment 배열을 문자열로 변환
+	        String equipmentStr = String.join(",", equipment);
+			
+			sql = "INSERT INTO classroom (room_id, capacity, equipment)VALUES (?, ?, ?)";
+			
+			pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, room_id);
+	        pstmt.setString(2, capacity);
+	        pstmt.setString(3, equipmentStr);
+            
+			result = pstmt.executeUpdate();
+			
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 roomRegister메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return result;
+		
+	}
+
+	//-----------
+	// 관리자가 강의실 조회하기 위한 함수 
+	public ArrayList<ClassroomVo> roomShearch() {
+		
+		ArrayList<ClassroomVo> courseList = new ArrayList<ClassroomVo>();
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			String sql = "select * from classroom";
+			
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				
+				// ClassroomVo 객체 생성 후 강의실 정보를 설정
+				ClassroomVo classroom = new ClassroomVo();
+				classroom.setRoom_id(rs.getString("room_id"));
+				classroom.setCapacity(rs.getInt("capacity"));
+				classroom.setEquipment(rs.getString("equipment"));
+
+				courseList.add(classroom);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 roomSearch메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return courseList;
+	}
+
+	//-----------
+	// 관리자가 강의실의 정보를 수정하기 위해 호출하는 함수
+	public int updateRoom(String room_id, String capacity, String room_equipment) {
+		
+		int result = 0;
+		
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			sql = "UPDATE classroom SET "
+					+ "capacity=?, equipment=? "
+					+ "WHERE room_id=?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, Integer.parseInt(capacity));
+			pstmt.setString(2, room_equipment);
+			pstmt.setString(3, room_id);
+            
+			result = pstmt.executeUpdate();
+			
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 updateCourse메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return result;
+		
+	}
+
+	//-----------
+	// 관리자가 강의실의 정보를 DB에서 삭제하기 위해 호출하는 함수
+	public int deleteRoom(String room_id) {
+		
+		int result = 0;
+		
+		String sql = null;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			sql = "DELETE FROM classroom WHERE room_id=?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, room_id);
+            
+			result = pstmt.executeUpdate();
+			
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 deleteRoom메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return result;
 	}
 
 }
