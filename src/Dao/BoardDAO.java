@@ -406,14 +406,14 @@ public class BoardDAO {
     }
 
 	public int bookPostUpload(BookPostVo bookPostVo) {
-		
+		String sql = null;
 		int result = 0;
 		
 		try {
 	        con = ds.getConnection();
 
 	        // 1. book_post 테이블에 게시글 저장
-	        String sql = "INSERT INTO book_post (user_id, post_title, post_content, major_tag) VALUES (?, ?, ?, ?)";
+	        sql = "INSERT INTO book_post (user_id, post_title, post_content, major_tag) VALUES (?, ?, ?, ?)";
 	        pstmt = con.prepareStatement(sql);
 	        pstmt.setString(1, bookPostVo.getUserId());
 	        pstmt.setString(2, bookPostVo.getPostTitle());
@@ -429,8 +429,8 @@ public class BoardDAO {
 	        }
 
 	        // 3. book_image 테이블에 이미지 정보 저장
-	        String imageSql = "INSERT INTO book_image (post_id, file_name) VALUES (?, ?)";
-	        pstmt = con.prepareStatement(imageSql);
+	        sql = "INSERT INTO book_image (post_id, file_name) VALUES (?, ?)";
+	        pstmt = con.prepareStatement(sql);
 	        for (BookPostVo.BookImage image : bookPostVo.getImages()) {
 	            pstmt.setInt(1, postId);
 	            pstmt.setString(2, image.getFileName());

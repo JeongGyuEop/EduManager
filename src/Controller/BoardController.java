@@ -289,7 +289,7 @@ public class BoardController extends HttpServlet {
 			
 		case "/bookPostUpload.bo": // 여기서는 간단한 로직만 처리합니다.
 			result = boardservice.bookPostUploadService(request); // 저장 메서드 라인
-			if (result == 2) {
+			if (result == 1) {
 				// 저장에 성공하면 성공 메시지 반환
 			} else {
 				// 저장에 실패하면 실패 메시지 반환
