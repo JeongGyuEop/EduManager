@@ -414,7 +414,7 @@ public class BoardDAO {
 
 	        // 1. book_post 테이블에 게시글 저장
 	        sql = "INSERT INTO book_post (user_id, post_title, post_content, major_tag) VALUES (?, ?, ?, ?)";
-	        pstmt = con.prepareStatement(sql);
+	        pstmt = con.prepareStatement(sql, pstmt.RETURN_GENERATED_KEYS);
 	        pstmt.setString(1, bookPostVo.getUserId());
 	        pstmt.setString(2, bookPostVo.getPostTitle());
 	        pstmt.setString(3, bookPostVo.getPostContent());
@@ -427,6 +427,9 @@ public class BoardDAO {
 	        if (rs.next()) {
 	            postId = rs.getInt(1);
 	        }
+	        
+	        // 자원 정리 후 새 쿼리 준비를 위해 pstmt 닫기
+	        if (pstmt != null) pstmt.close();
 
 	        // 3. book_image 테이블에 이미지 정보 저장
 	        sql = "INSERT INTO book_image (post_id, file_name) VALUES (?, ?)";
