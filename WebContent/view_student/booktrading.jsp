@@ -15,8 +15,17 @@
 <meta charset="UTF-8">
 <title>판매 또는 구매 글 등록</title>
 </head>
+
+<% 
+    String message = (String) request.getAttribute("message"); 
+    if (message != null) {
+%>
+        <p><%= message %></p>
+<% 
+    } 
+%>
 <body>
-	<form action="<%=contextPath%>/Board/bookPostUpload.bo" method="post"
+	<form action="<%=contextPath%>/Board/bookPostUpload.bo" method="get"
 		enctype="multipart/form-data">
 		<!-- 작성자 정보 가져온 뒤 readonly -->
 		<!-- 작성일은 DAO에서 처리 -->
