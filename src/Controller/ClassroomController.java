@@ -22,6 +22,7 @@ import Service.ClassroomService;
 import Service.StudentService;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
+import Vo.EnrollmentVo;
 import Vo.StudentVo;
 
 
@@ -180,6 +181,7 @@ public class ClassroomController extends HttpServlet {
 	    	        for (CourseVo course : courseListAjax) {
 	    	            JSONObject courseJson = new JSONObject();
 	    	            courseJson.put("courseName", course.getCourse_name()); // 강의 이름 추가
+	    	            courseJson.put("courseId", course.getCourse_id()); // 강의 아이디 추가
 	    	            courseArray.add(courseJson); // 배열에 추가
 	    	        }
 	    	    }
@@ -301,7 +303,7 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    		ArrayList<ClassroomVo> roomList = new ArrayList<ClassroomVo>();
 	    		
-	    		roomList = classroomservice.serviceRoomSearch();
+	    		roomList = classroomservice.serviceGetClassInfo();
 	    		
 	    		center = request.getParameter("center");
 	    		
@@ -311,7 +313,7 @@ public class ClassroomController extends HttpServlet {
 				nextPage = "/main.jsp";
 				
 				break;
-				
+	    		
 		//==========================================================================================
 				
 	    	case "/updateRoom.do":
@@ -338,17 +340,6 @@ public class ClassroomController extends HttpServlet {
 	    		room_id = request.getParameter("room_id");
 	    		
 	    		result = classroomservice.serviceDeleteRoom(room_id); 
-
-//	    		if(result == 1) {
-//				    response.sendRedirect(contextPath +"/classroom/roomSearch.bo?message="
-//				    		+ URLEncoder.encode("강의실이 정상적으로 삭제되었습니다.", "UTF-8") + "&center=/view_admin/roomSearch.jsp");
-//				    return;
-//				} else {
-//					// 실패 시 message 파라미터만 포함하여 리다이렉트
-//				    response.sendRedirect(contextPath +"/classroom/roomSearch.bo?message=" 
-//				                      + URLEncoder.encode("강의실 삭제에 실패했습니다.", "UTF-8") + "&center=/view_admin/roomSearch.jsp");
-//				    return;
-//				}
 	    		
 	    	    out = response.getWriter();
 	    		if(result == 1) {
@@ -370,7 +361,7 @@ public class ClassroomController extends HttpServlet {
 	    		String course_id_ = (String) request.getParameter("course_id");	    
 	    		
 	    		session.setAttribute("course_id", course_id_);
-//	    		
+	    		
 	    		studentList = classroomservice.serviceStudentSearch(course_id_);
 	    		
 	    		center = request.getParameter("classroomCenter");
@@ -486,7 +477,6 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    		break;
 	    		
-	    		
 	    //==========================================================================================
 	    		
 	    	case "/grade_delete.do": //교수가 성적 삭제
@@ -513,11 +503,8 @@ public class ClassroomController extends HttpServlet {
 		        response.getWriter().write("성적이 성공적으로 삭제되었습니다.");
 		        return;
 	    	    
-	    		
-	    		
 	    //==========================================================================================
   
-		
 	    	case "/course_registration.bo":
 	    		
 	    		
@@ -538,14 +525,46 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    		break;
 		        
-		        
-		        
-		        
 		//==========================================================================================
-		        
-		        
-		        
-		        
+			    
+	    	case "/studentCourseSearch.do": // 학생이 수강하는 과목을 조회해서 가져오는 2단계 요청주소
+	    		
+	    		ArrayList<EnrollmentVo> studentCourseList = new ArrayList<EnrollmentVo>();
+	    		
+	    		student_id = (String) session.getAttribute("student_id");
+	    		
+	    		studentCourseList = classroomservice.serviceStudentCourseSearch(student_id);
+	    		
+	    		// JSON 응답 설정
+	    	    response.setContentType("application/json; charset=UTF-8");
+	    	    out = response.getWriter();
+	    	    
+	    	    courseArray = new JSONArray();
+	    	    if (studentCourseList != null && !studentCourseList.isEmpty()) {
+
+	    	        // 강의 목록을 JSON 배열로 변환
+	    	        for (EnrollmentVo enrollment : studentCourseList) {
+	    	            JSONObject courseJson = new JSONObject();
+	    	            // EnrollmentVo의 CourseVo에서 강의 정보 추출
+	    	            CourseVo course = enrollment.getCourse(); // EnrollmentVo에서 CourseVo를 가져옴
+
+	    	            if (course != null) {
+	    	                courseJson.put("courseId", course.getCourse_id());   // 강의 ID 추가
+	    	                courseJson.put("courseName", course.getCourse_name()); // 강의 이름 추가
+	    	            }
+	    	            
+	    	            // 배열에 추가
+	    	            courseArray.add(courseJson);
+
+	    	        }
+	    	    }
+	    	    // JSON 응답 반환
+	    	    out.print(courseArray);
+	    	    out.flush();
+	    	    out.close();
+	    	    return;
+	    	    
+		//==========================================================================================
 
 	    	default:
 	    		break;

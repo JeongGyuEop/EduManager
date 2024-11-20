@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 
 import Vo.ClassroomVo;
 import Vo.CourseVo;
+import Vo.EnrollmentVo;
 import Vo.StudentVo;
 
 
@@ -656,5 +657,52 @@ public class ClassroomDAO {
 		}
 		
 		return courseList;
+	}
+
+	//-------------
+	// 로그인한 학생의 수강 중인 강의를 조회하는 함수
+	public ArrayList<EnrollmentVo> studentCourseSearch(String student_id) {
+		
+		ArrayList<EnrollmentVo> studentCourseList = new ArrayList<EnrollmentVo>();
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			// SQL 쿼리 실행
+            String query = "SELECT c.course_name, c.course_id "
+            			 + "FROM enrollment e "
+            			 + "JOIN course c ON e.course_id = c.course_id "
+            			 + "WHERE e.student_id = ?";
+            
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, student_id);
+            rs = pstmt.executeQuery();
+            
+            // 강의 이름을 리스트에 추가
+            while (rs.next()) {
+            	 // CourseVo 객체 생성 및 값 설정
+                CourseVo course = new CourseVo();
+                course.setCourse_id(rs.getString("course_id"));
+                course.setCourse_name(rs.getString("course_name"));
+				
+                // EnrollmentVo 객체 생성 및 CourseVo 설정
+                EnrollmentVo enrollment = new EnrollmentVo();
+                enrollment.setCourse(course); // courseId 대신 CourseVo 객체 설정
+            	
+                // EnrollmentVo 리스트에 추가
+                studentCourseList.add(enrollment);
+            }
+
+    		return studentCourseList;
+    		
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 courseSearch메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		return studentCourseList;
 	}
 }

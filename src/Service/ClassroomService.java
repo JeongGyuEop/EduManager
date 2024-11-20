@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Dao.ClassroomDAO;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
+import Vo.EnrollmentVo;
 import Vo.StudentVo;
 
 public class ClassroomService {
@@ -90,9 +91,9 @@ public class ClassroomService {
 
 	//-------------
 	// 관리자가 모든 강의실을 조회하기 위해 DAO 호출하는 함수
-	public ArrayList<ClassroomVo> serviceRoomSearch() {
-		return classroomdao.roomShearch();
-	}
+//	public ArrayList<ClassroomVo> serviceRoomSearch() {
+//		return classroomdao.roomShearch();
+//	}
 
 	//-------------
 	// 관리자가 강의실의 정보를 수정하기 위해 DAO를 호출하는 함수
@@ -106,9 +107,17 @@ public class ClassroomService {
 		return classroomdao.deleteRoom(room_id);
 	}
 
+	//--------------
+	// 한 학생의 수강 강의 조회를 위한 함수
+	public ArrayList<EnrollmentVo> serviceStudentCourseSearch(String student_id) {
+		return classroomdao.studentCourseSearch(student_id);
+	}
+	
+	// 수강신청을 위한 전체 강의실 조회
 	public ArrayList<CourseVo> serviceCourseList() {
 		return classroomdao.courseList();
 	}
+
 
 
 }
