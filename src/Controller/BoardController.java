@@ -324,7 +324,7 @@ public class BoardController extends HttpServlet {
 			/*	result = boardservice.bookPostUploadService(request); // 저장 메서드 라인
 			if (result == 1) {
 				// 저장에 성공하면 성공 메시지 반환
-			} else if (result == 0) {
+			} else {
 				// 저장에 실패하면 실패 메시지 반환
 			}
 			// 조회 메서드 라인

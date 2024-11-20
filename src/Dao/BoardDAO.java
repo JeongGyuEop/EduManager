@@ -311,13 +311,8 @@ public class BoardDAO {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				ScheduleVo event = new ScheduleVo(
-		                rs.getInt("schedule_id"),
-		                rs.getString("event_name"),
-		                rs.getString("description"),
-		                rs.getDate("start_date"),
-		                rs.getDate("end_date")
-		            );
+				ScheduleVo event = new ScheduleVo(rs.getInt("schedule_id"), rs.getString("event_name"),
+						rs.getString("description"), rs.getDate("start_date"), rs.getDate("end_date"));
 				events.add(event);
 			}
 		} catch (SQLException e) {
@@ -334,62 +329,62 @@ public class BoardDAO {
 	}
 
 	public boolean isValidSchedule(String eventName, String startDate, String endDate, String description) {
-        // 간단한 유효성 검사 로직을 구현
-        if (eventName == null || eventName.isEmpty()) {
-            return false;
-        }
-        if (startDate == null || startDate.isEmpty()) {
-            return false;
-        }
-        if (endDate == null || endDate.isEmpty()) {
-            return false;
-        }
-        if (description == null || description.isEmpty()) {
-            return false;
-        }
-        return true;
-    }
+		// 간단한 유효성 검사 로직을 구현
+		if (eventName == null || eventName.isEmpty()) {
+			return false;
+		}
+		if (startDate == null || startDate.isEmpty()) {
+			return false;
+		}
+		if (endDate == null || endDate.isEmpty()) {
+			return false;
+		}
+		if (description == null || description.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
 
-    public void insertSchedule(ScheduleVo schedule) {
-        String sql = "INSERT INTO academic_schedule (event_name, start_date, end_date, description) VALUES (?, ?, ?, ?)";
-        try {
-            con = ds.getConnection();
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, schedule.getEvent_name());
-            pstmt.setDate(2, schedule.getStart_date());
-            pstmt.setDate(3, schedule.getEnd_date());
-            pstmt.setString(4, schedule.getDescription());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("BoardDAO의 insertSchedule메소드에서 오류");
-            e.printStackTrace();
-            throw new RuntimeException("일정을 추가하는 중 오류가 발생했습니다.");
-        } finally {
-            closeResource();
-        }
-    }
-    
-    public void updateSchedule(ScheduleVo schedule) {
-        String sql = "UPDATE academic_schedule SET event_name = ?, start_date = ?, end_date = ?, description = ? WHERE schedule_id = ?";
-        try {
-            con = ds.getConnection();
-            pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, schedule.getEvent_name());
-            pstmt.setDate(2, schedule.getStart_date());
-            pstmt.setDate(3, schedule.getEnd_date());
-            pstmt.setString(4, schedule.getDescription());
-            pstmt.setInt(5, schedule.getSchedule_id());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("BoardDAO의 updateSchedule메소드에서 오류");
-            e.printStackTrace();
-            throw new RuntimeException("일정을 수정하는 중 오류가 발생했습니다.");
-        } finally {
-            closeResource();
-        }
-    }
+	public void insertSchedule(ScheduleVo schedule) {
+		String sql = "INSERT INTO academic_schedule (event_name, start_date, end_date, description) VALUES (?, ?, ?, ?)";
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, schedule.getEvent_name());
+			pstmt.setDate(2, schedule.getStart_date());
+			pstmt.setDate(3, schedule.getEnd_date());
+			pstmt.setString(4, schedule.getDescription());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("BoardDAO의 insertSchedule메소드에서 오류");
+			e.printStackTrace();
+			throw new RuntimeException("일정을 추가하는 중 오류가 발생했습니다.");
+		} finally {
+			closeResource();
+		}
+	}
 
-    public void deleteSchedule(int scheduleId) {
+	public void updateSchedule(ScheduleVo schedule) {
+		String sql = "UPDATE academic_schedule SET event_name = ?, start_date = ?, end_date = ?, description = ? WHERE schedule_id = ?";
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, schedule.getEvent_name());
+			pstmt.setDate(2, schedule.getStart_date());
+			pstmt.setDate(3, schedule.getEnd_date());
+			pstmt.setString(4, schedule.getDescription());
+			pstmt.setInt(5, schedule.getSchedule_id());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("BoardDAO의 updateSchedule메소드에서 오류");
+			e.printStackTrace();
+			throw new RuntimeException("일정을 수정하는 중 오류가 발생했습니다.");
+		} finally {
+			closeResource();
+		}
+	}
+
+	public void deleteSchedule(int scheduleId) {
         String sql = "DELETE FROM academic_schedule WHERE schedule_id = ?";
         try {
             con = ds.getConnection();
@@ -405,61 +400,71 @@ public class BoardDAO {
         }
     }
 
-    
-//-------------- 중고 책 거래 ----------------------------------------------------------------------------------------------
-    
+	//===============================================================================
+	//중고책 거래 테이블들===============================================================
+	//===============================================================================
+
+	public int bookPostUpload(BookPostVo bookPostVo) {
+		String sql = null;
+		int result = 0;
 		
-		 // 게시글 저장
-	    public int bookPostUpload(BookPostVo bookPostVo) {
-	    	
-	    	int result = 0;
-	    	           
-	        try {
-	        	
-	        	con = ds.getConnection();	        	
-	        	con.setAutoCommit(false);
-	        	
-	        	pstmt = con.prepareStatement("INSERT INTO bookpost (user_id, title, content, major, created_at) "
-	        								+ "VALUES (?, ?, ?, ?, now())");
-	  
-	        	pstmt.setString(1, bookPostVo.getUserId());
-	            pstmt.setString(2, bookPostVo.getTitle());
-	            pstmt.setString(3, bookPostVo.getContent());
-	            pstmt.setString(4, bookPostVo.getMajor());
-	//            pstmt.setTimestamp(5, bookPostVo.getCreatedAt());
-	            
-	           result = pstmt.executeUpdate();
-	           
-	           pstmt = con.prepareStatement("INSERT INTO ");
-	           
-	           con.commit();
-	        
-	        } catch (SQLException e) {
-	        	System.out.println("BoardDAO의 bookPostUpload메소드 오류");
-	            e.printStackTrace();
-	            return 0; // 실패 시 0 반환
-	        }finally {
-	        	closeResource();
+		try {
+	        con = ds.getConnection();
+
+	        // 1. book_post 테이블에 게시글 저장
+	        sql = "INSERT INTO book_post (user_id, post_title, post_content, major_tag) VALUES (?, ?, ?, ?)";
+	        pstmt = con.prepareStatement(sql, pstmt.RETURN_GENERATED_KEYS);
+	        pstmt.setString(1, bookPostVo.getUserId());
+	        pstmt.setString(2, bookPostVo.getPostTitle());
+	        pstmt.setString(3, bookPostVo.getPostContent());
+	        pstmt.setString(4, bookPostVo.getMajorTag());
+	        pstmt.executeUpdate();
+
+	        // 2. 생성된 post_id 가져오기
+	        rs = pstmt.getGeneratedKeys();
+	        int postId = 0;
+	        if (rs.next()) {
+	            postId = rs.getInt(1);
 	        }
-	        return result;
+	        
+	        // 자원 정리 후 새 쿼리 준비를 위해 pstmt 닫기
+	        if (pstmt != null) pstmt.close();
+
+	        // 3. book_image 테이블에 이미지 정보 저장
+	        sql = "INSERT INTO book_image (post_id, file_name) VALUES (?, ?)";
+	        pstmt = con.prepareStatement(sql);
+	        for (BookPostVo.BookImage image : bookPostVo.getImages()) {
+	            pstmt.setInt(1, postId);
+	            pstmt.setString(2, image.getFileName());
+	            pstmt.executeUpdate();
+	        }
+
+	        result = 1; // 성공 시 1 반환
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        result = 0; // 실패 시 0 반환
+	    } finally {
+	        // 자원 정리
+	        try {
+	            if (rs != null) rs.close();
+	            if (pstmt != null) pstmt.close();
+	            if (con != null) con.close();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
 	    }
-		
+	    return result;
 	}
+	
+	//===============================================================================
+	//중고책 거래 테이블들===============================================================
+	//===============================================================================
 
-
+}
 
 /*
-SELECT 
-bp.post_id,
-bp.post_title,
-bp.post_content,
-bp.major_tag,
-bp.created_at,
-bi.file_name
-FROM 
-book_post bp
-INNER JOIN 
-book_image bi
-ON 
-bp.post_id = bi.post_id;
-   조인 조회  */
+ * SELECT bp.post_id, bp.post_title, bp.post_content, bp.major_tag,
+ * bp.created_at, bi.file_name FROM book_post bp INNER JOIN book_image bi ON
+ * bp.post_id = bi.post_id; 조인 조회
+ */

@@ -140,32 +140,40 @@ public class BoardService {
 	}
 
 //-------------- 중고 책 거래 ----------------------------------------------------------------------------------------------	
-	
+	// 브랜치가 다릅니다! 현재 major-input 있습니다!
 	public int bookPostUploadService(HttpServletRequest request) { // 업로드를 위해 사용될 정보만 가져옵니다.
-		String user_id = request.getParameter("user_id"); // 유저 아이디, hidden을 통해 받아왔습니다.
-		String title = request.getParameter("title"); // 글 제목
-		String content = request.getParameter("content"); // 글 내용
-		String major = request.getParameter("major"); // 책과 관련된 학과명
-		ArrayList<String> fileNames = new ArrayList<>(); // 파일 이름을 저장하는 변수
-		try {
-			Collection<Part> images = request.getParts(); // 이미지 정보 저장
-			for (Part image : images) {
-				if (image.getName().equals("image") && image.getSize() > 0) {
-					// 파일 이름 가져오기
-					String fileName = Paths.get(image.getSubmittedFileName()).getFileName().toString();
-					fileNames.add(fileName);
-				}
-			}
-		} catch (IOException | ServletException e) {
-			e.printStackTrace();
-		}
-			
-		// BookPostVO 객체 생성 및 데이터 설정
-		BookPostVo bookPostVo = new BookPostVo(user_id, title, content, major, fileNames);
+		String userId = request.getParameter("userId"); // 유저 아이디, hidden을 통해 받아왔습니다.
+		String postTitle = request.getParameter("postTitle"); // 글 제목
+		String postContent = request.getParameter("postContent"); // 글 내용
+		String majorTag = request.getParameter("majorTag"); // 책과 관련된 학과명
+		ArrayList<BookPostVo.BookImage> bookImages = new ArrayList<>(); // BookImage 객체 리스트를 저장하는 변수
+	    try {
+	        Collection<Part> images = request.getParts(); // 이미지 정보 저장
+	        for (Part image : images) {
+	            if (image.getName().equals("image") && image.getSize() > 0) {
+	                // 파일 이름 가져오기
+	                String fileName = Paths.get(image.getSubmittedFileName()).getFileName().toString();
+	                // BookImage 객체 생성 후 리스트에 추가
+	                BookPostVo.BookImage bookImage = new BookPostVo.BookImage();
+	                bookImage.setFileName(fileName);
+	                bookImages.add(bookImage);
+	            }
+	        }
+	    } catch (IOException | ServletException e) {
+	        e.printStackTrace();
+	    }
 		
-		int result = boarddao.bookPostUpload(bookPostVo);
-		
-		
-		return result;
+	    // BookPostVO 객체 생성 및 데이터 설정
+	    BookPostVo bookPostVo = new BookPostVo();
+	    bookPostVo.setUserId(userId);
+	    bookPostVo.setPostTitle(postTitle);
+	    bookPostVo.setPostContent(postContent);
+	    bookPostVo.setMajorTag(majorTag);
+	    bookPostVo.setImages(bookImages); // 이미지 리스트 설정
+
+	    // DAO 호출하여 데이터베이스에 저장
+	    int result = boarddao.bookPostUpload(bookPostVo);
+
+	    return result;
 	}
 }

@@ -1,99 +1,148 @@
 package Vo;
 
-import java.util.List;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class BookPostVo {
-    
-    // 필드 선언
-    private String userId;          // 유저 아이디
-    private String title;           // 글 제목
-    private String content;         // 글 내용
-    private String major;           // 학과 태그
-    private List<String> fileNames; // 업로드된 이미지 파일 목록
-    private Timestamp createdAt;    // 생성일시
+	// 글 번호 (자동 증가)
+	private int postId;
+	// 유저 아이디
+	private String userId;
+	// 글 제목
+	private String postTitle;
+	// 글 내용
+	private String postContent;
+	// 학과 태그
+	private String majorTag;
+	// 생성일시
+	private Timestamp createdAt;
+	// 이미지 리스트
+	private List<BookImage> images;
 
-    // 기본 생성자
-    public BookPostVo() {
-    }
+	// 기본 생성자
+	public BookPostVo() {
+	}
+	
+	// 모든 필드를 포함한 생성자
+	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
+			Timestamp createdAt, List<BookImage> images) {
+		this.postId = postId;
+		this.userId = userId;
+		this.postTitle = postTitle;
+		this.postContent = postContent;
+		this.majorTag = majorTag;
+		this.createdAt = createdAt;
+		this.images = images;
+	}
 
-    // 모든 필드를 초기화하는 생성자
-    public BookPostVo(String userId, String title, String content, String major, List<String> fileNames, Timestamp createdAt) {
-        this.userId = userId;
-        this.title = title;
-        this.content = content;
-        this.major = major;
-        this.fileNames = fileNames;
-        this.createdAt = createdAt;
-    }
+	public BookPostVo(String userId, String postTitle, String postContent, String majorTag) {
+		super();
+		this.userId = userId;
+		this.postTitle = postTitle;
+		this.postContent = postContent;
+		this.majorTag = majorTag;
+	}
 
-    // 시간 제외
-    public BookPostVo(String userId, String title, String content, String major, List<String> fileNames) {
-        this.userId = userId;
-        this.title = title;
-        this.content = content;
-        this.major = major;
-        this.fileNames = fileNames;
-    }
-    
-    // Getter 및 Setter 메서드
-    public String getUserId() {
-        return userId;
-    }
+	// Getter와 Setter 메서드
+	public int getPostId() {
+		return postId;
+	}
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+	public void setPostId(int postId) {
+		this.postId = postId;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getUserId() {
+		return userId;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-    public String getContent() {
-        return content;
-    }
+	public String getPostTitle() {
+		return postTitle;
+	}
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+	public void setPostTitle(String postTitle) {
+		this.postTitle = postTitle;
+	}
 
-    public String getMajor() {
-        return major;
-    }
+	public String getPostContent() {
+		return postContent;
+	}
 
-    public void setMajor(String major) {
-        this.major = major;
-    }
+	public void setPostContent(String postContent) {
+		this.postContent = postContent;
+	}
 
-    public List<String> getFileNames() {
-        return fileNames;
-    }
+	public String getMajorTag() {
+		return majorTag;
+	}
 
-    public void setFileNames(List<String> fileNames) {
-        this.fileNames = fileNames;
-    }
+	public void setMajorTag(String majorTag) {
+		this.majorTag = majorTag;
+	}
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
+	public Timestamp getCreatedAt() {
+		return createdAt;
+	}
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+	public void setCreatedAt(Timestamp createdAt) {
+		this.createdAt = createdAt;
+	}
 
-    @Override
-    public String toString() {
-        return "BookPostVO{" +
-                "userId='" + userId + '\'' +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", major='" + major + '\'' +
-                ", fileNames=" + fileNames +
-                ", createdAt=" + createdAt +
-                '}';
-    }
+	public List<BookImage> getImages() {
+		return images;
+	}
+
+	public void setImages(List<BookImage> images) {
+		this.images = images;
+	}
+
+	// 내부 클래스 - BookImage
+	public static class BookImage {
+		// 이미지 번호 (자동 증가)
+		private int imageId;
+		// 글 번호
+		private int postId;
+		// 이미지 파일 이름
+		private String fileName;
+
+		// 기본 생성자
+		public BookImage() {
+		}
+
+		// 모든 필드를 포함한 생성자
+		public BookImage(int imageId, int postId, String fileName) {
+			this.imageId = imageId;
+			this.postId = postId;
+			this.fileName = fileName;
+		}
+
+		// Getter와 Setter 메서드
+		public int getImageId() {
+			return imageId;
+		}
+
+		public void setImageId(int imageId) {
+			this.imageId = imageId;
+		}
+
+		public int getPostId() {
+			return postId;
+		}
+
+		public void setPostId(int postId) {
+			this.postId = postId;
+		}
+
+		public String getFileName() {
+			return fileName;
+		}
+
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
+		}
+	}
 }
