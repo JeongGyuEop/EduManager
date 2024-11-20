@@ -139,6 +139,8 @@ public class BoardService {
 		}
 	}
 
+//-------------- 중고 책 거래 ----------------------------------------------------------------------------------------------	
+	
 	public int bookPostUploadService(HttpServletRequest request) { // 업로드를 위해 사용될 정보만 가져옵니다.
 		String user_id = request.getParameter("user_id"); // 유저 아이디, hidden을 통해 받아왔습니다.
 		String title = request.getParameter("title"); // 글 제목
@@ -157,11 +159,12 @@ public class BoardService {
 		} catch (IOException | ServletException e) {
 			e.printStackTrace();
 		}
-		
+			
 		// BookPostVO 객체 생성 및 데이터 설정
 		BookPostVo bookPostVo = new BookPostVo(user_id, title, content, major, fileNames);
 		
 		int result = boarddao.bookPostUpload(bookPostVo);
+		
 		
 		return result;
 	}

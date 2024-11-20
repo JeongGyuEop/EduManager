@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,6 +21,7 @@ import Dao.BoardDAO;
 import Service.BoardService;
 import Service.MenuItemService;
 import Vo.BoardVo;
+import Vo.BookPostVo;
 import Vo.MemberVo;
 import Vo.ScheduleVo;
 import Vo.StudentVo;
@@ -289,7 +291,37 @@ public class BoardController extends HttpServlet {
 // 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
 			
 		case "/bookPostUpload.bo": // 여기서는 간단한 로직만 처리합니다.
-			result = boardservice.bookPostUploadService(request); // 저장 메서드 라인
+		
+			
+			 try {
+	
+			        // 3. 서비스 호출
+			        int resultl = boardservice.bookPostUploadService(request);
+
+			        // 4. 결과 처리 및 메시지 설정
+			        if (resultl == 1) {
+			            request.setAttribute("message", "게시글이 성공적으로 등록되었습니다.");
+			        } else {
+			            request.setAttribute("message", "게시글 등록에 실패했습니다. 다시 시도해주세요.");
+			        }
+
+			     // center 및 nextPage 지정
+					request.setAttribute("center", center);
+			        nextPage = "/view_student/booktrading.jsp";
+
+			    } catch (Exception e) {
+			        // 예외 발생 시 에러 메시지 설정
+			        e.printStackTrace();
+			        request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
+			        nextPage = "/error.jsp"; // 에러 페이지
+			    }
+			    break;
+			
+			
+			
+			
+			
+			/*	result = boardservice.bookPostUploadService(request); // 저장 메서드 라인
 			if (result == 1) {
 				// 저장에 성공하면 성공 메시지 반환
 			} else if (result == 0) {
@@ -298,10 +330,13 @@ public class BoardController extends HttpServlet {
 			// 조회 메서드 라인
 			// 조회 결과값 저장
 			// 반환 받은 메시지 request에 저장
+			
 			// center 및 nextPage 지정
+			request.setAttribute("center", center);
+			nextPage = "/view_student/booktrading.jsp";
 			
 			break;
-			
+		*/	
 			
 // 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
 			

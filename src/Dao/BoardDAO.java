@@ -405,8 +405,61 @@ public class BoardDAO {
         }
     }
 
-	public int bookPostUpload(BookPostVo bookPostVo) {
+    
+//-------------- 중고 책 거래 ----------------------------------------------------------------------------------------------
+    
 		
-		return 0;
+		 // 게시글 저장
+	    public int bookPostUpload(BookPostVo bookPostVo) {
+	    	
+	    	int result = 0;
+	    	           
+	        try {
+	        	
+	        	con = ds.getConnection();	        	
+	        	con.setAutoCommit(false);
+	        	
+	        	pstmt = con.prepareStatement("INSERT INTO bookpost (user_id, title, content, major, created_at) "
+	        								+ "VALUES (?, ?, ?, ?, now())");
+	  
+	        	pstmt.setString(1, bookPostVo.getUserId());
+	            pstmt.setString(2, bookPostVo.getTitle());
+	            pstmt.setString(3, bookPostVo.getContent());
+	            pstmt.setString(4, bookPostVo.getMajor());
+	//            pstmt.setTimestamp(5, bookPostVo.getCreatedAt());
+	            
+	           result = pstmt.executeUpdate();
+	           
+	           pstmt = con.prepareStatement("INSERT INTO ");
+	           
+	           con.commit();
+	        
+	        } catch (SQLException e) {
+	        	System.out.println("BoardDAO의 bookPostUpload메소드 오류");
+	            e.printStackTrace();
+	            return 0; // 실패 시 0 반환
+	        }finally {
+	        	closeResource();
+	        }
+	        return result;
+	    }
+		
 	}
-}
+
+
+
+/*
+SELECT 
+bp.post_id,
+bp.post_title,
+bp.post_content,
+bp.major_tag,
+bp.created_at,
+bi.file_name
+FROM 
+book_post bp
+INNER JOIN 
+book_image bi
+ON 
+bp.post_id = bi.post_id;
+   조인 조회  */
