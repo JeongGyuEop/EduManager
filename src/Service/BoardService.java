@@ -4,14 +4,19 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Collection;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 
 import Dao.BoardDAO;
 import Dao.MemberDAO;
 import Vo.BoardVo;
+import Vo.BookPostVo;
 import Vo.MemberVo;
 import Vo.ScheduleVo;
-import Vo.StudentVo;
 
 public class BoardService {
 
@@ -68,20 +73,20 @@ public class BoardService {
 	public List<ScheduleVo> getEvents(String startDate, String endDate) throws Exception {
 		return boarddao.getEvents(startDate, endDate);
 	}
-	
+
 	public void processViewSchedule(HttpServletRequest request) {
-        String month = request.getParameter("month");
-        if (month != null && !month.isEmpty()) {
-            String[] parts = month.split("-");
-            if (parts.length == 2) {
-                String year = parts[0];
-                String monthPart = parts[1];
-                List<ScheduleVo> scheduleList = boarddao.getEventsByMonth(year, monthPart);
-                request.setAttribute("scheduleList", scheduleList);
-            }
-        }
-    }
-	
+		String month = request.getParameter("month");
+		if (month != null && !month.isEmpty()) {
+			String[] parts = month.split("-");
+			if (parts.length == 2) {
+				String year = parts[0];
+				String monthPart = parts[1];
+				List<ScheduleVo> scheduleList = boarddao.getEventsByMonth(year, monthPart);
+				request.setAttribute("scheduleList", scheduleList);
+			}
+		}
+	}
+
 	public void addSchedule(HttpServletRequest request) {
 		String title = request.getParameter("title");
 		String startDate = request.getParameter("startDate");
@@ -133,22 +138,31 @@ public class BoardService {
 			throw new IllegalArgumentException("삭제할 일정이 선택되지 않았습니다.");
 		}
 	}
-	
-	
-//----------------------- 중고 책 거래 -------------------------------------------------
 
-	public int bookPostupload(String titlel, String contentl, String majorl) {
+	public int bookPostUploadService(HttpServletRequest request) { // 업로드를 위해 사용될 정보만 가져옵니다.
+		String user_id = request.getParameter("user_id"); // 유저 아이디, hidden을 통해 받아왔습니다.
+		String title = request.getParameter("title"); // 글 제목
+		String content = request.getParameter("content"); // 글 내용
+		String major = request.getParameter("major"); // 책과 관련된 학과명
+		ArrayList<String> fileNames = new ArrayList<>(); // 파일 이름을 저장하는 변수
+		try {
+			Collection<Part> images = request.getParts(); // 이미지 정보 저장
+			for (Part image : images) {
+				if (image.getName().equals("image") && image.getSize() > 0) {
+					// 파일 이름 가져오기
+					String fileName = Paths.get(image.getSubmittedFileName()).getFileName().toString();
+					fileNames.add(fileName);
+				}
+			}
+		} catch (IOException | ServletException e) {
+			e.printStackTrace();
+		}
 		
-		return boarddao.bookPostupload(titlel, contentl, majorl);
+		// BookPostVO 객체 생성 및 데이터 설정
+		BookPostVo bookPostVo = new BookPostVo(user_id, title, content, major, fileNames);
+		
+		int result = boarddao.bookPostUpload(bookPostVo);
+		
+		return result;
 	}
-	
-	
-	
-	
-	
-	
-	
-//----------------------- 중고 책 거래 -------------------------------------------------
-	
-	
 }

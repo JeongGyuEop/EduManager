@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,11 @@ import Vo.ScheduleVo;
 import Vo.StudentVo;
 
 @WebServlet("/Board/*")
+@MultipartConfig(
+	    fileSizeThreshold = 1024 * 1024 * 2, // 2MB => 2mb보다 작은 경우 메모리에 저장, 큰 경우 디스크에 저장
+	    maxFileSize = 1024 * 1024 * 10,      // 10MB - 개별 파일 크기 제한
+	    maxRequestSize = 1024 * 1024 * 50    // 50MB - 전체 파일 크기 제한
+	)
 public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	BoardService boardservice;
@@ -84,9 +90,11 @@ public class BoardController extends HttpServlet {
 
 		String startDate = null;
 		String endDate = null;
-	    String month = null;
-	    
-	    System.out.println("2단계 요청 주소 : " + action);
+		String month = null;
+
+		int result = 0;
+		
+		System.out.println("2단계 요청 주소 : " + action);
 
 		// 액션에 따라 분기 처리
 		switch (action) {
@@ -136,7 +144,7 @@ public class BoardController extends HttpServlet {
 			vo.setAuthor_id(writer);
 			vo.setTitle(title);
 			vo.setContent(content);
-			int result = boardservice.serviceInsertBoard(vo);
+			result = boardservice.serviceInsertBoard(vo);
 			String go = String.valueOf(result);
 			out.print(go);
 			return;
@@ -198,20 +206,20 @@ public class BoardController extends HttpServlet {
 			break;
 
 		case "/boardCalendar.bo":
-			
+
 			center = "/common/calendar.jsp";
-			
+
 			request.setAttribute("center", center);
-			
+
 			nextPage = "/main.jsp";
-			
+
 			break;
-			
+
 		case "/boardCalendar.do":
 			// 일정 데이터를 JSON 형식으로 응답하는 기능
 			startDate = request.getParameter("start");
 			endDate = request.getParameter("end");
-			
+
 			try {
 				List<ScheduleVo> eventList = boardservice.getEvents(startDate, endDate);
 				Gson gson = new Gson();
@@ -222,7 +230,7 @@ public class BoardController extends HttpServlet {
 					jsonEvent.addProperty("title", event.getEvent_name());
 					jsonEvent.addProperty("start", dateFormat.format(event.getStart_date()));
 					jsonEvent.addProperty("end", dateFormat.format(event.getEnd_date()));
-					jsonEvent.addProperty("description", event.getDescription());					
+					jsonEvent.addProperty("description", event.getDescription());
 					jsonEvents.add(jsonEvent);
 				}
 				String jsonResponse = gson.toJson(jsonEvents);
@@ -242,78 +250,61 @@ public class BoardController extends HttpServlet {
 				e.printStackTrace();
 			}
 			return;
-			
-			
+
 		case "/viewSchedule.bo":
-            month = request.getParameter("month");
-            if (month != null && !month.isEmpty()) {
-                boardservice.processViewSchedule(request);
-            }
-            
-            center = request.getParameter("center");
-            request.setAttribute("center", center);
-            
-            nextPage = "/main.jsp";
-            
-            break;
-            
+			month = request.getParameter("month");
+			if (month != null && !month.isEmpty()) {
+				boardservice.processViewSchedule(request);
+			}
+
+			center = request.getParameter("center");
+			request.setAttribute("center", center);
+
+			nextPage = "/main.jsp";
+
+			break;
+
 		case "/addSchedule":
 			boardservice.addSchedule(request);
 			startDate = request.getParameter("startDate");
-		    month = startDate.substring(0, 7);
-		    response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + month);
+			month = startDate.substring(0, 7);
+			response.sendRedirect(request.getContextPath()
+					+ "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + month);
 			return;
 		case "/updateSchedule":
 			boardservice.updateSchedule(request);
 			month = request.getParameter("month");
-			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + URLEncoder.encode(month, "UTF-8"));
+			response.sendRedirect(
+					request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month="
+							+ URLEncoder.encode(month, "UTF-8"));
 			return;
 		case "/deleteSchedule":
 			boardservice.deleteSchedule(request);
 			month = request.getParameter("month");
-			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + URLEncoder.encode(month, "UTF-8"));
+			response.sendRedirect(
+					request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month="
+							+ URLEncoder.encode(month, "UTF-8"));
 			return;
-		
-		
-//----------- 중고 책 거래 -----------------------------------------------------------------------------------------------------------------------
-		
-		case "/bookPostUpload.bo":	
-	
-	//		HttpSession session = request.getSession();
-	//		String user_id = (String)session.getAttribute(reply_id);
-		
-			String titlel = request.getParameter("title");
-			String contentl = request.getParameter("content");
-			String majorl = request.getParameter("major");
-			String image = request.getParameter("image");
-			
-	//		result = boardservice.bookPostupload(titlel, contentl, majorl);
-		
 
-			 // 받아온 값 출력 (단순 확인용)
-		    System.out.println("받아온 값 확인:");
-		    System.out.println("Title: " + titlel);
-		    System.out.println("Content: " + contentl);
-		    System.out.println("Major: " + majorl);
-		    System.out.println("Image: " + image);
+// 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
 			
-			
-			
-		/*	
+		case "/bookPostUpload.bo": // 여기서는 간단한 로직만 처리합니다.
+			result = boardservice.bookPostUploadService(request); // 저장 메서드 라인
 			if (result == 1) {
-
-				request.setAttribute("message", " 글 등록이 되었습니다.");
-
-			} else {
-				request.setAttribute("message", "글 등록을 실패하였습니다");
+				// 저장에 성공하면 성공 메시지 반환
+			} else if (result == 0) {
+				// 저장에 실패하면 실패 메시지 반환
 			}
-*/
-			nextPage = "/view_student/booktrading.jsp";
+			// 조회 메서드 라인
+			// 조회 결과값 저장
+			// 반환 받은 메시지 request에 저장
+			// center 및 nextPage 지정
 			
-
 			break;
 			
-//----------- 중고 책 거래 -----------------------------------------------------------------------------------------------------------------------		
+			
+// 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
+			
 		default:
 			break;
 		}

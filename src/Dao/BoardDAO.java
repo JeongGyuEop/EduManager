@@ -1,6 +1,5 @@
 package Dao;
 
-import java.awt.PageAttributes.OrientationRequestedType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,8 +13,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import Vo.BoardVo;
+import Vo.BookPostVo;
 import Vo.ScheduleVo;
-import Vo.StudentVo;
 
 public class BoardDAO {
 
@@ -405,23 +404,9 @@ public class BoardDAO {
             closeResource();
         }
     }
-    
-//----------- 중고 책 거래 ------------------------------------------------------    
 
-public int bookPostupload(String titlel, String contentl, String majorl) {
-	
-	int result = 0;
-	
-	
-	
-
-	
-	return result;
-	
-}
-   
-   
-    
-//----------- 중고 책 거래 ------------------------------------------------------    
-    
+	public int bookPostUpload(BookPostVo bookPostVo) {
+		
+		return 0;
+	}
 }

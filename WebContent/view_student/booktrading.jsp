@@ -1,36 +1,14 @@
-<%@page import="Vo.StudentVo"%>
+
+<%@page import="Vo.MemberVo"%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-	
-	
 <%
-	request.setCharacterEncoding("UTF-8");
+	request.setCharacterEncoding("utf-8");
 	String contextPath = request.getContextPath();
-	
-	//값을 받아온 이유는 list.jsp화면에서  1 2 3 페이지 번호 중 만약 2페이지 번호를 클릭하면 nowBlock의 값은0 nowPage의 값을 1일 것이다.
-	//				조회된 화면에서 글스기 버튼을 클릭하면 글을 작성하는 화면이 나오는데 글을 작성하는 현재 wirte.jsp디자인에서 [목록] <a>를
-	// 클릭했을 때 글을 작성하는 현제 write.jsp로 오기 전 이전 목록을 조회해서 바로 보여주기 위해 받았다. 목록 a태그 href속성주소에 nowPage, nowBlock를 추가하자
-//	String nowPage = (String)request.getAttribute("nowPage");
-//	String nowBlock = (String)request.getAttribute("nowBlock");
-	
-	//조회한 글작성자의 정보 
-//	StudentVo studentvo = (StudentVo)request.getAttribute("studentvo");
-//	String user_email = studentvo.getEmail();
-//	String user_name = studentvo.getUser_name();
-//	String user_id = studentvo.getUser_id();
-	
-%>	
-	
-<% 
-    String message = (String) request.getAttribute("message"); 
-    if (message != null) {
+	MemberVo memberVo = new MemberVo();
+	String user_id = memberVo.getUser_id();
 %>
-        <p><%= message %></p>
-<% 
-    } 
-%>	
-	
-	
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,10 +16,11 @@
 <title>판매 또는 구매 글 등록</title>
 </head>
 <body>
-	<form action="<%=contextPath%>/view_student/booktrading.jsp" method="get" senctype="multipart/form-data">
+	<form action="<%=contextPath%>/Board/bookPostUpload.bo" method="post"
+		enctype="multipart/form-data">
 		<!-- 작성자 정보 가져온 뒤 readonly -->
 		<!-- 작성일은 DAO에서 처리 -->
-		<input type="hidden" name="author" value="${user_name}" readonly>
+		<input type="hidden" name="user_id" value="${user_id}" readonly>
 		<table>
 			<thead>
 				<tr>
