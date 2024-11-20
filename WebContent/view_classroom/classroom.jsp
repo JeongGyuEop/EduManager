@@ -105,6 +105,11 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                                 ?????
                             </a>
+                            <a class="nav-link" href="<%=contextPath%>/professor/evaluationList.bo">
+    							<div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+   			 강의 평가
+							</a>
+                            
                             
 					<%	} else { %>
                             <!-- 사이드바 수강신청 영역 -->
