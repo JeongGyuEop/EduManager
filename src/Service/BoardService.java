@@ -11,6 +11,7 @@ import Dao.MemberDAO;
 import Vo.BoardVo;
 import Vo.MemberVo;
 import Vo.ScheduleVo;
+import Vo.StudentVo;
 
 public class BoardService {
 
@@ -132,4 +133,22 @@ public class BoardService {
 			throw new IllegalArgumentException("삭제할 일정이 선택되지 않았습니다.");
 		}
 	}
+	
+	
+//----------------------- 중고 책 거래 -------------------------------------------------
+
+	public int bookPostupload(String titlel, String contentl, String majorl) {
+		
+		return boarddao.bookPostupload(titlel, contentl, majorl);
+	}
+	
+	
+	
+	
+	
+	
+	
+//----------------------- 중고 책 거래 -------------------------------------------------
+	
+	
 }

@@ -21,6 +21,7 @@ import Service.MenuItemService;
 import Vo.BoardVo;
 import Vo.MemberVo;
 import Vo.ScheduleVo;
+import Vo.StudentVo;
 
 @WebServlet("/Board/*")
 public class BoardController extends HttpServlet {
@@ -276,11 +277,42 @@ public class BoardController extends HttpServlet {
 		
 //----------- 중고 책 거래 -----------------------------------------------------------------------------------------------------------------------
 		
-		case "/bookPostUpload":	
+		case "/bookPostUpload.bo":	
+	
+	//		HttpSession session = request.getSession();
+	//		String user_id = (String)session.getAttribute(reply_id);
+		
+			String titlel = request.getParameter("title");
+			String contentl = request.getParameter("content");
+			String majorl = request.getParameter("major");
+			String image = request.getParameter("image");
+			
+	//		result = boardservice.bookPostupload(titlel, contentl, majorl);
+		
+
+			 // 받아온 값 출력 (단순 확인용)
+		    System.out.println("받아온 값 확인:");
+		    System.out.println("Title: " + titlel);
+		    System.out.println("Content: " + contentl);
+		    System.out.println("Major: " + majorl);
+		    System.out.println("Image: " + image);
 			
 			
-		
-		
+			
+		/*	
+			if (result == 1) {
+
+				request.setAttribute("message", " 글 등록이 되었습니다.");
+
+			} else {
+				request.setAttribute("message", "글 등록을 실패하였습니다");
+			}
+*/
+			nextPage = "/view_student/booktrading.jsp";
+			
+
+			break;
+			
 //----------- 중고 책 거래 -----------------------------------------------------------------------------------------------------------------------		
 		default:
 			break;
