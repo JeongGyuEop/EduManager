@@ -285,7 +285,9 @@ public class BoardController extends HttpServlet {
 							+ URLEncoder.encode(month, "UTF-8"));
 			return;
 
-		case "/bookPostUpload": // 여기서는 간단한 로직만 처리합니다.
+// 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
+			
+		case "/bookPostUpload.bo": // 여기서는 간단한 로직만 처리합니다.
 			result = boardservice.bookPostUploadService(request); // 저장 메서드 라인
 			if (result == 1) {
 				// 저장에 성공하면 성공 메시지 반환
@@ -298,6 +300,10 @@ public class BoardController extends HttpServlet {
 			// center 및 nextPage 지정
 			
 			break;
+			
+			
+// 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
+			
 		default:
 			break;
 		}

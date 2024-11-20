@@ -13,6 +13,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import Vo.BoardVo;
+import Vo.BookPostVo;
 import Vo.ScheduleVo;
 
 public class BoardDAO {
@@ -403,4 +404,9 @@ public class BoardDAO {
             closeResource();
         }
     }
+
+	public int bookPostUpload(BookPostVo bookPostVo) {
+		
+		return 0;
+	}
 }

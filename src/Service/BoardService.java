@@ -168,6 +168,8 @@ public class BoardService {
 		// BookPostVO 객체 생성 및 데이터 설정
 		BookPostVo bookPostVo = new BookPostVo(user_id, title, content, major, fileNames);
 		
-		return 0;
+		int result = boarddao.bookPostUpload(bookPostVo);
+		
+		return result;
 	}
 }

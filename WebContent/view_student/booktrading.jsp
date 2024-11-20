@@ -1,5 +1,13 @@
+<%@page import="Vo.MemberVo"%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%
+	request.setCharacterEncoding("utf-8");
+	String contextPath = request.getContextPath();
+	MemberVo memberVo = new MemberVo();
+	String user_id = memberVo.getUser_id();
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +15,7 @@
 <title>판매 또는 구매 글 등록</title>
 </head>
 <body>
-	<form action="submitPost.jsp" method="post"
+	<form action="<%=contextPath%>/Board/bookPostUpload.bo" method="post"
 		enctype="multipart/form-data">
 		<!-- 작성자 정보 가져온 뒤 readonly -->
 		<!-- 작성일은 DAO에서 처리 -->
