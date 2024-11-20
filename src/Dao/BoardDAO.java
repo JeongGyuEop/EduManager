@@ -407,6 +407,8 @@ public class BoardDAO {
 
 	public int bookPostUpload(BookPostVo bookPostVo) {
 		
+		
+		
 		return 0;
 	}
 }

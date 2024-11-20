@@ -6,7 +6,7 @@
 	request.setCharacterEncoding("utf-8");
 	String contextPath = request.getContextPath();
 	MemberVo memberVo = new MemberVo();
-	String user_id = memberVo.getUser_id();
+	String userId = memberVo.getUser_id();
 %>
 <!DOCTYPE html>
 <html>
@@ -19,12 +19,12 @@
 		enctype="multipart/form-data">
 		<!-- 작성자 정보 가져온 뒤 readonly -->
 		<!-- 작성일은 DAO에서 처리 -->
-		<input type="hidden" name="user_id" value="${user_id}" readonly>
+		<input type="hidden" name="userId" value="${userId}" readonly>
 		<table>
 			<thead>
 				<tr>
-					<td><label for="title">글 제목:</label> <input type="text"
-						id="title" name="title" required></td>
+					<td><label for="postTitle">글 제목:</label> <input type="text"
+						id="postTitle" name="postTitle" required></td>
 				</tr>
 			</thead>
 			<tbody>
@@ -33,14 +33,14 @@
 						<div id="preview" style="display: flex; flex-wrap: wrap;"></div></td>
 				</tr>
 				<tr>
-					<td><label for="content">내용:</label> <textarea id="content"
-							name="content" rows="5" cols="50" required></textarea></td>
+					<td><label for="postContent">내용:</label> <textarea id="postContent"
+							name="postContent" rows="5" cols="50" required></textarea></td>
 				</tr>
 			</tbody>
 			<tfoot>
 				<tr>
-					<td><label for="major">학과 태그:</label> <select id="major"
-						name="major">
+					<td><label for="majorTag">학과 태그:</label> <select id="majorTag"
+						name="majorTag">
 							<option value="일반 중고책 거래">일반 중고책 거래</option>
 							<!-- 추가적인 옵션을 여기에 넣으세요 -->
 					</select></td>
