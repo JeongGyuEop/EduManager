@@ -68,7 +68,7 @@ public class ProfessorDAO {
 	             pstmt.setString(1, vo.getUser_id());
 	             pstmt.setString(2, vo.getUser_pw());
 	             pstmt.setString(3, vo.getUser_name());
-	             pstmt.setDate(4, vo.getBrithDate());
+	             pstmt.setDate(4, vo.getBirthDate());
 	             pstmt.setString(5, vo.getGender());
 	             pstmt.setString(6, vo.getAddress());
 	             pstmt.setString(7, vo.getPhone());
@@ -155,7 +155,7 @@ public class ProfessorDAO {
 		                
 		                professor.setProfessor_id(rs.getString("professor_id"));
 		                professor.setUser_name(rs.getString("user_name"));
-		                professor.setBrithDate(rs.getDate("birthDate"));
+		                professor.setBirthDate(rs.getDate("birthDate"));
 		                professor.setGender(rs.getString("gender"));
 		                professor.setAddress(rs.getString("address"));
 		                professor.setPhone(rs.getString("phone"));
@@ -203,7 +203,7 @@ public class ProfessorDAO {
 		            // 파라미터 설정
 		            stmt.setString(1, professor.getUser_name());  // 교수 이름
 		            stmt.setString(2, professor.getMajorcode());  // 전공 코드
-		            stmt.setDate(3, professor.getBrithDate());    // 생년월일
+		            stmt.setDate(3, professor.getBirthDate());    // 생년월일
 		            stmt.setString(4, professor.getGender());     // 성별
 		            stmt.setString(5, professor.getAddress());    // 주소
 		            stmt.setString(6, professor.getPhone());      // 전화번호

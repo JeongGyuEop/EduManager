@@ -17,13 +17,12 @@ import org.json.simple.JSONArray;
 import Service.MajorInputService;
 import Vo.MajorVo;
 
-@WebServlet("/MI/*")
-public class MajorInputController extends HttpServlet {
+@WebServlet("/major/*")
+public class MajorController extends HttpServlet {
 	private MajorInputService majorInputService;
 
 	@Override
 	public void init() throws ServletException {
-		// ���� �Է� ���� �ʱ�ȭ
 
 		majorInputService = new MajorInputService();
 	}
@@ -46,51 +45,77 @@ public class MajorInputController extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 
 		String action = request.getPathInfo();
+		System.out.println("2단계 요청 주소 : " + action);
 
 		String nextPage = null;
+		
+		String center = null;
 
 		switch (action) {
+		
+		//-----------------
 		case "/MajorInput.do":
 
 			int addResult = majorInputService.majorInput(request);
 			request.setAttribute("addResult", addResult);
+			
+			center = "/view_admin/MajorInput.jsp";
+			
+			request.setAttribute("center", center);
 
-			nextPage = "/jin/MajorInput.jsp";
+			nextPage = "/main.jsp";
 
 			break;
 
+		//-----------------
 		case "/searchMajor.do":
-			// �˻� ����� ���� ��
 			ArrayList<MajorVo> searchList = majorInputService.searchMajor(request);
-			// �˻��� �����ϸ� �״�� �ѷ��ְ�,
 			request.setAttribute("searchList", searchList);
 
-			nextPage = "/jin/EditDeleteMajor.jsp";
+			center = "/view_admin/EditDeleteMajor.jsp";
+			
+			request.setAttribute("center", center);
+			
+			nextPage = "/main.jsp";
 
 			break;
+			
+		//-----------------	
 		case "/editMajor.do":
 			int deleteResult = majorInputService.editMajorService(request);
-			System.out.println("editMajor.do" + deleteResult);
+
+			center = "/view_admin/EditDeleteMajor.jsp";
+			
+			request.setAttribute("center", center);
 			request.setAttribute("deleteResult", deleteResult);
-			nextPage = "/jin/EditDeleteMajor.jsp";
+			
+			nextPage = "/main.jsp";
 			break;
+			
+		//-----------------	
 		case "/fetchMajorData":
 			JSONArray majorData;
 			try {
+				
 				majorData = majorInputService.fetchMajorService();
 				response.setContentType("application/json; charset=UTF-8");
+				
 				PrintWriter out = response.getWriter();
 				out.print(majorData.toString());
+				
 			} catch (Exception e) {
+				
 				e.printStackTrace();
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				
 				PrintWriter out = response.getWriter();
 				out.println("<tr><td colspan='3'>�����͸� �ҷ����� ���� ������ �߻��߽��ϴ�.</td></tr>");
+				
 			}
 			return;
+		
+		//-----------------
 		default:
-			System.out.println("�ּ� �ҽ�");
-
 			break;
 		}
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);

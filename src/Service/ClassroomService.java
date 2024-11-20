@@ -45,9 +45,33 @@ public class ClassroomService {
 	}
 
 	//-------------
-	// 교수의 강의를 수정하기 위해 DAO를 호출하는
+	// 교수의 강의를 수정하기 위해 DAO를 호출하는 함수
 	public int serviceUpdateCourse(String course_id, String course_name, String room_id) {
 		return classroomdao.updateCourse(course_id, course_name, room_id);
+	}
+
+	//-------------
+	// 관리자가 강의실을 등록하기 위해 DAO를 호출하는 함수
+	public int serviceRoomRegister(String room_id, String capacity, String[] equipment) {
+		return classroomdao.roomRegister(room_id, capacity, equipment);
+	}
+
+	//-------------
+	// 관리자가 모든 강의실을 조회하기 위해 DAO 호출하는 함수
+	public ArrayList<ClassroomVo> serviceRoomSearch() {
+		return classroomdao.roomShearch();
+	}
+
+	//-------------
+	// 관리자가 강의실의 정보를 수정하기 위해 DAO를 호출하는 함수
+	public int serviceUpdateRoom(String room_id, String capacity, String room_equipment) {
+		return classroomdao.updateRoom(room_id, capacity, room_equipment);
+	}
+
+	//-------------
+	// 관리자가 강의실의 정보를 삭제하기 위해 DAO를 호출하는 함수
+	public int serviceDeleteRoom(String room_id) {
+		return classroomdao.deleteRoom(room_id);
 	}
 
 

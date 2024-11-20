@@ -328,7 +328,7 @@ public class BoardDAO {
 		} finally {
 			closeResource();
 		}
-		System.out.println(events);
+//		System.out.println(events);
 		return events;
 	}
 

@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
     String contextPath = request.getContextPath();
+
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -40,7 +41,8 @@
                 events: function(fetchInfo, successCallback, failureCallback) {
                     // 서버로부터 이벤트 데이터를 가져오는 함수
                     $.ajax({
-                        url: '<%=contextPath%>/Board/boardCalendar.bo', // 이벤트 데이터를 가져올 URL
+                    	
+                        url: '<%=contextPath%>/Board/boardCalendar.do', // 이벤트 데이터를 가져올 URL
                         type: 'GET',
                         dataType: 'json',
                         data: {

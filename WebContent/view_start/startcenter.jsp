@@ -4,6 +4,10 @@
 <%
     request.setCharacterEncoding("UTF-8");
     String contextPath = request.getContextPath();
+    
+    String id = (String)session.getAttribute("id");
+    String role = (String)session.getAttribute("role");
+    String name = (String)session.getAttribute("name");
 %>
     
 <!doctype html>
@@ -73,7 +77,8 @@
 	<!-- 배경 이미지 -->
     <div class="background" ></div>
     
-	<div class="container" >
+	<div class="container" style="margin-top: 100px">
+	
 	
 	    <div class="row align-items-stretch">
 	    
@@ -112,6 +117,8 @@
 	        <!-- 로그인 박스 -->
 	        <div class="col-md-4">
 	            <div class="h-100 p-5 bg-light border rounded-3 d-flex flex-column justify-content-center">
+			
+			<%  if(id == null) {  %>
 	                <h2>로그인</h2>
 	                <form action="<%=contextPath%>/member/login.do" method="post">
 	                    <div class="mb-3 d-flex align-items-center">
@@ -124,6 +131,9 @@
 	                    </div>
 	                    <button type="submit" class="btn btn-primary w-100">로그인</button>
 	                </form>
+			<%  } else {  %>    
+					반갑습니다. <br> <%=name %> <%=role %>님!
+			<%  }  %>     
 	            </div>
 	        </div>
 	        
@@ -133,9 +143,7 @@
 		    <!-- 학사 일정 영역 -->
 		    <div class="col-md-7" style="margin-bottom: 10px;"> <!-- 학사 일정 상자에 하단 여백 추가 -->
 		        <div class="h-100 p-5 bg-body-tertiary rounded-3">
-		            <h2>학사 일정</h2>
-		            <!-- FullCalendar 달력 삽입 -->
-		            <div id="calendar"></div>
+		            <jsp:include page="/common/calendar.jsp" />
 		        </div>
 		    </div>
 		    <div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
@@ -147,7 +155,6 @@
 		</div>
     
 </div>
-
   <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -169,6 +176,6 @@
             });
             calendar.render();
         });
-    </script>
+    </script> 
 </body>
 </html>

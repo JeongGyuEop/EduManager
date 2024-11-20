@@ -90,7 +90,7 @@
 	<h2>일정 관리</h2>
 
 	<!-- 일정 추가 폼 -->
-	<form id="scheduleForm" action="<%out.print(contextPath);%>/Board/addSchedule"
+	<form id="scheduleForm" action="<%=contextPath%>/Board/addSchedule"
 		method="post">
 		<label for="title">일정 제목:</label> <input type="text" id="title"
 			name="title" required> <br> <label for="startDate">시작
@@ -104,10 +104,11 @@
 
 	<h3>일정 목록</h3>
 	<!-- 조회할 달 선택 폼 -->
-	<form action="<%=contextPath%>/Board/viewSchedule" method="get">
+	<form action="<%=contextPath%>/Board/viewSchedule.bo?" method="get">
 		<label for="month">조회할 달:</label> <input type="month" id="month"
 			name="month" required
 			value="<%=request.getParameter("month") != null ? request.getParameter("month") : ""%>">
+			<input type="hidden" name="center" value="/view_admin/calendarEdit.jsp">
 		<input type="submit" value="조회">
 	</form>
 
@@ -201,7 +202,7 @@
 		    })
 		    .then(response => {
 		        if (response.ok) {
-		        	window.location.href = "<%=contextPath%>/Board/viewSchedule?month=" + encodeURIComponent(currentMonth);
+		        	window.location.href = "<%=contextPath%>/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + encodeURIComponent(currentMonth);
 		        } else {
 		            alert('일정 삭제 중 오류가 발생했습니다.');
 		        }

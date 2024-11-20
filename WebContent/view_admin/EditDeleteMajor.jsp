@@ -14,6 +14,7 @@
         crossorigin="anonymous"></script>
     <!-- 외부 CSS 파일 연결 -->
     <link rel="stylesheet" type="text/css" href="<%=contextPath%>/css/majorCSS.css">
+    
     <script type="text/javascript">
     function handleInputEvent(event, $input) {
         var td = $input.closest("td")[0];
@@ -22,12 +23,7 @@
             event.stopPropagation(); // 이벤트 전파 중지
             event.preventDefault();  // 기본 동작 방지
             updateAllValues(td);
-        } else if (event.type === "blur") {
-            // 이미 엔터키로 처리된 경우가 아니면 업데이트 수행
-            if (!event.defaultPrevented) {
-                updateAllValues(td);
-            }
-        }
+        } 
     }
     
     function updateAllValues(td) {
@@ -63,32 +59,28 @@
         var majorName = row.cells[1].innerText.trim();  // 학과 이름
         var majorTel = row.cells[2].innerText.trim();   // 학과 전화번호
     
-        // XHR 요청 보내기
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "<%=contextPath%>/MI/editMajor.do", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    
-        // 학과 코드, 학과 이름, 전화 번호 전달
-        var params = "majorCode=" + encodeURIComponent(majorCode)
-                   + "&majorName=" + encodeURIComponent(majorName)
-                   + "&majorTel=" + encodeURIComponent(majorTel);
-        console.log(params);
-        xhr.send(params);
-    
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    console.log("Update successful");
-                    location.reload();
-                } else {
-                    console.error("Update failed. Status: " + xhr.status);
-                    alert("업데이트에 실패했습니다. 다시 시도해 주세요.");
-                    // 업데이트 실패 시 원래 값으로 되돌림
-                    td.innerHTML = originalValue;
-                    td.setAttribute("onclick", "makeEditable(this)"); // onclick 핸들러 복원
-                }
+        // jQuery AJAX 요청 보내기
+        $.ajax({
+            type: "POST",
+            url: "<%=contextPath%>/major/editMajor.do",
+            data: {
+                majorCode: majorCode,
+                majorName: majorName,
+                majorTel: majorTel
+            },
+            success: function(response) {
+                console.log("Update successful");
+                alert("수정 또는 삭제에 성공했습니다.");
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error("Update failed. Status: " + xhr.status);
+                alert("업데이트에 실패했습니다. 다시 시도해 주세요.");
+                // 업데이트 실패 시 원래 값으로 되돌림
+                td.innerHTML = originalValue;
+                td.setAttribute("onclick", "makeEditable(this)"); // onclick 핸들러 복원
             }
-        };
+        });
     }
     
     function validateForm(telNumber) {
@@ -118,11 +110,7 @@
         td.appendChild(input);
     
         // 이벤트 핸들러 직접 추가
-        $(input).on("keydown", function(event) {
-            handleInputEvent(event, $(this));
-        });
-    
-        $(input).on("blur", function(event) {
+        $(input).on("keydown blur", function(event) {
             handleInputEvent(event, $(this));
         });
     
@@ -132,7 +120,7 @@
 </head>
 <body>
     <h3>수정 및 삭제할 학과 이름 또는 학과 번호를 입력해주세요.</h3>
-    <form class="form-container" action="<%=contextPath%>/MI/searchMajor.do" method="get">
+    <form class="form-container" action="<%=contextPath%>/major/searchMajor.do" method="get">
         <label for="searchMajor">학과 이름 또는 학과 번호:</label>
         <input type="text"
             id="searchMajor" name="searchMajor" placeholder="학과 이름 또는 번호를 입력하세요">

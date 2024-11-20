@@ -84,6 +84,8 @@ public class BoardController extends HttpServlet {
 		String startDate = null;
 		String endDate = null;
 	    String month = null;
+	    
+	    System.out.println("2단계 요청 주소 : " + action);
 
 		// 액션에 따라 분기 처리
 		switch (action) {
@@ -195,9 +197,20 @@ public class BoardController extends HttpServlet {
 			break;
 
 		case "/boardCalendar.bo":
+			
+			center = "/common/calendar.jsp";
+			
+			request.setAttribute("center", center);
+			
+			nextPage = "/main.jsp";
+			
+			break;
+			
+		case "/boardCalendar.do":
 			// 일정 데이터를 JSON 형식으로 응답하는 기능
 			startDate = request.getParameter("start");
 			endDate = request.getParameter("end");
+			
 			try {
 				List<ScheduleVo> eventList = boardservice.getEvents(startDate, endDate);
 				Gson gson = new Gson();
@@ -212,7 +225,6 @@ public class BoardController extends HttpServlet {
 					jsonEvents.add(jsonEvent);
 				}
 				String jsonResponse = gson.toJson(jsonEvents);
-				System.out.println(jsonResponse);
 				response.setContentType("application/json;charset=UTF-8");
 				out.print(jsonResponse);
 				out.flush();
@@ -229,28 +241,36 @@ public class BoardController extends HttpServlet {
 				e.printStackTrace();
 			}
 			return;
-		case "/viewSchedule":
+			
+			
+		case "/viewSchedule.bo":
             month = request.getParameter("month");
             if (month != null && !month.isEmpty()) {
                 boardservice.processViewSchedule(request);
             }
-            nextPage = "/jin/calendarEdit.jsp";
+            
+            center = request.getParameter("center");
+            request.setAttribute("center", center);
+            
+            nextPage = "/main.jsp";
+            
             break;
+            
 		case "/addSchedule":
 			boardservice.addSchedule(request);
 			startDate = request.getParameter("startDate");
 		    month = startDate.substring(0, 7);
-		    response.sendRedirect(request.getContextPath() + "/Board/viewSchedule?month=" + month);
+		    response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + month);
 			return;
 		case "/updateSchedule":
 			boardservice.updateSchedule(request);
 			month = request.getParameter("month");
-			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule?month=" + URLEncoder.encode(month, "UTF-8"));
+			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + URLEncoder.encode(month, "UTF-8"));
 			return;
 		case "/deleteSchedule":
 			boardservice.deleteSchedule(request);
 			month = request.getParameter("month");
-			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule?month=" + URLEncoder.encode(month, "UTF-8"));
+			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + URLEncoder.encode(month, "UTF-8"));
 			return;
 		default:
 			break;

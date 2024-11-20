@@ -133,7 +133,7 @@ public class ClassroomController extends HttpServlet {
 				} else {
 					// 실패 시 message 파라미터만 포함하여 리다이렉트
 				    response.sendRedirect(contextPath +"/classroom/course_register.bo?message=" 
-				                          + URLEncoder.encode("강의 등록에 실패했습니다. 다시 입력해 주세요.", "UTF-8"));
+				                          + URLEncoder.encode("강의 등록에 실패했습니다. 다시 입력해 주세요.", "UTF-8") + "&classroomCenter=/view_classroom/courseRegister.jsp");
 				    return;
 				}
 	    		
@@ -181,7 +181,7 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    //==========================================================================================
 				
-	    	// 강의실의 목록을 조회해서 가져온다.
+	    	// 로그인된 교수의 강의실의 목록을 조회해서 가져온다.
 	    	case "/getClassroomList.do":
 	    	
 	    		majorcode = (String)session.getAttribute("majorcode");
@@ -224,14 +224,14 @@ public class ClassroomController extends HttpServlet {
 				    return;
 				} else {
 					// 실패 시 message 파라미터만 포함하여 리다이렉트
-				    response.sendRedirect(contextPath +"/classroom/course_register.bo?message=" 
+				    response.sendRedirect(contextPath +"/classroom/course_search.bo?message=" 
 				                      + URLEncoder.encode("강의 삭제에 실패했습니다.", "UTF-8") + "&classroomCenter=/view_classroom/courseSearch.jsp");
 				    return;
 				}
 				
 	    //==========================================================================================
 				
-	    	case "/roomManage.bo":
+	    	case "/roomRegister.bo":
 	    		
 	    		center = request.getParameter("center");
 	    		
@@ -249,11 +249,85 @@ public class ClassroomController extends HttpServlet {
 	    		String capacity = (String) request.getParameter("capacity");
 	    		String[] equipment = request.getParameterValues("equipment[]");
 	    		
-	    		System.out.println(room_id);
-	    		System.err.println(capacity);
-	    		System.out.println(Arrays.toString(equipment));
+	    		result = classroomservice.serviceRoomRegister(room_id, capacity, equipment);
+	    		
+	    		if(result == 1) {
+				    response.sendRedirect(contextPath +"/classroom/roomSearch.bo?message="
+				    		+ URLEncoder.encode("강의실이 정상적으로 등록되었습니다.", "UTF-8") + "&center=/view_admin/roomSearch.jsp");
+				    return;
+				} else {
+					// 실패 시 message 파라미터만 포함하여 리다이렉트
+				    response.sendRedirect(contextPath +"/classroom/roomRegister.bo?message=" 
+				                      + URLEncoder.encode("강의실 등록에 실패했습니다. 다시 입력하세요.", "UTF-8") + "&center=/view_admin/roomRegister.jsp");
+				    return;
+				}
+	    		
+	    		
+	    //==========================================================================================
+			    
+	    	case "/roomSearch.bo": // 강의실 조회 화면 2단계 요청 주소를 받으면
+	    		
+	    		ArrayList<ClassroomVo> roomList = new ArrayList<ClassroomVo>();
+	    		
+	    		roomList = classroomservice.serviceRoomSearch();
+	    		
+	    		center = request.getParameter("center");
+	    		
+	    		request.setAttribute("roomList", roomList);
+	    		request.setAttribute("center", center);
+	    		
+				nextPage = "/main.jsp";
+				
+				break;
+				
+		//==========================================================================================
+				
+	    	case "/updateRoom.do":
+	    		
+	    		room_id = (String)request.getParameter("room_id");
+	    		capacity = (String) request.getParameter("capacity");
+	    		String room_equipment = (String)request.getParameter("equipment");
+	    		
+	    		result = classroomservice.serviceUpdateRoom(room_id, capacity, room_equipment);
+	    		
+	    		if(result == 1) {
+	    	        out = response.getWriter();
+	    	        out.write("success");
+	    	        out.flush();
+	    	        return;
+	    		}
 	    		
 	    		break;
+	    		
+	    //==========================================================================================
+				
+	    	case "/deleteRoom.do":
+	    		
+	    		room_id = request.getParameter("room_id");
+	    		
+	    		result = classroomservice.serviceDeleteRoom(room_id); 
+
+//	    		if(result == 1) {
+//				    response.sendRedirect(contextPath +"/classroom/roomSearch.bo?message="
+//				    		+ URLEncoder.encode("강의실이 정상적으로 삭제되었습니다.", "UTF-8") + "&center=/view_admin/roomSearch.jsp");
+//				    return;
+//				} else {
+//					// 실패 시 message 파라미터만 포함하여 리다이렉트
+//				    response.sendRedirect(contextPath +"/classroom/roomSearch.bo?message=" 
+//				                      + URLEncoder.encode("강의실 삭제에 실패했습니다.", "UTF-8") + "&center=/view_admin/roomSearch.jsp");
+//				    return;
+//				}
+	    		
+	    	    out = response.getWriter();
+	    		if(result == 1) {
+	    	        out.write("success");
+	    	        out.flush();
+	    	        return;
+	    		} else {
+	    	        out.write("non-success");
+	    	        out.flush();
+	    	        return;
+	    		}
 	    		
 		//==========================================================================================
 				
