@@ -23,8 +23,8 @@ public class StudentDAO {
 	PreparedStatement pstmt;
 	ResultSet rs;
 	DataSource ds;
-	String query = null;
-
+	
+	
 	// 커넥션 풀 얻는 생성자
 	public StudentDAO() {
 		try {
@@ -66,7 +66,7 @@ public class StudentDAO {
 		int result = 0;
 		try {
 			con = getConnection();
-			query = "INSERT INTO user (user_id, user_pw, user_name, birthDate, gender, address, phone, email, role) "
+			String query = "INSERT INTO user (user_id, user_pw, user_name, birthDate, gender, address, phone, email, role) "
 					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, studentUser.getUser_id());
@@ -274,150 +274,152 @@ public class StudentDAO {
 
 	// =====================================================================
 	// 강의 평가 등록
-	// 강의 평가 등록
 	public int insertEvaluation(StudentVo evaluation) {
-		int result = 0;
-		String query = "INSERT INTO course_evaluation (student_id, course_id, rating, comments) VALUES (?, ?, ?, ?)";
-		try {
-			con = getConnection();
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, evaluation.getStudent_id());
-			pstmt.setString(2, evaluation.getCourseId());
-			pstmt.setInt(3, evaluation.getRating());
-			pstmt.setString(4, evaluation.getComments());
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println("강의 평가 등록 중 예외 발생: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
-		return result;
+	    int result = 0;
+	    String query = "INSERT INTO course_evaluation (student_id, course_id, rating, comments) VALUES (?, ?, ?, ?)";
+	    try {
+	        con = getConnection();
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setString(1, evaluation.getStudent_id());
+	        pstmt.setString(2, evaluation.getCourseId());
+	        pstmt.setInt(3, evaluation.getRating());
+	        pstmt.setString(4, evaluation.getComments());
+	        result = pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        System.err.println("강의 평가 등록 중 예외 발생: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return result;
 	}
 
-	// StudentDAO 클래스에 추가
-	public List<StudentVo> getAllCourses(String user_id) {
-		List<StudentVo> courses = new ArrayList<>();
-		String query = "SELECT c.course_id, c.course_name " + "FROM course c "
-				+ "JOIN enrollment e ON c.course_id = e.course_id " + // enrollment 테이블을 통해 student_id와 course를 연결
-				"WHERE e.student_id = ?"; // student_id 조건 추가
-		try {
-			con = getConnection();
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, user_id);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				StudentVo course = new StudentVo();
-				course.setCourseId(rs.getString("course_id"));
-				course.setCourse_name(rs.getString("course_name"));
-				courses.add(course);
-			}
-		} catch (SQLException e) {
-			System.err.println("강의 목록 조회 중 예외 발생: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
-		return courses;
-	}
 
-	// =========================================================================================================
-	// 특정 학생의 강의 평가 목록 조회
+
+	// 특정 학생의 강의 평가 조회(특정 학생의 강의 평가 데이터를 데이터베이스에서 조회하여 반환)
 	public List<StudentVo> getEvaluationsByStudentId(String studentId) {
-		List<StudentVo> courses = new ArrayList<>();
-		String query = null;
-		try {
-			con = getConnection();
-			query = "SELECT c.course_name, c.course_id, e.rating, e.comments  FROM course c JOIN course_evaluation e ON e.course_id = c.course_id WHERE e.student_id = ?";
-			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, studentId);
-			rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-				StudentVo course = new StudentVo();
-				course.setCourseId(rs.getString("course_id"));
-				course.setCourse_name(rs.getString("course_name"));
-				course.setRating(rs.getInt("rating"));
-				course.setComments(rs.getString("comments"));
-				courses.add(course);
-			}
-
-		} catch (SQLException e) {
-			System.err.println("강의 평가 조회 중 예외 발생: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
-		return courses;
+	    List<StudentVo> evaluations = new ArrayList<>();
+	    String query = "SELECT ce.evaluation_id, ce.course_id, c.course_name, ce.rating, ce.comments " +
+	                   "FROM course_evaluation ce " +
+	                   "JOIN course c ON ce.course_id = c.course_id " +
+	                   "WHERE ce.student_id = ?";
+	    try {
+	        con = getConnection();
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setString(1, studentId);
+	        rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            StudentVo evaluation = new StudentVo();
+	            evaluation.setEvaluationId(rs.getInt("evaluation_id"));
+	            evaluation.setCourseId(rs.getString("course_id"));
+	            evaluation.setCourse_name(rs.getString("course_name"));
+	            evaluation.setRating(rs.getInt("rating"));
+	            evaluation.setComments(rs.getString("comments"));
+	            evaluations.add(evaluation);
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("강의 평가 조회 중 예외 발생: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return evaluations;
 	}
-
-	// =========================================================================================================
-	// 특정 평가 조회
+	// evaluationId(강의 평가 ID)를 기반으로 강의 평가 정보를 조회하여 반환
 	public StudentVo getEvaluationById(int evaluationId) {
-		StudentVo evaluation = null;
-		String query = "SELECT e.evaluation_id, e.course_id, c.course_name, e.rating, e.comments "
-				+ "FROM course_evaluation e JOIN course c ON e.course_id = c.course_id " + "WHERE e.evaluation_id = ?";
-		try {
-			con = getConnection();
-			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, evaluationId);
-			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				evaluation = new StudentVo();
-				evaluation.setEvaluationId(rs.getInt("evaluation_id"));
-				evaluation.setCourseId(rs.getString("course_id"));
-				evaluation.setCourse_name(rs.getString("course_name"));
-				evaluation.setRating(rs.getInt("rating"));
-				evaluation.setComments(rs.getString("comments"));
-			}
-		} catch (SQLException e) {
-			System.err.println("특정 평가 조회 중 예외 발생: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
-		return evaluation;
+	    StudentVo evaluation = null;
+	    String query = "SELECT ce.evaluation_id, ce.course_id, c.course_name, ce.rating, ce.comments " +
+	                   "FROM course_evaluation ce " +
+	                   "JOIN course c ON ce.course_id = c.course_id " +
+	                   "WHERE ce.evaluation_id = ?";
+	    try {
+	        con = getConnection();
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setInt(1, evaluationId);
+	        rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            evaluation = new StudentVo();
+	            evaluation.setEvaluationId(rs.getInt("evaluation_id"));
+	            evaluation.setCourseId(rs.getString("course_id"));
+	            evaluation.setCourse_name(rs.getString("course_name"));
+	            evaluation.setRating(rs.getInt("rating"));
+	            evaluation.setComments(rs.getString("comments"));
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("강의 평가 조회 중 예외 발생: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return evaluation;
 	}
 
-	// =========================================================================================================
+	// 해당학생이 듣는 강의목록 조회 메소드
+	public List<StudentVo> getAllCourses(String studentId) {
+	    List<StudentVo> courses = new ArrayList<>();
+	    String query = "SELECT c.course_id, c.course_name " +
+	                   "FROM course c " +
+	                   "JOIN enrollment e ON c.course_id = e.course_id " +
+	                   "WHERE e.student_id = ?"; // student_id를 기반으로 강의 조회
+	    try {
+	        con = getConnection();
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setString(1, studentId);
+	        rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            StudentVo course = new StudentVo();
+	            course.setCourseId(rs.getString("course_id"));
+	            course.setCourse_name(rs.getString("course_name"));
+	            courses.add(course);
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("강의 목록 조회 중 예외 발생: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return courses;
+	}
+
+
+
 	// 강의 평가 수정
 	public int updateEvaluation(StudentVo evaluation) {
-		int result = 0;
-		String query = "UPDATE course_evaluation SET rating = ?, comments = ? WHERE evaluation_id = ?";
-		try {
-			con = getConnection();
-			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, evaluation.getRating());
-			pstmt.setString(2, evaluation.getComments());
-			pstmt.setInt(3, evaluation.getEvaluationId());
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println("강의 평가 수정 중 예외 발생: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
-		return result;
+	    int result = 0;
+	    String query = "UPDATE course_evaluation SET rating = ?, comments = ? WHERE evaluation_id = ?";
+	    try {
+	        con = getConnection();
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setInt(1, evaluation.getRating());
+	        pstmt.setString(2, evaluation.getComments());
+	        pstmt.setInt(3, evaluation.getEvaluationId());
+	        result = pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        System.err.println("강의 평가 수정 중 예외 발생: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return result;
 	}
 
-	// =========================================================================================================
+
 	// 강의 평가 삭제
 	public int deleteEvaluation(int evaluationId) {
-		int result = 0;
-		String query = "DELETE FROM course_evaluation WHERE evaluation_id = ?";
-		try {
-			con = getConnection();
-			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, evaluationId);
-			result = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			System.err.println("강의 평가 삭제 중 예외 발생: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
-			closeResource();
-		}
-		return result;
+	    int result = 0;
+	    String query = "DELETE FROM course_evaluation WHERE evaluation_id = ?";
+	    try {
+	        con = getConnection();
+	        pstmt = con.prepareStatement(query);
+	        pstmt.setInt(1, evaluationId);
+	        result = pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        System.err.println("강의 평가 삭제 중 예외 발생: " + e.getMessage());
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return result;
 	}
 
 }// MemberDAO 클래스

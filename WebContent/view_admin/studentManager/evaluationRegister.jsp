@@ -1,11 +1,9 @@
-<%@page import="Vo.StudentVo"%>
-<%@page import="java.util.List"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="Vo.StudentVo" %>
 <%
     String contextPath = request.getContextPath();
-    String studentId = (String) session.getAttribute("student_id"); // 세션에서 학생 ID 가져오기
-    String studentName = (String) session.getAttribute("name"); // 세션에서 학생 이름 가져오기
+    String studentId = (String) session.getAttribute("id"); // 세션에서 로그인한 학생 ID 가져오기
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,22 +24,16 @@
                 <label for="studentId" class="form-label">학생 ID</label>
                 <input type="text" class="form-control" id="studentId" name="student_id" value="<%=studentId%>" readonly>
             </div>
-            <div class="mb-3">
-                <label for="studentName" class="form-label">학생 이름</label>
-                <input type="text" class="form-control" id="studentName" name="user_name" value="<%=studentName%>" readonly>
-            </div>
-            
+
             <!-- 강의 선택 -->
             <div class="mb-3">
                 <label for="courseId" class="form-label">강의 ID</label>
                 <select class="form-select" id="courseId" name="course_id" required>
                     <option value="">강의를 선택하세요</option>
-                    <%-- 서버에서 가져온 강의 목록 표시 --%>
+                    <%-- 강의 목록 동적 생성 --%>
                     <%
                         List<StudentVo> courseList = (List<StudentVo>) request.getAttribute("courseList");
-                		
-                		
-                        if (courseList != null) {
+                        if (courseList.size() != 0) {
                             for (StudentVo course : courseList) {
                     %>
                     <option value="<%=course.getCourseId()%>">
@@ -49,17 +41,11 @@
                     </option>
                     <%
                             }
-                        }else{
+                        }
                     %>
-                    <option value="">강의 데이터가 없습니다.</option>
-					<%
-   							 }
-										%>
-                    
-                    
                 </select>
             </div>
-            
+
             <!-- 평점 -->
             <div class="mb-3">
                 <label for="rating" class="form-label">평점</label>
@@ -73,7 +59,7 @@
                 </select>
             </div>
 
-            <!-- 내용 -->
+            <!-- 평가 내용 -->
             <div class="mb-3">
                 <label for="comments" class="form-label">평가 내용</label>
                 <textarea class="form-control" id="comments" name="comments" rows="4" placeholder="평가 내용을 입력하세요" required></textarea>

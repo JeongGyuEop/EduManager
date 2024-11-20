@@ -206,72 +206,79 @@ public class StudentController extends HttpServlet {
         	   out.close();
         	   return;
            }
-           
+         
            
            // ==========================================================================================
-       case "/evaluationRegister.do": // 강의 평가 등록 페이지
-    	   // 강의 목록 조회
-    	   String user_id = (String)session.getAttribute("user_id");
-    	   String name = (String)session.getAttribute("name");
-    	   
-    	    List<StudentVo> courseList = studentservice.getCourseList("user_id");
-    	    System.out.println(courseList);
-    	    request.setAttribute("courseList", courseList); // JSP로 전달
-    	    request.setAttribute("name", name);
-			center = "/view_admin/studentManager/evaluationRegister.jsp"; // 등록 화면 경로    	 
-   	    request.setAttribute("classroomCenter" , center);
-   	    nextPage = "/view_classroom/classroom.jsp";
-			break;
-	// ==========================================================================================
+        // 강의 평가 등록 페이지로 이동
+       case "/evaluationRegister.do":
+           String loggedInStudentId = (String) session.getAttribute("student_id");
+           
+           System.out.println(loggedInStudentId);
+           
+           List<StudentVo> courseList = studentservice.getAllCourses(loggedInStudentId);
+           request.setAttribute("studentId", loggedInStudentId);
+           request.setAttribute("courseList", courseList);
+           	 // String name = (String)session.getAttribute("name");
+        	 //request.setAttribute("name", name);
+           center = "/view_admin/studentManager/evaluationRegister.jsp";
+           request.setAttribute("classroomCenter", center);
+           nextPage = "/view_classroom/classroom.jsp";
+           break;
 
-		case "/evaluationSubmit.do": // 강의 평가 등록 처리
-			boolean isEvaluationInserted = studentservice.insertEvaluation(request);
-			String evaluationMessage = isEvaluationInserted ? "강의 평가가 성공적으로 등록되었습니다."
-					: "강의 평가 등록에 실패했습니다.";
-			response.sendRedirect(request.getContextPath() + "/student/evaluationList.do?message="
-					+ URLEncoder.encode(evaluationMessage, "UTF-8"));
-			return;
+       // ===============================================
+       // 강의 평가 데이터 등록 처리
+       case "/evaluationSubmit.do":
+           boolean isEvaluationInserted = studentservice.insertEvaluation(request);
+           String evaluationMessage = isEvaluationInserted ? "강의 평가가 성공적으로 등록되었습니다."
+                   : "강의 평가 등록에 실패했습니다.";
+           response.sendRedirect(request.getContextPath() + "/student/evaluationRegister.do?message="
+                   + URLEncoder.encode(evaluationMessage, "UTF-8"));
+           return;
 
-		// ==========================================================================================
-		case "/evaluationList.do": // 강의 평가 조회
-			studentId = (String)session.getAttribute("student_id"); // 세션에서 학생 ID 가져오기
-			System.out.println(studentId);
-			List<StudentVo> evaluations = studentservice.getEvaluationsByStudentId(studentId);
-			request.setAttribute("evaluations", evaluations);
+       // ===============================================
+       // 강의 평가 목록 조회
+       case "/evaluationList.do":
+           studentId = (String) session.getAttribute("student_id");
+           List<StudentVo> evaluations = studentservice.getEvaluationsByStudent(studentId); //getStudentEvaluations
+           request.setAttribute("evaluations", evaluations);
 
-			 center = "/view_admin/studentManager/evaluationList.jsp";
-              request.setAttribute("classroomCenter" , center);           
-              nextPage = "/view_classroom/classroom.jsp"; 
-			break;
+           center = "/view_admin/studentManager/evaluationList.jsp";
+           request.setAttribute("classroomCenter", center);
+           nextPage = "/view_classroom/classroom.jsp";
+           break;
 
-		// ==========================================================================================
-		case "/evaluationEdit.do": // 강의 평가 수정 페이지
-			int evaluationId = Integer.parseInt(request.getParameter("evaluationId")); 
-			StudentVo evaluation = studentservice.getEvaluationById(evaluationId);
-			request.setAttribute("evaluation", evaluation);
+       // ===============================================
+       // 강의 평가 수정 페이지로 이동
+       case "/evaluationEdit.do":
+           int evaluationId = Integer.parseInt(request.getParameter("evaluation_id"));
+           StudentVo evaluation = studentservice.getEvaluationById(evaluationId);
+           request.setAttribute("evaluation", evaluation);
 
-			center = "/view_admin/studentManager/evaluationEdit.jsp";
-       	    request.setAttribute("classroomCenter", center);
-       	    nextPage = "/view_classroom/classroom.jsp";
-			break;
+           center = "/view_admin/studentManager/evaluationEdit.jsp";
+           request.setAttribute("classroomCenter", center);
+           nextPage = "/view_classroom/classroom.jsp";
+           break;
 
-		case "/evaluationUpdate.do": // 강의 평가 수정 처리
-			boolean isEvaluationUpdated = studentservice.updateEvaluation(request);
-			String updateEvaluationMessage = isEvaluationUpdated ? "강의 평가가 성공적으로 수정되었습니다."
-					: "강의 평가 수정에 실패했습니다.";
-			response.sendRedirect(request.getContextPath() + "/student/evaluationList.do?message="
-					+ URLEncoder.encode(updateEvaluationMessage, "UTF-8"));
-			return;
+       // ===============================================
+       // 강의 평가 수정 처리
+       case "/evaluationUpdate.do":
+           boolean isEvaluationUpdated = studentservice.updateEvaluation(request);
+           String updateEvaluationMessage = isEvaluationUpdated ? "강의 평가가 성공적으로 수정되었습니다."
+                   : "강의 평가 수정에 실패했습니다.";
+           response.sendRedirect(request.getContextPath() + "/student/evaluationList.do?message="
+                   + URLEncoder.encode(updateEvaluationMessage, "UTF-8"));
+           return;
 
-		// ==========================================================================================
-		case "/evaluationDelete.do": // 강의 평가 삭제 처리
-			evaluationId = Integer.parseInt(request.getParameter("evaluationId"));
-			boolean isEvaluationDeleted = studentservice.deleteEvaluation(evaluationId);
-			String deleteEvaluationMessage = isEvaluationDeleted ? "강의 평가가 성공적으로 삭제되었습니다."
-					: "강의 평가 삭제에 실패했습니다.";
-			response.sendRedirect(request.getContextPath() + "/student/evaluationList.do?message="
-					+ URLEncoder.encode(deleteEvaluationMessage, "UTF-8"));
-			return;
+       // ===============================================
+       // 강의 평가 삭제 처리
+       case "/evaluationDelete.do":
+           evaluationId = Integer.parseInt(request.getParameter("evaluation_id"));
+           boolean isEvaluationDeleted = studentservice.deleteEvaluation(evaluationId);
+           String deleteEvaluationMessage = isEvaluationDeleted ? "강의 평가가 성공적으로 삭제되었습니다."
+                   : "강의 평가 삭제에 실패했습니다.";
+           response.sendRedirect(request.getContextPath() + "/student/evaluationList.do?message="
+                   + URLEncoder.encode(deleteEvaluationMessage, "UTF-8"));
+           return;
 
 		default:
 			break;
