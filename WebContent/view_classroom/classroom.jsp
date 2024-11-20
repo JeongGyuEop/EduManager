@@ -73,7 +73,7 @@
 			<!-- Navbar-->
 			    <ul class="navbar-nav ms-auto d-flex align-items-center">
 			        <li class="nav-item">
-			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> 교수님!</p>
+			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
 			        </li>
 			        <li class="nav-item dropdown">
 			            <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -115,9 +115,9 @@
                             
                             <!-- 사이드바 성적 조회 영역 -->
                             <div class="sb-sidenav-menu-heading">SCORE</div>
-                            <a class="nav-link" href="charts.html">
+                            <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo?classroomCenter=/view_classroom/courseList.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                ?????
+                                성적 관리
                             </a>
                             <a class="nav-link" href="tables.html">
                                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
@@ -127,7 +127,7 @@
 					<%	} else { %>
                             <!-- 사이드바 수강신청 영역 -->
                             <div class="sb-sidenav-menu-heading">Course Registration</div>
-                            <a class="nav-link" href="index.html">
+                            <a class="nav-link" href="<%=contextPath%>/classroom/course_registration.bo?classroomCenter=/view_classroom/courseRegistration.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 수강신청
                             </a>
@@ -179,7 +179,7 @@
                             
                             <!-- 사이드바 성적 조회 영역 -->
                             <div class="sb-sidenav-menu-heading">SCORE</div>
-                            <a class="nav-link" href="charts.html">
+                            <a class="nav-link" href="<%=contextPath%>/classroom/grade_search.bo?classroomCenter=/view_classroom/gradeList.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 성적 조회
                             </a>

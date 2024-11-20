@@ -5,8 +5,10 @@ public class CourseVo {
     private String course_name;
     private String professor_id;
     private String majorcode;
+    private String majorname;
     private String room_id;
     private ClassroomVo classroom; // ClassroomVo 객체 포함
+    
 
     public CourseVo() { } // 기본 생성자
 
@@ -19,6 +21,10 @@ public class CourseVo {
         this.majorcode = majorcode;
         this.room_id = room_id;
         this.classroom = classroom;
+    }
+    
+    public CourseVo(String majorname) {
+    	this.majorname = majorname;
     }
 
     // getter, setter
@@ -69,4 +75,13 @@ public class CourseVo {
     public void setClassroom(ClassroomVo classroom) {
         this.classroom = classroom;
     }
+
+	public String getMajorname() {
+		return majorname;
+	}
+
+	public void setMajorname(String majorname) {
+		this.majorname = majorname;
+	}
+    
 }

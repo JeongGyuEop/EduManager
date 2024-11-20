@@ -15,6 +15,8 @@
 	//받았다~~  [목록] <a>태그의 href속성의 주소에 nowPage와 nowBlock 값 추가 시키자 
 	String nowPage = (String)request.getAttribute("nowPage");
 	String nowBlock = (String)request.getAttribute("nowBlock");
+	
+	String id = (String)session.getAttribute("id");
 %>
 
 
@@ -49,7 +51,7 @@
                     	<div align="center">작 성 자</div>
                     </td>
                     <td width="34%" bgcolor="#f5f5f5" style="text-align: left">
-                    	<input type="text" name="writer" size="20" class="text2" />
+                    	<input type="text" name="writer" size="20" class="text2" value="<%=id %>" readonly/>
                     </td>
                  
                    </tr>

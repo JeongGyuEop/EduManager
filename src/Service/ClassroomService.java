@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Dao.ClassroomDAO;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
+import Vo.StudentVo;
 
 public class ClassroomService {
 
@@ -50,6 +51,37 @@ public class ClassroomService {
 		return classroomdao.updateCourse(course_id, course_name, room_id);
 	}
 
+	// 교수의 강의를 수강하는 학생 조회
+	public ArrayList<StudentVo> serviceStudentSearch(String course_id_) {
+		return classroomdao.studentSearch(course_id_);
+	}
+
+	//성적 등록 
+	public void serviceGradeInsert(String course_id_, String student_id, String total, String midtest_score, String finaltest_score, String assignment_score) {
+		classroomdao.gradeInsert(course_id_, student_id, total,midtest_score, finaltest_score ,assignment_score);
+	}
+
+	//성적 조회
+	public ArrayList<StudentVo> serviceGradeSearch(String student_id_1) {
+		return classroomdao.gradeSearch(student_id_1);
+	}
+
+	// 이미 성적이 있는지 조회 
+	public boolean isGradeExists(String course_id_, String student_id) {
+		return classroomdao.gradeExists(course_id_, student_id);
+	}
+
+	// 성적 수정
+	public void serviceGradeUpdate(String course_id_, String student_id, String total, String midtest_score, String finaltest_score,
+			String assignment_score) {
+		
+		classroomdao.gradeUpdate(course_id_, student_id, total, midtest_score, finaltest_score, assignment_score);
+	}
+
+	// 성적 삭제
+	public void serviceGradeDelete(String course_id_, String student_id) {
+		classroomdao.gradeDelete(course_id_, student_id);
+	}
 	//-------------
 	// 관리자가 강의실을 등록하기 위해 DAO를 호출하는 함수
 	public int serviceRoomRegister(String room_id, String capacity, String[] equipment) {
@@ -72,6 +104,10 @@ public class ClassroomService {
 	// 관리자가 강의실의 정보를 삭제하기 위해 DAO를 호출하는 함수
 	public int serviceDeleteRoom(String room_id) {
 		return classroomdao.deleteRoom(room_id);
+	}
+
+	public ArrayList<CourseVo> serviceCourseList() {
+		return classroomdao.courseList();
 	}
 
 

@@ -19,8 +19,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import Service.ClassroomService;
+import Service.StudentService;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
+import Vo.StudentVo;
 
 
 @WebServlet("/classroom/*")
@@ -361,6 +363,190 @@ public class ClassroomController extends HttpServlet {
 	    		
 		//==========================================================================================
 				
+	    	case "/student_search.bo": //강의명 클릭시 조회될 학생목록
+	    		
+	    		ArrayList<StudentVo> studentList = new ArrayList<StudentVo>();
+	    		
+	    		String course_id_ = (String) request.getParameter("course_id");	    
+	    		
+	    		session.setAttribute("course_id", course_id_);
+//	    		
+	    		studentList = classroomservice.serviceStudentSearch(course_id_);
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		session.setAttribute("studentList", studentList);
+	    		request.setAttribute("classroomCenter", center);
+	    		
+				nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		break;
+	    		
+	    //==========================================================================================
+
+	    	case "/grade_register.do": // 교수가 성적 등록
+	    		
+	    		studentList = (ArrayList<StudentVo>) session.getAttribute("studentList");
+	    		
+	    		session.setAttribute("studentList", studentList);
+	    		
+	    		course_id_ = (String) session.getAttribute("course_id");
+	    		String student_id = (String) request.getParameter("student_id");
+	    		String total = (String)request.getParameter("total");
+	    		String midtest_score = (String) request.getParameter("midtest");
+	    		String finaltest_score = (String) request.getParameter("finaltest");
+	    		String assignment_score = (String) request.getParameter("assignment");
+	    		
+	    		
+	    		session.setAttribute("total", total);
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		request.setAttribute("classroomCenter", center);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		boolean isGradeExists = classroomservice.isGradeExists(course_id_, student_id);
+	    		
+	    		if(isGradeExists) {// 이미 해당 학생의 성적이 등록되어 있는 경우
+	    			 response.getWriter().write("이미 성적이 등록된 학생입니다.");
+	    			 return;
+	    		} else {
+
+		    		classroomservice.serviceGradeInsert(course_id_, student_id, total, midtest_score, finaltest_score, assignment_score);
+		    		response.getWriter().write("성적이 성공적으로 등록되었습니다."); // 성공 메시지 반환
+		    		return;
+	    		}
+	    		
+	    		
+   	    //==========================================================================================
+		
+	    	case "/grade_search.bo": // 학생이 성적 조회
+	    		
+	    		ArrayList<StudentVo> studentList_ = new ArrayList<StudentVo>();
+	    			  
+	    		String student_id_1 = (String) session.getAttribute("student_id");
+	    		
+	    		studentList_ = classroomservice.serviceGradeSearch(student_id_1);
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		session.setAttribute("studentList", studentList_);
+	    		request.setAttribute("classroomCenter", center);
+	    		
+				nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		
+	    		break;
+	    
+  	    //==========================================================================================
+	    		
+	    	case "/grade_update.do": //교수가 성적 수정
+	    		
+	    		studentList = (ArrayList<StudentVo>) session.getAttribute("studentList");
+	    		
+	    		session.setAttribute("studentList", studentList);
+	    		
+	    		course_id_ = (String) session.getAttribute("course_id");
+	    		student_id = (String) request.getParameter("student_id");
+	    		total = (String)request.getParameter("total");
+	    		midtest_score = (String) request.getParameter("midtest");
+	    		finaltest_score = (String) request.getParameter("finaltest");
+	    		assignment_score = (String) request.getParameter("assignment");
+	    		
+	    		session.setAttribute("total", total);
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		request.setAttribute("classroomCenter", center);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    	
+	    		
+	    		// 입력값 검증
+	    	    try {
+	    	    	int midtest = Integer.parseInt(midtest_score);
+		    		int finaltest = Integer.parseInt(finaltest_score);
+		    		int assignment = Integer.parseInt(assignment_score);
+
+	    	        // 점수 범위 확인 (0~100)
+	    	        if (midtest < 0 || midtest > 100 || finaltest < 0 || finaltest > 100 || assignment < 0 || assignment > 100) {
+	    	            response.getWriter().write("점수는 0에서 100 사이여야 합니다.");
+	    	            return;
+	    	        }
+	    	        classroomservice.serviceGradeUpdate(course_id_, student_id, total, midtest_score, finaltest_score, assignment_score );
+	    	        response.getWriter().write("성적이 성공적으로 수정되었습니다.");
+	    	        return;
+	    	    } catch (NumberFormatException e) {
+	    	        // 숫자가 아닌 값이 입력된 경우
+	    	        response.getWriter().write("유효한 숫자를 입력해주세요.");
+	    	    }
+	    		
+	    		
+	    		
+	    		break;
+	    		
+	    		
+	    //==========================================================================================
+	    		
+	    	case "/grade_delete.do": //교수가 성적 삭제
+	    		
+	    		studentList = (ArrayList<StudentVo>) session.getAttribute("studentList");
+	    		
+	    		session.setAttribute("studentList", studentList);
+	    		
+	    		course_id_ = (String) session.getAttribute("course_id");
+	    		student_id = (String) request.getParameter("student_id");
+	    		
+	    		System.out.println(course_id_);
+	    		System.out.println(student_id);
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		request.setAttribute("classroomCenter", center);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    	      
+		       	classroomservice.serviceGradeDelete(course_id_, student_id);
+		       	
+		        response.getWriter().write("성적이 성공적으로 삭제되었습니다.");
+		        return;
+	    	    
+	    		
+	    		
+	    //==========================================================================================
+  
+		
+	    	case "/course_registration.bo":
+	    		
+	    		
+	    		ArrayList<CourseVo> courseList1 = new ArrayList<CourseVo>();
+	 
+	    		courseList1 = classroomservice.serviceCourseList();
+	    		
+	    		System.out.println(courseList1);
+	    		
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		session.setAttribute("courseList", courseList1);
+	    		request.setAttribute("classroomCenter", center);
+	    		
+				nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		
+	    		break;
+		        
+		        
+		        
+		        
+		//==========================================================================================
+		        
+		        
+		        
+		        
+
 	    	default:
 	    		break;
 	    }
