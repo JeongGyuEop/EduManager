@@ -11,7 +11,7 @@
 		enctype="multipart/form-data">
 		<!-- 작성자 정보 가져온 뒤 readonly -->
 		<!-- 작성일은 DAO에서 처리 -->
-		<input type="hidden" name="author" value="${author}" readonly>
+		<input type="hidden" name="user_id" value="${user_id}" readonly>
 		<table>
 			<thead>
 				<tr>
