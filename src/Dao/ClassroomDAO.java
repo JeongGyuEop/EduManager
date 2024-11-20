@@ -616,4 +616,45 @@ public class ClassroomDAO {
 			closeResource();
 		}
 	}
+
+	// 강의 리스트 조회 (수강신청)
+	public ArrayList<CourseVo> courseList() {
+		
+		ArrayList<CourseVo> courseList = new ArrayList<CourseVo>();
+		
+		String sql = null;
+		CourseVo courseVo;
+		
+		try {
+			con = ds.getConnection();
+			
+			sql = "select * from course";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				
+				courseVo = new CourseVo();
+				courseVo.setCourse_id(rs.getString("course_id"));
+				courseVo.setCourse_name(rs.getString("course_name"));
+				courseVo.setProfessor_id(rs.getString("professor_id"));
+				courseVo.setMajorcode(rs.getString("majorcode"));
+				courseVo.setRoom_id(rs.getString("room_id"));
+				
+				courseList.add(courseVo);
+			
+				
+			}
+			
+		}catch (Exception e) {
+			System.out.println("ClassroomDAO의 courseList 메소드 오류");
+			e.printStackTrace();
+		}finally {
+			closeResource();
+		}
+		
+		return courseList;
+	}
 }

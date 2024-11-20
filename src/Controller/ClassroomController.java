@@ -486,6 +486,36 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    		
 	    //==========================================================================================
+  
+		
+	    	case "/course_registration.bo":
+	    		
+	    		
+	    		ArrayList<CourseVo> courseList1 = new ArrayList<CourseVo>();
+	 
+	    		courseList1 = classroomservice.serviceCourseList();
+	    		
+	    		System.out.println(courseList1);
+	    		
+	    		
+	    		center = request.getParameter("classroomCenter");
+	    		
+	    		session.setAttribute("courseList", courseList1);
+	    		request.setAttribute("classroomCenter", center);
+	    		
+				nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		
+	    		break;
+		        
+		        
+		        
+		        
+		//==========================================================================================
+		        
+		        
+		        
+		        
 
 	    	default:
 	    		break;

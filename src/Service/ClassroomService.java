@@ -106,5 +106,9 @@ public class ClassroomService {
 		return classroomdao.deleteRoom(room_id);
 	}
 
+	public ArrayList<CourseVo> serviceCourseList() {
+		return classroomdao.courseList();
+	}
+
 
 }
