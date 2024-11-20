@@ -407,8 +407,51 @@ public class BoardDAO {
 
 	public int bookPostUpload(BookPostVo bookPostVo) {
 		
+		int result = 0;
 		
-		
-		return 0;
+		try {
+	        con = ds.getConnection();
+
+	        // 1. book_post 테이블에 게시글 저장
+	        String sql = "INSERT INTO book_post (user_id, post_title, post_content, major_tag) VALUES (?, ?, ?, ?)";
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, bookPostVo.getUserId());
+	        pstmt.setString(2, bookPostVo.getPostTitle());
+	        pstmt.setString(3, bookPostVo.getPostContent());
+	        pstmt.setString(4, bookPostVo.getMajorTag());
+	        pstmt.executeUpdate();
+
+	        // 2. 생성된 post_id 가져오기
+	        rs = pstmt.getGeneratedKeys();
+	        int postId = 0;
+	        if (rs.next()) {
+	            postId = rs.getInt(1);
+	        }
+
+	        // 3. book_image 테이블에 이미지 정보 저장
+	        String imageSql = "INSERT INTO book_image (post_id, file_name) VALUES (?, ?)";
+	        pstmt = con.prepareStatement(imageSql);
+	        for (BookPostVo.BookImage image : bookPostVo.getImages()) {
+	            pstmt.setInt(1, postId);
+	            pstmt.setString(2, image.getFileName());
+	            pstmt.executeUpdate();
+	        }
+
+	        result = 1; // 성공 시 1 반환
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        result = 0; // 실패 시 0 반환
+	    } finally {
+	        // 자원 정리
+	        try {
+	            if (rs != null) rs.close();
+	            if (pstmt != null) pstmt.close();
+	            if (con != null) con.close();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return result;
 	}
 }
