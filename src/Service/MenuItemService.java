@@ -58,7 +58,8 @@ public class MenuItemService {
 //            )),
             new MenuItemVo("마이페이지", "/student/myPage.bo?center=/view_admin/studentManager/myPage.jsp"),
             new MenuItemVo("공지사항", "notice.jsp"),
-            new MenuItemVo("학사일정", "/Board/boardCalendar.bo")
+            new MenuItemVo("학사일정", "/Board/boardCalendar.bo"),
+            new MenuItemVo("중고책방", "/Board/booktradingboard.bo?center=/view_student/booktradingboard.jsp")
         ));
 
         // 교수 메뉴

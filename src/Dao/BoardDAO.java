@@ -385,131 +385,94 @@ public class BoardDAO {
 	}
 
 	public void deleteSchedule(int scheduleId) {
-        String sql = "DELETE FROM academic_schedule WHERE schedule_id = ?";
-        try {
-            con = ds.getConnection();
-            pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, scheduleId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("BoardDAO의 deleteSchedule메소드에서 오류");
-            e.printStackTrace();
-            throw new RuntimeException("일정을 삭제하는 중 오류가 발생했습니다.");
-        } finally {
-            closeResource();
-        }
-    }
-
-	//===============================================================================
-	//중고책 거래 테이블들===============================================================
-	//===============================================================================
-
-	
-// 글쓰기
-	public int bookPostUpload(BookPostVo bookPostVo) {
-		String sql = null;
-		int result = 0;
-		
-		try {
-	        con = ds.getConnection();
-
-	        // 1. book_post 테이블에 게시글 저장
-	        sql = "INSERT INTO book_post (user_id, post_title, post_content, major_tag, created_at) VALUES (?, ?, ?, ?, now())";
-	        pstmt = con.prepareStatement(sql, pstmt.RETURN_GENERATED_KEYS);
-	        pstmt.setString(1, bookPostVo.getUserId());
-	        pstmt.setString(2, bookPostVo.getPostTitle());
-	        pstmt.setString(3, bookPostVo.getPostContent());
-	        pstmt.setString(4, bookPostVo.getMajorTag());
-	        pstmt.executeUpdate();
-
-	        // 2. 생성된 post_id 가져오기
-	        rs = pstmt.getGeneratedKeys();
-	        int postId = 0;
-	        if (rs.next()) {
-	            postId = rs.getInt(1);
-	        }
-	        
-	        // 자원 정리 후 새 쿼리 준비를 위해 pstmt 닫기
-	        if (pstmt != null) pstmt.close();
-
-	        // 3. book_image 테이블에 이미지 정보 저장
-	        sql = "INSERT INTO book_image (post_id, file_name) VALUES (?, ?)";
-	        pstmt = con.prepareStatement(sql);
-	        for (BookPostVo.BookImage image : bookPostVo.getImages()) {
-	            pstmt.setInt(1, postId);
-	            pstmt.setString(2, image.getFileName());
-	            pstmt.executeUpdate();
-	        }
-
-	        result = 1; // 성공 시 1 반환
-
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        result = 0; // 실패 시 0 반환
-	    } finally {
-	        // 자원 정리
-	        try {
-	            if (rs != null) rs.close();
-	            if (pstmt != null) pstmt.close();
-	            if (con != null) con.close();
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	    }
-	    return result;
-	}
-	
-	
-	// 모든 게시글 조회
-	public ArrayList booklistboard() {
-		
-		String sql = null;
-		
-		ArrayList<BookPostVo> list = new ArrayList<>();
-		
+		String sql = "DELETE FROM academic_schedule WHERE schedule_id = ?";
 		try {
 			con = ds.getConnection();
-			sql = "select * from book_post order by post_id desc";
-			
 			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				
-				BookPostVo vo = new BookPostVo(
-						   				rs.getInt("postId"),
-						   				rs.getString("userId"),
-						   				rs.getString("postTitle"),
-						   				rs.getString("postContent"),
-						   				rs.getString("majorTag"),
-						   				rs.getTimestamp("createdAt"));
-				
-				list.add(vo);
-								
-			}
-		} catch (Exception e) {
-			System.out.println("BoardDAO의  booklistboard메소드 오류");
+			pstmt.setInt(1, scheduleId);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("BoardDAO의 deleteSchedule메소드에서 오류");
 			e.printStackTrace();
-		}finally {
+			throw new RuntimeException("일정을 삭제하는 중 오류가 발생했습니다.");
+		} finally {
 			closeResource();
-			
 		}
-
-		return list;
-		
-		
 	}
-	
-	
-	
-	//===============================================================================
-	//중고책 거래 테이블들===============================================================
-	//===============================================================================
+
+	// ===============================================================================
+	// 중고책 거래=======================================================================
+	// ===============================================================================
+
+	public List<String> bookPostUpload(BookPostVo bookPostVo) {
+		String sqlInsertPost = "INSERT INTO book_post (user_id, post_title, post_content, major_tag, created_at) VALUES (?, ?, ?, ?, NOW())";
+        String sqlInsertImage = "INSERT INTO book_image (post_id, file_name, image_path) VALUES (?, ?, ?)";
+        List<String> imagePaths = new ArrayList<>();
+
+        try {
+            con = ds.getConnection();
+            con.setAutoCommit(false); // 트랜잭션 시작
+
+            // 1. book_post 테이블에 게시글 저장
+            pstmt = con.prepareStatement(sqlInsertPost, PreparedStatement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, bookPostVo.getUserId());
+            pstmt.setString(2, bookPostVo.getPostTitle());
+            pstmt.setString(3, bookPostVo.getPostContent());
+            pstmt.setString(4, bookPostVo.getMajorTag());
+            pstmt.executeUpdate();
+
+            // 2. 생성된 post_id 가져오기
+            rs = pstmt.getGeneratedKeys();
+            int postId = 0;
+            if (rs.next()) {
+                postId = rs.getInt(1);
+                bookPostVo.setPostId(postId);
+            } else {
+                throw new SQLException("게시글 삽입 실패, 게시글 ID를 가져올 수 없습니다.");
+            }
+
+            // 자원 정리 후 새 쿼리 준비
+            pstmt.close();
+            rs.close();
+
+            // 3. book_image 테이블에 이미지 정보 저장
+            pstmt = con.prepareStatement(sqlInsertImage);
+            for (BookPostVo.BookImage image : bookPostVo.getImages()) {
+                String fileName = image.getFileName();
+                String uploadTime = String.valueOf(System.currentTimeMillis()); // 현재 시간을 밀리초로 가져와서 문자열로 변환
+                String imagePath = "/images/" + postId + "/" + fileName + "_" + uploadTime;
+
+                pstmt.setInt(1, postId);
+                pstmt.setString(2, fileName);
+                pstmt.setString(3, imagePath);
+                pstmt.executeUpdate();
+
+                imagePaths.add(imagePath);
+            }
+
+            con.commit(); // 트랜잭션 커밋
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                if (con != null) {
+                    con.rollback(); // 오류 발생 시 트랜잭션 롤백
+                }
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            imagePaths.clear(); // 실패 시 빈 리스트 반환
+        } finally {
+            closeResource();
+            try {
+                if (con != null) {
+                    con.setAutoCommit(true); // 기본 자동 커밋 모드로 복구
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return imagePaths;
+    }
 
 }
-
-/*
- * SELECT bp.post_id, bp.post_title, bp.post_content, bp.major_tag,
- * bp.created_at, bi.file_name FROM book_post bp INNER JOIN book_image bi ON
- * bp.post_id = bi.post_id; 조인 조회
- */

@@ -5,41 +5,35 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
 import Dao.BoardDAO;
 import Service.BoardService;
 import Service.MenuItemService;
 import Vo.BoardVo;
-import Vo.BookPostVo;
 import Vo.MemberVo;
 import Vo.ScheduleVo;
-import Vo.StudentVo;
 
 @WebServlet("/Board/*")
-@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB => 2mb보다 작은 경우 메모리에 저장, 큰 경우 디스크에 저장
-		maxFileSize = 1024 * 1024 * 10, // 10MB - 개별 파일 크기 제한
-		maxRequestSize = 1024 * 1024 * 50 // 50MB - 전체 파일 크기 제한
-)
 public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	BoardService boardservice;
-	private BoardDAO boardDAO;
 
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		boardDAO = new BoardDAO();
+		new BoardDAO();
 		boardservice = new BoardService();
 	}
 
@@ -63,15 +57,6 @@ public class BoardController extends HttpServlet {
 		}
 	}
 
-	// JSON 문자열 내 특수 문자를 이스케이프 처리하는 메서드
-	private String escapeJson(String str) {
-		if (str == null) {
-			return "";
-		}
-		return str.replace("\\", "\\\\").replace("\"", "\\\"").replace("/", "\\/").replace("\b", "\\b")
-				.replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t");
-	}
-
 	// 모든 요청을 처리하는 메인 메서드
 	protected void doHandle(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException, Exception {
@@ -81,6 +66,7 @@ public class BoardController extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		PrintWriter out = response.getWriter();
+		String contextPath = request.getContextPath();
 
 		String nextPage = null;
 		String center = null;
@@ -93,8 +79,6 @@ public class BoardController extends HttpServlet {
 		String endDate = null;
 		String month = null;
 
-		int result = 0;
-
 		System.out.println("2단계 요청 주소 : " + action);
 
 		// 액션에 따라 분기 처리
@@ -105,7 +89,7 @@ public class BoardController extends HttpServlet {
 			String nowPage = request.getParameter("nowPage");
 			String nowBlock = request.getParameter("nowBlock");
 			MenuItemService menuService = new MenuItemService();
-			String contextPath = request.getContextPath();
+			contextPath = request.getContextPath();
 			String role = (String) session.getAttribute("role");
 			String menuHtml = menuService.generateMenuHtml(role, contextPath);
 			center = request.getParameter("center");
@@ -145,7 +129,7 @@ public class BoardController extends HttpServlet {
 			vo.setAuthor_id(writer);
 			vo.setTitle(title);
 			vo.setContent(content);
-			result = boardservice.serviceInsertBoard(vo);
+			int result = boardservice.serviceInsertBoard(vo);
 			String go = String.valueOf(result);
 			out.print(go);
 			return;
@@ -286,81 +270,6 @@ public class BoardController extends HttpServlet {
 					request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month="
 							+ URLEncoder.encode(month, "UTF-8"));
 			return;
-
-// 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
-
-		case "/bookPostUpload.bo": // 글 등록
-
-			// 글 등록 form으로부터 글 제목이 있을 경우에 실행
-			try {
-				// 서비스 호출
-				result = boardservice.bookPostUploadService(request);
-				// 결과 처리 및 메시지 설정
-				if (result == 1) {
-					request.setAttribute("message", "게시글이 성공적으로 등록되었습니다.");
-				} else {
-					request.setAttribute("message", "게시글 등록에 실패했습니다. 다시 시도해주세요.");
-				}
-			} catch (Exception e) {
-				// 예외 발생 시 에러 메시지 설정
-				e.printStackTrace();
-				request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
-			}
-			
-			//글쓰기 중앙화면(VIEW)경로를 request내장객체에 바인딩
-			request.setAttribute("center", "board/booktrading.jsp");
-			
-			request.setAttribute("nowPage", request.getParameter("nowPage"));
-			request.setAttribute("nowBlock", request.getParameter("nowBlock"));
-			// nextPage 지정
-			nextPage = "/Board/bookPostUpload.bo";
-
-			break;
-		
-	
-		
-		case "/booktradingboard.bo": // 글 조회 메서드
-			
-			// 게시판 목록을 가져오는 기능
-			HttpSession session_ = request.getSession();
-			String loginid = (String)session_.getAttribute("id");
-			
-			ArrayList<BookPostVo> list1 = boardservice.serviceBoardbooklist();
-			String nowPage1 = request.getParameter("nowPage");
-			String nowBlock1 = request.getParameter("nowBlock");			
-			
-			request.setAttribute("message", request.getAttribute("message"));
-			
-			center = "/Board/booktradingboard.bo";
-
-			request.setAttribute("center", center);
-			
-			request.setAttribute("list", list1);
-			request.setAttribute("id", loginid);
-			request.setAttribute("nowPage", nowPage1);
-			request.setAttribute("nowBlock", nowBlock1);
-
-			nextPage = "/main.jsp";
-
-			break;
-			
-			
-		
-			
-/*			
-		case "/searchbooklist.bo":
-			// 키워드로 게시글 검색 기능
-			String key1 = request.getParameter("key");
-			String word1 = request.getParameter("word");
-			list = boardservice.serviceBoardKeyWord(key1, word1);
-			request.setAttribute("list", list);
-			request.setAttribute("center", "view_student/booktradingboard.jsp");
-			nextPage = "/main.jsp";
-			break;	
-	*/		
-
-// 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
-
 		default:
 			break;
 		}
