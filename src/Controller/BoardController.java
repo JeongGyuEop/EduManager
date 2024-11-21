@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,19 +26,14 @@ import Vo.MemberVo;
 import Vo.ScheduleVo;
 
 @WebServlet("/Board/*")
-@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 1, // 1MB
-		maxFileSize = 1024 * 1024 * 10, // 10MB
-		maxRequestSize = 1024 * 1024 * 50 // 50MB
-)
 public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	BoardService boardservice;
-	private BoardDAO boardDAO;
 
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		boardDAO = new BoardDAO();
+		new BoardDAO();
 		boardservice = new BoardService();
 	}
 
@@ -63,15 +57,6 @@ public class BoardController extends HttpServlet {
 		}
 	}
 
-	// JSON 문자열 내 특수 문자를 이스케이프 처리하는 메서드
-	private String escapeJson(String str) {
-		if (str == null) {
-			return "";
-		}
-		return str.replace("\\", "\\\\").replace("\"", "\\\"").replace("/", "\\/").replace("\b", "\\b")
-				.replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t");
-	}
-
 	// 모든 요청을 처리하는 메인 메서드
 	protected void doHandle(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException, Exception {
@@ -93,8 +78,6 @@ public class BoardController extends HttpServlet {
 		String startDate = null;
 		String endDate = null;
 		String month = null;
-
-		int result = 0;
 
 		System.out.println("2단계 요청 주소 : " + action);
 
@@ -146,7 +129,7 @@ public class BoardController extends HttpServlet {
 			vo.setAuthor_id(writer);
 			vo.setTitle(title);
 			vo.setContent(content);
-			result = boardservice.serviceInsertBoard(vo);
+			int result = boardservice.serviceInsertBoard(vo);
 			String go = String.valueOf(result);
 			out.print(go);
 			return;
@@ -287,61 +270,6 @@ public class BoardController extends HttpServlet {
 					request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month="
 							+ URLEncoder.encode(month, "UTF-8"));
 			return;
-
-// 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
-
-		case "/booktradingboard.bo": // 글 조회 메서드
-
-			request.setAttribute("message", request.getAttribute("message"));
-
-			// response.sendRedirect(request.getContextPath() +
-			// "/Board/list.bo?nowPage=1&nowBlock=1");
-			// 위 구문은 페이지 이동용
-
-			center = request.getParameter("center");
-
-			request.setAttribute("center", center);
-
-			nextPage = "/main.jsp";
-
-			break;
-
-		case "/bookPostUpload.bo": // 글 등록하러 가기
-			
-			center = "/view_student/booktrading.jsp";
-
-			request.setAttribute("center", center);
-			request.setAttribute("userId", request.getParameter("userId"));
-			
-			nextPage = "/main.jsp";
-
-			break;
-
-		case "/bookPostUpload.do": // 글 등록
-
-			System.out.println("BoardController userId check : " + request.getParameter("userId"));
-			// 글 등록 form으로부터 글 제목이 있을 경우에 실행
-			try {
-				// 서비스 호출
-				result = boardservice.bookPostUploadService(request);
-				// 결과 처리 및 메시지 설정
-				if (result == 1) {
-					request.setAttribute("message", "게시글이 성공적으로 등록되었습니다.");
-				} else {
-					request.setAttribute("message", "게시글 등록에 실패했습니다. 다시 시도해주세요.");
-				}
-			} catch (Exception e) {
-				// 예외 발생 시 에러 메시지 설정
-				e.printStackTrace();
-				request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
-			}
-			// nextPage 지정
-			nextPage = "/Board/booktradingboard.bo?center=/view_student/booktradingboard.jsp";
-
-			break;
-
-// 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
-
 		default:
 			break;
 		}

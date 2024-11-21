@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import Vo.BoardVo;
 import Vo.BookPostVo;
