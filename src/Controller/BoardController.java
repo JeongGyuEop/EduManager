@@ -5,8 +5,8 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -15,21 +15,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
 import Dao.BoardDAO;
 import Service.BoardService;
 import Service.MenuItemService;
 import Vo.BoardVo;
-import Vo.BookPostVo;
 import Vo.MemberVo;
 import Vo.ScheduleVo;
-import Vo.StudentVo;
 
 @WebServlet("/Board/*")
-@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB => 2mb보다 작은 경우 메모리에 저장, 큰 경우 디스크에 저장
-		maxFileSize = 1024 * 1024 * 10, // 10MB - 개별 파일 크기 제한
-		maxRequestSize = 1024 * 1024 * 50 // 50MB - 전체 파일 크기 제한
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 1, // 1MB
+		maxFileSize = 1024 * 1024 * 10, // 10MB
+		maxRequestSize = 1024 * 1024 * 50 // 50MB
 )
 public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -81,6 +81,7 @@ public class BoardController extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		PrintWriter out = response.getWriter();
+		String contextPath = request.getContextPath();
 
 		String nextPage = null;
 		String center = null;
@@ -105,7 +106,7 @@ public class BoardController extends HttpServlet {
 			String nowPage = request.getParameter("nowPage");
 			String nowBlock = request.getParameter("nowBlock");
 			MenuItemService menuService = new MenuItemService();
-			String contextPath = request.getContextPath();
+			contextPath = request.getContextPath();
 			String role = (String) session.getAttribute("role");
 			String menuHtml = menuService.generateMenuHtml(role, contextPath);
 			center = request.getParameter("center");
@@ -290,19 +291,35 @@ public class BoardController extends HttpServlet {
 // 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
 
 		case "/booktradingboard.bo": // 글 조회 메서드
-			
+
 			request.setAttribute("message", request.getAttribute("message"));
-			
-			center = "/Board/booktradingboard.bo";
+
+			// response.sendRedirect(request.getContextPath() +
+			// "/Board/list.bo?nowPage=1&nowBlock=1");
+			// 위 구문은 페이지 이동용
+
+			center = request.getParameter("center");
 
 			request.setAttribute("center", center);
 
 			nextPage = "/main.jsp";
 
 			break;
-			
-		case "/bookPostUpload.bo": // 글 등록
 
+		case "/bookPostUpload.bo": // 글 등록하러 가기
+			
+			center = "/view_student/booktrading.jsp";
+
+			request.setAttribute("center", center);
+			request.setAttribute("userId", request.getParameter("userId"));
+			
+			nextPage = "/main.jsp";
+
+			break;
+
+		case "/bookPostUpload.do": // 글 등록
+
+			System.out.println("BoardController userId check : " + request.getParameter("userId"));
 			// 글 등록 form으로부터 글 제목이 있을 경우에 실행
 			try {
 				// 서비스 호출
@@ -319,7 +336,7 @@ public class BoardController extends HttpServlet {
 				request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
 			}
 			// nextPage 지정
-			nextPage = "/Board/booktradingboard.bo";
+			nextPage = "/Board/booktradingboard.bo?center=/view_student/booktradingboard.jsp";
 
 			break;
 

@@ -1,4 +1,3 @@
-
 <%@page import="Vo.MemberVo"%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -7,7 +6,8 @@
 	request.setCharacterEncoding("utf-8");
 	String contextPath = request.getContextPath();
 	MemberVo memberVo = new MemberVo();
-	String userId = memberVo.getUser_id();
+	String userId = (String) session.getAttribute("id");
+	System.out.println("booktrading userId check : " + userId);
 	
 	String nowPage = (String)request.getAttribute("nowPage");
 	String nowBlock = (String)request.getAttribute("nowBlock");
@@ -19,12 +19,11 @@
 <title>판매 또는 구매 글 등록</title>
 </head>
 <body>
-	<form action="<%=contextPath%>/Board/bookPostUpload.bo" method="post"
+	<form action="<%=contextPath%>/Board/bookPostUpload.do" method="post"
 		enctype="multipart/form-data">
 		<!-- 작성자 정보 가져온 뒤 readonly -->
 		<!-- 작성일은 DAO에서 처리 -->
-		<input type="hidden" name="userId" value="${userId}" readonly> --%>
-	 <!-- <input type="test" name="userId" value="${userId}">  -->
+		<input type="hidden" name="userId" value="<%=userId%>" readonly>
 		<table>
 			<thead>
 				<tr>
