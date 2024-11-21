@@ -138,7 +138,7 @@
 					<%	} else { %>
                             <!-- 사이드바 수강신청 영역 -->
                             <div class="sb-sidenav-menu-heading">Course Registration</div>
-                            <a class="nav-link" href="<%=contextPath%>/classroom/course_registration.bo?classroomCenter=/view_classroom/courseRegistration.jsp">
+                            <a class="nav-link" href="<%=contextPath%>/classroom/course_submit.bo?classroomCenter=/view_classroom/courseSubmit.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 수강신청
                             </a>

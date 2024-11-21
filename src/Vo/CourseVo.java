@@ -7,8 +7,16 @@ public class CourseVo {
     private String majorcode;
     private String majorname;
     private String room_id;
+    
+    private ProfessorVo professorName;
     private ClassroomVo classroom; // ClassroomVo 객체 포함
     
+    
+    @Override
+    public String toString() {
+        return "CourseVo [course_id=" + course_id + ", "
+        		+ "course_name=" + course_name + ", professorName=" + professorName + "]";
+    }
 
     public CourseVo() { } // 기본 생성자
 
@@ -83,5 +91,15 @@ public class CourseVo {
 	public void setMajorname(String majorname) {
 		this.majorname = majorname;
 	}
+
+	public ProfessorVo getProfessor_name() {
+		return professorName;
+	}
+
+	public void setProfessor_name(ProfessorVo professorName) {
+		this.professorName = professorName;
+	}
+	
+	
     
 }

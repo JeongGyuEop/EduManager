@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
 import Vo.EnrollmentVo;
+import Vo.ProfessorVo;
 import Vo.StudentVo;
 
 
@@ -619,19 +620,28 @@ public class ClassroomDAO {
 	}
 
 	// 강의 리스트 조회 (수강신청)
-	public ArrayList<CourseVo> courseList() {
+	public ArrayList<CourseVo> courseList(String studentId) {
 		
 		ArrayList<CourseVo> courseList = new ArrayList<CourseVo>();
 		
 		String sql = null;
 		CourseVo courseVo;
-		
+		ProfessorVo professorVo;
 		try {
 			con = ds.getConnection();
 			
-			sql = "select * from course";
+			sql = "select c.course_id, c.course_name, u.user_name, c.room_id "
+				+ "from course c "
+				+ "join professor_info p on c.professor_id = p.professor_id "
+				+ "join user u on p.user_id = u.user_id "
+				+ "where role = '교수'AND c.course_id "
+				+ "NOT IN "
+				+ "(SELECT course_id "
+				+ " FROM enrollment "
+				+ " WHERE student_id = ? )";
 			
 			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, studentId);
 			
 			rs = pstmt.executeQuery();
 			
@@ -640,13 +650,15 @@ public class ClassroomDAO {
 				courseVo = new CourseVo();
 				courseVo.setCourse_id(rs.getString("course_id"));
 				courseVo.setCourse_name(rs.getString("course_name"));
-				courseVo.setProfessor_id(rs.getString("professor_id"));
-				courseVo.setMajorcode(rs.getString("majorcode"));
 				courseVo.setRoom_id(rs.getString("room_id"));
+				
+				professorVo = new ProfessorVo();
+				professorVo.setUser_name(rs.getString("user_name"));
+				
+				courseVo.setProfessor_name(professorVo);
 				
 				courseList.add(courseVo);
 			
-				
 			}
 			
 		}catch (Exception e) {
@@ -705,4 +717,102 @@ public class ClassroomDAO {
 		
 		return studentCourseList;
 	}
+
+	// 수강 신청
+	public int courseInsert(String courseId, String studentId) {
+		int result = 0;
+		String sql = null;
+		
+		try {
+			con = ds.getConnection();
+			sql = "insert into enrollment (student_id, course_id, enrollment_date) values(?, ? ,NOW())";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, studentId);
+			pstmt.setString(2, courseId);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 courseInsert메소드 오류");
+			e.printStackTrace();
+		}finally {
+			closeResource();
+		}
+		
+		return result;
+	}
+	
+	//수강 취소
+	public int courseDelete_(String courseId, String studentId) {
+		int result = 0;
+		String sql = null;
+		
+		try {
+			con = ds.getConnection();
+			sql = "delete from enrollment where student_id = ? and course_id = ? ";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, studentId);
+			pstmt.setString(2, courseId);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			System.out.println("ClassroomDAO의 courseInsert메소드 오류");
+			e.printStackTrace();
+		}finally {
+			closeResource();
+		}
+		
+		return result;
+	}
+
+	// 수강 신청 목록 조회
+	public ArrayList<CourseVo> courseSelect(String studentId) {
+		
+		ArrayList<CourseVo> courseList = new ArrayList<CourseVo>();
+		
+		String sql = null;
+		CourseVo courseVo;
+		ProfessorVo professorVo;
+		try {
+			con = ds.getConnection();
+			
+			sql = "select c.course_id, c.course_name, u.user_name, c.room_id "
+				+ "from course c "
+				+ "join professor_info p on c.professor_id = p.professor_id "
+				+ "join user u on p.user_id = u.user_id "
+				+ "join enrollment e on e.course_id = c.course_id "
+				+ "where student_id = ? ";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, studentId);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				
+				courseVo = new CourseVo();
+				courseVo.setCourse_id(rs.getString("course_id"));
+				courseVo.setCourse_name(rs.getString("course_name"));
+				courseVo.setRoom_id(rs.getString("room_id"));
+				
+				professorVo = new ProfessorVo();
+				professorVo.setUser_name(rs.getString("user_name"));
+				
+				courseVo.setProfessor_name(professorVo);
+				
+				courseList.add(courseVo);
+			
+			}
+			
+		}catch (Exception e) {
+			System.out.println("ClassroomDAO의 courseList 메소드 오류");
+			e.printStackTrace();
+		}finally {
+			closeResource();
+		}
+		
+		return courseList;
+	}
+	
 }

@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.el.ListELResolver;
 import javax.servlet.RequestDispatcher;
@@ -501,23 +503,26 @@ public class ClassroomController extends HttpServlet {
 		       	classroomservice.serviceGradeDelete(course_id_, student_id);
 		       	
 		        response.getWriter().write("성적이 성공적으로 삭제되었습니다.");
-		        return;
-	    	    
-	    //==========================================================================================
-  
-	    	case "/course_registration.bo":
+		        return; 
 	    		
+	    //==========================================================================================
+		
+	    	case "/course_submit.bo": //수강신청 전체 과목 조회
 	    		
 	    		ArrayList<CourseVo> courseList1 = new ArrayList<CourseVo>();
+	    		ArrayList<CourseVo> courseList2 = new ArrayList<CourseVo>();
 	 
-	    		courseList1 = classroomservice.serviceCourseList();
+	    		String studentId = (String)session.getAttribute("student_id");
 	    		
-	    		System.out.println(courseList1);
-	    		
+	    		courseList1 = classroomservice.serviceCourseList(studentId);
+	    		courseList2 = classroomservice.serviceCourseSelect(studentId);
+	    		System.out.println(courseList2);
 	    		
 	    		center = request.getParameter("classroomCenter");
 	    		
 	    		session.setAttribute("courseList", courseList1);
+	    		session.setAttribute("courseList2", courseList2);
+	    		
 	    		request.setAttribute("classroomCenter", center);
 	    		
 				nextPage = "/view_classroom/classroom.jsp";
@@ -565,6 +570,49 @@ public class ClassroomController extends HttpServlet {
 	    	    return;
 	    	    
 		//==========================================================================================
+		        
+	    	case "/courseInsert.do": //수강 신청
+	    		
+	    		String courseId = request.getParameter("courseId");
+	    		studentId = (String)session.getAttribute("student_id");
+	    		System.out.println(courseId);
+	    		System.out.println(studentId);
+	    		int isInsert = classroomservice.serviceCourseInsert(courseId, studentId);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		if(isInsert > 0) {
+	    			response.getWriter().write("Success");
+	    			return;
+	    		}else {
+	    			response.getWriter().write("Fail");
+	    			return;
+	    		}
+	    		
+		        
+	    //==========================================================================================
+	    		
+	    	case "/courseDelete.do": //수강 취소
+	    		
+	    		courseId = request.getParameter("courseId");
+	    		studentId = (String)session.getAttribute("student_id");
+	    		System.out.println(courseId);
+	    		System.out.println(studentId);
+	    		
+	    		int isDelete = classroomservice.serviceCourseDelete(courseId, studentId);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    		
+	    		if(isDelete > 0) {
+	    			response.getWriter().write("Success");
+	    			return;
+	    		}else {
+	    			response.getWriter().write("Fail");
+	    			return;
+	    		}
+	    		
+	    //==========================================================================================
+	    	
 
 	    	default:
 	    		break;
