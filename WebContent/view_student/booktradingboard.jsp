@@ -1,22 +1,17 @@
+
 <%@page import="Vo.BookPostVo"%>
 <%@page import="java.util.ArrayList"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<% 
-    String message = (String) request.getAttribute("message");
-%>
-
+<%@ page language="java" contentType="text/html; charset=utf-8"  pageEncoding="utf-8"%>
 <%
 	request.setCharacterEncoding("UTF-8");
 	String contextPath = request.getContextPath(); 
 %> 
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>리스트 조회</title>
-
+<title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="/MVCBoard/style.css"/>
 <script type="text/javascript">
 
     // 아래의 검색어를 입력하지 않고  검색버튼을 눌렀을때
@@ -48,7 +43,7 @@
     //아래에 작성된 <form>를 이용해 글번호에 해당되는 글 하나의 정보를 조회 요청!
     function fnRead(val){
     	document.frmRead.action="<%=contextPath%>/Board/read.bo";
-    	document.frmRead.b_idx.value = val;
+    	document.frmRead.notice_id.value = val;
     	document.frmRead.submit();//<form> 을 이용해 요청
     }
     
@@ -59,7 +54,7 @@
 	//페이징 처리를 위한 변수 선언
 	
 	int totalRecord = 0;//board테이블에 저장된  조회된 총 글의 갯수 저장  *
-    int numPerPage = 10; //한 페이지 번호당 조회해서 보여줄 글 목록 개수 저장
+    int numPerPage = 5; //한 페이지 번호당 조회해서 보여줄 글 목록 개수 저장
     int pagePerBlock = 3; //한 블럭당 묶여질 페이지 번호 갯수 저장
     					  //예)   1   2    3   <-  한블럭으로 묶음 
 	
@@ -136,25 +131,14 @@
 	위 자바스크립트 function fnRead함수에서 사용하는 <form>
  --%>
 <form name="frmRead">
-	<input type="hidden" name="b_idx">
+	<input type="hidden" name="notice_id">
 	<input type="hidden" name="nowPage" value="<%=nowPage%>">
 	<input type="hidden" name="nowBlock" value="<%=nowBlock%>">
 </form>
 
 	
 <table width="97%" border="0" cellspacing="0" cellpadding="0">
-	<tr height="40"> 
-		<td width="46%" style="text-align: left"> 
-			&nbsp;&nbsp;&nbsp; <img src="<%=contextPath%>/board/images/board02.gif" width="150" height="30">
-		</td>
-	</tr>
-	<tr> 
-		<td colspan="3">
-			<div align="center">
-				<img src="<%=contextPath%>/board/images/line_870.gif" width="870" height="4">
-			</div>
-		</td>
-	</tr>
+
 	<tr> 
 		<td colspan="3" valign="top">
 			<div align="center"> 
@@ -162,20 +146,15 @@
 	        	<tr> 
 	        		<td colspan="4" style="height: 19px">&nbsp;</td> 
 	        	</tr>
-	        	<tr>
-	        		<td colspan="4" style="height: 19px">
-	        			<img src="<%=contextPath%>/board/images/ink.gif" width="875" height="100">
-	        		</td>
-	        	</tr>
 	        	<tr> 
 	        		<td colspan="4">
 						<table border="0" width="100%" cellpadding="2" cellspacing="0">
 							<tr align="center" bgcolor="#D0D0D0" height="120%">
 								<td align="left">번호</td>
 								<td align="left">제목</td>
-								<td align="left">이름</td>
+								<td align="left">내용</td>
 								<td align="left">날짜</td>
-								<td align="left">조회수</td>
+								<td align="left">작성자</td>
 							</tr>	
 					<%
 						//board테이블에서 조회된 게시글이 없다면?
@@ -189,47 +168,32 @@
 							
 							for(int i=beginPerPage;  i<(beginPerPage+numPerPage);  i++){
 							  
-								out.println(i);  //1페이지 번호 또는 자유게시판 메뉴 클릭시   0,  1 , 2,  3, 4
+							/* 	out.println(i);  //1페이지 번호 또는 자유게시판 메뉴 클릭시   0,  1 , 2,  3, 4
 								                 //2페이지 번호 클릭시 5, 6, 7, 8, 9
 								                 
 								out.println(beginPerPage+numPerPage);
-								out.println("-------------------------<br>");
+								out.println("-------------------------<br>"); */
 								
 								if(i == totalRecord){
 									break;
 								}
 								
-								BoardVo vo = (BoardVo)list.get(i);
-			//					int level = vo.getB_level(); // 모든글들의 들여쓰기 정도값 0(주글),1(주글에 대한 답변)
+								BookPostVo vo = (BookPostVo)list.get(i);
+					    //		int level = vo.getB_level(); 
+								//모든 글들의 들여쓰기 정도값
+								//0(주글)또는1(주글에 대한 답변글).....
 					%>
 							<tr>
-								<td align="left"><%=vo.getB_idx()%></td>
-								<td>			
-									<%-- <%for(int j=0; j<level*5; j++){%>	
-												&nbsp;
-									<%}%>
-												 --%>
-								<% 
-									int width = 0;  //답변글에 대한 이미지level.gif의 들여쓰기 너비 width값
-									
-									if(vo.getB_level() > 0){  //답변글들
-										
-										width = vo.getB_level() * 10;
-								%>
-										<img src="<%=contextPath%>/board/images/level.gif" width="<%=width%>" height="15">
-										<img src="<%=contextPath%>/board/images/re.gif">
-									<%}	%>			 	
-									<a href="javascript:fnRead('<%=vo.getB_idx()%>')">
-										<%=vo.getB_title()%>
+								<td align="left"><%=vo.getPostId()%></td>
+								<td>
+									<a href="javascript:fnRead('<%=vo.getPostId() %>')">
+										<%=vo.getPostTitle() %>
 									</a>
-								</td>
 								
-								
-								
-								<td align="left"><%=vo.getB_name()%></td>
-								<td align="left"><%=vo.getB_date()%></td>
-								<td align="left"><%=vo.getB_cnt()%></td>
-							</tr>												
+								<td align="left"><%=vo.getPostContent()%></td>
+								<td align="left"><%=vo.getCreatedAt()%></td>
+								<td align="left"><%=vo.getUserId()%></td>
+							</tr>										
 					<%			
 							}
 								
@@ -247,7 +211,7 @@
 	        		<td colspan="4">&nbsp;</td>
 	        	</tr>
 				<tr>
-					<form action="<%=contextPath%>/Board/searchlist.bo" 
+					<form action="<%=contextPath%>/Board/searchbooklist.bo" 
 							method="post" 
 							name="frmSearch" onsubmit="fnSearch(); return false;">
 		            	<td colspan="2">
@@ -269,17 +233,13 @@
 		            <%-- 새 글쓰기 버튼 이미지 --%>
 		            <td width="38%" style="text-align:left">
 		            
-		            <%
-		            	//로그인을 하면 새글쓰기 <inpu>이 보이게 설정
-		            	if(id != null){
-		            %>			
-		            	<input type="image"  
-		            		   id="newContent"
-		            		   src="<%=contextPath%>/board/images/write.gif"
-		            		   onclick="location.href='<%=contextPath%>/Board/write.bo?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>'"
-		            	/>
-		            		
-		            <%	} %>
+		           		
+		            	<button 
+							id="newContent"
+							onclick="location.href='<%=contextPath%>/Board/bookPostUpload.bo?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>'">
+							새글쓰기
+						</button>
+		           
 		            
 		            </td>
 	           
@@ -297,7 +257,7 @@
 				
 				if(nowBlock > 0){
 		%>			
-				    <a href="<%=contextPath%>/Board/list.bo?nowBlock=<%=nowBlock-1%>&nowPage=<%=((nowBlock-1)*pagePerBlock)%>">
+				    <a href="<%=contextPath%>/Board/booktradingboard.bo?nowBlock=<%=nowBlock-1%>&nowPage=<%=((nowBlock-1)*pagePerBlock)%>">
 					◀ 이전 <%=pagePerBlock %>개
 					</a>
 		<%	
@@ -308,7 +268,7 @@
 				for(int i=0;   i<pagePerBlock;    i++){
 		%>			
 				&nbsp;&nbsp;
-				<a href="<%=contextPath%>/Board/list.bo?nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock)+i%>">
+				<a href="<%=contextPath%>/Board/booktradingboard.bo?nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock)+i%>">
 					<%=(nowBlock * pagePerBlock)+i+1%>
 					<%
 						if((nowBlock * pagePerBlock)+i+1 == totalPage){
@@ -323,7 +283,7 @@
 				
 				if(totalBlock > nowBlock + 1){
 		%>			
-				 <a href="<%=contextPath%>/Board/list.bo?nowBlock=<%=nowBlock+1%>&nowPage=<%=(nowBlock+1)*pagePerBlock%>">
+				 <a href="<%=contextPath%>/Board/booktradingboard.bo?nowBlock=<%=nowBlock+1%>&nowPage=<%=(nowBlock+1)*pagePerBlock%>">
 					▶ 다음 <%=pagePerBlock%>개 	
 				 </a>
 		<%			
@@ -333,11 +293,7 @@
 				
 			}//바깥쪽 if닫기 
 		%>
-		
-		
-		
-		
-		
+	
 		</td> 
 	</tr>
 </table>

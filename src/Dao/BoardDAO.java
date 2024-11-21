@@ -404,6 +404,8 @@ public class BoardDAO {
 	//중고책 거래 테이블들===============================================================
 	//===============================================================================
 
+	
+// 글쓰기
 	public int bookPostUpload(BookPostVo bookPostVo) {
 		String sql = null;
 		int result = 0;
@@ -456,6 +458,49 @@ public class BoardDAO {
 	    }
 	    return result;
 	}
+	
+	
+	// 모든 게시글 조회
+	public ArrayList booklistboard() {
+		
+		String sql = null;
+		
+		ArrayList<BookPostVo> list = new ArrayList<>();
+		
+		try {
+			con = ds.getConnection();
+			sql = "select * from book_post order by post_id desc";
+			
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				
+				BookPostVo vo = new BookPostVo(
+						   				rs.getInt("postId"),
+						   				rs.getString("userId"),
+						   				rs.getString("postTitle"),
+						   				rs.getString("postContent"),
+						   				rs.getString("majorTag"),
+						   				rs.getTimestamp("createdAt"));
+				
+				list.add(vo);
+								
+			}
+		} catch (Exception e) {
+			System.out.println("BoardDAO의  booklistboard메소드 오류");
+			e.printStackTrace();
+		}finally {
+			closeResource();
+			
+		}
+
+		return list;
+		
+		
+	}
+	
+	
 	
 	//===============================================================================
 	//중고책 거래 테이블들===============================================================

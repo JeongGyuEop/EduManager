@@ -176,4 +176,15 @@ public class BoardService {
 
 	    return result;
 	}
+	
+	//모든 글조회
+	public ArrayList<BookPostVo> serviceBoardbooklist() {
+		
+		return boarddao.booklistboard();
+	}
+	
+	
+	
+	
+	
 }

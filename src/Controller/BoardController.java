@@ -289,18 +289,6 @@ public class BoardController extends HttpServlet {
 
 // 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
 
-		case "/booktradingboard.bo": // 글 조회 메서드
-			
-			request.setAttribute("message", request.getAttribute("message"));
-			
-			center = "/Board/booktradingboard.bo";
-
-			request.setAttribute("center", center);
-
-			nextPage = "/main.jsp";
-
-			break;
-			
 		case "/bookPostUpload.bo": // 글 등록
 
 			// 글 등록 form으로부터 글 제목이 있을 경우에 실행
@@ -318,10 +306,58 @@ public class BoardController extends HttpServlet {
 				e.printStackTrace();
 				request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
 			}
+			
+			//글쓰기 중앙화면(VIEW)경로를 request내장객체에 바인딩
+			request.setAttribute("center", "board/booktrading.jsp");
+			
+			request.setAttribute("nowPage", request.getParameter("nowPage"));
+			request.setAttribute("nowBlock", request.getParameter("nowBlock"));
 			// nextPage 지정
-			nextPage = "/Board/booktradingboard.bo";
+			nextPage = "/Board/bookPostUpload.bo";
 
 			break;
+		
+	
+		
+		case "/booktradingboard.bo": // 글 조회 메서드
+			
+			// 게시판 목록을 가져오는 기능
+			HttpSession session_ = request.getSession();
+			String loginid = (String)session_.getAttribute("id");
+			
+			ArrayList<BookPostVo> list1 = boardservice.serviceBoardbooklist();
+			String nowPage1 = request.getParameter("nowPage");
+			String nowBlock1 = request.getParameter("nowBlock");			
+			
+			request.setAttribute("message", request.getAttribute("message"));
+			
+			center = "/Board/booktradingboard.bo";
+
+			request.setAttribute("center", center);
+			
+			request.setAttribute("list", list1);
+			request.setAttribute("id", loginid);
+			request.setAttribute("nowPage", nowPage1);
+			request.setAttribute("nowBlock", nowBlock1);
+
+			nextPage = "/main.jsp";
+
+			break;
+			
+			
+		
+			
+/*			
+		case "/searchbooklist.bo":
+			// 키워드로 게시글 검색 기능
+			String key1 = request.getParameter("key");
+			String word1 = request.getParameter("word");
+			list = boardservice.serviceBoardKeyWord(key1, word1);
+			request.setAttribute("list", list);
+			request.setAttribute("center", "view_student/booktradingboard.jsp");
+			nextPage = "/main.jsp";
+			break;	
+	*/		
 
 // 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
 

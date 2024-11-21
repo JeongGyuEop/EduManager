@@ -43,6 +43,19 @@ public class BookPostVo {
 		this.majorTag = majorTag;
 	}
 
+	
+	
+	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
+			Timestamp createdAt) {
+		super();
+		this.postId = postId;
+		this.userId = userId;
+		this.postTitle = postTitle;
+		this.postContent = postContent;
+		this.majorTag = majorTag;
+		this.createdAt = createdAt;
+	}
+
 	// Getter와 Setter 메서드
 	public int getPostId() {
 		return postId;
