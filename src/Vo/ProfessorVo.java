@@ -20,6 +20,11 @@ public class ProfessorVo {
 	private String  majorcode;    //학과번호
 	private Date   employDate ;  //고용일
 	
+	  @Override
+	    public String toString() {
+	        return "ProfessorVo [professorName=" + user_name + "]";
+	    }
+	
 	
 	//기본생성자
 	public ProfessorVo() {}

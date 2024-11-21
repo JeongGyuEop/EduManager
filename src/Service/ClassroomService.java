@@ -106,8 +106,24 @@ public class ClassroomService {
 		return classroomdao.deleteRoom(room_id);
 	}
 
-	public ArrayList<CourseVo> serviceCourseList() {
-		return classroomdao.courseList();
+	//수강 과목 전체 목록 조회
+	public ArrayList<CourseVo> serviceCourseList(String studentId) {
+		return classroomdao.courseList(studentId);
+	}
+	
+	//수강 신청
+	public int serviceCourseInsert(String courseId, String studentId) {
+		return classroomdao.courseInsert(courseId, studentId);
+	}
+
+	//수강 취소
+	public int serviceCourseDelete(String courseId, String studentId) {
+		return classroomdao.courseDelete_(courseId, studentId);
+	}
+
+	//수강 목록 조회
+	public ArrayList<CourseVo> serviceCourseSelect(String studentId) {
+		return classroomdao.courseSelect(studentId);
 	}
 
 
