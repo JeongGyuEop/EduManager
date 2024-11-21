@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
-import Dao.BoardDAO;
 import Dao.BookPostDAO;
 import Dao.MemberDAO;
 import Vo.BookPostVo;

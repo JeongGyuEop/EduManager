@@ -9,9 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import Dao.BoardDAO;
 import Dao.BookPostDAO;
-import Service.BoardService;
 import Service.BookPostService;
 
 @WebServlet("/Book/*")
