@@ -5,7 +5,6 @@
     pageEncoding="UTF-8"%>
 
 <%
-
     String contextPath = request.getContextPath();
     ArrayList<CourseVo> courseList = (ArrayList<CourseVo>) session.getAttribute("courseList");
     ArrayList<CourseVo> courseList2 = (ArrayList<CourseVo>) session.getAttribute("courseList2");
@@ -59,7 +58,6 @@
                             <td><%=course.getProfessor_name().getUser_name()%></td>
                             <td><%=course.getRoom_id()%></td>
                             <td>
-                                <!-- 수강 버튼 -->
                                 <button class="btn btn-green register-btn" onclick="moveToApply(this)">수강</button>
                             </td>
                         </tr>
@@ -85,14 +83,13 @@
                         </tr>
                     </thead>
                     <tbody id="applyTableBody">
-                  		<% for (CourseVo course1 : courseList2) { %>
+                        <% for (CourseVo course1 : courseList2) { %>
                         <tr>
                             <td><%=course1.getCourse_id()%></td>
                             <td><%=course1.getCourse_name()%></td>
                             <td><%=course1.getProfessor_name().getUser_name()%></td>
                             <td><%=course1.getRoom_id()%></td>
                             <td>
-                                <!-- 취소 버튼 -->
                                 <button class="btn btn-danger cancel-btn" onclick="moveToCourse(this)">취소</button>
                             </td>
                         </tr>
@@ -101,56 +98,55 @@
                 </table>
             </div>
         </div>
+
+        <!-- 수강신청 종료 -->
+        <div class="text-center mt-5">
+            <p class="text-danger">수강신청을 종료하면 나의 강의실에 강의가 보입니다!</p>
+            <button class="btn btn-primary btn-lg" onclick="finishEnrollment()">수강신청 종료하기</button>
+        </div>
     </main>
     <script type="text/javascript">
-        // 수강 버튼 클릭 시 호출되는 함수
         function moveToApply(button) {
-            const row = button.closest("tr"); // 버튼이 포함된 <tr> 요소 가져오기
-            const courseId = row.cells[0].innerText; // <tr>의 첫 번째 셀 값(course_id) 가져오기
-            
-            document.getElementById("applyTableBody").appendChild(row); // 신청 목록으로 행 이동
-            
-            button.textContent = "취소"; // 버튼 텍스트를 "취소"로 변경
-            button.className = "btn btn-danger cancel-btn"; // 버튼 스타일 변경
-            button.setAttribute("onclick", "moveToCourse(this)"); // 클릭 이벤트를 취소 처리로 변경
-            
-            sendDataToController(courseId, "courseInsert.do"); // 수강 등록 요청
+            const row = button.closest("tr");
+            const courseId = row.cells[0].innerText;
+            document.getElementById("applyTableBody").appendChild(row);
+            button.textContent = "취소";
+            button.className = "btn btn-danger cancel-btn";
+            button.setAttribute("onclick", "moveToCourse(this)");
+            sendDataToController(courseId, "courseInsert.do");
         }
 
-        // 취소 버튼 클릭 시 호출되는 함수
         function moveToCourse(button) {
-            const row = button.closest("tr"); // 버튼이 포함된 <tr> 요소 가져오기
-            const courseId = row.cells[0].innerText; // <tr>의 첫 번째 셀 값(course_id) 가져오기
-            
-            document.getElementById("courseTableBody").appendChild(row); // 수강 목록으로 행 이동
-            
-            button.textContent = "수강"; // 버튼 텍스트를 "수강"으로 변경
-            button.className = "btn btn-green register-btn"; // 버튼 스타일 변경
-            button.setAttribute("onclick", "moveToApply(this)"); // 클릭 이벤트를 수강 처리로 변경
-            
-            sendDataToController(courseId, "courseDelete.do"); // 수강 취소 요청
+            const row = button.closest("tr");
+            const courseId = row.cells[0].innerText;
+            document.getElementById("courseTableBody").appendChild(row);
+            button.textContent = "수강";
+            button.className = "btn btn-green register-btn";
+            button.setAttribute("onclick", "moveToApply(this)");
+            sendDataToController(courseId, "courseDelete.do");
         }
 
-        // Controller와 AJAX로 데이터를 주고받는 함수
         function sendDataToController(courseId, action) {
-	
-        	var url = "<%=contextPath%>/classroom/" + action + "?classroomCenter=/view_classroom/courseSubmit.jsp";
-        	
+            var url = "<%=contextPath%>/classroom/" + action + "?classroomCenter=/view_classroom/courseSubmit.jsp";
             $.ajax({
-                url: url, // 요청 보낼 URL
-                type: "POST", // HTTP 메서드
+                url: url,
+                type: "POST",
                 data: {
-                    courseId: courseId // 전송할 course_id
+                    courseId: courseId
                 },
                 success: function (response) {
-                	if (response === "Success") {
-                        alert("성공!"); // 성공 알림
+                    if (response === "Success") {
+                        alert("성공!");
                     } else {
-                        alert("실패!"); // 실패 알림
+                        alert("실패!");
                     }
                 },
-                
             });
+        }
+
+        function finishEnrollment() {
+            alert("수강신청이 종료되었습니다!");
+            window.location.href = "<%=contextPath%>/classroom/classroom.bo?classroomCenter=/view_classroom/studentMyCourse.jsp";
         }
     </script>
 </body>

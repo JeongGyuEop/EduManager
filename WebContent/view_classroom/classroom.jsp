@@ -50,7 +50,7 @@
                                 '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
 	                                '<nav class="sb-sidenav-menu-nested nav">' +
 		                                '<a class="nav-link" href="<%=contextPath%>/assign/assignmentManage.bo?center=/view_classroom/assignment_submission/assignmentManage.jsp&courseId=' + course.courseId + '">과제</a>' +
-		                                <%-- '<a class="nav-link" href="<%=contextPath%>/classroom/materialManage.do?courseId=' + course.courseId + '">공지사항</a>' + --%>
+		                                '<a class="nav-link" href="<%=contextPath%>/classroom/materialManage.do?courseId=' + course.courseId + '">공지사항</a>' +
 	                                '</nav>' +
                                 '</div>';
 								
@@ -58,7 +58,7 @@
 							    '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
 							        '<nav class="sb-sidenav-menu-nested nav">' +
 							            '<a class="nav-link" href="<%=contextPath%>/submission/assignmentManage.do?courseId=' + course.courseId + '">과제</a>' +
-							            <%-- '<a class="nav-link" href="<%=contextPath%>/classroom/materialManage.do?courseId=' + course.courseId + '">공지사항</a>' + --%>
+							            '<a class="nav-link" href="<%=contextPath%>/classroom/materialManage.do?courseId=' + course.courseId + '">공지사항</a>' + 
 							        '</nav>' +
 							    '</div>';
 							    
