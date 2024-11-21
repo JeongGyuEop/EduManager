@@ -8,6 +8,9 @@
 	String contextPath = request.getContextPath();
 	MemberVo memberVo = new MemberVo();
 	String userId = memberVo.getUser_id();
+	
+	String nowPage = (String)request.getAttribute("nowPage");
+	String nowBlock = (String)request.getAttribute("nowBlock");
 %>
 <!DOCTYPE html>
 <html>

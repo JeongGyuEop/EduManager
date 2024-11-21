@@ -27,11 +27,10 @@ import Vo.ScheduleVo;
 import Vo.StudentVo;
 
 @WebServlet("/Board/*")
-@MultipartConfig(
-	    fileSizeThreshold = 1024 * 1024 * 2, // 2MB => 2mb보다 작은 경우 메모리에 저장, 큰 경우 디스크에 저장
-	    maxFileSize = 1024 * 1024 * 10,      // 10MB - 개별 파일 크기 제한
-	    maxRequestSize = 1024 * 1024 * 50    // 50MB - 전체 파일 크기 제한
-	)
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB => 2mb보다 작은 경우 메모리에 저장, 큰 경우 디스크에 저장
+		maxFileSize = 1024 * 1024 * 10, // 10MB - 개별 파일 크기 제한
+		maxRequestSize = 1024 * 1024 * 50 // 50MB - 전체 파일 크기 제한
+)
 public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	BoardService boardservice;
@@ -95,7 +94,7 @@ public class BoardController extends HttpServlet {
 		String month = null;
 
 		int result = 0;
-		
+
 		System.out.println("2단계 요청 주소 : " + action);
 
 		// 액션에 따라 분기 처리
@@ -289,57 +288,43 @@ public class BoardController extends HttpServlet {
 			return;
 
 // 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
-			
-		case "/bookPostUpload.bo": // 여기서는 간단한 로직만 처리합니다.
-		
-			
-			 try {
-	
-			        // 3. 서비스 호출
-			        int resultl = boardservice.bookPostUploadService(request);
 
-			        // 4. 결과 처리 및 메시지 설정
-			        if (resultl == 1) {
-			            request.setAttribute("message", "게시글이 성공적으로 등록되었습니다.");
-			        } else {
-			            request.setAttribute("message", "게시글 등록에 실패했습니다. 다시 시도해주세요.");
-			        }
+		case "/booktradingboard.bo": // 글 조회 메서드
+			
+			request.setAttribute("message", request.getAttribute("message"));
+			
+			center = "/Board/booktradingboard.bo";
 
-			     // center 및 nextPage 지정
-					request.setAttribute("center", center);
-			        nextPage = "/view_student/booktrading.jsp";
-
-			    } catch (Exception e) {
-			        // 예외 발생 시 에러 메시지 설정
-			        e.printStackTrace();
-			        request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
-			        nextPage = "/error.jsp"; // 에러 페이지
-			    }
-			    break;
-			
-			
-			
-			
-			
-			/*	result = boardservice.bookPostUploadService(request); // 저장 메서드 라인
-			if (result == 1) {
-				// 저장에 성공하면 성공 메시지 반환
-			} else {
-				// 저장에 실패하면 실패 메시지 반환
-			}
-			// 조회 메서드 라인
-			// 조회 결과값 저장
-			// 반환 받은 메시지 request에 저장
-			
-			// center 및 nextPage 지정
 			request.setAttribute("center", center);
-			nextPage = "/view_student/booktrading.jsp";
-			
+
+			nextPage = "/main.jsp";
+
 			break;
-		*/	
 			
+		case "/bookPostUpload.bo": // 글 등록
+
+			// 글 등록 form으로부터 글 제목이 있을 경우에 실행
+			try {
+				// 서비스 호출
+				result = boardservice.bookPostUploadService(request);
+				// 결과 처리 및 메시지 설정
+				if (result == 1) {
+					request.setAttribute("message", "게시글이 성공적으로 등록되었습니다.");
+				} else {
+					request.setAttribute("message", "게시글 등록에 실패했습니다. 다시 시도해주세요.");
+				}
+			} catch (Exception e) {
+				// 예외 발생 시 에러 메시지 설정
+				e.printStackTrace();
+				request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
+			}
+			// nextPage 지정
+			nextPage = "/Board/booktradingboard.bo";
+
+			break;
+
 // 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
-			
+
 		default:
 			break;
 		}
