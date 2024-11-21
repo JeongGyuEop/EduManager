@@ -2,6 +2,10 @@ package Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -51,8 +55,6 @@ public class AssignmentController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8"); // MIME TYPE 설정
 		
-		String contextPath = request.getContextPath();
-		
 		//웹브라우저로 출력할 출력 스트림 생성
 	    PrintWriter out = null;
 	      
@@ -88,7 +90,6 @@ public class AssignmentController extends HttpServlet {
 	    		ArrayList<AssignmentVo> assignmentList = new ArrayList<AssignmentVo>();
 	    		
 	    		course_id = request.getParameter("courseId");
-	    		System.out.println(course_id);
 	    		assignmentList = assignmentservice.serviceAssignmentSearch(course_id);
 	    		
 	    		// JSON 응답 설정
@@ -119,6 +120,66 @@ public class AssignmentController extends HttpServlet {
 	    	    out.close();
 	    	    return;
 	    		
+	    //==========================================================================================
+	    		
+	    	case "/createAssignment.do": // 해당 과목의 과제를 등록하는 2단계 요청 주소를 받으면
+	    		
+	    		course_id = request.getParameter("courseId");
+	    		String title = request.getParameter("title");
+	    		String description = request.getParameter("description");
+	    		String dueDateString = request.getParameter("dueDate");
+	    		
+	    		Date dueDate = java.sql.Date.valueOf(dueDateString);
+	            
+	            AssignmentVo assignment = new AssignmentVo();
+	            assignment.setTitle(title);
+	            assignment.setDescription(description);
+	            assignment.setDueDate(dueDate);
+
+	            CourseVo course = new CourseVo();
+	            course.setCourse_id(course_id);
+	            assignment.setCourse(course);
+	            
+	            int result = assignmentservice.serviceCreateAssignment(assignment);
+	    		
+	            if(result == 1) {
+				    response.sendRedirect(request.getContextPath() +"/assign/assignmentManage.bo?message="
+				    		+ URLEncoder.encode("과제 등록이 완료되었습니다.", "UTF-8")
+				    		+ "&courseId=" + course_id
+				    		+ "&center=/view_classroom/assignment_submission/assignmentManage.jsp");
+				    return;
+				} else {
+					// 실패 시 message 파라미터만 포함하여 리다이렉트
+				    response.sendRedirect(request.getContextPath() +"/assign/assignmentManage.bo?message=" 
+				                          + URLEncoder.encode("과제 등록에 실패했습니다. 다시 입력해 주세요.", "UTF-8") 
+								    	  + "&courseId=" + course_id
+				                          + "center=/view_classroom/assignment_submission/assignmentManage.jsp");
+				    return;
+				}
+	            
+	    //==========================================================================================
+	    		
+	    	case "/deleteAssignment.do": // 해당 과목의 과제를 삭제하는 2단계 요청주소를 받으면
+	    		
+	    		String assignment_id = request.getParameter("assignmentId");
+	    		course_id = request.getParameter("courseId");
+	    		
+	    		int deleteAssignmentResult = assignmentservice.serviceDeleteAssignment(assignment_id);
+	    		
+	    		if(deleteAssignmentResult == 1) {
+				    response.sendRedirect(request.getContextPath() +"/assign/assignmentManage.bo?message="
+				    		+ URLEncoder.encode("과제가 삭제되었습니다.", "UTF-8") 
+				    		+ "&courseId=" + course_id
+				    		+ "&center=/view_classroom/assignment_submission/assignmentManage.jsp");
+				    return;
+				} else {
+					// 실패 시 message 파라미터만 포함하여 리다이렉트
+				    response.sendRedirect(request.getContextPath() +"/assign/assignmentManage.bo?message=" 
+				                          + URLEncoder.encode("과제 삭제에 실패했습니다. 다시 입력해 주세요.", "UTF-8") 
+								    	  + "&courseId=" + course_id
+				                          + "center=/view_classroom/assignment_submission/assignmentManage.jsp");
+				    return;
+				}
 	    		
 	    //==========================================================================================
 	    		

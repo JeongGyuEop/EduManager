@@ -3,6 +3,7 @@ package Dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import javax.naming.Context;
@@ -69,8 +70,8 @@ public class AssignmentDAO {
                 assignment.setAssignmentId(rs.getInt("assignment_id"));
                 assignment.setTitle(rs.getString("title"));
                 assignment.setDescription(rs.getString("description"));
-                assignment.setDueDate(rs.getDate("due_date").toLocalDate());
-                assignment.setCreatedDate(rs.getTimestamp("created_date").toLocalDateTime());
+                assignment.setDueDate(rs.getDate("due_date"));
+                assignment.setCreatedDate(rs.getTimestamp("created_date"));
                 
                 // AssignmentVo 리스트에 추가
                 assignmentList.add(assignment);
@@ -79,13 +80,81 @@ public class AssignmentDAO {
     		return assignmentList;
     		
 		} catch (Exception e) {
-			System.out.println("ClassroomDAO의 courseSearch메소드에서 오류 ");
+			System.out.println("AssignmentDAO의 assignmentSearch메소드에서 오류 ");
 			e.printStackTrace();
 		} finally {
 			closeResource(); // 자원 해제
 		}
 		
 		return assignmentList;
+	}
+
+	//------------
+	// 교수가 자신의 각 강의에 과제를 DB에 등록하기 위해 호출하는 함수 
+	public int createAssignment(AssignmentVo assignment) {
+		
+		int result = 0;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			// SQL 쿼리 실행
+			String sql = "INSERT INTO assignment (course_id, title, description, due_date, created_date) "
+	                   + "VALUES (?, ?, ?, ?, ?)";
+            
+            pstmt = con.prepareStatement(sql);
+            
+            // PreparedStatement에 값 설정
+            pstmt.setString(1, assignment.getCourse().getCourse_id());
+            pstmt.setString(2, assignment.getTitle());
+            pstmt.setString(3, assignment.getDescription());
+            pstmt.setDate(4, assignment.getDueDate()); // java.sql.Date 설정
+            pstmt.setTimestamp(5, new Timestamp(System.currentTimeMillis())); // 현재 시간 설정
+            result = pstmt.executeUpdate();
+            
+    		return result;
+    		
+		} catch (Exception e) {
+			System.out.println("AssignmentDAO의 assignmentSearch메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+		
+		
+		return result;
+	}
+
+	//-----------
+	// 교수가 자신의 각 강의에 등록된 과제를 DB에서 삭제하기 위해 호출되는 함수
+	public int deleteAssignment(String assignment_id) {
+		
+		int result = 0;
+		
+		try {
+			
+			con = ds.getConnection();
+			
+			// SQL 쿼리 실행
+			String sql = "DELETE FROM assignment WHERE assignment_id=?";
+            
+            pstmt = con.prepareStatement(sql);
+            
+            // PreparedStatement에 값 설정
+            pstmt.setString(1, assignment_id);
+            result = pstmt.executeUpdate();
+            
+    		return result;
+    		
+		} catch (Exception e) {
+			System.out.println("AssignmentDAO의 assignmentSearch메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+
+		return 0;
 	}
 
 }
