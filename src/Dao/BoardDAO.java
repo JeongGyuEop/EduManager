@@ -412,7 +412,7 @@ public class BoardDAO {
 	        con = ds.getConnection();
 
 	        // 1. book_post 테이블에 게시글 저장
-	        sql = "INSERT INTO book_post (user_id, post_title, post_content, major_tag) VALUES (?, ?, ?, ?)";
+	        sql = "INSERT INTO book_post (user_id, post_title, post_content, major_tag, created_at) VALUES (?, ?, ?, ?, now())";
 	        pstmt = con.prepareStatement(sql, pstmt.RETURN_GENERATED_KEYS);
 	        pstmt.setString(1, bookPostVo.getUserId());
 	        pstmt.setString(2, bookPostVo.getPostTitle());

@@ -25,11 +25,12 @@
     } 
 %>
 <body>
-	<form action="<%=contextPath%>/Board/bookPostUpload.bo" method="get"
+	<form action="<%=contextPath%>/Board/bookPostUpload.bo" method="post"
 		enctype="multipart/form-data">
 		<!-- 작성자 정보 가져온 뒤 readonly -->
 		<!-- 작성일은 DAO에서 처리 -->
-		<input type="hidden" name="userId" value="${userId}" readonly>
+		<input type="hidden" name="userId" value="${userId}" readonly> --%>
+	 <!-- <input type="test" name="userId" value="${userId}">  -->
 		<table>
 			<thead>
 				<tr>
