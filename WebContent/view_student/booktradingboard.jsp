@@ -1,7 +1,9 @@
+<%@page import="java.util.List"%>
 <%@page import="Vo.BookPostVo"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 request.setCharacterEncoding("UTF-8");
 String contextPath = request.getContextPath();
@@ -43,7 +45,8 @@ String contextPath = request.getContextPath();
     //조회된 화면에서  글제목 하나를 클릭했을때  글번호를 매개변수로 받아서
     //아래에 작성된 <form>를 이용해 글번호에 해당되는 글 하나의 정보를 조회 요청!
     function fnRead(val){
-    	document.frmRead.action="<%=contextPath%>/Book/bookread.bo";
+    	document.frmRead.action="<%=contextPath%>
+	/Book/bookread.bo";
 		document.frmRead.notice_id.value = val;
 		document.frmRead.submit();//<form> 을 이용해 요청
 	}
@@ -74,10 +77,10 @@ String contextPath = request.getContextPath();
 
 	//BoardController에서 request에 바인딩 한 ArrayList배열을 꺼내옵니다
 	//조회된 글목록 정보 얻기 
-	ArrayList list = (ArrayList) request.getAttribute("list");
+	List<BookPostVo> bookBoardList = (List<BookPostVo>) request.getAttribute("bookBoardList");
 
 	//조회된 글 총 갯수 
-	totalRecord = list.size();
+	totalRecord = bookBoardList.size();
 
 	//게시판 아래쪽 페이지 번호 중 하나를 클릭했다면?
 	if (request.getAttribute("nowPage") != null) {
@@ -153,7 +156,7 @@ String contextPath = request.getContextPath();
 									</tr>
 									<%
 									//board테이블에서 조회된 게시글이 없다면?
-									if (list.isEmpty()) {
+									if (bookBoardList.isEmpty()) {
 									%>
 									<tr align="center">
 										<td colspan="5">등록된 글이 없습니다.</td>
@@ -172,21 +175,21 @@ String contextPath = request.getContextPath();
 										if (i == totalRecord) {
 											break;
 										}
-
-										BookPostVo vo = (BookPostVo) list.get(i);
 										//		int level = vo.getB_level(); 
 										//모든 글들의 들여쓰기 정도값
 										//0(주글)또는1(주글에 대한 답변글).....
 									%>
-									<tr>
-										<td align="left"><%=vo.getPostId()%></td>
-										<td><a href="javascript:fnRead('<%=vo.getPostId()%>')">
-												<%=vo.getPostTitle()%>
-										</a>
-										<td align="left"><%=vo.getUserId()%></td>
-										<td align="left"><%=vo.getMajorTag()%></td>
-										<td align="left"><%=vo.getCreatedAt()%></td>
-									</tr>
+
+									<c:forEach var="list" items="${bookBoardList}">
+										<tr>
+											<td align="left">${list.postId }</td>
+											<td><a href="javascript:fnRead('${list.postTitle }')">
+											</a></td>
+											<td align="left">${list.userId }</td>
+											<td align="left">${list.majorTag }</td>
+											<td align="left">${list.createdAt }</td>
+										</tr>
+									</c:forEach>
 									<%
 									}
 
@@ -229,9 +232,9 @@ String contextPath = request.getContextPath();
 
 								<form action="<%=contextPath%>/Book/bookPostUpload.bo"
 									method="get">
-								<input type="hidden" value="<%=userId%>" name="userId">
+									<input type="hidden" value="<%=userId%>" name="userId">
 									<input type="hidden" value="<%=nowPage%>" name="nowPage">
-									<input type="hidden" value="<%=nowBlock%>" name="nowBlock">	
+									<input type="hidden" value="<%=nowBlock%>" name="nowBlock">
 									<input type="submit" value="글 쓰기">
 								</form>
 
