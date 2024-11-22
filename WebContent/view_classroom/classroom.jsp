@@ -134,9 +134,11 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 성적 관리
                             </a>
+                            
+                            <!-- 사이드바 강의 평가 영역 -->
                             <a class="nav-link" href="<%=contextPath%>/professor/evaluationList.bo">
     							<div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
-   			 강의 평가
+   			 					강의 평가
 							</a>
                             
                             
@@ -158,18 +160,12 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 성적 조회
                             </a>
-<<<<<<< HEAD
-                            <a class="nav-link" href="tables.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Tables
-                            </a>
+                            
                             <!-- 강의 평가 항목 추가 -->
                             <a class="nav-link" href="<%=contextPath%>/student/evaluationRegister.do?id=로그인한 학생아이디전달필요">
                                 <div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
                                 강의 평가
                             </a>
-=======
->>>>>>> 3d828f5701ad10fa0f28f09795f80ac3ad597695
                     <%	} %> 
                         </div>
                     </div>
