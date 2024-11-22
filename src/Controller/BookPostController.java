@@ -74,23 +74,6 @@ public class BookPostController extends HttpServlet {
 
 		case "/booktradingboard.bo": // 글 조회 메서드
 
-	//		request.setAttribute("message", request.getAttribute("message"));
-
-			// response.sendRedirect(request.getContextPath() +
-			// "/Board/list.bo?nowPage=1&nowBlock=1");
-			// 위 구문은 페이지 이동용
-
-	//		center = request.getParameter("center");
-
-	//		request.setAttribute("center", center);
-
-	//		nextPage = "/Book/booktradingboaed.bo";
-
-	//		break;
-
-			// 게시판 목록을 가져오는 기능
-
-			
 			BookPostVo list = bookPostservice.serviceBoardbooklist();
 			String nowPage = request.getParameter("nowPage");
 			String nowBlock = request.getParameter("nowBlock");			
