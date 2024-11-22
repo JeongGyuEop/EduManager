@@ -122,5 +122,10 @@ public class BookPostService {
 
 		return majorInfo;
 	}
+	
+	// 키워드 검색을 통한 게시글 목록 조회 서비스
+		public List<BookPostVo> serviceBookKeyWord(String key, String word) {
+			return bookPostDAO.bookserchList(key, word);
+		}
 }
 

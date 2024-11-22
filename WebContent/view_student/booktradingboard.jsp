@@ -36,14 +36,6 @@
 	// 조회된 글목록 정보 얻기 
 	List<BookPostVo> bookBoardList = (List<BookPostVo>) request.getAttribute("bookBoardList");
 
-	for (BookPostVo listcheck : bookBoardList) {
-		System.out.println(listcheck.getPostId()); // postId 가져오기
-		System.out.println(listcheck.getPostTitle()); // postTitle 가져오기
-		System.out.println(listcheck.getUserId()); // userId 가져오기
-		System.out.println(listcheck.getMajorTag()); // majorTag 가져오기
-		System.out.println(listcheck.getCreatedAt()); // createdAt 가져오기
-	}
-
 	//조회된 글 총 갯수 
 	totalRecord = bookBoardList.size();
 
@@ -219,7 +211,7 @@
 							</form>
 						</tr>
 							<%-- 새 글쓰기 버튼 이미지 --%>
-							<td width="38%" style="text-align: left">
+					 	<td width="38%" style="text-align: left"> 
 
 
 

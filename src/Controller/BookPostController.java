@@ -1,6 +1,7 @@
 package Controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -124,18 +125,27 @@ public class BookPostController extends HttpServlet {
 				request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
 			}
 			// nextPage 지정
-			nextPage = "/Book/booktradingboard.bo";  //?center=/view_student/booktradingboard.jsp";
+			nextPage = "/Book/booktradingboard.bo?&center=/view_student/booktradingboard.jsp";  //?center=/view_student/booktradingboard.jsp";
 
 			break;
 
-			//게시판읽기
-		case "/bookread.bo":	
-			
-			
-	
 			
 			//게시글 검색
 		case "/booksearchlist.bo":	
+
+			// 키워드로 게시글 검색 기능
+						String key = request.getParameter("key");
+						String word = request.getParameter("word");
+						bookBoardList = bookPostservice.serviceBookKeyWord(key, word);
+						request.setAttribute("bookBoardList", bookBoardList);
+						request.setAttribute("center", "view_student/booktradingboard.jsp");
+						nextPage = "/main.jsp";
+						break;
+			
+			
+			
+			//게시판읽기
+		case "/bookread.bo":	
 			
 			
 			

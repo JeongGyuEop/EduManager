@@ -10,6 +10,8 @@ import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+
+import Vo.BoardVo;
 import Vo.BookPostVo;
 import Vo.BookPostVo.BookImage;
 
@@ -113,7 +115,7 @@ public class BookPostDAO {
 			for (BookPostVo.BookImage image : bookPostVo.getImages()) {
 				String fileName = image.getFileName();
 				String uploadTime = String.valueOf(System.currentTimeMillis()); // 현재 시간을 밀리초로 가져와서 문자열로 변환
-				String imagePath = "/images/" + postId + "/" + fileName + "_" + uploadTime;
+				String imagePath = "/images/" + postId + "/" + uploadTime + "_" + fileName;
 
 				pstmt.setInt(1, postId);
 				pstmt.setString(2, fileName);
@@ -180,6 +182,56 @@ public class BookPostDAO {
 		return bookBoardList;
 	}
 
+	
+	// 검색
+	public List<BookPostVo> bookserchList(String key, String word) {
+		
+		String sqlbooklist = null;
+		ArrayList<BookPostVo> bookBoardList =  new ArrayList<>();
+		
+		if(!word.equals("")) {
+			if(key.equals("titleContent")) {
+				sqlbooklist = "SELECT * FROM book_post WHERE post_title LIKE ? OR post_content LIKE ? ORDER BY post_id DESC";
+			} else {
+				sqlbooklist = "SELECT * FROM book_post WHERE user_id LIKE ? ORDER BY post_id DESC";
+			}
+		} else {
+			sqlbooklist = "SELECT * FROM book_post ORDER BY post_id DESC";
+		}
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sqlbooklist);
+
+			if (!word.equals("")) {
+				if (key.equals("titleContent")) {
+					pstmt.setString(1, "%" + word + "%");
+					pstmt.setString(2, "%" + word + "%");
+				} else {
+					pstmt.setString(1, "%" + word + "%");
+				}
+			}
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				int postId = rs.getInt("post_id");
+				String userId = rs.getString("user_id");
+				String postTitle = rs.getString("post_title");
+				String majorTag = rs.getString("major_tag");
+				Timestamp createdAt = rs.getTimestamp("created_at");
+				// 게시물 정보 생성
+				BookPostVo BoardList = new BookPostVo(postId, userId, postTitle, majorTag, createdAt);
+				bookBoardList.add(BoardList);
+			}
+		} catch (Exception e) {
+			System.out.println("bookpostDAO의 bookserchList메소드에서 오류");
+			e.printStackTrace();
+		} finally {
+			closeResource();
+		}
+		return bookBoardList;
+	}
 	// ===============================================================================
 	// 중고책 거래=======================================================================
 	// ===============================================================================
