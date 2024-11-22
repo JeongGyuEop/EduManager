@@ -20,6 +20,11 @@ public class ProfessorVo {
 	private String  majorcode;    //학과번호
 	private Date   employDate ;  //고용일
 	
+	 // 추가된 강의 정보 필드
+    private String courseId;      // 강의 ID //추가
+    private String courseName;    // 강의 이름 //추가
+    private int rating;           // 평점 추가
+    private String comments;      // 평가 내용 추가
 	
 	//기본생성자
 	public ProfessorVo() {}
@@ -41,9 +46,10 @@ public class ProfessorVo {
 	}
 
 	
-	//전체 생성자
+	//전체 생성자(String courseId, String courseName, int rating,String comments  추가함)
 	public ProfessorVo(String user_id, String user_pw, String user_name, Date birthDate, String gender, String address,
-			String phone, String email, String role, String professor_id, String majorcode, Date employDate) {
+			String phone, String email, String role, String professor_id, String majorcode, Date employDate, 
+			String courseId, String courseName, int rating, String comments) {
 		super();
 		this.user_id = user_id;
 		this.user_pw = user_pw;
@@ -57,6 +63,10 @@ public class ProfessorVo {
 		this.professor_id = professor_id;
 		this.majorcode = majorcode;
 		this.employDate = employDate;
+		this.courseId = courseId; //추가
+        this.courseName = courseName; //추가
+        this.rating = rating; //추가
+        this.comments = comments; //추가
 	}
 
 	
@@ -158,9 +168,37 @@ public class ProfessorVo {
 		this.employDate = employDate;
 	}
 
+	public String getCourseId() { //추가
+	    return courseId;
+	    }
 
+	public void setCourseId(String courseId) { //추가
+	    this.courseId = courseId;
+	    }
+
+	public String getCourseName() { //추가
+	    return courseName;
+	    }
+
+	public void setCourseName(String courseName) { //추가
+	    this.courseName = courseName;
+	    }
 	
+	public int getRating() {
+        return rating;
+    }
 
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
 }
 

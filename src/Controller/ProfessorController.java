@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import Vo.ProfessorVo;
 import Service.ProfessorService;
 
@@ -248,7 +251,60 @@ public class ProfessorController extends HttpServlet {
     
 	            nextPage = "/main.jsp";
 	       
-	        break;
+	      //===========================================================================
+	      // 강의 평가 조회
+		case "/evaluationList.bo":
+
+		    // 세션에서 교수 ID 가져오기
+		    String loggedInProfessorId = (String) request.getSession().getAttribute("professor_id"); 
+		    
+		    // 강의 평가 데이터 조회
+		    List<ProfessorVo> evaluationList = prosessservice.getEvaluationsByProfessorId(loggedInProfessorId);
+
+		    // JSP에 데이터 전달
+		    request.setAttribute("evaluationList", evaluationList);
+		    
+		    
+		    center = "/view_admin/professorManager/evaluationProfessorList.jsp";
+		    request.setAttribute("classroomCenter", center);
+		    nextPage = "/view_classroom/classroom.jsp";
+		    break;
+		    
+		    
+		  //=====================================================================
+		 // 강의 목록 조회 및 강의 평가 검색
+		case "/evaluationSearch.bo":
+			
+			// 강의 목록 조회 (교수가 담당한 강의들)
+			List<ProfessorVo> courseList = prosessservice.getCoursesByProfessorId( request.getParameter("professor_id") );
+
+			System.out.println("courseList size: " + courseList.size());
+
+			// JSON 배열 생성
+			JSONArray jsonCourseArray = new JSONArray();
+
+			for (ProfessorVo course : courseList) {
+			    System.out.println("Course ID: " + course.getCourseId() + ", Course Name: " + course.getCourseName());
+			    
+			    // JSONObject 생성 및 매핑
+			    JSONObject courseJson = new JSONObject();
+			    courseJson.put("courseId", course.getCourseId());
+			    courseJson.put("courseName", course.getCourseName());
+			    
+			    // JSON 배열에 추가
+			    jsonCourseArray.put(courseJson);
+			}
+
+			
+			System.out.println(jsonCourseArray.toString());
+			// JSON 응답 전송
+			response.setContentType("application/json; charset=UTF-8");			
+			response.getWriter().print(jsonCourseArray.toString());
+			
+		    
+		    
+		   return;
+
 
 		default:
 			break;
