@@ -21,42 +21,56 @@ public class MenuItemService {
 		
 		// 관리자 메뉴
         roleMenuMap.put("관리자", Arrays.asList(
-            new MenuItemVo("사용자 관리", "/member/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp", Arrays.asList(
-                new MenuItemVo("학생관리", "/member/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp"),
-                new MenuItemVo("교수관리", "professorManage.jsp"),
-                new MenuItemVo("관리자 관리", "adminManage.jsp")
+        		
+            new MenuItemVo("사용자 관리", "/#", Arrays.asList(
+            	new MenuItemVo("학생 등록", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp"),
+                new MenuItemVo("학생 조회", "/student/viewStudentList.do?"),
+                
+                new MenuItemVo("교수 등록", "/professor/professorAdd.bo?center=/view_admin/professorManager/professoradd.jsp"),
+                new MenuItemVo("교수 조회", "/professor/professorquiry.do?center=/view_admin/professorManager/professorinquiry.jsp"),
+                
+                new MenuItemVo("관리자 등록", "/admin/adminjoin.bo?center=/view_admin/adminManager/adminjoin.jsp"),
+                new MenuItemVo("관리자 조회", "/admin/managerview.do?center=/view_admin/adminManager/adminquiry.jsp")
             )),
+            
             new MenuItemVo("학사 관리", "departmentManage.jsp", Arrays.asList(
-                new MenuItemVo("학과 관리", "departmentManage.jsp"),
-                new MenuItemVo("강의실 관리", "classroomManage.jsp")
+                new MenuItemVo("학과 관리", "/major/MajorInput.do"),
+                new MenuItemVo("학과 수정/삭제", "/major/searchMajor.do"),
+
+            	new MenuItemVo("강의실 등록", "/classroom/roomRegister.bo?center=/view_admin/roomRegister.jsp"),
+            	new MenuItemVo("강의실 조회", "/classroom/roomSearch.bo?center=/view_admin/roomSearch.jsp")
+            	
             )),
+            
             new MenuItemVo("정보 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp", Arrays.asList(
                 new MenuItemVo("공지사항 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp"),
-                new MenuItemVo("학사일정 관리", "scheduleManage.jsp")
+                new MenuItemVo("학사일정 관리", "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp")
             ))
         ));
         
         // 학생 메뉴
         roleMenuMap.put("학생", Arrays.asList(
-            new MenuItemVo("강의실", "/classroom/studentClassroom.bo?"),
+            new MenuItemVo("강의실", "/classroom/classroom.bo?classroomCenter=studentMyCourse.jsp"),
 //            , Arrays.asList(
 //                new MenuItemVo("수강신청", "courseRegister.jsp"),
 //                new MenuItemVo("과제제출", "assignmentSubmit.jsp"),
 //                new MenuItemVo("성적조회", "gradeCheck.jsp")
 //            )),
-            new MenuItemVo("마이페이지", "myPage.jsp"),
-            new MenuItemVo("공지사항", "notice.jsp")
+
+            new MenuItemVo("마이페이지", "/student/myPage.bo?center=/view_admin/studentManager/myPage.jsp"),
+            new MenuItemVo("공지사항", "/Board/list.bo?center=/common/notice/list.jsp"),
+            new MenuItemVo("학사일정", "/Board/boardCalendar.bo")
         ));
 
         // 교수 메뉴
         roleMenuMap.put("교수", Arrays.asList(
-            new MenuItemVo("강의실", "/classroom/professorClassroom.bo?"),
+            new MenuItemVo("강의실", "/classroom/classroom.bo?classroomCenter=professorMyCourse.jsp"),
 //            , Arrays.asList(
 //                new MenuItemVo("강의 개설", "lectureOpen.jsp"),
 //                new MenuItemVo("과제 관리", "assignmentManage.jsp"),
 //                new MenuItemVo("공지사항 등록", "noticeRegister.jsp")
 //            )),
-            new MenuItemVo("강의 관리", "lectureManage.jsp"),
+            new MenuItemVo("공지 사항", "/Board/list.bo?center=/common/notice/list.jsp"),
             new MenuItemVo("학생 관리", "studentManage.jsp")
         ));
         
@@ -71,7 +85,7 @@ public class MenuItemService {
 		if (menus != null) {
 	        htmlLoad.append("<ul>");
 	        for (MenuItemVo menu : menus) {
-//	            // 역할에 따른 디렉토리 경로 설정
+	            // 역할에 따른 디렉토리 경로 설정
 //	            String rolePath = "";
 //	            if ("관리자".equals(userRole)) {
 //	                rolePath = "/view_admin/";
@@ -97,6 +111,21 @@ public class MenuItemService {
 	                        .append("\">")
 	                        .append(subMenu.getName())
 	                        .append("</a></li>");
+	                    
+	                    // 하위 메뉴의 하위 메뉴 처리
+	                    if (!subMenu.getSubMenus().isEmpty()) {
+	                        htmlLoad.append("<ul>");
+	                        for (MenuItemVo subSubMenu : subMenu.getSubMenus()) {
+	                            htmlLoad.append("<li><a href=\"")
+	                                .append(contextPath)
+	                                .append(subSubMenu.getPage())
+	                                .append("\">")
+	                                .append(subSubMenu.getName())
+	                                .append("</a></li>");
+	                        }
+	                        htmlLoad.append("</ul>");
+	                    }
+	                    
 	                }
 	                htmlLoad.append("</ul>");
 	            }

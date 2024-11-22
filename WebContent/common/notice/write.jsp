@@ -15,6 +15,8 @@
 	//받았다~~  [목록] <a>태그의 href속성의 주소에 nowPage와 nowBlock 값 추가 시키자 
 	String nowPage = (String)request.getAttribute("nowPage");
 	String nowBlock = (String)request.getAttribute("nowBlock");
+	
+	String id = (String)session.getAttribute("id");
 %>
 
 
@@ -49,7 +51,7 @@
                     	<div align="center">작 성 자</div>
                     </td>
                     <td width="34%" bgcolor="#f5f5f5" style="text-align: left">
-                    	<input type="text" name="writer" size="20" class="text2" />
+                    	<input type="text" name="writer" size="20" class="text2" value="<%=id %>" readonly/>
                     </td>
                  
                    </tr>
@@ -107,7 +109,7 @@
 			event.preventDefault(); //a태그  href속성의 주소요청 기본이벤트 차단
 			
 			//board테이블에 저장된 모든 글 조회 요청!
-			location.href="<%=contextPath%>/Board/list.bo?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>";
+			location.href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>";
 		});
 	
 	    //새글 정보를 입력하고 등록 이미지를 감싸고 있는 <a>를 선택해서 클릭이벤트 등록
@@ -141,7 +143,7 @@
 	    					
 	    					if(result){
 	    						//board테이블에 저장된 모든 글 조회 요청! 
-	    						location.href="<%=contextPath%>/Board/list.bo";
+	    						location.href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp";
 	    					}
 	    					
 	    					
