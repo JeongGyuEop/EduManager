@@ -22,7 +22,12 @@ public class BookPostVo {
 	// 기본 생성자
 	public BookPostVo() {
 	}
-	
+
+	public BookPostVo(String majorTag) {
+		super();
+		this.majorTag = majorTag;
+	}
+
 	// 모든 필드를 포함한 생성자
 	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
 			Timestamp createdAt, List<BookImage> images) {
@@ -43,8 +48,6 @@ public class BookPostVo {
 		this.majorTag = majorTag;
 	}
 
-	
-	
 	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
 			Timestamp createdAt) {
 		super();

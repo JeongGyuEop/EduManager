@@ -48,10 +48,36 @@ public class BookPostDAO {
 	// 중고책 거래=======================================================================
 	// ===============================================================================
 
+	public List<BookPostVo> majorInfo() {
+
+		List<BookPostVo> majorInfo = new ArrayList<BookPostVo>();
+		String sqlMajorInfo = "SELECT majorname FROM majorinformation";
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sqlMajorInfo);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				String major = rs.getString("majorname");
+				BookPostVo majorTag = new BookPostVo(major);
+				majorInfo.add(majorTag);
+			}
+		} catch (Exception e) {
+			System.out.println("BookPostDAO의 majorInfo메소드에서 오류");
+			e.printStackTrace();
+		} finally {
+			closeResource();
+		}
+		return majorInfo;
+	}
+
 	public List<String> bookPostUpload(BookPostVo bookPostVo) {
 		String sqlInsertPost = "INSERT INTO book_post (user_id, post_title, post_content, major_tag, created_at) VALUES (?, ?, ?, ?, NOW())";
 		String sqlInsertImage = "INSERT INTO book_image (post_id, file_name, image_path) VALUES (?, ?, ?)";
 		List<String> imagePaths = new ArrayList<>();
+
+		System.out.println(bookPostVo.getUserId());
 
 		try {
 			con = ds.getConnection();

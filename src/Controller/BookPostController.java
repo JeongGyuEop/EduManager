@@ -1,6 +1,8 @@
 package Controller;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import Dao.BookPostDAO;
 import Service.BookPostService;
+import Vo.BookPostVo;
 
 @WebServlet("/Book/*")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 1, // 1MB
@@ -83,19 +86,20 @@ public class BookPostController extends HttpServlet {
 			break;
 
 		case "/bookPostUpload.bo": // 글 등록하러 가기
+			// 학과 정보를 받아옵니다.
+			List<BookPostVo> majorInfo = bookPostservice.majorInfo();
 
 			center = "/view_student/booktrading.jsp";
-
+			
 			request.setAttribute("center", center);
+			request.setAttribute("majorInfo", majorInfo);
 			request.setAttribute("userId", request.getParameter("userId"));
-
+			
 			nextPage = "/main.jsp";
 
 			break;
 
 		case "/bookPostUpload.do": // 글 등록
-
-			System.out.println("BoardController userId check : " + request.getParameter("userId"));
 			// 글 등록 form으로부터 글 제목이 있을 경우에 실행
 			try {
 				// 서비스 호출

@@ -33,10 +33,6 @@ public class BookPostService {
 		String postContent = request.getParameter("postContent"); // 글 내용
 		String majorTag = request.getParameter("majorTag"); // 책과 관련된 학과명
 
-		System.out.println(request.getParameter("userId"));
-		System.out.println(request.getParameter("postTitle"));
-		System.out.println(request.getParameter("postContent"));
-		System.out.println(request.getParameter("majorTag"));
 		// 2. 이미지 파일 수집
 		ArrayList<BookPostVo.BookImage> bookImages = new ArrayList<>(); // BookImage 객체 리스트를 저장하는 변수
 		try {
@@ -107,5 +103,11 @@ public class BookPostService {
 		}
 
 		return 1; // 성공 시 1 반환
+	}
+
+	public List<BookPostVo> majorInfo() {
+		List<BookPostVo> majorInfo = bookPostDAO.majorInfo();
+
+		return majorInfo;
 	}
 }
