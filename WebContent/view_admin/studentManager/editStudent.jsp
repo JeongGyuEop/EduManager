@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+<%@page import="Vo.StudentVo"%>
+=======
 <%@ page import="Vo.StudentVo"%>
+>>>>>>> f91585b3f5086a3d3d244c2897767351e6e62280
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <!DOCTYPE html>
@@ -131,6 +135,7 @@
 <body>
     <div id="student-edit-container">
         <h2 id="student-edit-title"><i class="fas fa-edit"></i> 학생 정보 수정</h2>
+
 
         <%
             StudentVo student = (StudentVo) request.getAttribute("student");

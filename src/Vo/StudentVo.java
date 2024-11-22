@@ -31,8 +31,15 @@ public class StudentVo {
     private int grade;           // 학년
     private Date admission_date; // 입학일
     private String status;       // 상태 (재학, 휴학, 졸업, 자퇴)
+    
+    private int midtest_score, finaltest_score, assignment_score; // 중간고사, 기말고사, 과제
+    private Float score; // 성적 총점 
+    
+    private CourseVo Course; // CourseVo 객체 포함
 
 
+    
+    
 	public String getStudent_id() {
 		return student_id;
 	}
@@ -134,6 +141,13 @@ public class StudentVo {
 		this.status = status;
 	}
 
+	
+	
+	public StudentVo(CourseVo course) {
+		this.Course = course;
+	}
+
+
 	public String getUser_id() {
 		return user_id;
 	}
@@ -221,6 +235,56 @@ public class StudentVo {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+
+	public CourseVo getCourse() {
+		return Course;
+	}
+
+
+	public void setCourse(CourseVo course) {
+		Course = course;
+	}
+
+
+	public Float getScore() {
+		return score;
+	}
+
+
+	public void setScore(Float score) {
+		this.score = score;
+	}
+
+
+	public int getMidtest_score() {
+		return midtest_score;
+	}
+
+
+	public void setMidtest_score(int midtest_score) {
+		this.midtest_score = midtest_score;
+	}
+
+
+	public int getFinaltest_score() {
+		return finaltest_score;
+	}
+
+
+	public void setFinaltest_score(int finaltest_score) {
+		this.finaltest_score = finaltest_score;
+	}
+
+
+	public int getAssignment_score() {
+		return assignment_score;
+	}
+
+
+	public void setAssignment_score(int assignment_score) {
+		this.assignment_score = assignment_score;
 	}
 
 	
