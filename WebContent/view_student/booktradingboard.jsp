@@ -1,3 +1,4 @@
+<%@page import="java.util.Map"%>
 <%@page import="java.util.List"%>
 <%@page import="Vo.BookPostVo"%>
 <%@page import="java.util.ArrayList"%>
@@ -7,6 +8,86 @@
 <%
 request.setCharacterEncoding("UTF-8");
 String contextPath = request.getContextPath();
+
+//페이징 처리를 위한 변수 선언
+
+int totalRecord = 0;//board테이블에 저장된  조회된 총 글의 갯수 저장  *
+int numPerPage = 5; //한 페이지 번호당 조회해서 보여줄 글 목록 개수 저장
+int pagePerBlock = 3; //한 블럭당 묶여질 페이지 번호 갯수 저장
+//예)   1   2    3   <-  한블럭으로 묶음 
+
+int totalPage = 0; // 총 페이지 번호 갯수(총페이지 갯수) *
+int totalBlock = 0; // 총 페이지 번호 갯수에 따른 총블럭 갯수  *
+int nowPage = 0; //현재 클라이언트 화면에 보여지고 있는 페이지가 위치한 번호 저장
+//요약 : 아래 쪽 페이지번호 1 2  3  중에서 클릭한  현재 페이지번호 저장
+//*
+
+int nowBlock = 0; //클릭한 페이지번호가 속한 블럭위치 번호 저장  *
+
+int beginPerPage = 0; //각 페이지마다 
+//조회되어 보여지는 시작 행의  index위치 번호
+//(가장 위의 조회된 레코드 행의 시작 index위치번호) 저장  
+//*
+
+//BoardController에서 request에 바인딩 한 ArrayList배열을 꺼내옵니다
+//조회된 글목록 정보 얻기 
+ArrayList list = (ArrayList) request.getAttribute("list");
+
+//조회된 글 총 갯수 
+totalRecord = list.size();
+
+//게시판 아래쪽 페이지 번호 중 하나를 클릭했다면?
+if (request.getAttribute("nowPage") != null) {
+	//클릭한 페이지번호를 얻어 저장
+	nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
+}
+
+//각 페이지에 보여질 시작글번호 구하기
+beginPerPage = nowPage * numPerPage;
+//자유게시판 메뉴 클릭 또는 아래 하단의 페이지번호 중 1페이지 번호 클릭시!!!
+// 0      *     5       =   0 index
+
+//아래 하단의 페이지번호 중 2페이지 번호 클릭시!!! 
+// 1      *     5       =    5 index
+
+//각 페이지마다 
+//조회되어 보여지는 시작 행의  index위치 번호
+//(가장 위의 조회된 레코드 행의 시작 index위치번호) 저장  
+
+//글이 몇개 인지에 따른 총 페이지 번호 갯수 구하기
+//총 페이지번호 갯수 = 총 글의 갯수 / 한 페이지당 보여질 글목록 갯수 
+totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
+//33.0         /     5
+//			6.6
+//         7.0
+//         7
+//총 페이지 번호 갯수에 따른 총 블럭 갯수 구하기 
+totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
+//	        7.0  /  한 블럭당 묶여질 페이지 번호 갯수  3
+//	     2.333333333333333
+//       3.0
+//       3
+//게시판 아래쪽에 클릭한 페이지 번호가 속한 불럭 위치 번호 구하기
+if (request.getAttribute("nowBlock") != null) {
+
+	//BoardController에서 request에 바인딩된 값을 다시 얻어 저장 
+	nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
+}
+
+// id 구하기
+String userId = (String) session.getAttribute("id");
+
+// BoardController에서 request에 바인딩 한 ArrayList배열을 꺼내옵니다
+// 조회된 글목록 정보 얻기 
+List<BookPostVo> bookBoardList = (List<BookPostVo>) request.getAttribute("bookBoardList");
+
+for (BookPostVo listcheck : bookBoardList) {
+	System.out.println(listcheck.getPostId()); // postId 가져오기
+	System.out.println(listcheck.getPostTitle()); // postTitle 가져오기
+	System.out.println(listcheck.getUserId()); // userId 가져오기
+	System.out.println(listcheck.getMajorTag()); // majorTag 가져오기
+	System.out.println(listcheck.getCreatedAt()); // createdAt 가져오기
+}
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -45,8 +126,7 @@ String contextPath = request.getContextPath();
     //조회된 화면에서  글제목 하나를 클릭했을때  글번호를 매개변수로 받아서
     //아래에 작성된 <form>를 이용해 글번호에 해당되는 글 하나의 정보를 조회 요청!
     function fnRead(val){
-    	document.frmRead.action="<%=contextPath%>
-	/Book/bookread.bo";
+    	document.frmRead.action="<%=contextPath%>/Book/bookread.bo";
 		document.frmRead.notice_id.value = val;
 		document.frmRead.submit();//<form> 을 이용해 요청
 	}
@@ -54,76 +134,6 @@ String contextPath = request.getContextPath();
 
 </head>
 <body>
-	<%
-	//페이징 처리를 위한 변수 선언
-
-	int totalRecord = 0;//board테이블에 저장된  조회된 총 글의 갯수 저장  *
-	int numPerPage = 5; //한 페이지 번호당 조회해서 보여줄 글 목록 개수 저장
-	int pagePerBlock = 3; //한 블럭당 묶여질 페이지 번호 갯수 저장
-	//예)   1   2    3   <-  한블럭으로 묶음 
-
-	int totalPage = 0; // 총 페이지 번호 갯수(총페이지 갯수) *
-	int totalBlock = 0; // 총 페이지 번호 갯수에 따른 총블럭 갯수  *
-	int nowPage = 0; //현재 클라이언트 화면에 보여지고 있는 페이지가 위치한 번호 저장
-	//요약 : 아래 쪽 페이지번호 1 2  3  중에서 클릭한  현재 페이지번호 저장
-	//*
-
-	int nowBlock = 0; //클릭한 페이지번호가 속한 블럭위치 번호 저장  *
-
-	int beginPerPage = 0; //각 페이지마다 
-	//조회되어 보여지는 시작 행의  index위치 번호
-	//(가장 위의 조회된 레코드 행의 시작 index위치번호) 저장  
-	//*
-
-	//BoardController에서 request에 바인딩 한 ArrayList배열을 꺼내옵니다
-	//조회된 글목록 정보 얻기 
-	List<BookPostVo> bookBoardList = (List<BookPostVo>) request.getAttribute("bookBoardList");
-
-	//조회된 글 총 갯수 
-	totalRecord = bookBoardList.size();
-
-	//게시판 아래쪽 페이지 번호 중 하나를 클릭했다면?
-	if (request.getAttribute("nowPage") != null) {
-		//클릭한 페이지번호를 얻어 저장
-		nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
-	}
-
-	//각 페이지에 보여질 시작글번호 구하기
-	beginPerPage = nowPage * numPerPage;
-	//자유게시판 메뉴 클릭 또는 아래 하단의 페이지번호 중 1페이지 번호 클릭시!!!
-	// 0      *     5       =   0 index
-
-	//아래 하단의 페이지번호 중 2페이지 번호 클릭시!!! 
-	// 1      *     5       =    5 index
-
-	//각 페이지마다 
-	//조회되어 보여지는 시작 행의  index위치 번호
-	//(가장 위의 조회된 레코드 행의 시작 index위치번호) 저장  
-
-	//글이 몇개 인지에 따른 총 페이지 번호 갯수 구하기
-	//총 페이지번호 갯수 = 총 글의 갯수 / 한 페이지당 보여질 글목록 갯수 
-	totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
-	//33.0         /     5
-	//			6.6
-	//         7.0
-	//         7
-	//총 페이지 번호 갯수에 따른 총 블럭 갯수 구하기 
-	totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
-	//	        7.0  /  한 블럭당 묶여질 페이지 번호 갯수  3
-	//	     2.333333333333333
-	//       3.0
-	//       3
-	//게시판 아래쪽에 클릭한 페이지 번호가 속한 불럭 위치 번호 구하기
-	if (request.getAttribute("nowBlock") != null) {
-
-		//BoardController에서 request에 바인딩된 값을 다시 얻어 저장 
-		nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
-	}
-
-	String userId = (String) session.getAttribute("id");
-	%>
-
-
 	<%--글제목 하나를 클릭했을떄 BoardController 글 하나 조회 요청하기 위한 폼
 	위 자바스크립트 function fnRead함수에서 사용하는 <form>
  --%>
@@ -132,8 +142,6 @@ String contextPath = request.getContextPath();
 			name="nowPage" value="<%=nowPage%>"> <input type="hidden"
 			name="nowBlock" value="<%=nowBlock%>">
 	</form>
-
-
 	<table width="97%" border="0" cellspacing="0" cellpadding="0">
 
 		<tr>
@@ -152,50 +160,35 @@ String contextPath = request.getContextPath();
 										<td align="left">작성자</td>
 										<td align="left">학과태그</td>
 										<td align="left">날짜</td>
-
 									</tr>
 									<%
-									//board테이블에서 조회된 게시글이 없다면?
-									if (bookBoardList.isEmpty()) {
+									// 리스트가 비어 있지 않으면 반복문을 통해 출력
+									if (bookBoardList != null && !bookBoardList.isEmpty()) {
+										for (BookPostVo listinput : bookBoardList) {
+									%>
+									<tr>
+										<!-- 번호 -->
+										<td align="left"><%=listinput.getPostId()%></td>
+										<!-- 제목 (링크 클릭 시 fnRead 함수 호출) -->
+										<td><a
+											href="javascript:fnRead('<%=listinput.getPostId()%>')"><%=listinput.getPostTitle()%></a></td>
+										<!-- 작성자 -->
+										<td align="left"><%=listinput.getUserId()%></td>
+										<!-- 학과태그 -->
+										<td align="left"><%=listinput.getMajorTag()%></td>
+										<!-- 날짜 -->
+										<td align="left"><%=listinput.getCreatedAt()%></td>
+									</tr>
+									<%
+									}
+									} else {
 									%>
 									<tr align="center">
 										<td colspan="5">등록된 글이 없습니다.</td>
 									</tr>
 									<%
-									} else {//board테이블에서 조회된 게시글이 있다면?
-
-									for (int i = beginPerPage; i < (beginPerPage + numPerPage); i++) {
-
-										/* 	out.println(i);  //1페이지 번호 또는 자유게시판 메뉴 클릭시   0,  1 , 2,  3, 4
-											                 //2페이지 번호 클릭시 5, 6, 7, 8, 9
-											                 
-											out.println(beginPerPage+numPerPage);
-											out.println("-------------------------<br>"); */
-
-										if (i == totalRecord) {
-											break;
-										}
-										//		int level = vo.getB_level(); 
-										//모든 글들의 들여쓰기 정도값
-										//0(주글)또는1(주글에 대한 답변글).....
-									%>
-
-									<c:forEach var="list" items="${bookBoardList}">
-										<tr>
-											<td align="left">${list.postId }</td>
-											<td><a href="javascript:fnRead('${list.postTitle }')">
-											</a></td>
-											<td align="left">${list.userId }</td>
-											<td align="left">${list.majorTag }</td>
-											<td align="left">${list.createdAt }</td>
-										</tr>
-									</c:forEach>
-									<%
-									}
-
 									}
 									%>
-
 								</table>
 							</td>
 						</tr>
@@ -278,15 +271,9 @@ String contextPath = request.getContextPath();
 
  } //바깥쪽 if닫기
  %>
-
-
-
-
-
 			</td>
 		</tr>
 	</table>
-
 </body>
 </html>
 

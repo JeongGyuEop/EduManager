@@ -152,8 +152,7 @@ public class BookPostDAO {
 	// 모든 게시글 조회
 	public List<BookPostVo> booklistboard() {
 
-		String sqlbooklist = "SELECT bp.post_id, bp.user_id, bp.post_title," + "bp.major_tag, bp.created_at, "
-				+ "FROM book_post bp " + "ORDER BY bp.post_id DESC";
+		String sqlbooklist = "SELECT bp.post_id, bp.user_id, bp.post_title, bp.major_tag, bp.created_at FROM book_post bp ORDER BY bp.post_id DESC";
 		List<BookPostVo> bookBoardList = new ArrayList<BookPostVo>();
 
 		try {
