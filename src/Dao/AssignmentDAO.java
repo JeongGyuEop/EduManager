@@ -91,7 +91,7 @@ public class AssignmentDAO {
 
 	//------------
 	// 교수가 자신의 각 강의에 과제를 DB에 등록하기 위해 호출하는 함수 
-	public int createAssignment(AssignmentVo assignment) {
+	public int createAssignment(AssignmentVo assignmentVo) {
 		
 		int result = 0;
 		
@@ -106,17 +106,17 @@ public class AssignmentDAO {
             pstmt = con.prepareStatement(sql);
             
             // PreparedStatement에 값 설정
-            pstmt.setString(1, assignment.getCourse().getCourse_id());
-            pstmt.setString(2, assignment.getTitle());
-            pstmt.setString(3, assignment.getDescription());
-            pstmt.setDate(4, assignment.getDueDate()); // java.sql.Date 설정
+            pstmt.setString(1, assignmentVo.getCourse().getCourse_id());
+            pstmt.setString(2, assignmentVo.getTitle());
+            pstmt.setString(3, assignmentVo.getDescription());
+            pstmt.setDate(4, assignmentVo.getDueDate()); // java.sql.Date 설정
             pstmt.setTimestamp(5, new Timestamp(System.currentTimeMillis())); // 현재 시간 설정
             result = pstmt.executeUpdate();
             
     		return result;
     		
 		} catch (Exception e) {
-			System.out.println("AssignmentDAO의 assignmentSearch메소드에서 오류 ");
+			System.out.println("AssignmentDAO의 createAssignment메소드에서 오류 ");
 			e.printStackTrace();
 		} finally {
 			closeResource(); // 자원 해제
@@ -148,13 +148,53 @@ public class AssignmentDAO {
     		return result;
     		
 		} catch (Exception e) {
-			System.out.println("AssignmentDAO의 assignmentSearch메소드에서 오류 ");
+			System.out.println("AssignmentDAO의 deleteAssignment메소드에서 오류 ");
 			e.printStackTrace();
 		} finally {
 			closeResource(); // 자원 해제
 		}
 
 		return 0;
+	}
+
+	//-----------
+	// 교수가 자신의 각 강의에 등록된 과제를 DB에 수정요청을 위해 호출되는 함수
+	public int updateAssignment(AssignmentVo assignmentVo) {
+		int result = 0;
+		
+		try {
+			
+			System.out.println("Assignment ID: " + assignmentVo.getAssignmentId());
+			System.out.println("Title: " + assignmentVo.getTitle());
+			System.out.println("Description: " + assignmentVo.getDescription());
+			System.out.println("Due Date: " + assignmentVo.getDueDate());
+
+			con = ds.getConnection();
+			
+			// SQL 쿼리 실행
+			String sql = "UPDATE assignment "
+						+ "SET title=?, description=?, due_date=? "
+						+ "WHERE assignment_id=?";
+            
+            pstmt = con.prepareStatement(sql);
+            
+            // PreparedStatement에 값 설정
+            pstmt.setString(1, assignmentVo.getTitle());
+            pstmt.setString(2, assignmentVo.getDescription());
+            pstmt.setDate(3, assignmentVo.getDueDate());
+            pstmt.setInt(4, assignmentVo.getAssignmentId());
+            result = pstmt.executeUpdate();
+            
+    		return result;
+    		
+		} catch (Exception e) {
+			System.out.println("AssignmentDAO의 updateAssignment메소드에서 오류 ");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 자원 해제
+		}
+
+		return result;
 	}
 
 }

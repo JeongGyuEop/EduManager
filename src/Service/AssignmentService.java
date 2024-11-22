@@ -21,14 +21,20 @@ public class AssignmentService {
 
 	//----------
 	// 교수의 각 강의에 과제를 등록하기 위해 DAO 호출
-	public int serviceCreateAssignment(AssignmentVo assignment) {
-		return assignmentdao.createAssignment(assignment);
+	public int serviceCreateAssignment(AssignmentVo assignmentVo) {
+		return assignmentdao.createAssignment(assignmentVo);
 	}
 
 	//----------
 	// 교수의 각 강의의 과제를 삭제하기 위해 DAO 호출
 	public int serviceDeleteAssignment(String assignment_id) {
 		return assignmentdao.deleteAssignment(assignment_id);
+	}
+
+	//----------
+	// 교수의 각 강의의 과제를 수정하기 위해 DAO 호출
+	public int serviceUpdateAssignment(AssignmentVo assignmentVo) {
+		return assignmentdao.updateAssignment(assignmentVo);
 	}
 
 }

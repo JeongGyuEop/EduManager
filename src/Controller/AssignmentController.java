@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -22,7 +20,6 @@ import org.json.simple.JSONObject;
 import Service.AssignmentService;
 import Vo.AssignmentVo;
 import Vo.CourseVo;
-import Vo.EnrollmentVo;
 
 @WebServlet("/assign/*")
 public class AssignmentController extends HttpServlet {
@@ -131,16 +128,16 @@ public class AssignmentController extends HttpServlet {
 	    		
 	    		Date dueDate = java.sql.Date.valueOf(dueDateString);
 	            
-	            AssignmentVo assignment = new AssignmentVo();
-	            assignment.setTitle(title);
-	            assignment.setDescription(description);
-	            assignment.setDueDate(dueDate);
+	            AssignmentVo assignmentVo = new AssignmentVo();
+	            assignmentVo.setTitle(title);
+	            assignmentVo.setDescription(description);
+	            assignmentVo.setDueDate(dueDate);
 
 	            CourseVo course = new CourseVo();
 	            course.setCourse_id(course_id);
-	            assignment.setCourse(course);
+	            assignmentVo.setCourse(course);
 	            
-	            int result = assignmentservice.serviceCreateAssignment(assignment);
+	            int result = assignmentservice.serviceCreateAssignment(assignmentVo);
 	    		
 	            if(result == 1) {
 				    response.sendRedirect(request.getContextPath() +"/assign/assignmentManage.bo?message="
@@ -178,6 +175,42 @@ public class AssignmentController extends HttpServlet {
 				                          + URLEncoder.encode("과제 삭제에 실패했습니다. 다시 입력해 주세요.", "UTF-8") 
 								    	  + "&courseId=" + course_id
 				                          + "center=/view_classroom/assignment_submission/assignmentManage.jsp");
+				    return;
+				}
+	    		
+	    //==========================================================================================
+	    		
+	    	case "/updateAssignment.do": // 해당 과목의 과제를 수정하는 2단계 요청주소를 받으면
+	    		assignment_id = (String)request.getParameter("assignmentId");
+	    		title = request.getParameter("title");
+	    		dueDateString = (String)request.getParameter("dueDate");
+	    		description = request.getParameter("description");
+	    		
+	    		dueDate = java.sql.Date.valueOf(dueDateString);
+	    		
+	    		System.out.println(assignment_id);
+	    		System.out.println(title);
+	    		System.out.println(description);
+	    		System.out.println(dueDate);
+	    		
+	    		assignmentVo = new AssignmentVo();
+	    		assignmentVo.setAssignmentId(Integer.parseInt(assignment_id));
+	            assignmentVo.setTitle(title);
+	            assignmentVo.setDescription(description);
+	            assignmentVo.setDueDate(dueDate);
+	    		
+	    		course_id = request.getParameter("courseId");
+	    		
+	    		int updateAssignmentResult = assignmentservice.serviceUpdateAssignment(assignmentVo);
+	    		
+	    		out = response.getWriter();
+	    		if(updateAssignmentResult == 1) {
+	    			out.write("success");
+	    			out.close();
+				    return;
+				} else {
+	    			out.write("non_success");
+	    			out.close();
 				    return;
 				}
 	    		

@@ -27,6 +27,8 @@
 %>
 <script>
     $(document).ready(function() {
+
+        //-------------
         // 과제 조회 탭에서 AJAX로 데이터 불러오기
         $.ajax({
             url: '<%= contextPath %>/assign/assignmentSearch.do',
@@ -39,16 +41,18 @@
 
                 if (assignmentList && assignmentList.length > 0) {
                     assignmentList.forEach(function(assignment) {
-                        var row = '<tr>' +
-                                    '<td>' + assignment.title + '</td>' +
-                                    '<td>' + assignment.dueDate + '</td>' +
-                                    '<td>' + assignment.description + '</td>' +
-                                    '<td>' +
-                                        '<a href="editAssignment.jsp?assignmentId=' + assignment.assignmentId + '" class="btn btn-sm btn-primary">수정</a> ' +
-                                        '<a href="#" class="btn btn-sm btn-danger" onclick="confirmDelete(' + assignment.assignmentId + ')">삭제</a> ' +
-                                        '<a href="viewSubmissions.jsp?assignmentId=' + assignment.assignmentId + '" class="btn btn-sm btn-success">제출물 보기</a>' +
-                                    '</td>' +
-                                  '</tr>';
+                        var row = '<tr data-id="' + assignment.assignmentId + '">' +
+				                        '<td class="editable editable-title">' + assignment.title + '</td>' +
+				                        '<td class="editable editable-dueDate">' + assignment.dueDate + '</td>' +
+				                        '<td class="editable editable-description">' + assignment.description + '</td>' +
+				                        '<td>' +
+				                            '<button class="btn btn-sm btn-primary edit-btn">수정</button>' +
+				                            '<button class="btn btn-sm btn-success complete-btn" style="display:none;">완료</button>' +
+				                            '<button class="btn btn-sm btn-secondary cancel-btn" style="display:none;">취소</button>' +
+				                            '<button class="btn btn-sm btn-danger delete-btn">삭제</button>' +
+				                            '<button class="btn btn-sm btn-success view-btn">제출물 보기</button>' +
+				                        '</td>' +
+				                    '</tr>';
                         tbody.append(row);
                     });
                 } else {
@@ -62,6 +66,100 @@
         });
     });
     
+    //-------------
+ 	// 수정 버튼 클릭 시
+    $(document).on('click', '.edit-btn', function () {
+        var row = $(this).closest('tr'); // 현재 행 가져오기
+
+        // 기존 값 저장 (data 속성에 저장)
+        row.find('.editable').each(function () {
+            var cell = $(this);
+            cell.data('original-value', cell.text()); // 기존 값을 저장
+            var value = cell.text();
+
+            // 마감일은 date picker로 변환
+            if (cell.hasClass('editable-dueDate')) {
+                cell.html('<input type="date" class="form-control" value="' + value + '">');
+            } else {
+                cell.html('<input type="text" class="form-control" value="' + value + '">');
+            }
+        });
+
+        // 모든 버튼 숨기기
+        row.find('.edit-btn, .delete-btn, .view-btn').hide();
+
+        // 완료/취소 버튼 표시
+        row.find('.complete-btn, .cancel-btn').show();
+    });
+    
+
+    //-------------
+    // 완료 버튼 클릭 시
+    $(document).on('click', '.complete-btn', function () {
+        var row = $(this).closest('tr'); // 현재 행 가져오기
+        var assignmentId = row.data('id'); // 데이터 ID
+        var title = row.find('.editable-title input').val();
+        var dueDate = row.find('.editable-dueDate input').val();
+        var description = row.find('.editable-description input').val();
+
+        // AJAX로 수정 요청 보내기
+        $.ajax({
+            url: '<%= contextPath %>/assign/updateAssignment.do',
+            method: 'POST',
+            data: {
+            	courseId: '<%= course_id %>',
+                assignmentId: assignmentId,
+                title: title,
+                dueDate: dueDate,
+                description: description
+            },
+            success: function (response) {
+                if (response === 'success') {
+                    alert('수정이 완료되었습니다.');
+
+                    // 입력 필드를 다시 텍스트로 변경
+                    row.find('.editable-title').html(title);
+                    row.find('.editable-dueDate').html(dueDate);
+                    row.find('.editable-description').html(description);
+
+                    // 완료/취소 버튼 숨기기
+                    row.find('.complete-btn, .cancel-btn').hide();
+
+                    // 수정, 삭제, 제출물확인 버튼 다시 표시
+                    row.find('.edit-btn, .delete-btn, .view-btn').show();
+                } else {
+                    alert('수정에 실패했습니다. 다시 시도해주세요.');
+                }
+            },
+            error: function (error) {
+                alert('수정 요청 중 오류가 발생했습니다.');
+                console.error(error);
+            }
+        });
+    });
+
+
+    //-------------
+    // 취소 버튼 클릭 시
+    $(document).on('click', '.cancel-btn', function () {
+        var row = $(this).closest('tr'); // 현재 행 가져오기
+
+        // 저장된 기존 값으로 복원
+        row.find('.editable').each(function () {
+            var cell = $(this);
+            var originalValue = cell.data('original-value'); // 저장된 기존 값
+            cell.html(originalValue); // 기존 값으로 복원
+        });
+
+        // 완료/취소 버튼 숨기기
+        row.find('.complete-btn, .cancel-btn').hide();
+
+        // 기본 버튼 다시 표시
+        row.find('.edit-btn, .delete-btn, .view-btn').show();
+    });
+ 
+
+    //-------------
  	// 과제 삭제 확인 함수
     function confirmDelete(assignmentId) {
         if (confirm("삭제하시겠습니까?")) {
@@ -125,6 +223,40 @@
                 </div>
             </form>
         </div>
+        
+        <!-- 수정 모달 -->
+<div class="modal fade" id="editAssignmentModal" tabindex="-1" aria-labelledby="editAssignmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAssignmentModalLabel">과제 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editAssignmentForm">
+                    <input type="hidden" id="editAssignmentId">
+                    <div class="mb-3">
+                        <label for="editTitle" class="form-label">제목:</label>
+                        <input type="text" id="editTitle" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDescription" class="form-label">설명:</label>
+                        <textarea id="editDescription" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDueDate" class="form-label">마감일:</label>
+                        <input type="date" id="editDueDate" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="saveEditAssignment">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+        
     </div>
 </div>
 
