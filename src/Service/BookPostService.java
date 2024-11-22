@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
-import Dao.BoardDAO;
 import Dao.BookPostDAO;
 import Dao.MemberDAO;
 import Vo.BookPostVo;
@@ -35,10 +34,6 @@ public class BookPostService {
 		String postContent = request.getParameter("postContent"); // 글 내용
 		String majorTag = request.getParameter("majorTag"); // 책과 관련된 학과명
 
-		System.out.println(request.getParameter("userId"));
-		System.out.println(request.getParameter("postTitle"));
-		System.out.println(request.getParameter("postContent"));
-		System.out.println(request.getParameter("majorTag"));
 		// 2. 이미지 파일 수집
 		ArrayList<BookPostVo.BookImage> bookImages = new ArrayList<>(); // BookImage 객체 리스트를 저장하는 변수
 		try {
@@ -112,15 +107,20 @@ public class BookPostService {
 	}
 
 
+
 	//모든 글조회
-	public BookPostVo serviceBoardbooklist() {
-		
+	public List<BookPostVo> serviceBoardbooklist() {
 		return bookPostDAO.booklistboard();
 	}
 	
 	
 	
-	
-	
-	
+
+//학과정보 받아오기
+	public List<BookPostVo> majorInfo() {
+		List<BookPostVo> majorInfo = bookPostDAO.majorInfo();
+
+		return majorInfo;
+	}
 }
+

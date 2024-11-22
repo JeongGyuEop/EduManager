@@ -23,6 +23,13 @@ public class BookPostVo {
 	public BookPostVo() {
 	}
 
+
+	public BookPostVo(String majorTag) {
+		super();
+		this.majorTag = majorTag;
+	}
+
+
 	// 모든 필드를 포함한 생성자
 	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
 			Timestamp createdAt, List<BookImage> images) {
@@ -43,6 +50,16 @@ public class BookPostVo {
 		this.majorTag = majorTag;
 	}
 
+	public BookPostVo(int postId, String userId, String postTitle, String majorTag, Timestamp createdAt) {
+		super();
+		this.postId = postId;
+		this.userId = userId;
+		this.postTitle = postTitle;
+		this.majorTag = majorTag;
+		this.createdAt = createdAt;
+	}
+
+
 	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
 			Timestamp createdAt) {
 		super();
@@ -50,15 +67,6 @@ public class BookPostVo {
 		this.userId = userId;
 		this.postTitle = postTitle;
 		this.postContent = postContent;
-		this.majorTag = majorTag;
-		this.createdAt = createdAt;
-	}
-
-	public BookPostVo(int postId, String userId, String postTitle, String majorTag, Timestamp createdAt) {
-		super();
-		this.postId = postId;
-		this.userId = userId;
-		this.postTitle = postTitle;
 		this.majorTag = majorTag;
 		this.createdAt = createdAt;
 	}

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.Context;
@@ -49,11 +50,37 @@ public class BookPostDAO {
 	// 중고책 거래=======================================================================
 	// ===============================================================================
 
-	// 글 등록
+	// 학과 정보 받아오기
+	public List<BookPostVo> majorInfo() {
+
+		List<BookPostVo> majorInfo = new ArrayList<BookPostVo>();
+		String sqlMajorInfo = "SELECT majorname FROM majorinformation";
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sqlMajorInfo);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				String major = rs.getString("majorname");
+				BookPostVo majorTag = new BookPostVo(major);
+				majorInfo.add(majorTag);
+			}
+		} catch (Exception e) {
+			System.out.println("BookPostDAO의 majorInfo메소드에서 오류");
+			e.printStackTrace();
+		} finally {
+			closeResource();
+		}
+		return majorInfo;
+	}
+
 	public List<String> bookPostUpload(BookPostVo bookPostVo) {
 		String sqlInsertPost = "INSERT INTO book_post (user_id, post_title, post_content, major_tag, created_at) VALUES (?, ?, ?, ?, NOW())";
 		String sqlInsertImage = "INSERT INTO book_image (post_id, file_name, image_path) VALUES (?, ?, ?)";
 		List<String> imagePaths = new ArrayList<>();
+
+		System.out.println(bookPostVo.getUserId());
 
 		try {
 			con = ds.getConnection();
@@ -114,58 +141,48 @@ public class BookPostDAO {
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
-			}finally {
-			closeResource();
-			
+			} finally {
+				closeResource();
+
+			}
+			return imagePaths;
 		}
-		return imagePaths;
 	}
-}
-	
-	
-	
-	
+
 	// 모든 게시글 조회
-	public BookPostVo booklistboard() {
+	public List<BookPostVo> booklistboard() {
 
-	    String sql = null;
-	    BookPostVo vo =null;
-	    try {
-	        con = ds.getConnection();
+		String sqlbooklist = "SELECT bp.post_id, bp.user_id, bp.post_title," + "bp.major_tag, bp.created_at, "
+				+ "FROM book_post bp " + "ORDER BY bp.post_id DESC";
+		List<BookPostVo> bookBoardList = new ArrayList<BookPostVo>();
 
-	        // book_post와 book_image를 JOIN
-	        sql = "SELECT bp.post_id, bp.user_id, bp.post_title," +
-	              "bp.major_tag, bp.created_at, " +
-	              "FROM book_post bp " +
-	              "ORDER BY bp.post_id DESC";
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sqlbooklist);
+			rs = pstmt.executeQuery();
 
-	        pstmt = con.prepareStatement(sql);
-	        rs = pstmt.executeQuery();
+			while (rs.next()) {
+				int postId = rs.getInt("post_id");
+				String userId = rs.getString("user_id");
+				String postTitle = rs.getString("post_title");
+				String majorTag = rs.getString("major_tag");
+				Timestamp createdAt = rs.getTimestamp("created_at");
+				// 게시물 정보 생성
+				BookPostVo BoardList = new BookPostVo(postId, userId, postTitle, majorTag, createdAt);
+				bookBoardList.add(BoardList);
+			}
+		} catch (Exception e) {
+			System.out.println("BookDAO의 booklistboard 메소드 오류");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 리소스 정리
+		}
 
-	        while (rs.next()) {
-	            // 게시물 정보 생성
-	             vo = new BookPostVo(
-	                    rs.getInt("post_id"),
-	                    rs.getString("user_id"),
-	                    rs.getString("post_title"),
-	                    rs.getString("major_tag"),
-	                    rs.getTimestamp("created_at")
-	            );
-
-	        }
-	    } catch (Exception e) {
-	        System.out.println("BoardDAO의 booklistboard 메소드 오류");
-	        e.printStackTrace();
-	    } finally {
-	        closeResource(); // 리소스 정리
-	    }
-
-	    return vo;
+		return bookBoardList;
 	}
 
 	// ===============================================================================
 	// 중고책 거래=======================================================================
 	// ===============================================================================
-
 
 }
