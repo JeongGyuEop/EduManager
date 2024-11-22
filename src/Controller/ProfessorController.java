@@ -275,7 +275,7 @@ public class ProfessorController extends HttpServlet {
 		    // JSP에 데이터 전달
 		    request.setAttribute("evaluationList", evaluationList);
 		    
-		    center = "/view_admin/professorManager/evaluationProfessorList.jsp";
+		    center = "/view_classroom/evaluation/evaluationProfessorList.jsp";
 		    request.setAttribute("classroomCenter", center);
 		    
 		    nextPage = "/view_classroom/classroom.jsp";

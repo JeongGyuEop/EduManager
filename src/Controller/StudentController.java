@@ -220,7 +220,7 @@ public class StudentController extends HttpServlet {
            request.setAttribute("courseList", courseList);
            	 // String name = (String)session.getAttribute("name");
         	 //request.setAttribute("name", name);
-           center = "/view_admin/studentManager/evaluationRegister.jsp";
+           center = "/view_classroom/evaluation/evaluationRegister.jsp";
            request.setAttribute("classroomCenter", center);
            nextPage = "/view_classroom/classroom.jsp";
            break;
@@ -242,7 +242,7 @@ public class StudentController extends HttpServlet {
            List<StudentVo> evaluations = studentservice.getEvaluationsByStudent(studentId); //getStudentEvaluations
            request.setAttribute("evaluations", evaluations);
 
-           center = "/view_admin/studentManager/evaluationList.jsp";
+           center = "/view_classroom/evaluation/evaluationList.jsp";
            request.setAttribute("classroomCenter", center);
            nextPage = "/view_classroom/classroom.jsp";
            break;
@@ -254,7 +254,7 @@ public class StudentController extends HttpServlet {
            StudentVo evaluation = studentservice.getEvaluationById(evaluationId);
            request.setAttribute("evaluation", evaluation);
 
-           center = "/view_admin/studentManager/evaluationEdit.jsp";
+           center = "/view_classroom/evaluation/evaluationEdit.jsp";
            request.setAttribute("classroomCenter", center);
            nextPage = "/view_classroom/classroom.jsp";
            break;
