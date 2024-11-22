@@ -20,11 +20,16 @@ public class ProfessorVo {
 	private String  majorcode;    //학과번호
 	private Date   employDate ;  //고용일
 	
-	 // 추가된 강의 정보 필드
+	// 추가된 강의 정보 필드
     private String courseId;      // 강의 ID //추가
     private String courseName;    // 강의 이름 //추가
     private int rating;           // 평점 추가
     private String comments;      // 평가 내용 추가
+    
+    @Override
+	public String toString() {
+	    return "ProfessorVo [professorName=" + user_name + "]";
+	}
 	
 	//기본생성자
 	public ProfessorVo() {}

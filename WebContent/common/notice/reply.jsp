@@ -62,7 +62,7 @@
 													<div align="center">작 성 자</div>
 												</td>
 												<td width="34%" bgcolor="#f5f5f5" style="text-align: left">
-													&nbsp;&nbsp; <input type="text" name="writer" id="writer" value="<%=id%>" readonly>
+													&nbsp;&nbsp; <input type="text" name="writer" id="writer" value="<%=id %>" readonly>
 												</td>
 											</tr>
 											<tr>
@@ -129,7 +129,6 @@
 				}
 			return true;
 		}
-
 	</script>
 	
 	

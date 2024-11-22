@@ -26,6 +26,29 @@ public class StudentVo {
     private String professor_id;  // 담당 교수 ID
     private String room_id;       // 강의실 ID
     
+    private int midtest_score, finaltest_score, assignment_score; // 중간고사, 기말고사, 과제
+    private Float score; // 성적 총점 
+    
+    private CourseVo Course; // CourseVo 객체 포함
+
+
+	public StudentVo(String user_id, String user_pw, String user_name, Date birthDate, String gender, String address,
+			String phone, String email, String role) {
+		super();
+		this.user_id = user_id;
+		this.user_pw = user_pw;
+		this.user_name = user_name;
+		this.birthDate = birthDate;
+		this.gender = gender;
+		this.address = address;
+		this.phone = phone;
+		this.email = email;
+		this.role = role;
+	}
+	
+	public StudentVo(CourseVo course) {
+		this.Course = course;
+	}
 
     // 기본 생성자
     public StudentVo() {}
@@ -65,7 +88,7 @@ public class StudentVo {
         this.comments = comments;
     }
     
- // 생성자: course 테이블 필드 포함
+    // 생성자: course 테이블 필드 포함
     public StudentVo(String courseId, String course_name, String professor_id, String majorcode, String room_id) {
         this.courseId = courseId;
         this.course_name = course_name;
@@ -244,8 +267,57 @@ public class StudentVo {
         this.room_id = room_id;
     }
 
+	public CourseVo getCourse() {
+		return Course;
+	}
 
-    // toString 메서드
+
+	public void setCourse(CourseVo course) {
+		Course = course;
+	}
+
+
+	public Float getScore() {
+		return score;
+	}
+
+
+	public void setScore(Float score) {
+		this.score = score;
+	}
+
+
+	public int getMidtest_score() {
+		return midtest_score;
+	}
+
+
+	public void setMidtest_score(int midtest_score) {
+		this.midtest_score = midtest_score;
+	}
+
+
+	public int getFinaltest_score() {
+		return finaltest_score;
+	}
+
+
+	public void setFinaltest_score(int finaltest_score) {
+		this.finaltest_score = finaltest_score;
+	}
+
+
+	public int getAssignment_score() {
+		return assignment_score;
+	}
+
+
+	public void setAssignment_score(int assignment_score) {
+		this.assignment_score = assignment_score;
+	}
+
+	
+	 // toString 메서드
     @Override
     public String toString() {
         return "StudentVo{" +
