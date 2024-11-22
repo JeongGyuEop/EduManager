@@ -10,6 +10,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import Vo.BookPostVo;
+import Vo.BookPostVo.BookImage;
 
 public class BookPostDAO {
 
@@ -48,6 +49,7 @@ public class BookPostDAO {
 	// 중고책 거래=======================================================================
 	// ===============================================================================
 
+	// 글 등록
 	public List<String> bookPostUpload(BookPostVo bookPostVo) {
 		String sqlInsertPost = "INSERT INTO book_post (user_id, post_title, post_content, major_tag, created_at) VALUES (?, ?, ?, ?, NOW())";
 		String sqlInsertImage = "INSERT INTO book_image (post_id, file_name, image_path) VALUES (?, ?, ?)";
@@ -76,8 +78,8 @@ public class BookPostDAO {
 			}
 
 			// 자원 정리 후 새 쿼리 준비
-			pstmt.close();
-			rs.close();
+//			pstmt.close();
+//			rs.close();
 
 			// 3. book_image 테이블에 이미지 정보 저장
 			pstmt = con.prepareStatement(sqlInsertImage);
@@ -106,21 +108,64 @@ public class BookPostDAO {
 			}
 			imagePaths.clear(); // 실패 시 빈 리스트 반환
 		} finally {
-			closeResource();
 			try {
-				if (con != null) {
+				if (con != null && !con.getAutoCommit()) {
 					con.setAutoCommit(true); // 기본 자동 커밋 모드로 복구
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
-			}
+			}finally {
+			closeResource();
+			
 		}
-
 		return imagePaths;
+	}
+}
+	
+	
+	
+	
+	// 모든 게시글 조회
+	public BookPostVo booklistboard() {
+
+	    String sql = null;
+	    BookPostVo vo =null;
+	    try {
+	        con = ds.getConnection();
+
+	        // book_post와 book_image를 JOIN
+	        sql = "SELECT bp.post_id, bp.user_id, bp.post_title," +
+	              "bp.major_tag, bp.created_at, " +
+	              "FROM book_post bp " +
+	              "ORDER BY bp.post_id DESC";
+
+	        pstmt = con.prepareStatement(sql);
+	        rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            // 게시물 정보 생성
+	             vo = new BookPostVo(
+	                    rs.getInt("post_id"),
+	                    rs.getString("user_id"),
+	                    rs.getString("post_title"),
+	                    rs.getString("major_tag"),
+	                    rs.getTimestamp("created_at")
+	            );
+
+	        }
+	    } catch (Exception e) {
+	        System.out.println("BoardDAO의 booklistboard 메소드 오류");
+	        e.printStackTrace();
+	    } finally {
+	        closeResource(); // 리소스 정리
+	    }
+
+	    return vo;
 	}
 
 	// ===============================================================================
 	// 중고책 거래=======================================================================
 	// ===============================================================================
+
 
 }

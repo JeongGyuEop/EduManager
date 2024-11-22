@@ -27,6 +27,7 @@ public class BookPostService {
 
 //-------------- 중고 책 거래 ----------------------------------------------------------------------------------------------	
 
+	// 글 등록
 	public int bookPostUploadService(HttpServletRequest request) {
 		// 1. 폼 데이터 추출
 		String userId = request.getParameter("userId"); // 유저 아이디, hidden을 통해 받아왔습니다.
@@ -109,4 +110,17 @@ public class BookPostService {
 
 		return 1; // 성공 시 1 반환
 	}
+
+
+	//모든 글조회
+	public BookPostVo serviceBoardbooklist() {
+		
+		return bookPostDAO.booklistboard();
+	}
+	
+	
+	
+	
+	
+	
 }

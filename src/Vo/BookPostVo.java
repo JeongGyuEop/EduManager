@@ -22,7 +22,7 @@ public class BookPostVo {
 	// 기본 생성자
 	public BookPostVo() {
 	}
-	
+
 	// 모든 필드를 포함한 생성자
 	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
 			Timestamp createdAt, List<BookImage> images) {
@@ -43,8 +43,6 @@ public class BookPostVo {
 		this.majorTag = majorTag;
 	}
 
-	
-	
 	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
 			Timestamp createdAt) {
 		super();
@@ -52,6 +50,15 @@ public class BookPostVo {
 		this.userId = userId;
 		this.postTitle = postTitle;
 		this.postContent = postContent;
+		this.majorTag = majorTag;
+		this.createdAt = createdAt;
+	}
+
+	public BookPostVo(int postId, String userId, String postTitle, String majorTag, Timestamp createdAt) {
+		super();
+		this.postId = postId;
+		this.userId = userId;
+		this.postTitle = postTitle;
 		this.majorTag = majorTag;
 		this.createdAt = createdAt;
 	}
@@ -121,16 +128,19 @@ public class BookPostVo {
 		private int postId;
 		// 이미지 파일 이름
 		private String fileName;
+		// 이미지 파일 경로
+		private String image_path;
 
 		// 기본 생성자
 		public BookImage() {
 		}
 
 		// 모든 필드를 포함한 생성자
-		public BookImage(int imageId, int postId, String fileName) {
+		public BookImage(int imageId, int postId, String fileName, String image_path) {
 			this.imageId = imageId;
 			this.postId = postId;
 			this.fileName = fileName;
+			this.image_path = image_path;
 		}
 
 		// Getter와 Setter 메서드
@@ -157,5 +167,15 @@ public class BookPostVo {
 		public void setFileName(String fileName) {
 			this.fileName = fileName;
 		}
+
+		public String getImage_path() {
+			return image_path;
+		}
+
+		public void setImage_path(String image_path) {
+			this.image_path = image_path;
+		}
+
 	}
+
 }

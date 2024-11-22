@@ -16,25 +16,33 @@
 	String nowBlock = (String)request.getAttribute("nowBlock");
 %>
 
-<% 
-    String message = (String) request.getAttribute("message"); 
-	if (request.getAttribute("message") != null) { %>
-	alert("<%= request.getAttribute("message").toString().replaceAll("\"", "\\\"") %>");
-<% } %>
+
 
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>판매 또는 구매 글 등록</title>
+
+ <script type="text/javascript">
+        window.onload = function () {
+            // JSP에서 메시지 값을 JavaScript 변수로 가져오기
+            var message = "<%= request.getAttribute("message") %>";
+            if (message && message !== "null") {
+                alert(message); // 메시지가 있을 경우에만 alert 창 표시
+            }
+        };
+    </script>
+    
 </head>
 <body>
 
-	<form action="<%=contextPath%>/Board/bookPostUpload.do" method="post"
+	<form action="<%=contextPath%>/Book/bookPostUpload.do" method="post"
 		enctype="multipart/form-data">
 		<!-- 작성자 정보 가져온 뒤 readonly -->
 		<!-- 작성일은 DAO에서 처리 -->
-		<input type="hidden" name="userId" value="<%=userId%>" readonly>
+<!-- 	<input type="hidden" name="userId" value="<%=userId%>" readonly>  -->	
+		<input type="text" name="userId" value="<%=userId%>">
 
 		<table>
 			<thead>

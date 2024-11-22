@@ -1,10 +1,11 @@
+
+
 <%@page import="Vo.BookPostVo"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"  pageEncoding="utf-8"%>
 <%
 	request.setCharacterEncoding("UTF-8");
 	String contextPath = request.getContextPath(); 
-	String userId = (String) session.getAttribute("id");
 %> 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -42,7 +43,7 @@
     //조회된 화면에서  글제목 하나를 클릭했을때  글번호를 매개변수로 받아서
     //아래에 작성된 <form>를 이용해 글번호에 해당되는 글 하나의 정보를 조회 요청!
     function fnRead(val){
-    	document.frmRead.action="<%=contextPath%>/Board/read.bo";
+    	document.frmRead.action="<%=contextPath%>/Book/bookread.bo";
     	document.frmRead.notice_id.value = val;
     	document.frmRead.submit();//<form> 을 이용해 요청
     }
@@ -151,10 +152,11 @@
 						<table border="0" width="100%" cellpadding="2" cellspacing="0">
 							<tr align="center" bgcolor="#D0D0D0" height="120%">
 								<td align="left">번호</td>
-								<td align="left">제목</td>
-								<td align="left">내용</td>
-								<td align="left">날짜</td>
+								<td align="left">제목</td>		
 								<td align="left">작성자</td>
+								<td align="left">학과태그</td>
+								<td align="left">날짜</td>
+								
 							</tr>	
 					<%
 						//board테이블에서 조회된 게시글이 없다면?
@@ -186,15 +188,14 @@
 							<tr>
 								<td align="left"><%=vo.getPostId()%></td>
 								<td>
-									<a href="javascript:fnRead('<%=vo.getPostId() %>')">
-										<%=vo.getPostTitle() %>
+									<a href="javascript:fnRead('<%=vo.getPostId()%>')">
+										<%=vo.getPostTitle()%>
 									</a>
-								
-								<td align="left"><%=vo.getPostContent()%></td>
-								<td align="left"><%=vo.getCreatedAt()%></td>
 								<td align="left"><%=vo.getUserId()%></td>
+								<td align="left"><%=vo.getMajorTag()%></td>
+								<td align="left"><%=vo.getCreatedAt()%></td>
 							</tr>										
-					<%			
+					<%		
 							}
 								
 						}
@@ -211,7 +212,7 @@
 	        		<td colspan="4">&nbsp;</td>
 	        	</tr>
 				<tr>
-					<form action="<%=contextPath%>/Board/searchbooklist.bo" 
+					<form action="<%=contextPath%>/Book/booksearchlist.bo" 
 							method="post" 
 							name="frmSearch" onsubmit="fnSearch(); return false;">
 		            	<td colspan="2">
@@ -236,8 +237,8 @@
 		           		
 		            	<button 
 							id="newContent"
-							onclick="location.href='<%=contextPath%>/Board/bookPostUpload.bo?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>'">
-							새글쓰기
+							onclick="location.href='<%=contextPath%>/Book/bookPostUpload.do?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>'">
+							새 글쓰기
 						</button>
 		           
 		            
@@ -257,7 +258,7 @@
 				
 				if(nowBlock > 0){
 		%>			
-				    <a href="<%=contextPath%>/Board/booktradingboard.bo?nowBlock=<%=nowBlock-1%>&nowPage=<%=((nowBlock-1)*pagePerBlock)%>">
+				    <a href="<%=contextPath%>/Book/booktradingboard.bo?nowBlock=<%=nowBlock-1%>&nowPage=<%=((nowBlock-1)*pagePerBlock)%>">
 					◀ 이전 <%=pagePerBlock %>개
 					</a>
 		<%	
@@ -268,7 +269,7 @@
 				for(int i=0;   i<pagePerBlock;    i++){
 		%>			
 				&nbsp;&nbsp;
-				<a href="<%=contextPath%>/Board/booktradingboard.bo?nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock)+i%>">
+				<a href="<%=contextPath%>/Book/booktradingboard.bo?nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock)+i%>">
 					<%=(nowBlock * pagePerBlock)+i+1%>
 					<%
 						if((nowBlock * pagePerBlock)+i+1 == totalPage){
@@ -283,7 +284,7 @@
 				
 				if(totalBlock > nowBlock + 1){
 		%>			
-				 <a href="<%=contextPath%>/Board/booktradingboard.bo?nowBlock=<%=nowBlock+1%>&nowPage=<%=(nowBlock+1)*pagePerBlock%>">
+				 <a href="<%=contextPath%>/Book/booktradingboard.bo?nowBlock=<%=nowBlock+1%>&nowPage=<%=(nowBlock+1)*pagePerBlock%>">
 					▶ 다음 <%=pagePerBlock%>개 	
 				 </a>
 		<%			
@@ -293,14 +294,16 @@
 				
 			}//바깥쪽 if닫기 
 		%>
-	
+		
+		
+		
+		
+		
 		</td> 
 	</tr>
 </table>
-	<form action="<%=contextPath%>/Board/bookPostUpload.bo" method="get">
-		<input type="hidden" value="<%=userId%>" name="userId"> <input
-			type="submit" value="글 쓰기">
-	</form>
-
 </body>
 </html>
+
+
+
