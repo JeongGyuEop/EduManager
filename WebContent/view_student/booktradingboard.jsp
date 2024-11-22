@@ -92,8 +92,8 @@ for (BookPostVo listcheck : bookBoardList) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Insert title here</title>
+
+<title>목록조회</title>
 <link rel="stylesheet" type="text/css" href="/MVCBoard/style.css" />
 
 <script type="text/javascript">
@@ -217,14 +217,13 @@ for (BookPostVo listcheck : bookBoardList) {
 									</div>
 								</td>
 							</form>
-
+						</tr>
 							<%-- 새 글쓰기 버튼 이미지 --%>
 							<td width="38%" style="text-align: left">
 
 
 
-								<form action="<%=contextPath%>/Book/bookPostUpload.bo"
-									method="get">
+								<form action="<%=contextPath%>/Book/bookPostUpload.bo" method="post">
 									<input type="hidden" value="<%=userId%>" name="userId">
 									<input type="hidden" value="<%=nowPage%>" name="nowPage">
 									<input type="hidden" value="<%=nowBlock%>" name="nowBlock">

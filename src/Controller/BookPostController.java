@@ -132,7 +132,13 @@ public class BookPostController extends HttpServlet {
 		case "/bookread.bo":	
 			
 			
+	
+			
+			//게시글 검색
 		case "/booksearchlist.bo":	
+			
+			
+			
 // 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
 
 		default:
