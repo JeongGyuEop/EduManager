@@ -135,6 +135,13 @@
                                 성적 관리
                             </a>
                             
+                            <!-- 사이드바 강의 평가 영역 -->
+                            <a class="nav-link" href="<%=contextPath%>/professor/evaluationList.bo">
+    							<div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+   			 					강의 평가
+							</a>
+                            
+                            
 					<%	} else { %>
                             <!-- 사이드바 수강신청 영역 -->
                             <div class="sb-sidenav-menu-heading">Course Registration</div>
@@ -152,6 +159,12 @@
                             <a class="nav-link" href="<%=contextPath%>/classroom/grade_search.bo?classroomCenter=/view_classroom/gradeList.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 성적 조회
+                            </a>
+                            
+                            <!-- 강의 평가 항목 추가 -->
+                            <a class="nav-link" href="<%=contextPath%>/student/evaluationRegister.do?id=로그인한 학생아이디전달필요">
+                                <div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+                                강의 평가
                             </a>
                     <%	} %> 
                         </div>
