@@ -11,7 +11,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import Vo.BookPostVo;
-import Vo.BookPostVo.BookImage;
 
 public class BookPostDAO {
 
@@ -113,7 +112,7 @@ public class BookPostDAO {
 			for (BookPostVo.BookImage image : bookPostVo.getImages()) {
 				String fileName = image.getFileName();
 				String uploadTime = String.valueOf(System.currentTimeMillis()); // 현재 시간을 밀리초로 가져와서 문자열로 변환
-				String imagePath = "/images/" + postId + "/" + fileName + "_" + uploadTime;
+				String imagePath = "/images/" + postId + "/" + uploadTime + "_" + fileName;
 
 				pstmt.setInt(1, postId);
 				pstmt.setString(2, fileName);
