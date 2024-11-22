@@ -5,6 +5,7 @@
     request.setCharacterEncoding("UTF-8");
     String contextPath = request.getContextPath();
     String course_id = (String) request.getParameter("courseId");
+    String role = (String)session.getAttribute("role");
 %>
 
 <!DOCTYPE html>
@@ -12,9 +13,6 @@
 <head>
 <meta charset="UTF-8">
 <title>과제 관리</title>
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
 <%
     String message = request.getParameter("message");
     if (message != null) {
@@ -27,6 +25,8 @@
 %>
 <script>
     $(document).ready(function() {
+    	
+    	var role = "<%= role %>";
 
         //-------------
         // 과제 조회 탭에서 AJAX로 데이터 불러오기
@@ -40,21 +40,29 @@
                 tbody.empty(); // 테이블 본문 초기화
 
                 if (assignmentList && assignmentList.length > 0) {
-                    assignmentList.forEach(function(assignment) {
-                        var row = '<tr data-id="' + assignment.assignmentId + '">' +
-				                        '<td class="editable editable-title">' + assignment.title + '</td>' +
-				                        '<td class="editable editable-dueDate">' + assignment.dueDate + '</td>' +
-				                        '<td class="editable editable-description">' + assignment.description + '</td>' +
-				                        '<td>' +
-				                            '<button class="btn btn-sm btn-primary edit-btn">수정</button>' +
-				                            '<button class="btn btn-sm btn-success complete-btn" style="display:none;">완료</button>' +
-				                            '<button class="btn btn-sm btn-secondary cancel-btn" style="display:none;">취소</button>' +
-				                            '<button class="btn btn-sm btn-danger delete-btn">삭제</button>' +
-				                            '<button class="btn btn-sm btn-success view-btn">제출물 보기</button>' +
-				                        '</td>' +
-				                    '</tr>';
-                        tbody.append(row);
-                    });
+                	
+	                    assignmentList.forEach(function(assignment) {
+	                        var row = '<tr data-id="' + assignment.assignmentId + '">' +
+					                        '<td class="editable editable-title">' + assignment.title + '</td>' +
+					                        '<td class="editable editable-dueDate">' + assignment.dueDate + '</td>' +
+					                        '<td class="editable editable-description">' + assignment.description + '</td>';
+					    if(role === "교수") {
+					    			row += '<td>' +
+					                	        '<button class="btn btn-sm btn-primary edit-btn">수정</button>' +
+					                	        '<button class="btn btn-sm btn-success complete-btn" style="display:none;">완료</button>' +
+					                	        '<button class="btn btn-sm btn-secondary cancel-btn" style="display:none;">취소</button>' +
+					                	        '<button class="btn btn-sm btn-danger delete-btn">삭제</button>' +
+					                	        '<button class="btn btn-sm btn-success view-btn">제출물 보기</button>' +
+					                 	   '</td>' +
+					                '</tr>';
+                		} else {
+                					row += '<td>' + 
+					                	        '<button class="btn btn-sm btn-success view-btn">과제 제출</button>' +
+					               		   '</td>' +
+					                '</tr>';
+                		}
+	                        tbody.append(row);
+	                    });
                 } else {
                     var emptyRow = '<tr><td colspan="4">등록된 과제가 없습니다.</td></tr>';
                     tbody.append(emptyRow);
@@ -178,9 +186,11 @@
         <li class="nav-item">
             <a class="nav-link active" id="assignment-list-tab" data-bs-toggle="tab" href="#assignment-list" role="tab" aria-controls="assignment-list" aria-selected="true">과제 조회</a>
         </li>
+<% if(role.equals("교수")) { %>
         <li class="nav-item">
             <a class="nav-link" id="assignment-create-tab" data-bs-toggle="tab" href="#assignment-create" role="tab" aria-controls="assignment-create" aria-selected="false">과제 등록</a>
         </li>
+<% } %>
     </ul>
 
     <!-- 탭 내용 -->
@@ -223,44 +233,8 @@
                 </div>
             </form>
         </div>
-        
-        <!-- 수정 모달 -->
-<div class="modal fade" id="editAssignmentModal" tabindex="-1" aria-labelledby="editAssignmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editAssignmentModalLabel">과제 수정</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editAssignmentForm">
-                    <input type="hidden" id="editAssignmentId">
-                    <div class="mb-3">
-                        <label for="editTitle" class="form-label">제목:</label>
-                        <input type="text" id="editTitle" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editDescription" class="form-label">설명:</label>
-                        <textarea id="editDescription" class="form-control" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editDueDate" class="form-label">마감일:</label>
-                        <input type="date" id="editDueDate" class="form-control" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                <button type="button" class="btn btn-primary" id="saveEditAssignment">저장</button>
-            </div>
-        </div>
-    </div>
-</div>
-        
     </div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
