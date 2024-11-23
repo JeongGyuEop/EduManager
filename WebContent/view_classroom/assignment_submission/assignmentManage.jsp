@@ -41,25 +41,26 @@
 
                 if (assignmentList && assignmentList.length > 0) {
                 	
-	                    assignmentList.forEach(function(assignment) {
-	                        var row = '<tr data-id="' + assignment.assignmentId + '">' +
-					                        '<td class="editable editable-title">' + assignment.title + '</td>' +
-					                        '<td class="editable editable-dueDate">' + assignment.dueDate + '</td>' +
-					                        '<td class="editable editable-description">' + assignment.description + '</td>';
-					    if(role === "교수") {
-					    			row += '<td>' +
-					                	        '<button class="btn btn-sm btn-primary edit-btn">수정</button>' +
-					                	        '<button class="btn btn-sm btn-success complete-btn" style="display:none;">완료</button>' +
-					                	        '<button class="btn btn-sm btn-secondary cancel-btn" style="display:none;">취소</button>' +
-					                	        '<button class="btn btn-sm btn-danger delete-btn">삭제</button>' +
-					                	        '<button class="btn btn-sm btn-success view-btn">제출물 보기</button>' +
-					                 	   '</td>' +
-					                '</tr>';
+	                assignmentList.forEach(function(assignment) {
+	                var row = '<tr data-id="' + assignment.assignmentId + '">' +
+					                '<td class="editable editable-title">' + assignment.title + '</td>' +
+					                '<td class="editable editable-dueDate">' + assignment.dueDate + '</td>' +
+					                '<td class="editable editable-description">' + assignment.description + '</td>';
+					if(role === "교수") {
+					    	row += '<td>' +
+					                    '<button class="btn btn-sm btn-primary edit-btn">수정</button>' +
+					                    '<button class="btn btn-sm btn-success complete-btn" style="display:none;">완료</button>' +
+					                    '<button class="btn btn-sm btn-secondary cancel-btn" style="display:none;">취소</button>' +
+					          	        '<button class="btn btn-sm btn-danger delete-btn">삭제</button>' +
+					                    '<button class="btn btn-sm btn-success view-btn">제출물 보기</button>' +
+					           	   '</td>' +
+					           '</tr>';
                 		} else {
-                					row += '<td>' + 
-					                	        '<button class="btn btn-sm btn-success view-btn">과제 제출</button>' +
-					               		   '</td>' +
-					                '</tr>';
+                			row += '<td>' +
+			                            '<button class="btn btn-sm btn-success submission-btn" data-id="' + assignment.assignmentId + 
+			                            '" data-title="' + encodeURIComponent(assignment.title) + '">과제 제출</button>' +
+			                       '</td>' +
+					           '</tr>';
                 		}
 	                        tbody.append(row);
 	                    });
@@ -73,6 +74,19 @@
             }
         });
     });
+    
+    //-------------
+    // 과제 제출 클릭 시
+    // 이벤트 리스너 추가
+	$(document).on('click', '.submission-btn', function() {
+	    var assignmentId = $(this).data('id'); // 과제 ID 가져오기
+	    var assignmentTitle = $(this).data('title'); // 과제 제목 가져오기
+	    var courseId = '<%= course_id %>';
+	    var submitPageUrl = '<%=contextPath%>/submit/submitAssignmentPage.bo'; // 이동할 페이지 URL
+	
+	    // 페이지 이동
+	    location.href = submitPageUrl + '?assignmentId=' + assignmentId + '&assignmentTitle=' + assignmentTitle + '&courseId=' + courseId;
+	});
     
     //-------------
  	// 수정 버튼 클릭 시

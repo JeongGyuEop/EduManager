@@ -114,9 +114,6 @@ public class MemberController extends HttpServlet {
 			// 로그인 성공 (check 값이 "1"인 경우)
 			String role = userInfo.get("role");
 			
-			
-			
-
 			if(role.equals("학생")) {
     			// 재요청할 전체 메인화면 주소를 저장
     			center = "/view_student/studentHome.jsp";
