@@ -181,6 +181,55 @@ public class BookPostDAO {
 
 		return bookBoardList;
 	}
+	
+	// content 포함 조회
+	public BookPostVo bookPost(int postId) {
+
+		String sqlbookpost = "SELECT bp.post_id, bp.user_id, bp.post_title, bp.post_content, bp.major_tag, bp.created_at, GROUP_CONCAT(bi.file_name) AS file_names, GROUP_CONCAT(bi.image_path) AS image_paths FROM book_post bp LEFT JOIN book_image bi ON bp.post_id = bi.post_id WHERE bp.post_id = ? GROUP BY bp.post_id;";
+		
+	    BookPostVo bookPost = new BookPostVo();
+
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sqlbookpost);
+			pstmt.setInt(1, postId);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				postId = Integer.parseInt(rs.getString("post_id"));
+				String userId = rs.getString("user_id");
+			    String postTitle = rs.getString("post_title");
+			    String postContent = rs.getString("post_content");
+			    String majorTag = rs.getString("major_tag");
+			    Timestamp createdAt = rs.getTimestamp("created_at");
+			    String fileNameList = rs.getString("file_names");
+			    String image_pathList = rs.getString("image_paths");
+			    
+			    List<BookImage> images = new ArrayList<>();
+			    
+			    if (fileNameList != null && image_pathList != null) {
+			        String[] fileNames = fileNameList.split(",");
+			        String[] imagePaths = image_pathList.split(",");
+			        
+			        for (int i = 0; i < fileNames.length; i++) {
+			            String fileName = fileNames[i].trim();
+			            String imagePath = imagePaths[i].trim();
+			            BookImage image = new BookImage(fileName, imagePath);
+			            images.add(image);
+			        }
+			    }
+			    // BookPostVo 객체를 생성합니다.
+			    bookPost = new BookPostVo(postId, userId, postTitle, postContent, majorTag, createdAt, images);
+			}
+		} catch (Exception e) {
+			System.out.println("BookDAO의 booklistboard 메소드 오류");
+			e.printStackTrace();
+		} finally {
+			closeResource(); // 리소스 정리
+		}
+
+		return bookPost;
+	}
 
 	
 	// 검색

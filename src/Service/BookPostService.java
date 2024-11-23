@@ -113,8 +113,11 @@ public class BookPostService {
 		return bookPostDAO.booklistboard();
 	}
 	
-	
-	
+	//글 내용 조회
+	public BookPostVo serviceBookPost(HttpServletRequest request) {
+		int postId = Integer.parseInt(request.getParameter("postId"));
+		return bookPostDAO.bookPost(postId);
+	}
 
 //학과정보 받아오기
 	public List<BookPostVo> majorInfo() {

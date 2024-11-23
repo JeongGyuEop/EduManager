@@ -71,6 +71,20 @@ public class BookPostVo {
 		this.createdAt = createdAt;
 	}
 
+	
+	
+	public BookPostVo(String userId, String postTitle, String postContent, String majorTag, Timestamp createdAt,
+			List<BookImage> images) {
+		super();
+		this.userId = userId;
+		this.postTitle = postTitle;
+		this.postContent = postContent;
+		this.majorTag = majorTag;
+		this.createdAt = createdAt;
+		this.images = images;
+	}
+
+
 	// Getter와 Setter 메서드
 	public int getPostId() {
 		return postId;
@@ -149,6 +163,12 @@ public class BookPostVo {
 			this.postId = postId;
 			this.fileName = fileName;
 			this.image_path = image_path;
+		}
+
+		public BookImage(String fileName, String imagePath) {
+			super();
+			this.fileName = fileName;
+			this.image_path = imagePath;
 		}
 
 		// Getter와 Setter 메서드

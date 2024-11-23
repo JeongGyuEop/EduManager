@@ -145,8 +145,18 @@ public class BookPostController extends HttpServlet {
 			
 			
 			//게시판상세보기
-		case "/bookread.bo":	
+		case "/bookread.bo":
 			
+			BookPostVo bookPost = bookPostservice.serviceBookPost(request);
+			majorInfo = bookPostservice.majorInfo();
+			
+			request.setAttribute("center", "/view_student/booktradingread.jsp");
+			request.setAttribute("bookPost", bookPost);
+			request.setAttribute("majorInfo", majorInfo);
+
+			nextPage = "/main.jsp";
+			
+			break;
 			
 			//게시글 삭제
 		case "/deleteBoard.do":
