@@ -114,8 +114,18 @@
     //조회된 화면에서  글제목 하나를 클릭했을때  글번호를 매개변수로 받아서
     //아래에 작성된 <form>를 이용해 글번호에 해당되는 글 하나의 정보를 조회 요청!
     function fnRead(val){
+<<<<<<< HEAD
     	document.frmRead.action="<%=contextPath%>/view_student/booktradingread.jsp";
 		document.frmRead.notice_id.value = val;
+=======
+    	var values = val.split(",");
+        var postId = values[0];
+    	
+    	document.frmRead.action="<%=contextPath%>/Book/bookread.bo";
+    	
+		document.frmRead.postId.value = postId;
+	    
+>>>>>>> ef10ca62b5222e7b5fb5063d644940ee2df320fd
 		document.frmRead.submit();//<form> 을 이용해 요청
 	}
 </script>
@@ -126,9 +136,7 @@
 	위 자바스크립트 function fnRead함수에서 사용하는 <form>
  --%>
 	<form name="frmRead">
-		<input type="hidden" name="notice_id"> <input type="hidden"
-			name="nowPage" value="<%=nowPage%>"> <input type="hidden"
-			name="nowBlock" value="<%=nowBlock%>">
+		<input type="hidden" name="postId">
 	</form>
 	<table width="97%" border="0" cellspacing="0" cellpadding="0">
 
@@ -209,19 +217,18 @@
 								</td>
 							</form>
 						</tr>
-							<%-- 새 글쓰기 버튼 이미지 --%>
-					 	<td width="38%" style="text-align: left"> 
+						<%-- 새 글쓰기 버튼 이미지 --%>
+						<td width="38%" style="text-align: left">
 
 
 
-								<form action="<%=contextPath%>/Book/bookPostUpload.bo" method="post">
-									<input type="hidden" value="<%=userId%>" name="userId">
-									<input type="hidden" value="<%=nowPage%>" name="nowPage">
-									<input type="hidden" value="<%=nowBlock%>" name="nowBlock">
-									<input type="submit" value="글 쓰기">
-								</form>
+							<form action="<%=contextPath%>/Book/bookPostUpload.bo"
+								method="post">
+								<input type="hidden" value="<%=userId%>" name="userId">
+								<input type="submit" value="글 쓰기">
+							</form>
 
-							</td>
+						</td>
 						<tr>
 							<td colspan="4">&nbsp;</td>
 						</tr>

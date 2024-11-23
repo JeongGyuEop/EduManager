@@ -147,10 +147,11 @@ public class BookPostController extends HttpServlet {
 			
 			
 			//게시판상세보기
-		case "/bookread.bo":	
+		case "/bookread.bo":
 			
+
 			// 게시글 읽기 기능
-			String post_id = request.getParameter("post_id");
+/*			String post_id = request.getParameter("post_id");
 			String nowPage_ = request.getParameter("nowPage");
 			String nowBlock_ = request.getParameter("nowBlock");
 			bookBoardList = bookPostservice.serviceBoardRead(post_id);
@@ -158,15 +159,21 @@ public class BookPostController extends HttpServlet {
 			request.setAttribute("bookBoardList", bookBoardList);
 			request.setAttribute("nowPage", nowPage_);
 			request.setAttribute("nowBlock", nowBlock_);
-			request.setAttribute("post_id", post_id);
-			
-			
-			nextPage = "/main.jsp";
+			request.setAttribute("post_id", post_id);  */
 
-		
-	     
-		break;	
+			BookPostVo bookPost = bookPostservice.serviceBookPost(request);
+			majorInfo = bookPostservice.majorInfo();
 			
+			request.setAttribute("center", "/view_student/booktradingread.jsp");
+			request.setAttribute("bookPost", bookPost);
+			request.setAttribute("majorInfo", majorInfo);
+
+			nextPage = "/main.jsp";
+			
+			break;
+
+			
+
 		
 		
 			//게시글 삭제

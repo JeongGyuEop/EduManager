@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+<%@page import="java.util.ArrayList"%>
+<%@page import="Vo.BookPostVo.BookImage"%>
+>>>>>>> ef10ca62b5222e7b5fb5063d644940ee2df320fd
 <%@page import="java.sql.Timestamp"%>
 <%@ page import="Vo.BookPostVo"%>
 <%@ page import="Vo.MemberVo"%>
@@ -11,8 +16,9 @@
 
 	MemberVo memberVo = new MemberVo();
 	String userId = (String) session.getAttribute("id");
-	Timestamp createdAt = (Timestamp) request.getAttribute("createdAt");
-    BookPostVo postDetail = (BookPostVo) request.getAttribute("postDetail");
+
+	/* Timestamp createdAt = (Timestamp) request.getAttribute("createdAt");
+  
     List<BookPostVo> majorInfo = (List<BookPostVo>) request.getAttribute("majorInfo");
     
     String errorMessage = (String) request.getAttribute("errorMessage");
@@ -20,10 +26,38 @@
 	String nowPage = (String) request.getAttribute("nowPage");
 	String nowBlock = (String) request.getAttribute("nowBlock");
    
-	List<BookPostVo> bookBoardList = (List<BookPostVo>) request.getAttribute("bookBoardList");
+	List<BookPostVo> bookBoardList = (List<BookPostVo>) request.getAttribute("bookBoardList"); */
+	  BookPostVo postDetail = (BookPostVo) request.getAttribute("postDetail");
 %>
 
+<%
 
+	// vo객체 반환
+	BookPostVo bookPost = (BookPostVo) request.getAttribute("bookPost");
+	List<BookPostVo> majorInfo = (List<BookPostVo>) request.getAttribute("majorInfo");
+	if (bookPost == null) {
+		// 객체가 없을 경우 처리
+		out.println("게시글 정보를 불러올 수 없습니다.");
+		return;
+	}
+
+	// vo 해제
+	int postId = bookPost.getPostId();
+	String postUserId = bookPost.getUserId();
+	String postTitle = bookPost.getPostTitle();
+	String postContent = bookPost.getPostContent();
+	String majorTag = bookPost.getMajorTag();
+	Timestamp createdAt = bookPost.getCreatedAt();
+	List<BookImage> images = bookPost.getImages();
+
+	// 이미지 리스트 생성
+	List<BookImage> displayImages = new ArrayList<>();
+	if (images != null) {
+		for (int i = 0; i < images.size() && i < 5; i++) {
+			displayImages.add(images.get(i));
+		}
+	}
+%>
 
 <!DOCTYPE html>
 <html>
@@ -31,7 +65,8 @@
 <meta charset="UTF-8">
 <title>상세확인</title>
 
- <script type="text/javascript">
+
+ <%-- <script type="text/javascript">
         window.onload = function () {
             // JSP에서 메시지 값을 JavaScript 변수로 가져오기
             var message = "<%= request.getAttribute("message") %>";
@@ -47,39 +82,36 @@
             if (message && message !== "null") {
                 alert(message);
             } 
-    </script>
+    </script> --%>
     
-</head>
-<body>	
 
+</head>
+<body>
 	<form action="<%=contextPath%>/Book/bookPostUpload.do" method="post"
 		enctype="multipart/form-data">
-		<!-- 작성자 정보 가져온 뒤 readonly -->
-		<!-- 작성일은 DAO에서 처리 -->
-<!-- 	<input type="hidden" name="userId" value="<%=userId%>" readonly>  -->	
-
+		<input type="hidden" name="userId" value="<%=userId%>">
 		<table>
 			<thead>
 				<tr>
-					<td><label for="postTitle">글 제목:</label> 
-					<input type="text" id="postTitle" name="postTitle" value="<%= postDetail != null ? postDetail.getPostTitle() : "" %>" required></td>
+
+					<td><label for="postTitle">글 제목:</label><%=postTitle%></td>
 				</tr>
 				<tr>
-				<td></td>	
-						<td><input type="text" name="stuname" value="<%=userId%>" readonly></td>
-						<td><input type="text" name="stutime" value="<%=createdAt%>" readonly></td>
-				</tr>		
+					<td><label for="postUserId">작성자:</label><%=postUserId%></td>
+					<td><label for="createdAt">작성일:</label><%=createdAt%></td>
+				</tr>
+				</tr>
+
 			</thead>
 			<tbody>
-				<tr>
+			<!-- <tr>
 					<td colspan="4"><label for="preview-image">이미지 미리보기</label>
 						<div id="preview" style="display: flex; flex-wrap: wrap;"></div></td>
-				</tr>
+				</tr> -->
 				<tr>
-					<td colspan="4"><label for="postContent">내용:</label> 
-					<textarea id="postContent" name="postContent" rows="5" cols="50" required>
-							<%= postDetail != null ? postDetail.getPostContent() : "" %>
-							</textarea></td>
+
+					<td colspan="4"><label for="postContent">내용:</label><%=postContent%></td>
+
 				</tr>
 				<tr>
 					<td colspan="4" bgcolor="#f5f5f5" style="text-align: left">
@@ -89,34 +121,26 @@
 			</tbody>
 			<tfoot>
 				<tr>
-				<div align="right" id="menuButton" >
-					<td><label for="majorTag">학과 태그:</label> <select id="majorTag"
-						name="majorTag">
-							<option value="일반 중고책 거래">일반 중고책 거래</option>
-							<c:forEach var="major" items="${majorInfo}">
-								<option value="${major.majorTag}" >
-								${major.majorTag}</option>
-							</c:forEach>
-					</select></td>
-					
-					<%--수정하기 --%>	
+						<%--수정하기 --%>	
+						<td><label for="majorTag">학과 태그:</label><%=majorTag%></td>
+
+						<!-- if(userId == postUserId { -->
+
+						<%--수정하기 --%>
 						<td><input type="button" id="update" value="수정"></td>
-					<%--삭제하기 --%>	
-						<td><input type="button" id="delete" onclick="javascript:deletePro('<%=userId%>');" value="삭제"></td> 
-					 <%--목록 --%>
-					 <form action="<%=contextPath%>/Book/booktradingboard.bo" method="post"></td>
-					<td><input type="submit" id="list" value="목록" /></td>
-					</form>
-				</div>
-				</tr>
-				<tr>
-					<td><label for="image">이미지:</label><input type="file"
-						id="image" name="image" accept="image/*"
-						onchange="previewImages(event)" multiple></td>
+						<%--삭제하기 --%>
+						<td><input type="button" id="delete"
+							onclick="javascript:deletePro('<%=postId%>');" value="삭제"></td>
+
+						<!-- } -->
+
+						<%--목록 --%>
+					<td><input type="button" id="list" value="목록" /></td>
 				</tr>
 			</tfoot>
 		</table>
 	</form>
+
 	
 	<!-- 댓글 섹션 -->
 <div id="commentsSection" style="margin-top: 20px;">
@@ -307,6 +331,7 @@
 		
 		
 	</script>
+
 
 </body>
 </html>
