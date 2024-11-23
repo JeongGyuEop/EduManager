@@ -76,7 +76,7 @@ public class BookPostDAO {
 		}
 		return majorInfo;
 	}
-
+// 글정보등록
 	public List<String> bookPostUpload(BookPostVo bookPostVo) {
 		String sqlInsertPost = "INSERT INTO book_post (user_id, post_title, post_content, major_tag, created_at) VALUES (?, ?, ?, ?, NOW())";
 		String sqlInsertImage = "INSERT INTO book_image (post_id, file_name, image_path) VALUES (?, ?, ?)";
@@ -232,8 +232,71 @@ public class BookPostDAO {
 		}
 		return bookBoardList;
 	}
+	
+	
+
+	 // 게시글 읽기 (Read)
+	public List<BookPostVo> getPostById(int postId) throws SQLException {
+	    String sql = "SELECT * FROM book_post WHERE post_id = ?";
+		List<BookPostVo> bookBoardList = new ArrayList<BookPostVo>();
+
+	    try {
+	        // 데이터베이스 연결
+	        con = ds.getConnection(); 
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setInt(1, postId); // 쿼리에 ID 설정
+	        rs = pstmt.executeQuery();
+
+	        // 결과 처리
+	        if (rs.next()) { // 단일 결과만 처리
+	            int postId_ = rs.getInt("post_id");
+	            String userId = rs.getString("user_id");
+	            String postTitle = rs.getString("post_title");
+	            String postContent = rs.getString("post_content");
+	            String majorTag = rs.getString("major_tag");
+	            Timestamp createdAt = rs.getTimestamp("created_at");
+
+	            // BookPostVo 객체 생성
+	            bookBoardList = (List<BookPostVo>) new BookPostVo(postId_, userId, postTitle, postContent, majorTag, createdAt);
+	        }
+	    } catch (Exception e) {
+	        System.out.println("BookPostDAO의 getPostById 메서드에서 오류 발생");
+	        e.printStackTrace();
+	    } finally {
+	        closeResource(); // 자원 정리 (Connection, PreparedStatement, ResultSet 닫기)
+	    }
+
+	    return bookBoardList; // 조회된 게시글 반환 (없으면 null 반환)
+	}
+    
+    
+    /*
+      // 게시글 수정 (Update)
+    public boolean updatePost(BookPostVo post) throws SQLException {
+        String sql = "UPDATE book_posts SET post_title = ?, post_content = ?, major_tag = ? WHERE post_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, post.getPostTitle());
+            stmt.setString(2, post.getPostContent());
+            stmt.setString(3, post.getMajorTag());
+            stmt.setInt(4, post.getPostId());
+            return stmt.executeUpdate() > 0; // 1 이상이면 수정 성공
+        }
+    }
+
+    // 게시글 삭제 (Delete)
+    public boolean deletePost(int postId) throws SQLException {
+        String sql = "DELETE FROM book_posts WHERE post_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, postId);
+            return stmt.executeUpdate() > 0; // 1 이상이면 삭제 성공
+        }
+    }
+
+     */
+	
 	// ===============================================================================
 	// 중고책 거래=======================================================================
 	// ===============================================================================
+
 
 }

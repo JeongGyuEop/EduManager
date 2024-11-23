@@ -1,3 +1,4 @@
+<%@page import="java.sql.Timestamp"%>
 <%@ page import="Vo.BookPostVo"%>
 <%@ page import="Vo.MemberVo"%>
 <%@ page import="java.util.List"%>
@@ -10,13 +11,18 @@
 
 	MemberVo memberVo = new MemberVo();
 	String userId = (String) session.getAttribute("id");
-
+	Timestamp createdAt = (Timestamp) request.getAttribute("createdAt");
+    BookPostVo postDetail = (BookPostVo) request.getAttribute("postDetail");
+    List<BookPostVo> majorInfo = (List<BookPostVo>) request.getAttribute("majorInfo");
+    
+    String errorMessage = (String) request.getAttribute("errorMessage");
 
 	String nowPage = (String) request.getAttribute("nowPage");
 	String nowBlock = (String) request.getAttribute("nowBlock");
-
-	List<BookPostVo> majorInfo = (List<BookPostVo>) request.getAttribute("majorInfo");
+   
+	List<BookPostVo> bookBoardList = (List<BookPostVo>) request.getAttribute("bookBoardList");
 %>
+
 
 
 <!DOCTYPE html>
@@ -33,6 +39,14 @@
                 alert(message); // 메시지가 있을 경우에만 alert 창 표시
             }
         };
+        
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // 메시지 알림 처리
+            var message = "<%= request.getAttribute("message") %>";
+            if (message && message !== "null") {
+                alert(message);
+            } 
     </script>
     
 </head>
@@ -48,14 +62,13 @@
 			<thead>
 				<tr>
 					<td><label for="postTitle">글 제목:</label> 
-					<input type="text" id="postTitle" name="postTitle" required></td>
+					<input type="text" id="postTitle" name="postTitle" value="<%= postDetail != null ? postDetail.getPostTitle() : "" %>" required></td>
 				</tr>
 				<tr>
 				<td></td>	
 						<td><input type="text" name="stuname" value="<%=userId%>" readonly></td>
-						<td><input type="text" name="stutime" value="작성날짜" readonly></td>
+						<td><input type="text" name="stutime" value="<%=createdAt%>" readonly></td>
 				</tr>		
-				</tr>
 			</thead>
 			<tbody>
 				<tr>
@@ -63,8 +76,10 @@
 						<div id="preview" style="display: flex; flex-wrap: wrap;"></div></td>
 				</tr>
 				<tr>
-					<td colspan="4"><label for="postContent">내용:</label> <textarea
-							id="postContent" name="postContent" rows="5" cols="50" required></textarea></td>
+					<td colspan="4"><label for="postContent">내용:</label> 
+					<textarea id="postContent" name="postContent" rows="5" cols="50" required>
+							<%= postDetail != null ? postDetail.getPostContent() : "" %>
+							</textarea></td>
 				</tr>
 				<tr>
 					<td colspan="4" bgcolor="#f5f5f5" style="text-align: left">
@@ -79,7 +94,8 @@
 						name="majorTag">
 							<option value="일반 중고책 거래">일반 중고책 거래</option>
 							<c:forEach var="major" items="${majorInfo}">
-								<option value="${major.majorTag}">${major.majorTag}</option>
+								<option value="${major.majorTag}" >
+								${major.majorTag}</option>
 							</c:forEach>
 					</select></td>
 					
@@ -122,7 +138,7 @@
 
     <!-- 댓글 입력 폼 -->
     <form action="<%=contextPath%>/Book/replypro.do" method="post" style="display: flex; flex-direction: column;">
-        <input type="hidden" name="postId" value="<%=request.getAttribute("postId")%>" />
+        <input type="hidden" name="postId" value="<%= postDetail != null ? postDetail.getPostId() : "" %>">
         <textarea name="commentContent" rows="3" style="margin-bottom: 10px; padding: 10px; width: 100%; resize: none; border: 1px solid #ddd;" placeholder="댓글을 입력하세요..." required></textarea>
         <button type="submit" style="align-self: flex-end; padding: 5px 15px; border: 1px solid #ddd; background-color: #f5f5f5; cursor: pointer;">
             댓글 등록

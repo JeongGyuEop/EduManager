@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.sql.SQLException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -127,5 +129,20 @@ public class BookPostService {
 		public List<BookPostVo> serviceBookKeyWord(String key, String word) {
 			return bookPostDAO.bookserchList(key, word);
 		}
-}
 
+
+		//상세보기 수정을 위한 글번호 얻기
+		public List<BookPostVo> getPostById(int postId) throws SQLException {
+		  
+			return bookPostDAO.getPostById(postId);
+		}
+
+		public List<BookPostVo> serviceBoardRead(String post_id) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+
+
+
+}
