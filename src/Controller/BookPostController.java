@@ -144,8 +144,22 @@ public class BookPostController extends HttpServlet {
 			
 			
 			
-			//게시판읽기
+			//게시판상세보기
 		case "/bookread.bo":	
+			
+			
+			//게시글 삭제
+		case "/deleteBoard.do":
+			
+			
+			//게시글 수정
+		case "updateBoard.do":
+			
+			
+			//댓글 입력
+		case "replypro.do":	
+			
+			
 			
 			
 			
