@@ -83,14 +83,14 @@ public class BookPostService {
 			Collection<Part> parts = request.getParts();
 			for (Part part : parts) {
 				if (part.getName().equals("image") && part.getSize() > 0) {
-					String fileName = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+					String uploadTime = Paths.get(part.getSubmittedFileName()).getFileName().toString();
 					// 해당 이미지의 uniqueFileName 찾기
 					String uniqueFileName = null;
 					for (String path : imagePaths) {
-						if (path.contains("/" + postId + "/" + fileName + "_")) {
-							uniqueFileName = path.substring(path.lastIndexOf("/") + 1);
-							break;
-						}
+					    if (path.contains("/" + postId + "/" + uploadTime + "_")) {
+					        uniqueFileName = path.substring(path.lastIndexOf("/") + 1);
+					        break;
+					    }
 					}
 					if (uniqueFileName != null) {
 						String filePath = postImageDirPath + File.separator + uniqueFileName;
