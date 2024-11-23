@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 
 import Vo.BoardVo;
 import Vo.BookPostVo;
+import Vo.BookPostVo.BookImage;
 
 public class BookPostDAO {
 
