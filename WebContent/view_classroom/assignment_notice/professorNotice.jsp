@@ -1,17 +1,18 @@
-
-<%@page import="Vo.BoardVo"%>
+<%@page import="Vo.ClassroomBoardVo"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%
 	request.setCharacterEncoding("UTF-8");
 	String contextPath = request.getContextPath();
+	String course_id = (String)session.getAttribute("course_id");
+	String role_ = (String)session.getAttribute("role");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Insert title here</title>
+<title>교수 공지사항</title>
 <link rel="stylesheet" type="text/css" href="/MVCBoard/style.css" />
 <script type="text/javascript">
 
@@ -45,10 +46,24 @@
     //조회된 화면에서  글제목 하나를 클릭했을때  글번호를 매개변수로 받아서
     //아래에 작성된 <form>를 이용해 글번호에 해당되는 글 하나의 정보를 조회 요청!
     function fnRead(val){
-    	document.frmRead.action="<%=contextPath%>/Board/read.bo";
+    	document.frmRead.action="<%=contextPath%>/classroomboard/noticeRead.bo";    	
 		document.frmRead.notice_id.value = val;
 		document.frmRead.submit();//<form> 을 이용해 요청
 	}
+    
+    //role 값이 교수일때 새글쓰기 버튼 보이고 학생일때 안보이게
+    $(document).ready(function () {
+		
+    	var role = "<%=role_ %>";
+    	
+    	if(role === "교수"){
+			$("#newContent").css("visibility", "visible");
+    	}else{
+			$("#newContent").css("visibility", "hidden");
+    	}
+    	
+	});
+    
 </script>
 </head>
 <body>
@@ -75,7 +90,7 @@
 
 		//BoardController에서 request에 바인딩 한 ArrayList배열을 꺼내옵니다
 		//조회된 글목록 정보 얻기 
-		ArrayList list = (ArrayList) request.getAttribute("list");
+		ArrayList<ClassroomBoardVo> list = (ArrayList<ClassroomBoardVo>)request.getAttribute("list");
 
 		//조회된 글 총 갯수 
 		totalRecord = list.size();
@@ -119,16 +134,19 @@
 		}
 
 		String id = (String) session.getAttribute("id");
+		
 	%>
 
 
-	<%--글제목 하나를 클릭했을떄 BoardController 글 하나 조회 요청하기 위한 폼
+	<%--글제목 하나를 클릭했을떄 ClassroomBoardController 글 하나 조회 요청하기 위한 폼
 	위 자바스크립트 function fnRead함수에서 사용하는 <form>
  --%>
 	<form name="frmRead">
+		<input type="hidden" name="center" value="/view_classroom/assignment_notice/classroomRead.jsp">
 		<input type="hidden" name="notice_id"> 
 		<input type="hidden" name="nowPage" value="<%=nowPage%>"> 
 		<input type="hidden" name="nowBlock" value="<%=nowBlock%>">
+		<input type="hidden" name="course_id" value="<%=course_id%>">
 	</form>
 
 
@@ -148,18 +166,18 @@
 										<td align="left">번호</td>
 										<td align="left">제목</td>
 										<td align="left">내용</td>
-										<td align="left">날짜</td>
 										<td align="left">작성자</td>
+										<td align="left">날짜</td>
 									</tr>
 									<%
-										//board테이블에서 조회된 게시글이 없다면?
+										//classroom_notice테이블에서 조회된 게시글이 없다면?
 										if (list.isEmpty()) {
 									%>
 									<tr align="center">
 										<td colspan="5">등록된 글이 없습니다.</td>
 									</tr>
 									<%
-										} else {//board테이블에서 조회된 게시글이 있다면?
+										} else {//classroom_notice테이블에서 조회된 게시글이 있다면?
 
 											for (int i = beginPerPage; i < (beginPerPage + numPerPage); i++) {
 
@@ -167,7 +185,7 @@
 													break;
 												}
 
-												BoardVo vo = (BoardVo) list.get(i);
+												ClassroomBoardVo vo = (ClassroomBoardVo) list.get(i);
 												//		int level = vo.getB_level(); 
 												//모든 글들의 들여쓰기 정도값
 												//0(주글)또는1(주글에 대한 답변글).....
@@ -183,10 +201,11 @@
 											%> 
 											<img src="<%=contextPath%>/common/notice/images/level.gif" width="<%=width%>" height="15"> 
 											<img src="<%=contextPath%>/common/notice/images/re.gif"> 
+											
 											<%
 											 	}
 											 %>
-											<a href="javascript:fnRead('<%=vo.getNotice_id()%>')"> <%=vo.getTitle()%></a>
+											<a href="javascript:fnRead('<%=vo.getNotice_id()%>')"> <%=vo.getTitle()%> </a>
 										</td>
 										<td align="left"><%=vo.getContent()%></td>
 										<td align="left"><%=vo.getCreated_date()%></td>
@@ -208,7 +227,8 @@
 							<td colspan="4">&nbsp;</td>
 						</tr>
 						<tr>
-							<form action="<%=contextPath%>/Board/searchlist.bo" method="post" name="frmSearch" onsubmit="fnSearch(); return false;">
+							<form action="<%=contextPath%>/classroomboard/searchlist.bo" 
+								method="post" name="frmSearch" onsubmit="fnSearch(); return false;">
 								<td colspan="2">
 									<div align="right">
 										<select name="key">
@@ -219,8 +239,8 @@
 								</td>
 								<td width="26%">
 									<div align="center">
-										&nbsp; <input type="text" name="word" id="word" /> <input
-											type="submit" value="검색" />
+										&nbsp; <input type="text" name="word" id="word" />
+										 <input type="submit" value="검색" />
 									</div>
 								</td>
 							</form>
@@ -230,7 +250,8 @@
 
 
 								<button id="newContent"
-									onclick="location.href='<%=contextPath%>/Board/write.bo?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>'">
+									onclick="location.href='<%=contextPath%>/classroomboard/noticeWrite.bo?center=/view_classroom/assignment_notice/classroomWrite.jsp&nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>&course_id=<%=course_id%>'
+									style='visibility:visible;'">
 									새 글쓰기</button>
 
 
@@ -247,29 +268,31 @@
 				if (totalRecord != 0) {//DB의 board테이블에서 조회된 글이 있다면?
 
 					if (nowBlock > 0) {
-			%> <a
-				href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock - 1%>&nowPage=<%=((nowBlock - 1) * pagePerBlock)%>">
-					◀ 이전 <%=pagePerBlock%>개
-			</a> <%
- 	}
-
+			%> 
+			<a href="<%=contextPath%>/classroomboard/noticeList.bo?center=/view_classroom/assignment_notice/professorNotice.jsp&nowBlock=<%=nowBlock - 1%>&nowPage=<%=((nowBlock - 1) * pagePerBlock)%>&courseId=<%=course_id%>">
+				◀ 이전 <%=pagePerBlock%>개
+			 </a> 
+		<%
+ 		}
  		//페이지 번호를 반복해서 3개씩 보여 주자 
  		for (int i = 0; i < pagePerBlock; i++) {
- %> &nbsp;&nbsp; <a
-				href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock) + i%>">
-					<%=(nowBlock * pagePerBlock) + i + 1%> <%
- 	if ((nowBlock * pagePerBlock) + i + 1 == totalPage) {
+ 		%> &nbsp;&nbsp; 
+ 		<a href="<%=contextPath%>/classroomboard/noticeList.bo?center=/view_classroom/assignment_notice/professorNotice.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=(nowBlock * pagePerBlock) + i%>&courseId=<%=course_id%>">
+					<%=(nowBlock * pagePerBlock) + i + 1%> 
+		<%
+ 			if ((nowBlock * pagePerBlock) + i + 1 == totalPage) {
  				break;
  			}
- %>
-			</a> &nbsp;&nbsp; <%
+ 		%>
+		</a> &nbsp;&nbsp; 
+	<%
  	} //for 닫기
 
  		if (totalBlock > nowBlock + 1) {
- %> <a
-				href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock + 1%>&nowPage=<%=(nowBlock + 1) * pagePerBlock%>">
-					▶ 다음 <%=pagePerBlock%>개
-			</a> <%
+	 %> 
+ 		<a href="<%=contextPath%>/classroomboard/noticeList.bo?center=/view_classroom/assignment_notice/professorNotice.jsp&nowBlock=<%=nowBlock + 1%>&nowPage=<%=(nowBlock + 1) * pagePerBlock%>&courseId=<%=course_id%>">
+				▶ 다음 <%=pagePerBlock%>개
+		</a> <%
  	}
 
  	} //바깥쪽 if닫기
@@ -280,15 +303,3 @@
 	</table>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-

@@ -61,7 +61,7 @@ public class BoardDAO {
 			
 			try {
 				con = ds.getConnection();//DB연결
-				sql = "select * from notice order by b_group asc";
+				sql = "select * from notice order by b_group asc, notice_id desc ";
 				pstmt = con.prepareStatement(sql);
 				rs = pstmt.executeQuery();
 				
