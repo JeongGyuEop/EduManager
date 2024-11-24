@@ -13,6 +13,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>과제 제출</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<%
+    String message = request.getParameter("message");
+    if (message != null) {
+%>
+        <script>
+            alert('<%= message %>'); // 메시지를 알림으로 표시
+        </script>
+<%
+    }
+%>
+<script>
+
+	$(document).ready(function() {
+		const submitButton = $('#assignmentUploadForm button[type="submit"]'); // 제출 버튼
+	    $.ajax({
+	        url: '<%=contextPath%>/submit/getSubmittedAssignments.do',
+	        method: 'GET',
+	        data: {
+	        	assignmentId: '<%=assignmentId%>'
+	        },
+	        dataType: 'json',
+	        success: function(response) {
+	        	if (response) { // 응답 객체가 존재할 경우
+	        		
+	                submitButton.prop('disabled', true); // 제출 버튼 비활성화
+	        		
+	                // 다운로드 버튼을 클릭했을 때 전달할 URL
+	        		const downloadUrl = '<%=contextPath%>/submit/downloadAssignment.do?fileName=' 
+                        + encodeURIComponent(response.fileName) 
+                        + '&originalName=' + encodeURIComponent(response.originalName);
+	        		
+	                $('#submittedAssignments').append(
+	                    '<tr>' +
+	                        '<td>' + '<%=assignment_title%>' + '</td>' +
+	                        '<td>' + response.originalName + '</td>' +
+	                        '<td>' + response.submittedDate + '</td>' +
+	                        '<td><a href="' + downloadUrl + '">다운로드</a></td>' +
+	                        '<td><button class="delete-file-btn" data-file-id="' + response.fileId + '">삭제</button></td>' +
+	                    '</tr>'
+	                );
+	            } else {
+	                submitButton.prop('disabled', false); // 제출 버튼 활성화
+	                $('#submittedAssignments').append('<tr><td colspan="3">제출된 과제가 없습니다.</td></tr>');
+	            }
+	        },
+	        error: function() {
+	            alert('제출된 과제를 불러오는 중 오류가 발생했습니다.');
+	        }
+	    });
+	});
+	
+	$(document).on('click', '.delete-file-btn', function() {
+		const submitButton = $('#assignmentUploadForm button[type="submit"]'); // 제출 버튼
+	    const fileId = $(this).data('file-id');
+	    const row = $(this).closest('tr');
+
+	    $.ajax({
+	        url: '<%=contextPath%>/submit/deleteFile.do',
+	        method: 'POST',
+	        data: { fileId: fileId },
+	        success: function(response) {
+                submitButton.prop('disabled', false); // 제출 버튼 활성화
+	            alert(response);
+	            row.remove(); // 삭제된 행을 테이블에서 제거
+	            $('#submittedAssignments').append('<tr><td colspan="3">제출된 과제가 없습니다.</td></tr>');
+	        },
+	        error: function(xhr) {
+	            if (xhr.status === 403) {
+	                alert("파일 삭제 권한이 없습니다.");
+	            } else {
+	                alert("파일 삭제에 실패했습니다.");
+	            }
+	        }
+	    });
+	});
+	
+</script>
+
 </head>
 <body>
     <div class="container">
@@ -41,21 +120,16 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>과목</th>
+                        <th>과제명</th>
                         <th>파일명</th>
                         <th>제출일</th>
                         <th>다운로드</th>
+                        <th>관리</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- 업로드된 파일 리스트 -->
-                    <tr>
-                        <td>컴퓨터 과학 기초</td>
-                        <td>example_assignment.pdf</td>
-                        <td>2024-11-23</td>
-                        <td><a href="<%=contextPath%>/downloadAssignment.do?fileId=1" class="btn btn-sm btn-success"><i class="fas fa-download"></i> 다운로드</a></td>
-                    </tr>
-                </tbody>
+                <tbody id="submittedAssignments">
+			        <!-- Ajax 결과가 여기 추가됩니다. -->
+			    </tbody>
             </table>
         </div>
     </div>

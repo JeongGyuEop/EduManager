@@ -4,10 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+
+import Vo.SubmissionVo;
 
 public class SubmissionDAO {
 
@@ -51,8 +55,8 @@ public class SubmissionDAO {
 		        String sql = "INSERT INTO submission (assignment_id, student_id) VALUES (?, ?)";
 		        pstmt = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 
-		        pstmt.setInt(1, Integer.parseInt(assignmentId)); // `INT` 타입
-		        pstmt.setString(2, studentId); // `VARCHAR` 타입
+		        pstmt.setInt(1, Integer.parseInt(assignmentId)); 
+		        pstmt.setString(2, studentId); 
 
 		        pstmt.executeUpdate();
 
@@ -77,7 +81,7 @@ public class SubmissionDAO {
 		
 		int result = 0;
 		
-		String query = "INSERT INTO submission_file (submission_id, file_path, original_name) VALUES (?, ?, ?)";
+		String query = "INSERT INTO submission_file (submission_id, file_name, original_name) VALUES (?, ?, ?)";
 
 	    try {
 
@@ -101,6 +105,102 @@ public class SubmissionDAO {
 	    
 	    return result;
 		
+	}
+
+	//----------
+	// 학생이 제출한 과제(파일)을 조회하기 위해 DB 연결
+	public SubmissionVo getSubmissions(String studentId, String assignmentId) {
+		SubmissionVo submissions = null;
+		
+	    String sql = "SELECT s.submission_id, s.assignment_id, s.student_id, s.submitted_date, sf.file_id, sf.file_name, sf.original_name " +
+	                 "FROM submission s " +
+	                 "LEFT JOIN submission_file sf ON s.submission_id = sf.submission_id " +
+	                 "WHERE s.student_id = ? AND s.assignment_id=?";
+
+	    try {
+	        con = ds.getConnection();
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, studentId);
+	        pstmt.setInt(2, Integer.parseInt(assignmentId));
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            submissions = new SubmissionVo();
+	            submissions.setFileId(rs.getInt("file_id"));
+	            submissions.setSubmissionId(rs.getInt("submission_id"));
+	            submissions.setSubmittedDate(rs.getTimestamp("submitted_date"));
+	            submissions.setFileName(rs.getString("file_name"));
+	            submissions.setOriginalName(rs.getString("original_name"));
+	        }
+	    } catch (Exception e) {
+	    	System.out.println("SubmissionDAO의 getSubmissions 메소드에서 오류");
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return submissions;
+	}
+
+	//----------
+	//
+	public SubmissionVo getFileById(String fileId) {
+		SubmissionVo fileData = null;
+	    String sql = "SELECT * FROM submission_file WHERE file_id = ?";
+	
+	    try {
+	        con = ds.getConnection();
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, fileId);
+	        rs = pstmt.executeQuery();
+	
+	        if (rs.next()) {
+	            fileData = new SubmissionVo();
+	            fileData.setFileId(rs.getInt("file_id"));
+	            fileData.setSubmissionId(rs.getInt("submission_id"));
+	            fileData.setFileName(rs.getString("file_name"));
+	            fileData.setOriginalName(rs.getString("original_name"));
+	        }
+	    } catch (Exception e) {
+	    	System.out.println("SubmissionDAO의 getFileById 메소드에서 오류");
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	
+	    return fileData;
+	}
+
+	//----------
+	//
+	public int deleteFile(String fileId, int submission_id) {
+		
+		String sql = "DELETE FROM submission_file WHERE file_id = ?";
+		String sumission_sql = "DELETE FROM submission WHERE submission_id = ?";
+		int result = 0;
+		
+	    try {
+	        con = ds.getConnection();
+	        
+	        // 1. submission_file 테이블에서 삭제
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, fileId);
+	        result = pstmt.executeUpdate();
+	        
+	        // 2. submission 테이블에서 삭제
+	        pstmt = con.prepareStatement(sumission_sql);
+	        pstmt.setInt(1, submission_id);
+	        result += pstmt.executeUpdate();
+	
+	        return result;
+	        
+	    } catch (Exception e) {
+	    	System.out.println("SubmissionDAO의 deleteFile 메소드에서 오류");
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+
+        return result;
 	}
 	
 }

@@ -1,6 +1,9 @@
 package Controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
@@ -13,10 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
+
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import Service.SubmissionService;
+import Vo.SubmissionVo;
 
 @WebServlet("/submit/*")
 public class SubmissionController extends HttpServlet {
@@ -98,7 +104,6 @@ public class SubmissionController extends HttpServlet {
 	    		
 	    		String assignmentId = multipartRequest.getParameter("assignmentId"); 
 	    		String assignmentTitle = multipartRequest.getParameter("assignmentTitle");
-	    	    System.out.println("assignmentId: " + assignmentId); // 값 확인
 	    		String studentId = (String)session.getAttribute("student_id"); // 학생 ID
 	    		        
 	    		// submission 테이블에 데이터 저장
@@ -117,34 +122,108 @@ public class SubmissionController extends HttpServlet {
 				    response.sendRedirect(request.getContextPath() +"/submit/submitAssignmentPage.bo?message="
 				    		+ URLEncoder.encode("과제 제출이 완료되었습니다.", "UTF-8")
 				    		+ "&assignmentId=" + assignmentId
-				    		+ "&assignmentTitle=" + assignmentTitle);
+				    		+ "&assignmentTitle=" +  URLEncoder.encode(assignmentTitle, "UTF-8"));
 				    return;
 				} else {
 					// 실패 시 message 파라미터만 포함하여 리다이렉트
 					response.sendRedirect(request.getContextPath() +"/submit/submitAssignmentPage.bo?message="
 				    		+ URLEncoder.encode("과제 제출에 실패했습니다.", "UTF-8")
 				    		+ "&assignmentId=" + assignmentId
-				    		+ "&assignmentTitle=" + assignmentTitle);
+				    		+ "&assignmentTitle=" +  URLEncoder.encode(assignmentTitle, "UTF-8"));
 				    return;
 				}
 	    		
 	    //==========================================================================================
 	    		
-	    	case "/createAssignment.do": //  2단계 요청 주소를 받으면
-	    		
-	    		break;
+	    	case "/getSubmittedAssignments.do": 
+	    	    studentId = (String) session.getAttribute("student_id"); // 학생 ID
+	    	    assignment_id = request.getParameter("assignmentId");
+	    	    
+	    	    response.setContentType("application/json;charset=utf-8");
+	    	    
+	    	    out = response.getWriter();
+	    	    
+	    	    SubmissionVo submission = submissionservice.serviceGetSubmission(studentId, assignment_id);
+	    	    if (submission != null) {
+	    	        // JSON 데이터 생성
+	    	        JSONObject jsonObject = new JSONObject();
+	    	        jsonObject.put("fileId", submission.getFileId());
+	    	        jsonObject.put("originalName", submission.getOriginalName());
+	    	        jsonObject.put("submittedDate", submission.getSubmittedDate().toString());
+	    	        jsonObject.put("fileName", submission.getFileName());
+
+	    	        response.setContentType("application/json;charset=utf-8");
+	    	        out.print(jsonObject);
+	    	        out.flush();
+	    	        out.close();
+
+	    	        return;
+	    	    } else {
+	    	        response.setContentType("application/json;charset=utf-8");
+	    	        out.print("null");
+	    	        out.flush();
+	    	        out.close();
+	    	        return;
+	    	    }
+	    	    
 	    		
 	    //==========================================================================================
 	    		
-	    	case "/deleteAssignment.do": //  2단계 요청주소를 받으면
-	    		
-	    		break;
+	    	case "/downloadAssignment.do":
+	    	    String fileName = request.getParameter("fileName");
+	    	    String originalName = request.getParameter("originalName");
+
+	    	    File file = new File(getServletContext().getRealPath("/submitUploads") + File.separator + fileName);
+	    	    if (file.exists()) {
+	    	        response.setContentType("application/octet-stream");
+	    	        response.setContentLength((int) file.length());
+	    	        response.setHeader("Content-Disposition", "attachment; filename=\"" + URLEncoder.encode(originalName, "UTF-8") + "\";");
+
+	    	        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+	    	             BufferedOutputStream file_out = new BufferedOutputStream(response.getOutputStream())) {
+
+	    	            byte[] buffer = new byte[1024];
+	    	            int bytesRead;
+	    	            while ((bytesRead = in.read(buffer)) != -1) {
+	    	            	file_out.write(buffer, 0, bytesRead);
+	    	            }
+	    	            file_out.flush();
+	    	            return;
+	    	        } catch (IOException e) {
+	    	            e.printStackTrace();
+	    	        }
+	    	    } else {
+	    	        response.setContentType("text/html;charset=UTF-8");
+	    	        response.getWriter().write("<script>alert('파일을 찾을 수 없습니다.'); history.back();</script>");
+	    	        return;
+	    	    }
 	    		
 	    //==========================================================================================
 	    		
-	    	case "/updateAssignment.do": // 
-	    		
-	    		break;
+	    	case "/deleteFile.do": // 
+	    	    String fileId = request.getParameter("fileId"); // 클라이언트에서 전달된 파일 ID
+	    	    // 파일 정보 조회 및 권한 확인
+	    	    SubmissionVo fileData = submissionservice.getFileById(fileId);
+	    	    int submission_id = fileData.getSubmissionId();
+	    	    
+	    	    // 실제 파일 삭제
+	    	    String filePath = getServletContext().getRealPath("/submitUploads") + File.separator + fileData.getFileName();
+	    	    file = new File(filePath);
+	    	    boolean fileDeleted = file.exists() && file.delete();
+
+	    	    // 데이터베이스에서 파일 정보 삭제
+	    	    if (fileDeleted) {
+	    	        result = submissionservice.deleteFile(fileId, submission_id);
+	    	        if (result == 2) {
+	    	            response.getWriter().write("파일이 성공적으로 삭제되었습니다.");
+	    	        } else {
+	    	            response.getWriter().write("파일 삭제는 완료되었으나, 데이터베이스에서 완전히 삭제되지 않았습니다.");
+	    	        }
+	    	    } else {
+	    	        response.getWriter().write("파일을 삭제할 수 없습니다.");
+	    	    }
+	    	    
+	    	    return;
 	    		
 	    //==========================================================================================
 	    		

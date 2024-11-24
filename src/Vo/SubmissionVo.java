@@ -9,6 +9,11 @@ public class SubmissionVo {
     private Timestamp submittedDate; // 제출 날짜
     private String feedback;         // 피드백
     private int grade;               // 점수
+    
+    private int fileId;
+	private String fileName;
+    private String originalName;
+    
 
     // 기본 생성자
     public SubmissionVo() {}
@@ -70,6 +75,30 @@ public class SubmissionVo {
 
     public void setGrade(int grade) {
         this.grade = grade;
+    }
+    
+    public int getFileId() {
+		return fileId;
+	}
+
+	public void setFileId(int fileId) {
+		this.fileId = fileId;
+	}
+    
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    public void setOriginalName(String originalName) {
+        this.originalName = originalName;
     }
 
 }
