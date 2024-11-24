@@ -23,12 +23,10 @@ public class BookPostVo {
 	public BookPostVo() {
 	}
 
-
 	public BookPostVo(String majorTag) {
 		super();
 		this.majorTag = majorTag;
 	}
-
 
 	// 모든 필드를 포함한 생성자
 	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
@@ -59,7 +57,6 @@ public class BookPostVo {
 		this.createdAt = createdAt;
 	}
 
-
 	public BookPostVo(int postId, String userId, String postTitle, String postContent, String majorTag,
 			Timestamp createdAt) {
 		super();
@@ -71,8 +68,6 @@ public class BookPostVo {
 		this.createdAt = createdAt;
 	}
 
-	
-	
 	public BookPostVo(String userId, String postTitle, String postContent, String majorTag, Timestamp createdAt,
 			List<BookImage> images) {
 		super();
@@ -83,7 +78,6 @@ public class BookPostVo {
 		this.createdAt = createdAt;
 		this.images = images;
 	}
-
 
 	// Getter와 Setter 메서드
 	public int getPostId() {
@@ -152,9 +146,19 @@ public class BookPostVo {
 		private String fileName;
 		// 이미지 파일 경로
 		private String image_path;
+		// 저장 파일 이름
+		private String uniqueFileName;
 
 		// 기본 생성자
 		public BookImage() {
+		}
+
+		public String getUniqueFileName() {
+			return uniqueFileName;
+		}
+
+		public void setUniqueFileName(String uniqueFileName) {
+			this.uniqueFileName = uniqueFileName;
 		}
 
 		// 모든 필드를 포함한 생성자
