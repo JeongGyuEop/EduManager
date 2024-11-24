@@ -1,8 +1,8 @@
-<<<<<<< HEAD
-=======
+
+<%@page import="Vo.CommentVo"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="Vo.BookPostVo.BookImage"%>
->>>>>>> ef10ca62b5222e7b5fb5063d644940ee2df320fd
+
 <%@page import="java.sql.Timestamp"%>
 <%@ page import="Vo.BookPostVo"%>
 <%@ page import="Vo.MemberVo"%>
@@ -17,17 +17,8 @@
 	MemberVo memberVo = new MemberVo();
 	String userId = (String) session.getAttribute("id");
 
-	/* Timestamp createdAt = (Timestamp) request.getAttribute("createdAt");
-  
-    List<BookPostVo> majorInfo = (List<BookPostVo>) request.getAttribute("majorInfo");
-    
-    String errorMessage = (String) request.getAttribute("errorMessage");
-
-	String nowPage = (String) request.getAttribute("nowPage");
-	String nowBlock = (String) request.getAttribute("nowBlock");
-   
-	List<BookPostVo> bookBoardList = (List<BookPostVo>) request.getAttribute("bookBoardList"); */
-	  BookPostVo postDetail = (BookPostVo) request.getAttribute("postDetail");
+	 BookPostVo postDetail = (BookPostVo) request.getAttribute("postDetail");
+	 CommentVo comment = (CommentVo) request.getAttribute("commentList");
 %>
 
 <%
@@ -144,31 +135,32 @@
 	
 	<!-- 댓글 섹션 -->
 <div id="commentsSection" style="margin-top: 20px;">
-    <h3 style="margin-bottom: 10px; font-size: 1.2em;">댓글</h3>
+    <h3>댓글</h3>
 
     <!-- 댓글 목록 -->
-    <div id="commentList" style="margin-bottom: 20px; border: 1px solid #ddd; padding: 10px; max-height: 200px; overflow-y: auto;">
+    <div id="commentList">
         <c:forEach var="comment" items="${commentList}">
-            <div style="border-bottom: 1px solid #eaeaea; padding: 10px 0;">
-                <p style="margin: 0; font-weight: bold;">${comment.author}</p>
-                <p style="margin: 5px 0 0; font-size: 0.9em;">${comment.content}</p>
-                <p style="margin: 5px 0 0; font-size: 0.8em;">${comment.date}</p>
+            <div>
+                <strong>${comment.author}</strong>
+                <p>${comment.content}</p>
+                <span>${comment.createdAt}</span>
             </div>
         </c:forEach>
         <c:if test="${empty commentList}">
-            <p style="text-align: center; margin: 10px 0;">댓글이 없습니다. 첫 댓글을 작성해보세요!</p>
+            <p>댓글이 없습니다.</p>
         </c:if>
     </div>
 
     <!-- 댓글 입력 폼 -->
-    <form action="<%=contextPath%>/Book/replypro.do" method="post" style="display: flex; flex-direction: column;">
-        <input type="hidden" name="postId" value="<%= postDetail != null ? postDetail.getPostId() : "" %>">
-        <textarea name="commentContent" rows="3" style="margin-bottom: 10px; padding: 10px; width: 100%; resize: none; border: 1px solid #ddd;" placeholder="댓글을 입력하세요..." required></textarea>
-        <button type="submit" style="align-self: flex-end; padding: 5px 15px; border: 1px solid #ddd; background-color: #f5f5f5; cursor: pointer;">
-            댓글 등록
-        </button>
+    <form action="${pageContext.request.contextPath}/Book/postDetail.do" method="post">
+        <input type="hidden" name="postId" value="${postDetail.postId}">
+        <input type="hidden" name="createdAt" value="${postDetail.createdAt}">
+        <input type="text" name="author" placeholder="작성자" required>
+        <textarea name="commentContent" placeholder="댓글 입력" required></textarea>
+        <button type="submit">등록</button>
     </form>
 </div>
+	
 
 
 	<script>
@@ -207,7 +199,7 @@
 		}
 		
 		
-		
+	<%--	
 		//삭제 <input type="img" onclick>를 클릭하면
 	  	//호출되는 함수 
 		function deletePro(userId){
@@ -324,6 +316,28 @@
 			});
 		});
 		
+
+--%>
+
+
+
+
+
+<%-- 		
+		//댓글등록
+		$.ajax({
+    url: "<%=contextPath%>/Book/replypro.do",
+    type: "POST",
+    data: { postId: postId, author: author, content: content },
+    success: function(response) {
+        console.log("댓글 등록 성공:", response);
+        location.reload(); // 성공 시 페이지 새로고침
+    },
+    error: function(error) {
+        console.log("댓글 등록 실패:", error);
+    }
+}); --%>
+
 		
 		
 		

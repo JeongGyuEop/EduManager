@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import Vo.BoardVo;
 import Vo.BookPostVo;
 import Vo.BookPostVo.BookImage;
+import Vo.CommentVo;
 
 public class BookPostDAO {
 
@@ -317,6 +318,103 @@ public class BookPostDAO {
 
 	    return bookBoardList; // 조회된 게시글 반환 (없으면 null 반환)
 	}
+
+	
+	
+	//댓글
+	public BookPostVo getPostDetail(int postId) {
+        BookPostVo post = null;
+        String sql = "SELECT * FROM book_post WHERE post_id = ?";
+
+        try (Connection con =  ds.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, postId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                post = new BookPostVo();
+                post.setPostId(rs.getInt("post_id"));
+                post.setUserId(rs.getString("user_id"));
+                post.setPostTitle(rs.getString("post_title"));
+                post.setPostContent(rs.getString("post_content"));
+                post.setMajorTag(rs.getString("major_tag"));
+                post.setCreatedAt(rs.getTimestamp("created_at"));
+            }
+        } catch (Exception e) {
+        	 System.out.println("BookPostDAO의 getPostDetail 메서드에서 오류 발생");
+            e.printStackTrace();
+        }finally {
+			closeResource();
+		}
+        return post;
+    }
+
+    public List<CommentVo> getComments(int postId) {
+        List<CommentVo> comments = new ArrayList<>();
+        String sql = "SELECT * FROM comments WHERE post_id = ? ORDER BY created_at ASC";
+
+        try (Connection con = ds.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, postId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                CommentVo comment = new CommentVo();
+                comment.setCommentId(rs.getInt("comment_id"));
+                comment.setPostId(rs.getInt("post_id"));
+                comment.setAuthor(rs.getString("author"));
+                comment.setContent(rs.getString("content"));
+                comment.setCreatedAt(rs.getTimestamp("created_at"));
+                comments.add(comment);
+            }
+        } catch (Exception e) {
+        	System.out.println("BookPostDAO의 getComments 메서드에서 오류 발생");
+            e.printStackTrace();
+        }finally {
+			closeResource();
+		}
+        return comments;
+    }
+
+    public void addComment(CommentVo comment) {
+        
+    	
+    	String sql = "INSERT INTO comments (post_id, author, content, created_at) VALUES (?, ?, ?, now())";
+
+        
+        try {
+        	Connection con = ds.getConnection();
+        	con.setAutoCommit(false); // 트랜잭션 비활성화
+             pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, comment.getPostId());
+            pstmt.setString(2, comment.getAuthor());
+            pstmt.setString(3, comment.getContent());
+            pstmt.executeUpdate();
+            
+            con.commit(); // 커밋 호출
+            
+            System.out.println("Post ID: " + comment.getPostId());
+            System.out.println("Author: " + comment.getAuthor());
+            System.out.println("Content: " + comment.getContent());
+            
+            
+        } catch (Exception e) {
+        	System.out.println("BookPostDAO의 addComment 메서드에서 오류 발생");
+            e.printStackTrace();
+        }finally {
+			closeResource();
+		}
+    }
+
+	
+	
+	
+	
+	
+	
+	
+	
+
     
     
     /*
@@ -346,6 +444,5 @@ public class BookPostDAO {
 	// ===============================================================================
 	// 중고책 거래=======================================================================
 	// ===============================================================================
-
 
 }

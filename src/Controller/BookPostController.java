@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import Dao.BookPostDAO;
 import Service.BookPostService;
 import Vo.BookPostVo;
+import Vo.CommentVo;
 
 @WebServlet("/Book/*")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 1, // 1MB
@@ -127,7 +128,7 @@ public class BookPostController extends HttpServlet {
 				request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
 			}
 			// nextPage 지정
-			nextPage = "/Book/booktradingboard.bo?&center=/view_student/booktradingboard.jsp";  //?center=/view_student/booktradingboard.jsp";
+			nextPage = "/Book/booktradingboard.bo?&center=/view_student/booktradingboard.jsp";
 
 			break;
 
@@ -150,17 +151,6 @@ public class BookPostController extends HttpServlet {
 		case "/bookread.bo":
 			
 
-			// 게시글 읽기 기능
-/*			String post_id = request.getParameter("post_id");
-			String nowPage_ = request.getParameter("nowPage");
-			String nowBlock_ = request.getParameter("nowBlock");
-			bookBoardList = bookPostservice.serviceBoardRead(post_id);
-			request.setAttribute("center", "view_student/booktradingread.jsp");
-			request.setAttribute("bookBoardList", bookBoardList);
-			request.setAttribute("nowPage", nowPage_);
-			request.setAttribute("nowBlock", nowBlock_);
-			request.setAttribute("post_id", post_id);  */
-
 			BookPostVo bookPost = bookPostservice.serviceBookPost(request);
 			majorInfo = bookPostservice.majorInfo();
 			
@@ -173,22 +163,125 @@ public class BookPostController extends HttpServlet {
 			break;
 
 			
+			
+			
+			// 댓글 작성 처리 및 게시글 상세보기
+		case "/postDetail.do":
+		    try {
+		        // 게시글 상세보기
+		        int postId = Integer.parseInt(request.getParameter("postId"));
+		        BookPostVo postDetail = bookPostservice.getPostDetail(postId);
+		        List<CommentVo> commentList = bookPostservice.getComments(postId);
+		        
+		        // 댓글 작성 처리 (POST 방식으로 받은 댓글 내용)
+		        if ("POST".equalsIgnoreCase(request.getMethod())) {
+		            String author = request.getParameter("author");
+		            String content = request.getParameter("commentContent");
 
-		
-		
+		            // 댓글 작성
+		            Timestamp createdAt = Timestamp.valueOf(LocalDateTime.now());
+		            CommentVo newComment = new CommentVo();
+		            newComment.setPostId(postId);
+		            newComment.setAuthor(author);
+		            newComment.setContent(content);
+		            newComment.setCreatedAt(createdAt);
+
+		            // 댓글 추가
+		            bookPostservice.addComment(newComment);
+
+		            // 댓글 추가 후 리로드(리디렉션 대신 동일 페이지로 갱신)
+		            commentList = bookPostservice.getComments(postId);
+		        }
+
+		        // 요청 속성에 게시글 정보와 댓글 리스트 설정
+		        request.setAttribute("postDetail", postDetail);
+		        request.setAttribute("commentList", commentList);
+
+		        // 상세보기 페이지로 이동
+
+		        nextPage = "/Book/postDetail.do?&center=/view_student/booktradingread.jsp";
+		       // nextPage = "/view_student/booktradingread.jsp"; // 상세보기 페이지
+		    } catch (NumberFormatException e) {
+		        // postId가 유효하지 않으면 오류 처리
+		        request.setAttribute("errorMessage", "Invalid postId parameter.");
+		        return;
+		    }
+		    break;
+
+			
+			
+			
+			
+			/*
+			   // 댓글 게시글 상세보기
+        case "/postDetail.do":
+            try {
+                // 게시글 상세보기
+                int postId = Integer.parseInt(request.getParameter("postId"));
+                BookPostVo postDetail = bookPostservice.getPostDetail(postId);
+                List<CommentVo> commentList = bookPostservice.getComments(postId);
+
+                
+                // 요청 속성에 게시글 정보와 댓글 리스트 설정
+                request.setAttribute("postDetail", postDetail);
+                request.setAttribute("commentList", commentList);
+                
+
+                // 상세보기 페이지로 이동
+                nextPage = "/view_student/booktradingread.jsp"; // 상세보기 페이지
+
+            } catch (NumberFormatException e) {
+                // postId가 유효하지 않으면 오류 처리
+                request.setAttribute("errorMessage", "Invalid postId parameter.");
+ //               nextPage = "/error.jsp"; // 오류 페이지로 리디렉션
+                return;
+            }
+            break;
+
+        // 댓글 작성 처리
+        case "/replypro.do":
+            try {
+                // 댓글 작성 처리
+                int postId_ = Integer.parseInt(request.getParameter("postId"));
+                String author = request.getParameter("author");
+                String content = request.getParameter("commentContent");
+                
+                BookPostVo postDetail = (BookPostVo) request.getAttribute("postDetail");
+                Timestamp createdAt = Timestamp.valueOf(LocalDateTime.now());
+
+                // 새로운 댓글 객체 생성
+                CommentVo newComment = new CommentVo();
+                newComment.setPostId(postId_);
+                newComment.setAuthor(author);
+                newComment.setContent(content);
+                newComment.setCreatedAt(createdAt);
+
+                // 댓글 추가
+                bookPostservice.addComment(newComment);
+
+                // 댓글 작성 후 상세보기 페이지로 리다이렉트
+                response.sendRedirect(request.getContextPath() + "/Book/postDetail.do?postId=" + postId_);
+                return;
+
+            } catch (NumberFormatException e) {
+                // postId가 유효하지 않으면 오류 처리
+                request.setAttribute("errorMessage", "Invalid postId parameter.");
+                return;
+            }
+      //      break;
+*/
+  
+
+			
+
+	    	
 			//게시글 삭제
-		case "/deleteBoard.do":
+	//	case "/deleteBoard.do":
 			
 			
 			//게시글 수정
-		case "updateBoard.do":
-			
-			
-			//댓글 입력
-		case "replypro.do":	
-			
-			
-			
+	//	case "updateBoard.do":
+				
 			
 			
 // 중고 책 거래 -------------------------------------------------------------------------------------------------------------------

@@ -114,10 +114,10 @@
     //조회된 화면에서  글제목 하나를 클릭했을때  글번호를 매개변수로 받아서
     //아래에 작성된 <form>를 이용해 글번호에 해당되는 글 하나의 정보를 조회 요청!
     function fnRead(val){
-<<<<<<< HEAD
-    	document.frmRead.action="<%=contextPath%>/view_student/booktradingread.jsp";
-		document.frmRead.notice_id.value = val;
-=======
+
+   		<%-- document.frmRead.action="<%=contextPath%>/view_student/booktradingread.jsp";
+		document.frmRead.notice_id.value = val; --%>
+
     	var values = val.split(",");
         var postId = values[0];
     	
@@ -125,7 +125,7 @@
     	
 		document.frmRead.postId.value = postId;
 	    
->>>>>>> ef10ca62b5222e7b5fb5063d644940ee2df320fd
+
 		document.frmRead.submit();//<form> 을 이용해 요청
 	}
 </script>

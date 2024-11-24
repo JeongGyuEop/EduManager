@@ -15,6 +15,7 @@ import javax.servlet.http.Part;
 import Dao.BookPostDAO;
 import Dao.MemberDAO;
 import Vo.BookPostVo;
+import Vo.CommentVo;
 
 public class BookPostService {
 
@@ -140,12 +141,25 @@ public class BookPostService {
 			return bookPostDAO.getPostById(postId);
 		}
 
-		public List<BookPostVo> serviceBoardRead(String post_id) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+
+		
+		
+		
+		 public BookPostVo getPostDetail(int postId) {
+		        return bookPostDAO.getPostDetail(postId);
+		    }
+
+		    public List<CommentVo> getComments(int postId) {
+		        return bookPostDAO.getComments(postId);
+		    }
+
+		    public void addComment(CommentVo comment) {
+		        bookPostDAO.addComment(comment);
+		    }
+		
+		
 		
 
-
+		
 
 }
