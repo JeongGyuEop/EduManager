@@ -130,7 +130,7 @@ public class BookPostService {
 		return bookPostDAO.bookPost(postId);
 	}
 
-//학과정보 받아오기
+	//학과정보 받아오기
 	public List<BookPostVo> majorInfo() {
 		List<BookPostVo> majorInfo = bookPostDAO.majorInfo();
 
@@ -142,4 +142,3 @@ public class BookPostService {
 			return bookPostDAO.bookserchList(key, word);
 		}
 }
-
