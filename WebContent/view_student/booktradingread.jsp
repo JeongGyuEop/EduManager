@@ -1,5 +1,12 @@
 
+
 <%@page import="Vo.CommentVo"%>
+
+<%@page import="java.io.IOException"%>
+<%@page import="java.io.FileNotFoundException"%>
+<%@page import="java.io.InputStream"%>
+<%@page import="java.util.Properties"%>
+
 <%@page import="java.util.ArrayList"%>
 <%@page import="Vo.BookPostVo.BookImage"%>
 
@@ -48,6 +55,18 @@
 			displayImages.add(images.get(i));
 		}
 	}
+	// 프로퍼티 파일 로드
+	Properties properties = new Properties();
+	try (InputStream input = application.getResourceAsStream("/WEB-INF/classes/config.properties")) {
+		if (input == null) {
+			throw new FileNotFoundException("프로퍼티 파일을 찾을 수 없습니다.");
+		}
+		properties.load(input);
+	} catch (IOException ex) {
+		ex.printStackTrace();
+	}
+
+	String uploadDir = properties.getProperty("upload.dir");
 %>
 
 <!DOCTYPE html>
@@ -95,10 +114,27 @@
 
 			</thead>
 			<tbody>
-			<!-- <tr>
+				<tr>
 					<td colspan="4"><label for="preview-image">이미지 미리보기</label>
-						<div id="preview" style="display: flex; flex-wrap: wrap;"></div></td>
-				</tr> -->
+						<div id="preview" style="display: flex; flex-wrap: wrap;">
+							<%
+								if (images != null && !images.isEmpty()) {
+									for (BookImage image : images) {
+										String imagePath = image.getImage_path();
+							%>
+							<img src="<%=request.getContextPath() + imagePath%>"
+								style="width: 178px; height: 178px; margin: 2px;" />
+							<%
+								}
+								} else {
+							%>
+							<p>이미지가 없습니다.</p>
+							<%
+								}
+							%>
+						</div></td>
+				</tr>
+
 				<tr>
 
 					<td colspan="4"><label for="postContent">내용:</label><%=postContent%></td>
@@ -112,20 +148,21 @@
 			</tbody>
 			<tfoot>
 				<tr>
-						<%--수정하기 --%>	
-						<td><label for="majorTag">학과 태그:</label><%=majorTag%></td>
 
-						<!-- if(userId == postUserId { -->
+					<td><label for="majorTag">학과 태그:</label><%=majorTag%></td>
 
-						<%--수정하기 --%>
-						<td><input type="button" id="update" value="수정"></td>
-						<%--삭제하기 --%>
-						<td><input type="button" id="delete"
-							onclick="javascript:deletePro('<%=postId%>');" value="삭제"></td>
 
-						<!-- } -->
+					<!-- if(userId == postUserId { -->
 
-						<%--목록 --%>
+					<%--수정하기 --%>
+					<td><input type="button" id="update" value="수정"></td>
+					<%--삭제하기 --%>
+					<td><input type="button" id="delete"
+						onclick="javascript:deletePro('<%=postId%>');" value="삭제"></td>
+
+					<!-- } -->
+
+					<%--목록 --%>
 					<td><input type="button" id="list" value="목록" /></td>
 				</tr>
 			</tfoot>
