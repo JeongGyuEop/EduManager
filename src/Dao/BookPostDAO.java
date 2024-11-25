@@ -16,7 +16,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import Vo.BoardVo;
 import Vo.BookPostVo;
 import Vo.BookPostVo.BookImage;
 
@@ -35,7 +34,6 @@ public class BookPostDAO {
 			System.out.println("커넥션풀 얻기 실패 : " + e.toString());
 		}
 	}
-
 
     // 자원 해제 메서드
     private void closeResource() {
@@ -80,92 +78,182 @@ public class BookPostDAO {
 	}
 
 	public void bookPostUpload(BookPostVo bookPostVo) {
-        String sqlInsertPost = "INSERT INTO book_post (user_id, post_title, post_content, major_tag, created_at) VALUES (?, ?, ?, ?, NOW())";
-        String sqlInsertImage = "INSERT INTO book_image (post_id, file_name, image_path) VALUES (?, ?, ?)";
+		String sqlInsertPost = "INSERT INTO book_post (user_id, post_title, post_content, major_tag, created_at) VALUES (?, ?, ?, ?, NOW())";
+		String sqlInsertImage = "INSERT INTO book_image (post_id, file_name, image_path) VALUES (?, ?, ?)";
 
-        // 프로퍼티 파일 로드
-        Properties properties = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
-            if (input == null) {
-                throw new FileNotFoundException("프로퍼티 파일을 찾을 수 없습니다.");
-            }
-            properties.load(input);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return;
-        }
+		// 프로퍼티 파일 로드
+		Properties properties = new Properties();
+		try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+			if (input == null) {
+				throw new FileNotFoundException("프로퍼티 파일을 찾을 수 없습니다.");
+			}
+			properties.load(input);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return;
+		}
 
-        // 업로드 디렉토리 설정
-        String uploadDir = properties.getProperty("upload.dir");
-        if (uploadDir == null || uploadDir.isEmpty()) {
-            throw new IllegalArgumentException("업로드 디렉토리가 설정되지 않았습니다.");
-        }
+		// 업로드 디렉토리 설정
+		String uploadDir = properties.getProperty("upload.dir");
+		if (uploadDir == null || uploadDir.isEmpty()) {
+			throw new IllegalArgumentException("업로드 디렉토리가 설정되지 않았습니다.");
+		}
 
-        try {
-            // 데이터베이스 연결 및 트랜잭션 시작
-            con = ds.getConnection();
-            con.setAutoCommit(false);
+		try {
+			// 데이터베이스 연결 및 트랜잭션 시작
+			con = ds.getConnection();
+			con.setAutoCommit(false);
 
-            // 1. book_post 테이블에 게시글 저장
-            pstmt = con.prepareStatement(sqlInsertPost, pstmt.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, bookPostVo.getUserId());
-            pstmt.setString(2, bookPostVo.getPostTitle());
-            pstmt.setString(3, bookPostVo.getPostContent());
-            pstmt.setString(4, bookPostVo.getMajorTag());
-            pstmt.executeUpdate();
+			// 1. book_post 테이블에 게시글 저장
+			pstmt = con.prepareStatement(sqlInsertPost, PreparedStatement.RETURN_GENERATED_KEYS);
+			pstmt.setString(1, bookPostVo.getUserId());
+			pstmt.setString(2, bookPostVo.getPostTitle());
+			pstmt.setString(3, bookPostVo.getPostContent());
+			pstmt.setString(4, bookPostVo.getMajorTag());
+			pstmt.executeUpdate();
 
-            // 생성된 post_id 가져오기
-            rs = pstmt.getGeneratedKeys();
-            int postId = 0;
-            if (rs.next()) {
-                postId = rs.getInt(1);
-                bookPostVo.setPostId(postId); // VO 객체에 postId 설정
-            } else {
-                throw new SQLException("게시글 삽입 실패, 게시글 ID를 가져올 수 없습니다.");
-            }
+			// 생성된 post_id 가져오기
+			rs = pstmt.getGeneratedKeys();
+			int postId = 0;
+			if (rs.next()) {
+				postId = rs.getInt(1);
+				bookPostVo.setPostId(postId); // VO 객체에 postId 설정
+			} else {
+				throw new SQLException("게시글 삽입 실패, 게시글 ID를 가져올 수 없습니다.");
+			}
 
-            // 2. book_image 테이블에 이미지 정보 저장
-            pstmt = con.prepareStatement(sqlInsertImage);
-            for (BookPostVo.BookImage image : bookPostVo.getImages()) {
-                String fileName = image.getFileName();
-                String uploadTime = String.valueOf(System.currentTimeMillis());
-                String uniqueFileName = uploadTime + "_" + fileName;
-                String imagePath = uploadDir + "/" + postId + "/" + uniqueFileName;
+			// 2. book_image 테이블에 이미지 정보 저장
+			pstmt = con.prepareStatement(sqlInsertImage);
+			for (BookPostVo.BookImage image : bookPostVo.getImages()) {
+				String fileName = image.getFileName();
+				String uploadTime = String.valueOf(System.currentTimeMillis());
+				String uniqueFileName = uploadTime + "_" + fileName;
+				String imagePath = uploadDir + "/" + postId + "/" + uniqueFileName;
 
-                // VO의 BookImage 객체에 uniqueFileName과 imagePath 설정
-                image.setFileName(uniqueFileName); // 파일명을 uniqueFileName으로 변경
-                image.setImage_path(imagePath);
+				// VO의 BookImage 객체에 uniqueFileName과 imagePath 설정
+				image.setFileName(uniqueFileName); // 파일명을 uniqueFileName으로 변경
+				image.setImage_path(imagePath);
 
-                pstmt.setInt(1, postId);
-                pstmt.setString(2, uniqueFileName);
-                pstmt.setString(3, imagePath);
-                pstmt.executeUpdate();
-            }
+				pstmt.setInt(1, postId);
+				pstmt.setString(2, uniqueFileName);
+				pstmt.setString(3, imagePath);
+				pstmt.executeUpdate();
+			}
 
-            // 트랜잭션 커밋
-            con.commit();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                if (con != null) {
-                    con.rollback(); // 오류 발생 시 트랜잭션 롤백
-                }
-            } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
-            }
-        } finally {
-            try {
-                if (con != null && !con.getAutoCommit()) {
-                    con.setAutoCommit(true); // 자동 커밋 모드 복구
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                // 리소스 해제
-                closeResource();
-            }
-        }
-    }
+			// 트랜잭션 커밋
+			con.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				if (con != null) {
+					con.rollback(); // 오류 발생 시 트랜잭션 롤백
+				}
+			} catch (SQLException rollbackEx) {
+				rollbackEx.printStackTrace();
+			}
+		} finally {
+			try {
+				if (con != null && !con.getAutoCommit()) {
+					con.setAutoCommit(true); // 자동 커밋 모드 복구
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				// 리소스 해제
+				closeResource();
+			}
+		}
+	}
+
+	public void bookPostUpdate(BookPostVo bookPostVo) {
+		String sqlUpdatePost = "UPDATE book_post SET user_id = ?, post_title = ?, post_content = ?, major_tag = ? WHERE post_id = ?";
+		String sqlDeleteImages = "DELETE FROM book_image WHERE post_id = ?";
+		String sqlInsertImage = "INSERT INTO book_image (post_id, file_name, image_path) VALUES (?, ?, ?)";
+
+		// Load properties
+		Properties properties = new Properties();
+		try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+			if (input == null) {
+				throw new FileNotFoundException("Cannot find config.properties file.");
+			}
+			properties.load(input);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			return;
+		}
+
+		// Get upload directory
+		String uploadDir = properties.getProperty("upload.dir");
+		if (uploadDir == null || uploadDir.isEmpty()) {
+			throw new IllegalArgumentException("Upload directory is not set.");
+		}
+
+		try {
+			// Get database connection and start transaction
+			con = ds.getConnection();
+			con.setAutoCommit(false);
+
+			int postId = bookPostVo.getPostId();
+			if (postId == 0) {
+				throw new IllegalArgumentException("Post ID is missing. Cannot update post.");
+			}
+
+			// Update the existing post
+			pstmt = con.prepareStatement(sqlUpdatePost);
+			pstmt.setString(1, bookPostVo.getUserId());
+			pstmt.setString(2, bookPostVo.getPostTitle());
+			pstmt.setString(3, bookPostVo.getPostContent());
+			pstmt.setString(4, bookPostVo.getMajorTag());
+			pstmt.setInt(5, postId);
+			pstmt.executeUpdate();
+
+			// Delete existing images for the post
+			pstmt = con.prepareStatement(sqlDeleteImages);
+			pstmt.setInt(1, postId);
+			pstmt.executeUpdate();
+
+			// Insert new images
+			pstmt = con.prepareStatement(sqlInsertImage);
+			for (BookPostVo.BookImage image : bookPostVo.getImages()) {
+				String fileName = image.getFileName();
+				String uploadTime = String.valueOf(System.currentTimeMillis());
+				String uniqueFileName = uploadTime + "_" + fileName;
+				String imagePath = uploadDir + "/" + postId + "/" + uniqueFileName;
+
+				// Update the image object with the new file name and path
+				image.setFileName(uniqueFileName);
+				image.setImage_path(imagePath);
+
+				pstmt.setInt(1, postId);
+				pstmt.setString(2, uniqueFileName);
+				pstmt.setString(3, imagePath);
+				pstmt.executeUpdate();
+			}
+
+			// Commit the transaction
+			con.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				if (con != null) {
+					con.rollback(); // Roll back the transaction in case of error
+				}
+			} catch (SQLException rollbackEx) {
+				rollbackEx.printStackTrace();
+			}
+		} finally {
+			try {
+				if (con != null && !con.getAutoCommit()) {
+					con.setAutoCommit(true); // Restore auto-commit mode
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				// Release resources
+				closeResource();
+			}
+		}
+	}
 
 	// 모든 게시글 조회
 	public List<BookPostVo> booklistboard() {
@@ -189,7 +277,7 @@ public class BookPostDAO {
 				bookBoardList.add(BoardList);
 			}
 		} catch (Exception e) {
-			System.out.println("BookDAO의 booklistboard 메소드 오류");
+			System.out.println("BookPostDAO의 booklistboard 메소드 오류");
 			e.printStackTrace();
 		} finally {
 			closeResource(); // 리소스 정리
@@ -212,7 +300,7 @@ public class BookPostDAO {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				postId = Integer.parseInt(rs.getString("post_id"));
+				postId = rs.getInt("post_id");
 				String userId = rs.getString("user_id");
 				String postTitle = rs.getString("post_title");
 				String postContent = rs.getString("post_content");
@@ -238,7 +326,7 @@ public class BookPostDAO {
 				bookPost = new BookPostVo(postId, userId, postTitle, postContent, majorTag, createdAt, images);
 			}
 		} catch (Exception e) {
-			System.out.println("BookDAO의 booklistboard 메소드 오류");
+			System.out.println("BookPostDAO의 bookPost 메소드 오류");
 			e.printStackTrace();
 		} finally {
 			closeResource(); // 리소스 정리
@@ -299,5 +387,4 @@ public class BookPostDAO {
 	// ===============================================================================
 	// 중고책 거래=======================================================================
 	// ===============================================================================
-
 }
