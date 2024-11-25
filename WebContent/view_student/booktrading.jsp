@@ -23,18 +23,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>판매 또는 구매 글 등록</title>
-
- <script type="text/javascript">
-        window.onload = function () {
-            // JSP에서 메시지 값을 JavaScript 변수로 가져오기
-            var message = "<%= request.getAttribute("message") %>";
-            if (message && message !== "null") {
-                alert(message); // 메시지가 있을 경우에만 alert 창 표시
-            }
-        };
-    </script>
-    
+<title>판매 또는 구매 글 등록</title>    
 </head>
 <body>
 

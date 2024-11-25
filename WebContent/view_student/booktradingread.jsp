@@ -119,14 +119,17 @@ String uploadDir = properties.getProperty("upload.dir");
 							type="submit" value="수정하기">
 					</form></td>
 				<td><form action="<%=contextPath%>/Book/bookpostdelete.do">
-						<input type="hidden" value="<%=postId%>"><input
+						<input type="hidden" value="<%=postId%>" name="postId"><input
 							type="submit" value="삭제하기">
 					</form></td>
 				<%
 				}
 				%>
 				<%--목록 --%>
-				<td><input type="button" id="list" value="목록" /></td>
+				<td><form action="<%=contextPath%>/Book/bookpostboard.bo">
+						<input type="hidden" value="/view_student/booktradingboard.jsp"
+							name="center"><input type="submit" value="목록">
+					</form></td>
 			</tr>
 		</tfoot>
 	</table>

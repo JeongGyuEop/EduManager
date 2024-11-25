@@ -1,5 +1,6 @@
 package Dao;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -384,7 +385,78 @@ public class BookPostDAO {
 		}
 		return bookBoardList;
 	}
-	// ===============================================================================
-	// 중고책 거래=======================================================================
-	// ===============================================================================
+	
+	public int bookPostDelete(String postId) {
+		int result = 0;
+        String deleteImagesSQL = "DELETE FROM book_image WHERE post_id = ?";
+        String deletePostSQL = "DELETE FROM book_post WHERE post_id = ?";
+        String selectImagesSQL = "SELECT image_path FROM book_image WHERE post_id = ?"; // 파일 삭제를 위한 이미지 경로 조회
+
+        List<String> imagePaths = new ArrayList<>();
+
+        try {
+            con = ds.getConnection();
+            con.setAutoCommit(false); // 트랜잭션 시작
+
+            // 1. 이미지 경로 조회 (파일 삭제를 위해)
+            pstmt = con.prepareStatement(selectImagesSQL);
+            pstmt.setInt(1, Integer.parseInt(postId));
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                imagePaths.add(rs.getString("image_path"));
+            }
+            rs.close();
+            pstmt.close();
+
+            // 2. book_image 테이블에서 삭제
+            pstmt = con.prepareStatement(deleteImagesSQL);
+            pstmt.setInt(1, Integer.parseInt(postId));
+            pstmt.executeUpdate();
+            pstmt.close();
+
+            // 3. book_post 테이블에서 삭제
+            pstmt = con.prepareStatement(deletePostSQL);
+            pstmt.setInt(1, Integer.parseInt(postId));
+            result = pstmt.executeUpdate();
+            pstmt.close();
+
+            con.commit(); // 트랜잭션 커밋
+
+            // 4. 파일 시스템에서 이미지 파일 삭제 (선택 사항)
+            for (String path : imagePaths) {
+                File imageFile = new File(path);
+                if (imageFile.exists()) {
+                    if (!imageFile.delete()) {
+                        System.out.println("이미지 파일 삭제 실패: " + path);
+                        // 필요 시, 로그를 남기거나 추가 처리를 할 수 있습니다.
+                    } else {
+                        System.out.println("이미지 파일 삭제 성공: " + path);
+                    }
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid postId format: " + postId);
+            try {
+                if (con != null) con.rollback();
+            } catch (SQLException ex) { ex.printStackTrace(); }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception occurred while deleting post: " + e.toString());
+            try {
+                if (con != null) con.rollback();
+            } catch (SQLException ex) { ex.printStackTrace(); }
+        } finally {
+            try {
+                if (con != null) {
+                    con.setAutoCommit(true); // 원래 상태로 복구
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            closeResource();
+        }
+
+        return result;
+    }
 }

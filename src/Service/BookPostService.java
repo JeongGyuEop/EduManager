@@ -249,4 +249,10 @@ public class BookPostService {
 
 		return 1; // 성공 시 1 반환
 	}
+
+	public int bookPostDelete(HttpServletRequest request) {
+		String postId = request.getParameter("postId");
+		int result = bookPostDAO.bookPostDelete(postId);
+		return result;
+	}
 }
