@@ -38,7 +38,7 @@
 </head>
 <body>
 
-	<form action="<%=contextPath%>/Book/bookpostupdate.do" method="post"
+	<form action="<%=contextPath%>/Book/bookPostUpload.do" method="post"
 		enctype="multipart/form-data">
 		<!-- 작성자 정보 가져온 뒤 readonly -->
 		<!-- 작성일은 DAO에서 처리 -->
