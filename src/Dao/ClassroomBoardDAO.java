@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 
 import Vo.BoardVo;
 import Vo.ClassroomBoardVo;
+import Vo.MemberVo;
 
 public class ClassroomBoardDAO {
 
@@ -42,14 +43,18 @@ public class ClassroomBoardDAO {
 	}
 	
 	//전체 공지사항 목록 조회
-	public ArrayList<ClassroomBoardVo> noticeList(String course_id) {
+	public ArrayList<ClassroomBoardVo> noticeList(String course_id, String user_name) {
 		String sql = null;
 		
 		ArrayList<ClassroomBoardVo> list = new ArrayList<ClassroomBoardVo>();
 		
 		try {
 			con = ds.getConnection();//DB연결
-			sql = "select * from classroom_notice where course_id = ? order by b_group asc, notice_id desc ";
+			sql = "select cn.notice_id, cn.b_group, cn.b_level, cn.author_id, u.user_name, cn.title, cn.content, cn.created_date "
+					+ "from classroom_notice cn "
+					+ "join user u on cn.author_id = u.user_id "
+					+ "where cn.course_id = ? "
+					+ "order by cn.b_group asc, cn.notice_id desc ";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, course_id);
 			
@@ -59,15 +64,23 @@ public class ClassroomBoardDAO {
 			//BoardVo객체에 레코드 정보를 반복해서 저장하고 
 			//BoardVo객체들을 ArrayList배열에 반복해서  추가
 			while(rs.next()) {
-				ClassroomBoardVo vo = new ClassroomBoardVo(rs.getInt("notice_id"),
-										 rs.getInt("b_group"),
-										 rs.getInt("b_level"),
-										 rs.getString("author_id"),
-										 rs.getString("title"), 
-										 rs.getString("content"), 
-										 rs.getDate("created_date"));
+				ClassroomBoardVo vo = new ClassroomBoardVo();
+						
+				vo.setNotice_id(rs.getInt("notice_id"));
+				vo.setB_group( rs.getInt("b_group"));
+				vo.setB_level( rs.getInt("b_level"));
+				vo.setAuthor_id( rs.getString("author_id"));
+				vo.setTitle( rs.getString("title"));
+				vo.setContent( rs.getString("content"));
+				vo.setCreated_date(rs.getDate("created_date"));
+				
+				MemberVo memvo = new MemberVo();
+				
+				memvo.setUser_name(rs.getString("user_name"));
+				vo.setUserName(memvo);
+				
 				list.add(vo);			
-			}			
+			}						
 		} catch (Exception e) {
 			System.out.println("ClassroomBoardDAO의 noticeList메소드에서 오류 ");
 			e.printStackTrace();
@@ -84,7 +97,10 @@ public class ClassroomBoardDAO {
 		
 		try {
 			con = ds.getConnection();
-			sql = "select * from classroom_notice where notice_id=?";
+			sql = "select cn.notice_id, cn.b_group, cn.b_level, cn.author_id, u.user_name, cn.title, cn.content, cn.created_date "
+					+ "from classroom_notice cn "
+					+ "join user u on cn.author_id = u.user_id "
+					+ "where notice_id=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1,  Integer.parseInt(notice_id));
 			rs = pstmt.executeQuery();
@@ -99,6 +115,11 @@ public class ClassroomBoardDAO {
 						 rs.getString("title"), 
 						 rs.getString("content"), 
 						 rs.getDate("created_date"));
+				MemberVo memvo = new MemberVo();
+				memvo.setUser_name(rs.getString("user_name"));
+				
+				vo.setUserName(memvo);
+				
 			}
 		} catch (Exception e) {
 			System.out.println("ClassroomBoardDAO의 noticeRead메소드");
@@ -145,7 +166,7 @@ public class ClassroomBoardDAO {
 
 	}
 
-	public ArrayList boardKeyWord(String key, String word) {
+	public ArrayList boardKeyWord(String key, String word, String course_id) {
 		
 		String sql = null;
 		
@@ -157,22 +178,31 @@ public class ClassroomBoardDAO {
 			//검색기준열의 값  제목+내용 선택했다면?
 			if(key.equals("titleContent")) {
 				
-				sql = "select * from classroom_notice "
-					+ "where title like  '%"+word+"%' "
-					+ "OR content like '%"+word+"%' "
-					+ "order by b_group asc";
+				sql = "select cn.notice_id, cn.b_group, cn.b_level, cn.author_id, cn.title, cn.content, cn.created_date, u.user_name "
+					+ "from classroom_notice cn "
+					+ "join user u on cn.author_id = u.user_id "
+					+ "where (cn.title like  '%"+word+"%' "
+					+ "OR cn.content like '%"+word+"%') "
+					+ "and cn.course_id = ? "
+					+ "order by cn.b_group asc";
 				
 			}else {//검색기준열의 값 작성자 선택했다면?
 				
-				sql = "select * from classroom_notice "
-				    + " where author_id like '%"+word+"%' "
-				    + "order by b_group asc";
+				sql = "select cn.notice_id, cn.b_group, cn.b_level, cn.author_id, cn.title, cn.content, cn.created_date, u.user_name "
+					+ "from classroom_notice cn "
+					+ "join user u on cn.author_id = u.user_id "
+				    + " where u.user_name like '%"+word+"%' "
+				    + " and cn.course_id = ? "
+				    + "order by cn.b_group asc";
 			} 
 					
 		}else {//검색어를 입력하지 않았다면?
 			//모든 글의 열목록 조회
-			sql = "select * from classroom_notice "
-					+ "order by b_group asc";
+			sql = "select cn.notice_id, cn.b_group, cn.b_level, cn.author_id, cn.title, cn.content, cn.created_date, u.user_name "
+					+ "from classroom_notice cn "
+					+ "join user u on cn.author_id = u.user_id "
+					+ "where cn.course_id = ? "
+					+ "order by cn.b_group asc";
 			
 		}
 		
@@ -180,19 +210,30 @@ public class ClassroomBoardDAO {
 			con = ds.getConnection();//DB연결
 			
 			pstmt = con.prepareStatement(sql);
+			
+	        pstmt.setString(1, course_id); // course_id
+
 			rs = pstmt.executeQuery();
 			
 			//조회된 ResultSet의 정보를 레코드 단위로 얻어서 
 			//BoardVo객체에 레코드 정보를 반복해서 저장하고 
 			//BoardVo객체들을 ArrayList배열에 반복해서  추가
 			while(rs.next()) {
-				ClassroomBoardVo vo = new ClassroomBoardVo(rs.getInt("notice_id"),
-						 rs.getInt("b_group"),
-						 rs.getInt("b_level"),
-						 rs.getString("author_id"),
-						 rs.getString("title"), 
-						 rs.getString("content"), 
-						 rs.getDate("created_date"));
+				ClassroomBoardVo vo = new ClassroomBoardVo();
+						
+				vo.setNotice_id(rs.getInt("notice_id"));
+				vo.setB_group( rs.getInt("b_group"));
+				vo.setB_level( rs.getInt("b_level"));
+				vo.setAuthor_id( rs.getString("author_id"));
+				vo.setTitle( rs.getString("title"));
+				vo.setContent( rs.getString("content"));
+				vo.setCreated_date(rs.getDate("created_date"));
+				
+				MemberVo memvo = new MemberVo();
+				
+				memvo.setUser_name(rs.getString("user_name"));
+				vo.setUserName(memvo);
+				
 				list.add(vo);			
 			}			
 			

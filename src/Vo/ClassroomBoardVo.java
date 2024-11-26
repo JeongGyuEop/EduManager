@@ -8,6 +8,8 @@ public class ClassroomBoardVo {
     private String author_id, title, content, course_id;
     private Date created_date;
     
+    private MemberVo userName;
+    
     @Override
     public String toString() {
         return "BoardVo{" +
@@ -136,6 +138,14 @@ public class ClassroomBoardVo {
 
 	public void setCourse_id(String course_id) {
 		this.course_id = course_id;
+	}
+
+	public MemberVo getUserName() {
+		return userName;
+	}
+
+	public void setUserName(MemberVo userName) {
+		this.userName = userName;
 	}
     
     

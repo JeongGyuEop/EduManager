@@ -66,9 +66,23 @@ public class ClassroomBoardController extends HttpServlet{
 	    		
 	    		ArrayList<ClassroomBoardVo> noticeList = null;
 	    		String course_id = request.getParameter("courseId");
-	    		//부장 호출!
-				noticeList = classroomBoardService.serviceNoticeList(course_id);
-				
+	    		String user_name = (String)session.getAttribute("name");
+	    		String key = (String)request.getParameter("key");
+	    		String word = (String)request.getParameter("word");
+	    		
+	    		if(word == null) {
+	    			//부장 호출!
+					noticeList = classroomBoardService.serviceNoticeList(course_id, user_name);
+					request.setAttribute("list", noticeList);
+	    		}else {
+	    			ArrayList list = null;
+			   		//부장 호출
+			   		//검색 기준열의 값과 입력한 검색어 단어를 포함하고 있는 글목록 조회 명령!
+			   	    list = classroomBoardService.serviceBoardKeyWord(key, word, course_id);
+			   	    request.setAttribute("list", list);
+	    		}
+	    		
+	    		
 				//list.jsp페이지의 페이징 처리 부분에서 
 				//이전 또는 다음 또는 각페이지 번호중 하나를 클릭했을때 요청받는 값 얻기
 				String nowPage = request.getParameter("nowPage");
@@ -77,10 +91,12 @@ public class ClassroomBoardController extends HttpServlet{
 	            center = request.getParameter("center");
 	    		request.setAttribute("classroomCenter", center);
 	    		
-				request.setAttribute("list", noticeList);
 				request.setAttribute("nowPage", nowPage);
 				request.setAttribute("nowBlock", nowBlock);
-				session.setAttribute("course_id", course_id);
+				request.setAttribute("course_id", course_id);
+				request.setAttribute("user_name", user_name);
+		   	    request.setAttribute("key", key);
+		   	    request.setAttribute("word", word);
 				
 				nextPage = "/view_classroom/classroom.jsp";
 	
@@ -93,7 +109,7 @@ public class ClassroomBoardController extends HttpServlet{
 	    		String notice_id = request.getParameter("notice_id");//글번호
 				String nowPage_ = request.getParameter("nowPage");//현재 페이지번호
 				String nowBlock_ = request.getParameter("nowBlock");
-				course_id = (String)session.getAttribute("course_id");
+				course_id = (String)request.getParameter("course_id");
 				
 				//글제목을 눌렀을때 조회된 레코드(글)에 관한 글정보 하나 조회 요청
 				vo = classroomBoardService.serviceNoticeRead(notice_id);
@@ -106,6 +122,7 @@ public class ClassroomBoardController extends HttpServlet{
 				request.setAttribute("nowPage", nowPage_);
 				request.setAttribute("nowBlock", nowBlock_);
 				request.setAttribute("notice_id", notice_id);
+				request.setAttribute("course_id", course_id);
 				 
 				center = request.getParameter("center");
 				//조회된 글 하나의 정보를 보여줄 중앙 VIEW 경로  request에 바인딩
@@ -120,7 +137,7 @@ public class ClassroomBoardController extends HttpServlet{
 	    	case "/noticeWrite.bo":
 	    		
 				String reply_id_ = (String)session.getAttribute("id");
-				course_id = (String)session.getAttribute("course_id");
+				course_id = (String)request.getParameter("course_id");
 				
 				//부장호출
 				//새글을 입력할수 있는 화면에 로그인한 사람(글쓰는 사람)의 정보를 보여주기 위해
@@ -132,7 +149,7 @@ public class ClassroomBoardController extends HttpServlet{
 			
 				request.setAttribute("nowPage", request.getParameter("nowPage"));
 				request.setAttribute("nowBlock", request.getParameter("nowBlock"));
-				
+				request.setAttribute("course_id", course_id);
 				
 				//재요청할 전체 VIEW경로 저장
 				nextPage = "/view_classroom/classroom.jsp";
@@ -147,9 +164,8 @@ public class ClassroomBoardController extends HttpServlet{
 				String writer = request.getParameter("w");
 				String title = request.getParameter("t");
 				String content = request.getParameter("c");
-				course_id = (String)session.getAttribute("course_id");
+				course_id = (String)request.getParameter("course_id");
 				
-				System.out.println(course_id);
 				//요청한 값들 BoardVo객체의 각변수에 저장
 				vo = new ClassroomBoardVo();
 				vo.setAuthor_id(writer);
@@ -181,26 +197,30 @@ public class ClassroomBoardController extends HttpServlet{
 
 	    	case "/searchlist.bo":
 		    	//요청한 값 얻기 (조회를 위해 선택한 Option의 값 , 입력한 검색어)
-		   		String key = request.getParameter("key");
-		   		String word = request.getParameter("word");
+		   		key = request.getParameter("key");
+		   		word = request.getParameter("word");
 		   		String role_ = (String)session.getAttribute("role");
+		   		course_id = (String)request.getParameter("course_id");
+		   		
+		   		System.out.println(course_id);
+		   		System.out.println(key);
+		   		System.out.println(word);
 		   		
 		   		ArrayList list = null;
 		   		//부장 호출
 		   		//검색 기준열의 값과 입력한 검색어 단어를 포함하고 있는 글목록 조회 명령!
-		   	    list = classroomBoardService.serviceBoardKeyWord(key, word);
+		   	    list = classroomBoardService.serviceBoardKeyWord(key, word, course_id);
 		   			
 		   	    //VIEW중앙화면에 조회된 글목록을 보여주기 위해
 		   	    //request내장객체에 조회된 정보 바인딩
 		   	    request.setAttribute("list", list);
+		   	    request.setAttribute("course_id", course_id);
+		   	    request.setAttribute("key", key);
+		   	    request.setAttribute("word", word);
 		   	    
-		   	    if(role_.equals("교수")) {
-		   		    //VIEW중앙화면 주소경로 바인딩
-		   		    request.setAttribute("classroomCenter", "assignment_notice/professorNotice.jsp");
-		   	    }else {
-		   	   	 	request.setAttribute("classroomCenter", "assignment_notice/professorNotice.jsp");
-		   	    }
-		   	     
+		   
+		   		request.setAttribute("classroomCenter", "assignment_notice/professorNotice.jsp");
+		   	   
 		   	    //재요청할 메인 페이지 주소 경로 변수에 저장
 		   	    nextPage = "/view_classroom/classroom.jsp";
 		   	     
@@ -254,8 +274,9 @@ public class ClassroomBoardController extends HttpServlet{
 				String notice_id_ = request.getParameter("notice_id");
 				//요청한 답변글을 작성할 사람의 아이디 얻는다
 				reply_id_ = request.getParameter("id");
-				course_id = (String)session.getAttribute("course_id");
+				course_id = (String)request.getParameter("course_id");
 				
+				System.out.println("reply: " +course_id);
 				//부장호출
 				//로그인한 회원이 주글에 대한 답변그을 작성할수 있도록 하기 위해
 				//로그인 한 회원 아이디를 BoardService의 메소드 호출시 매개변수로 전달해
@@ -265,6 +286,7 @@ public class ClassroomBoardController extends HttpServlet{
 				//부모글번호와 조회한 답변글 작성자 정보를  request에 바인딩
 				request.setAttribute("notice_id", notice_id_); //주글(부모) 글번호 
 				request.setAttribute("vo", reply_vo);//답변글 작성하는 사람 정보 
+				request.setAttribute("course_id", course_id);
 				
 				//중앙화면(답변글을 작성할수 있는 중앙 VIEW) 경로를  request에 바인딩
 				request.setAttribute("classroomCenter", "assignment_notice/classroomReply.jsp");
@@ -284,11 +306,11 @@ public class ClassroomBoardController extends HttpServlet{
 	    			String reply_writer = request.getParameter("writer");
 	    			String reply_title = request.getParameter("title");
 	    			String reply_content = request.getParameter("content");
-					course_id = (String)session.getAttribute("course_id");
+					course_id = (String)request.getParameter("courseId");
+					
+					System.out.println("답변 : " + course_id);
 	    			
 	    			String reply_id = (String)session.getAttribute("id");
-	    			
-	    			String role_1 = (String)session.getAttribute("role");
 	    			
 	    			//부장님 호출
 	    			classroomBoardService.serviceReplyInsertBoard(super_notice_id, reply_writer, reply_title, reply_content, reply_id, course_id);
@@ -299,8 +321,6 @@ public class ClassroomBoardController extends HttpServlet{
 	    			//nextPage변수에 저장
 	    			nextPage = "/classroomboard/noticeList.bo?center=/view_classroom/assignment_notice/professorNotice.jsp";
 	    		     
-	    			
-	    			
 	    			break;
 	    		
 	    //==========================================================================================

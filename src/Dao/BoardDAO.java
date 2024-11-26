@@ -17,6 +17,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import Vo.BoardVo;
+import Vo.MemberVo;
 import Vo.ScheduleVo;
 
 public class BoardDAO {
@@ -61,7 +62,10 @@ public class BoardDAO {
 			
 			try {
 				con = ds.getConnection();//DB연결
-				sql = "select * from notice order by b_group asc, notice_id desc ";
+				sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, u.user_name, n.title, n.content, n.created_date "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+						+ "order by b_group asc, notice_id desc ";
 				pstmt = con.prepareStatement(sql);
 				rs = pstmt.executeQuery();
 				
@@ -76,6 +80,11 @@ public class BoardDAO {
 											 rs.getString("title"), 
 											 rs.getString("content"), 
 											 rs.getDate("created_date"));
+					
+					MemberVo memvo = new MemberVo();
+					memvo.setUser_name(rs.getString("user_name"));
+					vo.setUserName(memvo);
+					
 					list.add(vo);			
 				}			
 			} catch (Exception e) {
@@ -100,22 +109,28 @@ public class BoardDAO {
 				//검색기준열의 값  제목+내용 선택했다면?
 				if(key.equals("titleContent")) {
 					
-					sql = "select * from notice "
-						+ "where title like  '%"+word+"%' "
-						+ "OR content like '%"+word+"%' "
-						+ "order by b_group asc";
+					sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, n.title, n.content, n.created_date, u.user_name "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+						+ "where n.title like  '%"+word+"%' "
+						+ "OR n.content like '%"+word+"%' "
+						+ "order by n.b_group asc";
 					
 				}else {//검색기준열의 값 작성자 선택했다면?
 					
-					sql = "select * from notice "
-					    + " where author_id like '%"+word+"%' "
-					    + "order by b_group asc";
+					sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, n.title, n.content, n.created_date, u.user_name "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+					    + "where u.user_name like '%"+word+"%' "
+					    + "order by n.b_group asc";
 				} 
 						
 			}else {//검색어를 입력하지 않았다면?
 				//모든 글의 열목록 조회
-				sql = "select * from notice "
-						+ "order by b_group asc";
+				sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, n.title, n.content, n.created_date, u.user_name  "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+						+ "order by n.b_group asc";
 				
 			}
 			
@@ -136,6 +151,12 @@ public class BoardDAO {
 							 rs.getString("title"), 
 							 rs.getString("content"), 
 							 rs.getDate("created_date"));
+					
+					MemberVo memvo = new MemberVo();
+					
+					memvo.setUser_name(rs.getString("user_name"));
+					vo.setUserName(memvo);
+					
 					list.add(vo);			
 				}			
 				
@@ -192,7 +213,11 @@ public class BoardDAO {
 			
 			try {
 				con = ds.getConnection();
-				sql = "select * from notice where notice_id=?";
+				sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, n.title, n.content, n.created_date, u.user_name "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+						+ " where notice_id=?";
+				
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1,  Integer.parseInt(notice_id));
 				rs = pstmt.executeQuery();
@@ -207,6 +232,11 @@ public class BoardDAO {
 							 rs.getString("title"), 
 							 rs.getString("content"), 
 							 rs.getDate("created_date"));
+					MemberVo memvo = new MemberVo();
+					memvo.setUser_name(rs.getString("user_name"));
+					
+					vo.setUserName(memvo);
+					
 				}
 			} catch (Exception e) {
 				System.out.println("BoardDAO의 boardRead메소드");

@@ -19,8 +19,8 @@ public class ClassroomBoardService {
 	
 
 	//공지사항 전체 목록 조회
-	public ArrayList<ClassroomBoardVo> serviceNoticeList(String course_id) {
-		return classroomBoarddao.noticeList(course_id);
+	public ArrayList<ClassroomBoardVo> serviceNoticeList(String course_id, String user_name) {
+		return classroomBoarddao.noticeList(course_id, user_name);
 	}
 
 	//글 한개 조회 
@@ -39,8 +39,8 @@ public class ClassroomBoardService {
 	}
 
 	//검색
-	public ArrayList serviceBoardKeyWord(String key, String word) {
-		return classroomBoarddao.boardKeyWord(key, word);
+	public ArrayList serviceBoardKeyWord(String key, String word, String course_id) {
+		return classroomBoarddao.boardKeyWord(key, word, course_id);
 	}
 
 	//수정

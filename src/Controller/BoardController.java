@@ -91,12 +91,16 @@ public class BoardController extends HttpServlet {
 		// 액션에 따라 분기 처리
 	    switch(action) {
 		case "/list.bo": //모든 글 조회 
+			String key = (String)request.getParameter("key");
+			String word = (String)request.getParameter("word");
 			
-//			HttpSession session_ = request.getSession();
-//			String loginid = (String)session_.getAttribute("id");
-			
-			//부장 호출!
-			list = boardservice.serviceBoardList();
+			if(word == null) {
+				//부장 호출!
+				list = boardservice.serviceBoardList();
+			}else {
+				list = boardservice.serviceBoardKeyWord(key, word);
+					
+			}
 			
 			//list.jsp페이지의 페이징 처리 부분에서 
 			//이전 또는 다음 또는 각페이지 번호중 하나를 클릭했을때 요청받는 값 얻기
@@ -121,6 +125,8 @@ public class BoardController extends HttpServlet {
 			request.setAttribute("list", list);
 			request.setAttribute("nowPage", nowPage);
 			request.setAttribute("nowBlock", nowBlock);
+			request.setAttribute("key", key);
+		   	request.setAttribute("word", word);
 			
 			
 			
@@ -132,8 +138,8 @@ public class BoardController extends HttpServlet {
 		case "/searchlist.bo": //검색 키워드로  글조회
 			
 		 //요청한 값 얻기 (조회를 위해 선택한 Option의 값 , 입력한 검색어)
-		 String key = request.getParameter("key");
-		 String word = request.getParameter("word");
+		 key = request.getParameter("key");
+		 word = request.getParameter("word");
 		 String role_ = (String)session.getAttribute("role");
 			
 			
@@ -144,14 +150,14 @@ public class BoardController extends HttpServlet {
 	     //VIEW중앙화면에 조회된 글목록을 보여주기 위해
 	     //request내장객체에 조회된 정보 바인딩
 	     request.setAttribute("list", list);
-	     
+		 request.setAttribute("key", key);
+	      request.setAttribute("word", word);
+	      
 	     if(role_.equals("관리자")) {
 		     //VIEW중앙화면 주소경로 바인딩
 		     request.setAttribute("center", "view_admin/noticeManage.jsp");
-	     }else if(role_.equals("교수")){
-	    	 request.setAttribute("center", "view_professor/noticeProfessor.jsp");
-	     }else {
-	    	 request.setAttribute("center", "view_student/noticeStudent.jsp");
+	     }else { 
+	    	 request.setAttribute("center", "common/notice/list.jsp");
 	     }
 	     
 	     //재요청할 메인 페이지 주소 경로 변수에 저장

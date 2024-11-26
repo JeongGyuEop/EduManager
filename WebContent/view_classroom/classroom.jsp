@@ -45,24 +45,12 @@
 	                                	course.courseName + ' <!-- 강의 이름 표시 -->' +
 	                                '<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>' +
                                 '</a>' +
-                                
-		<%	if(role.equals("교수")) { %> // 현재 로그인 한 사람이 교수인 경우
                                 '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
 	                                '<nav class="sb-sidenav-menu-nested nav">' +
 		                                '<a class="nav-link" href="<%=contextPath%>/assign/assignmentManage.bo?center=/view_classroom/assignment_submission/assignmentManage.jsp&courseId=' + course.courseId + '">과제</a>' +
 		                                '<a class="nav-link" href="<%=contextPath%>/classroomboard/noticeList.bo?center=/view_classroom/assignment_notice/professorNotice.jsp&courseId=' + course.courseId + '">공지사항</a>' +
 	                                '</nav>' +
                                 '</div>';
-								
-		<%	} else { %> // 학생인 경우
-							    '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
-							        '<nav class="sb-sidenav-menu-nested nav">' +
-							            '<a class="nav-link" href="<%=contextPath%>/submission/assignmentManage.do?courseId=' + course.courseId + '">과제</a>' +
-		                                '<a class="nav-link" href="<%=contextPath%>/classroomboard/noticeList.bo?center=/view_classroom/assignment_notice/professorNotice.jsp&courseId=' + course.courseId + '">공지사항</a>' +
-							        '</nav>' +
-							    '</div>';
-							    
-		<%	} %> 
 
 							$('#courseTargetElement').append(courseHtml);
 
