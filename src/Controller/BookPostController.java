@@ -1,11 +1,8 @@
 package Controller;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,12 +11,22 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
 
 import Dao.BookPostDAO;
 import Service.BookPostService;
 import Vo.BookPostVo;
 import Vo.CommentVo;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.servlet.http.*;
 
 @WebServlet("/Book/*")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 1, // 1MB
@@ -68,6 +75,7 @@ public class BookPostController extends HttpServlet {
 		String nextPage = null;
 		String center = null;
 		String action = request.getPathInfo();
+		int result = 0;
 
 		System.out.println("2단계 요청 주소 : " + action);
 
@@ -79,21 +87,40 @@ public class BookPostController extends HttpServlet {
 
 			List<BookPostVo> bookBoardList = bookPostservice.serviceBoardbooklist();
 			String nowPage = request.getParameter("nowPage");
-			String nowBlock = request.getParameter("nowBlock");			
-			
-			request.setAttribute("message", request.getAttribute("message"));
-			
-			center = request.getParameter("center");
+			String nowBlock = request.getParameter("nowBlock");
+			String message = (String) request.getAttribute("message");
+			System.out.println(message);
+			request.setAttribute("message", message);
+
+			center = (String) request.getAttribute("center");
 
 			request.setAttribute("center", center);
-			
+			System.out.println(center);
 			request.setAttribute("bookBoardList", bookBoardList);
 			request.setAttribute("nowPage", nowPage);
 			request.setAttribute("nowBlock", nowBlock);
 
 			nextPage = "/main.jsp";
 
+			break;
+			
+		case "/bookpostboard.bo": // 글 조회 메서드
+			
+			bookBoardList = bookPostservice.serviceBoardbooklist();
+			nowPage = request.getParameter("nowPage");
+			nowBlock = request.getParameter("nowBlock");
+			
+			center = request.getParameter("center");
+			
+			request.setAttribute("center", center);
+			System.out.println(center);
+			request.setAttribute("bookBoardList", bookBoardList);
 
+			request.setAttribute("nowPage", nowPage);
+			request.setAttribute("nowBlock", nowBlock);
+			
+			nextPage = "/main.jsp";
+			
 			break;
 
 		case "/bookPostUpload.bo": // 글 등록하러 가기
@@ -101,11 +128,11 @@ public class BookPostController extends HttpServlet {
 			List<BookPostVo> majorInfo = bookPostservice.majorInfo();
 
 			center = "/view_student/booktrading.jsp";
-			
+
 			request.setAttribute("center", center);
 			request.setAttribute("majorInfo", majorInfo);
 			request.setAttribute("userId", request.getParameter("userId"));
-			
+
 			nextPage = "/main.jsp";
 
 			break;
@@ -115,183 +142,227 @@ public class BookPostController extends HttpServlet {
 			// 글 등록 form으로부터 글 제목이 있을 경우에 실행
 			try {
 				// 서비스 호출
-				int result = bookPostservice.bookPostUploadService(request);
+				result = bookPostservice.bookPostUploadService(request);
 				// 결과 처리 및 메시지 설정
 				if (result == 1) {
 					request.setAttribute("message", "게시글이 성공적으로 등록되었습니다.");
+					request.setAttribute("center", "/view_student/booktradingboard.jsp");
 				} else {
 					request.setAttribute("message", "게시글 등록에 실패했습니다. 다시 시도해주세요.");
+					request.setAttribute("center", "/view_student/booktradingboard.jsp");
 				}
 			} catch (Exception e) {
 				// 예외 발생 시 에러 메시지 설정
 				e.printStackTrace();
 				request.setAttribute("message", "게시글 등록 중 문제가 발생했습니다.");
+				request.setAttribute("center", "/view_student/booktradingboard.jsp");
 			}
 			// nextPage 지정
-			nextPage = "/Book/booktradingboard.bo?&center=/view_student/booktradingboard.jsp";
+
 
 			break;
 
-			
-			//게시글 검색
-		case "/booksearchlist.bo":	
+		// 게시글 검색
+		case "/booksearchlist.bo":
 
 			// 키워드로 게시글 검색 기능
-						String key = request.getParameter("key");
-						String word = request.getParameter("word");
-						bookBoardList = bookPostservice.serviceBookKeyWord(key, word);
-						request.setAttribute("bookBoardList", bookBoardList);
-						request.setAttribute("center", "view_student/booktradingboard.jsp");
-						nextPage = "/main.jsp";
-						break;
-			
-			
-			
-			//게시판상세보기
+			String key = request.getParameter("key");
+			String word = request.getParameter("word");
+			bookBoardList = bookPostservice.serviceBookKeyWord(key, word);
+			request.setAttribute("bookBoardList", bookBoardList);
+			request.setAttribute("center", "view_student/booktradingboard.jsp");
+			nextPage = "/main.jsp";
+			break;
+
+		// 게시판상세보기
 		case "/bookread.bo":
-			
+
 
 			BookPostVo bookPost = bookPostservice.serviceBookPost(request);
 			majorInfo = bookPostservice.majorInfo();
-			
+
 			request.setAttribute("center", "/view_student/booktradingread.jsp");
 			request.setAttribute("bookPost", bookPost);
 			request.setAttribute("majorInfo", majorInfo);
 
 			nextPage = "/main.jsp";
-			
+
 			break;
 
-			
-			
-			
-			// 댓글 작성 처리 및 게시글 상세보기
-		case "/postDetail.do":
-		    try {
-		        // 게시글 상세보기
-		        int postId = Integer.parseInt(request.getParameter("postId"));
-		        BookPostVo postDetail = bookPostservice.getPostDetail(postId);
-		        List<CommentVo> commentList = bookPostservice.getComments(postId);
-		        
-		        // 댓글 작성 처리 (POST 방식으로 받은 댓글 내용)
-		        if ("POST".equalsIgnoreCase(request.getMethod())) {
-		            String author = request.getParameter("author");
-		            String content = request.getParameter("commentContent");
 
-		            // 댓글 작성
-		            Timestamp createdAt = Timestamp.valueOf(LocalDateTime.now());
-		            CommentVo newComment = new CommentVo();
-		            newComment.setPostId(postId);
-		            newComment.setAuthor(author);
-		            newComment.setContent(content);
-		            newComment.setCreatedAt(createdAt);
+		// 게시글 삭제
+		case "/bookpostdelete.do":
 
-		            // 댓글 추가
-		            bookPostservice.addComment(newComment);
+			try {
+				// 서비스 호출
+				result = bookPostservice.bookPostDelete(request);
+				// 결과 처리 및 메시지 설정
+				if (result == 1) {
+					request.setAttribute("message", "게시글이 성공적으로 삭제되었습니다.");
+					request.setAttribute("center", "/view_student/booktradingboard.jsp");
+				} else {
+					request.setAttribute("message", "게시글 삭제에 실패했습니다. 다시 시도해주세요.");
+					request.setAttribute("center", "/view_student/booktradingboard.jsp");
+				}
+			} catch (Exception e) {
+				// 예외 발생 시 에러 메시지 설정
+				e.printStackTrace();
+				request.setAttribute("message", "게시글 삭제 중 문제가 발생했습니다.");
+				request.setAttribute("center", "/view_student/booktradingboard.jsp");
+			}
 
-		            // 댓글 추가 후 리로드(리디렉션 대신 동일 페이지로 갱신)
-		            commentList = bookPostservice.getComments(postId);
-		        }
+			// nextPage 지정
+			nextPage = "/Book/booktradingboard.bo";
 
-		        // 요청 속성에 게시글 정보와 댓글 리스트 설정
-		        request.setAttribute("postDetail", postDetail);
-		        request.setAttribute("commentList", commentList);
+			break;
 
-		        // 상세보기 페이지로 이동
+		// 게시글 수정 버튼
+		case "/bookpostupdate.bo":
+			System.out.println("Controller : " + request.getParameter("postId"));
+			BookPostVo bookPost1 = bookPostservice.serviceBookPost(request);
+			majorInfo = bookPostservice.majorInfo();
 
-		        nextPage = "/Book/postDetail.do?&center=/view_student/booktradingread.jsp";
-		       // nextPage = "/view_student/booktradingread.jsp"; // 상세보기 페이지
-		    } catch (NumberFormatException e) {
-		        // postId가 유효하지 않으면 오류 처리
-		        request.setAttribute("errorMessage", "Invalid postId parameter.");
-		        return;
-		    }
-		    break;
+			request.setAttribute("center", "/view_student/bookpostupdate.jsp");
+			request.setAttribute("bookPost", bookPost1);
+			request.setAttribute("majorInfo", majorInfo);
 
-			
-			
-			
-			
-			/*
-			   // 댓글 게시글 상세보기
-        case "/postDetail.do":
-            try {
-                // 게시글 상세보기
-                int postId = Integer.parseInt(request.getParameter("postId"));
-                BookPostVo postDetail = bookPostservice.getPostDetail(postId);
-                List<CommentVo> commentList = bookPostservice.getComments(postId);
+			nextPage = "/main.jsp";
 
-                
-                // 요청 속성에 게시글 정보와 댓글 리스트 설정
-                request.setAttribute("postDetail", postDetail);
-                request.setAttribute("commentList", commentList);
-                
+			break;
 
-                // 상세보기 페이지로 이동
-                nextPage = "/view_student/booktradingread.jsp"; // 상세보기 페이지
+		case "/bookpostupdate.do": // 글 수정
+			// 요청 인코딩 설정
+			request.setCharacterEncoding("UTF-8");
 
-            } catch (NumberFormatException e) {
-                // postId가 유효하지 않으면 오류 처리
-                request.setAttribute("errorMessage", "Invalid postId parameter.");
- //               nextPage = "/error.jsp"; // 오류 페이지로 리디렉션
-                return;
-            }
-            break;
+			// 폼 필드 값들을 저장할 변수 선언
+			String userIdUpdate = null;
+			String postIdUpdate = null;
+			String postTitleUpdate = null;
+			String postContentUpdate = null;
+			String majorTagUpdate = null;
 
-        // 댓글 작성 처리
-        case "/replypro.do":
-            try {
-                // 댓글 작성 처리
-                int postId_ = Integer.parseInt(request.getParameter("postId"));
-                String author = request.getParameter("author");
-                String content = request.getParameter("commentContent");
-                
-                BookPostVo postDetail = (BookPostVo) request.getAttribute("postDetail");
-                Timestamp createdAt = Timestamp.valueOf(LocalDateTime.now());
+			// BookPostVo 객체 및 이미지 리스트 생성
+			BookPostVo bookPostVoUpdate = new BookPostVo();
+			bookPostVoUpdate.setImages(new ArrayList<BookPostVo.BookImage>());
 
-                // 새로운 댓글 객체 생성
-                CommentVo newComment = new CommentVo();
-                newComment.setPostId(postId_);
-                newComment.setAuthor(author);
-                newComment.setContent(content);
-                newComment.setCreatedAt(createdAt);
+			// 파일 업로드 처리를 위해 파트들을 가져옵니다.
+			Collection<Part> partsUpdate = request.getParts();
 
-                // 댓글 추가
-                bookPostservice.addComment(newComment);
+			for (Part part : partsUpdate) {
+				String fieldName = part.getName();
+				if (part.getContentType() == null) {
+					// 이것은 폼 필드입니다.
+					String value = readParameterValue(part);
+					System.out.println("폼 필드 - " + fieldName + ": " + value); // 디버깅 로그
+					switch (fieldName) {
+					case "userId":
+						userIdUpdate = value;
+						bookPostVoUpdate.setUserId(userIdUpdate);
+						break;
+					case "postId":
+						postIdUpdate = value;
+						if (postIdUpdate != null && !postIdUpdate.isEmpty()) {
+							try {
+								bookPostVoUpdate.setPostId(Integer.parseInt(postIdUpdate));
+							} catch (NumberFormatException e) {
+								System.out.println("postId 형식이 올바르지 않습니다: " + postIdUpdate);
+								e.printStackTrace();
+								// 적절한 오류 처리
+							}
+						} else {
+							System.out.println("postId가 null이거나 비어있습니다.");
+						}
+						break;
+					case "postTitle":
+						postTitleUpdate = value;
+						bookPostVoUpdate.setPostTitle(postTitleUpdate);
+						break;
+					case "postContent":
+						postContentUpdate = value;
+						bookPostVoUpdate.setPostContent(postContentUpdate);
+						break;
+					case "majorTag":
+						majorTagUpdate = value;
+						bookPostVoUpdate.setMajorTag(majorTagUpdate);
+						break;
+					}
+				} else {
+					// 이것은 파일 파트입니다.
+					if (fieldName.equals("image") && part.getSize() > 0) {
+						String fileName = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+						System.out.println("파일 이름: " + fileName);
+						System.out.println("파일 크기: " + part.getSize());
+						System.out.println("컨텐츠 타입: " + part.getContentType());
 
-                // 댓글 작성 후 상세보기 페이지로 리다이렉트
-                response.sendRedirect(request.getContextPath() + "/Book/postDetail.do?postId=" + postId_);
-                return;
+						// 이미지 객체 생성 및 파일명 설정
+						BookPostVo.BookImage bookImage = new BookPostVo.BookImage();
+						bookImage.setFileName(fileName); // 실제 파일명
 
-            } catch (NumberFormatException e) {
-                // postId가 유효하지 않으면 오류 처리
-                request.setAttribute("errorMessage", "Invalid postId parameter.");
-                return;
-            }
-      //      break;
-*/
-  
+						// 이미지 리스트에 추가
+						bookPostVoUpdate.getImages().add(bookImage);
+					}
+				}
+			}
 
-			
+			// 폼 필드 값 출력
+			System.out.println("userId: " + userIdUpdate);
+			System.out.println("postId: " + postIdUpdate);
+			System.out.println("postTitle: " + postTitleUpdate);
+			System.out.println("postContent: " + postContentUpdate);
+			System.out.println("majorTag: " + majorTagUpdate);
 
-	    	
-			//게시글 삭제
-	//	case "/deleteBoard.do":
-			
-			
-			//게시글 수정
-	//	case "updateBoard.do":
-				
-			
-			
-// 중고 책 거래 -------------------------------------------------------------------------------------------------------------------
+			// 필수 필드 확인
+			if (userIdUpdate == null || postIdUpdate == null || postTitleUpdate == null || postContentUpdate == null
+					|| majorTagUpdate == null) {
+				System.out.println("필수 필드 중 하나 이상이 누락되었습니다.");
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "필수 필드가 누락되었습니다.");
+				return;
+			}
+			// 글 수정 form으로부터 글 제목이 있을 경우에 실행
+			try {
+				// 서비스 호출
+				result = bookPostservice.bookPostUpdateService(request);
+				// 결과 처리 및 메시지 설정
+				if (result == 1) {
+					request.setAttribute("message", "게시글이 성공적으로 수정되었습니다.");
+					request.setAttribute("center", "/view_student/booktradingboard.jsp");
+				} else {
+					request.setAttribute("message", "게시글 수정에 실패했습니다. 다시 시도해주세요.");
+					request.setAttribute("center", "/view_student/booktradingboard.jsp");
+				}
+			} catch (Exception e) {
+				// 예외 발생 시 에러 메시지 설정
+				e.printStackTrace();
+				request.setAttribute("message", "게시글 수정 중 문제가 발생했습니다.");
+				request.setAttribute("center", "/view_student/booktradingboard.jsp");
+			}
+			// nextPage 지정
+			nextPage = "/Book/booktradingboard.bo";
+
+			break;
+
+		// 댓글 입력
+		case "replypro.do":
+
+
 
 		default:
 			break;
 		}
 
-		// 다음 페이지로 포워딩
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
 		dispatch.forward(request, response);
+	}
+
+	// 폼 필드의 값을 읽어오는 유틸리티 메서드
+	private String readParameterValue(Part part) throws IOException {
+		InputStream inputStream = part.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+		StringBuilder value = new StringBuilder();
+		String line;
+		while ((line = reader.readLine()) != null) {
+			value.append(line);
+		}
+		return value.toString();
 	}
 }
