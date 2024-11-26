@@ -60,8 +60,6 @@ public class ClassroomController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8"); // MIME TYPE 설정
 		
-		String contextPath = request.getContextPath();
-		
 		//웹브라우저로 출력할 출력 스트림 생성
 	    PrintWriter out = null;
 	      
@@ -124,6 +122,7 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    		if(result == 1) {
 				    request.setAttribute("message", URLEncoder.encode("강의 등록이 완료되었습니다.", "UTF-8"));
+				    request.setAttribute("center", "/view_classroom/courseSearch.jsp");
 		    		nextPage = "/classroom/course_search.bo";
 				} else {
 				    request.setAttribute("message", URLEncoder.encode("강의 등록에 실패했습니다. 다시 입력해 주세요.", "UTF-8"));

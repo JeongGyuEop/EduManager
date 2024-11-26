@@ -172,7 +172,7 @@
                             </a>
                             
                             <!-- 강의 평가 항목 추가 -->
-                            <a class="nav-link" href="<%=contextPath%>/student/evaluationRegister.do?id=로그인한 학생아이디전달필요">
+                            <a class="nav-link" href="<%=contextPath%>/student/evaluationRegister.do">
                                 <div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
                                 강의 평가
                             </a>

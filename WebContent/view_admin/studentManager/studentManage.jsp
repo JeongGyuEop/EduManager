@@ -4,7 +4,6 @@
 <%
     request.setCharacterEncoding("UTF-8");
     String contextPath = request.getContextPath();
-    System.out.println(contextPath);
 %>
 
 <!DOCTYPE html>

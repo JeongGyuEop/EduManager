@@ -253,6 +253,8 @@ public class ProfessorController extends HttpServlet {
 	            
     
 	            nextPage = "/main.jsp";
+	            
+	            break;
 	       
 	      //===========================================================================
 	      // 강의 평가 조회
