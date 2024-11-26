@@ -174,8 +174,7 @@ if (request.getAttribute("nowBlock") != null) {
 										<!-- 번호 -->
 										<td align="left"><%=listinput.getPostId()%></td>
 										<!-- 제목 (링크 클릭 시 fnRead 함수 호출) -->
-										<td><a
-											href="javascript:fnRead('<%=listinput.getPostId()%>')"><%=listinput.getPostTitle()%></a></td>
+										<td><a href="javascript:fnRead('<%=listinput.getPostId()%>')"><%=listinput.getPostTitle()%></a></td>
 										<!-- 작성자 -->
 										<td align="left"><%=listinput.getUserId()%></td>
 										<!-- 학과태그 -->

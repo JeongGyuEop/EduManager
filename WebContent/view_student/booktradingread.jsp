@@ -1,18 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@page import="Vo.BookPostReplyVo"%>
 <%@page import="java.io.IOException"%>
 <%@page import="java.io.FileNotFoundException"%>
 <%@page import="java.io.InputStream"%>
 <%@page import="java.util.Properties"%>
-
 <%@page import="java.util.ArrayList"%>
 <%@page import="Vo.BookPostVo.BookImage"%>
-
 <%@page import="java.sql.Timestamp"%>
 <%@ page import="Vo.BookPostVo"%>
 <%@ page import="Vo.MemberVo"%>
 <%@ page import="java.util.List"%>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
 request.setCharacterEncoding("utf-8");
@@ -24,6 +22,27 @@ String userId = (String) session.getAttribute("id");
 // vo객체 반환
 BookPostVo bookPost = (BookPostVo) request.getAttribute("bookPost");
 List<BookPostVo> majorInfo = (List<BookPostVo>) request.getAttribute("majorInfo");
+List<BookPostReplyVo> replies = (List<BookPostReplyVo>) request.getAttribute("replies");
+
+//replies 리스트 내용 출력
+if (replies != null && !replies.isEmpty()) {
+	System.out.println("Replies List Contents:");
+	for (BookPostReplyVo reply : replies) {
+		System.out.println(reply); // toString() 메소드가 구현되어 있어야 합니다.
+
+		// 또는 개별 필드를 출력하고 싶다면
+		/*
+		System.out.println("Reply ID: " + reply.getReplyId());
+		System.out.println("User ID: " + reply.getUserId());
+		System.out.println("Content: " + reply.getReplyContent());
+		System.out.println("Reply Time: " + reply.getReplyTimeAt());
+		System.out.println("---------------------------");
+		*/
+	}
+} else {
+	System.out.println("Replies list is null or empty.");
+}
+
 if (bookPost == null) {
 	// 객체가 없을 경우 처리
 	out.println("게시글 정보를 불러올 수 없습니다.");
@@ -44,7 +63,6 @@ List<BookImage> displayImages = new ArrayList<>();
 if (images != null) {
 	for (int i = 0; i < images.size() && i < 5; i++) {
 		displayImages.add(images.get(i));
-
 	}
 }
 // 프로퍼티 파일 로드
@@ -60,25 +78,18 @@ try (InputStream input = application.getResourceAsStream("/WEB-INF/classes/confi
 
 String uploadDir = properties.getProperty("upload.dir");
 %>
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>상세확인</title>
-
-
-
 </head>
 <body>
-	<<<<<<< HEAD
-	<form action="<%=contextPath%>/Book/bookPostUpload.do" method="post"
-		enctype="multipart/form-data">
+	<div>
 		<input type="hidden" name="userId" value="<%=userId%>">
 		<table>
 			<thead>
 				<tr>
-
 					<td><label for="postTitle">글 제목:</label><%=postTitle%></td>
 				</tr>
 				<tr>
@@ -86,7 +97,6 @@ String uploadDir = properties.getProperty("upload.dir");
 					<td><label for="createdAt">작성일:</label><%=createdAt%></td>
 				</tr>
 				</tr>
-
 			</thead>
 			<tbody>
 				<tr>
@@ -111,9 +121,7 @@ String uploadDir = properties.getProperty("upload.dir");
 				</tr>
 
 				<tr>
-
 					<td colspan="4"><label for="postContent">내용:</label><%=postContent%></td>
-
 				</tr>
 				<tr>
 					<td colspan="4" bgcolor="#f5f5f5" style="text-align: left">
@@ -123,166 +131,76 @@ String uploadDir = properties.getProperty("upload.dir");
 			</tbody>
 			<tfoot>
 				<tr>
-
 					<td><label for="majorTag">학과 태그:</label><%=majorTag%></td>
-
-
-					<!-- if(userId == postUserId { -->
-
-					<%--수정하기 --%>
-					<td><input type="button" id="update" value="수정"></td>
-					<%--삭제하기 --%>
-					<td><input type="button" id="delete"
-						onclick="javascript:deletePro('<%=postId%>');" value="삭제"></td>
-
-					<!-- } -->
-
+					<%
+					if (userId != null && userId.equals(postUserId)) {
+					%>
+					<!-- 작성자가 동일할 경우에만 수정/삭제 버튼 표시 -->
+					<td><form action="<%=contextPath%>/Book/bookpostupdate.bo"
+							method="get">
+							<input type="hidden" value="<%=postId%>" name="postId"><input
+								type="submit" value="수정하기">
+						</form></td>
+					<td><form action="<%=contextPath%>/Book/bookpostdelete.do">
+							<input type="hidden" value="<%=postId%>" name="postId"><input
+								type="submit" value="삭제하기">
+						</form></td>
+					<%
+					}
+					%>
 					<%--목록 --%>
-					<td><input type="button" id="list" value="목록" /></td>
+					<td><form action="<%=contextPath%>/Book/bookpostboard.bo">
+							<input type="hidden" value="/view_student/booktradingboard.jsp"
+								name="center"><input type="submit" value="목록">
+						</form></td>
 				</tr>
 			</tfoot>
 		</table>
-	</form>
-
-
+	</div>
 	<!-- 댓글 섹션 -->
-	<div id="commentsSection" style="margin-top: 20px;">
-		<h3>댓글</h3>
+	<div id="replySection">
+		<h4>댓글</h4>
+		<div id="replyList">
+			<c:if test="${not empty replies}">
+				<div class="replies-section">
+					<h4>댓글 목록</h4>
+					<!-- replies 리스트를 반복 -->
+					<c:forEach var="reply" items="${replies}">
 
-		<!-- 댓글 목록 -->
-		<div id="commentList">
-			<c:forEach var="comment" items="${commentList}">
-				<div>
-					<strong>${comment.author}</strong>
-					<p>${comment.content}</p>
-					<span>${comment.createdAt}</span>
+						<table border="1" cellspacing="0" cellpadding="8">
+							<tr>
+								<%-- <td>${reply.replyId}</td> --%>
+								<td>${reply.userId}</td>
+								<td>${reply.replytimeAt}</td>
+							</tr>
+							<form action="" method="get">
+								<input type="hidden" ${reply.replyId }>
+								<tr>
+								
+									<td id="transeform" colspan="3">${reply.replyContent}
+										<button>수정</button>
+										<!-- js function호출로 replyContent 내부 값을 저장 후 tr 내부 전부 삭제 -->
+										<!-- 삭제된 tr 내부에 td(replyContet)와 수정완료 버튼(input type='submit') 생성 -->
+										<input type="submit" value="삭제">
+									</td>
+								</tr>
+							</form>
+						</table>
+					</c:forEach>
 				</div>
-			</c:forEach>
-			<c:if test="${empty commentList}">
-				<p>댓글이 없습니다.</p>
 			</c:if>
 		</div>
 
 		<!-- 댓글 입력 폼 -->
-		<form action="${pageContext.request.contextPath}/Book/postDetail.do"
-			method="post">
-			<input type="hidden" name="postId" value="${postDetail.postId}">
-			<input type="hidden" name="createdAt" value="${postDetail.createdAt}">
-			<input type="text" name="author" placeholder="작성자" required>
-			<textarea name="commentContent" placeholder="댓글 입력" required></textarea>
-			<button type="submit">등록</button>
+		<form action="<%=contextPath%>/Book/bookpostreply.do" method="post">
+			<input type="hidden" name="postId" value="<%=postId%>"> <input
+				type="text" name="userId" value="<%=userId%>" readonly>
+			<textarea name="replyContent" placeholder="댓글 입력" required></textarea>
+			<input type="submit" value="댓글 등록">
 		</form>
 	</div>
-
-
-
-	<script>
-		function previewImages(event) {
-			const files = event.target.files;
-
-			// 미리보기 영역을 초기화합니다.
-			const preview = document.getElementById('preview');
-			preview.innerHTML = ""; // 기존 미리보기를 초기화
-
-			// 파일이 5개를 초과하면 처리하지 않음
-			if (files.length > 5) {
-				alert("최대 5개의 이미지만 업로드할 수 있습니다.");
-				event.target.value = ""; // 파일 선택 초기화
-				return;
-			}
-
-			// 선택한 파일들을 순회하며 미리보기 생성
-			for (let i = 0; i < files.length; i++) {
-				if (files[i]) {
-					const reader = new FileReader();
-
-					reader.onload = function(e) {
-						// 각 이미지 미리보기를 위한 <img> 태그 생성
-						const img = document.createElement("img");
-						img.src = e.target.result;
-						img.style.width = "178px"; // 이미지의 가로 크기
-						img.style.height = "178px"; // 이미지의 세로 크기
-						img.style.margin = "2px"; // 이미지 간의 간격
-						preview.appendChild(img);
-					};
-
-					reader.readAsDataURL(files[i]);
-				}
-			}
-		}
+	<script type="text/javascript">
+		
 	</script>
-
-
-	<input type="hidden" name="userId" value="<%=userId%>">
-	<table>
-		<thead>
-			<tr>
-				<td><label for="postTitle">글 제목:</label><%=postTitle%></td>
-			</tr>
-			<tr>
-				<td><label for="postUserId">작성자:</label><%=postUserId%></td>
-				<td><label for="createdAt">작성일:</label><%=createdAt%></td>
-			</tr>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td colspan="4"><label for="preview-image">이미지 미리보기</label>
-					<div id="preview" style="display: flex; flex-wrap: wrap;">
-						<%
-						if (images != null && !images.isEmpty()) {
-							for (BookImage image : images) {
-								String imagePath = image.getImage_path();
-						%>
-						<img src="<%=request.getContextPath() + imagePath%>"
-							style="width: 178px; height: 178px; margin: 2px;" />
-						<%
-						}
-						} else {
-						%>
-						<p>이미지가 없습니다.</p>
-						<%
-						}
-						%>
-					</div></td>
-			</tr>
-
-			<tr>
-				<td colspan="4"><label for="postContent">내용:</label><%=postContent%></td>
-			</tr>
-			<tr>
-				<td colspan="4" bgcolor="#f5f5f5" style="text-align: left">
-					<p id="textInput"></p>
-				</td>
-			</tr>
-		</tbody>
-		<tfoot>
-			<tr>
-				<td><label for="majorTag">학과 태그:</label><%=majorTag%></td>
-				<%
-				if (userId != null && userId.equals(postUserId)) {
-				%>
-				<!-- 작성자가 동일할 경우에만 수정/삭제 버튼 표시 -->
-				<td><form action="<%=contextPath%>/Book/bookpostupdate.bo"
-						method="get">
-						<input type="hidden" value="<%=postId%>" name="postId"><input
-							type="submit" value="수정하기">
-					</form></td>
-				<td><form action="<%=contextPath%>/Book/bookpostdelete.do">
-						<input type="hidden" value="<%=postId%>" name="postId"><input
-							type="submit" value="삭제하기">
-					</form></td>
-				<%
-				}
-				%>
-				<%--목록 --%>
-				<td><form action="<%=contextPath%>/Book/bookpostboard.bo">
-						<input type="hidden" value="/view_student/booktradingboard.jsp"
-							name="center"><input type="submit" value="목록">
-					</form></td>
-			</tr>
-		</tfoot>
-	</table>
-
 </body>
 </html>

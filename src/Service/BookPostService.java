@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +16,7 @@ import javax.servlet.http.Part;
 import Dao.BookPostDAO;
 import Dao.MemberDAO;
 import Vo.BookPostVo;
-import Vo.CommentVo;
+import Vo.BookPostReplyVo;
 
 public class BookPostService {
 
@@ -154,12 +153,6 @@ public class BookPostService {
 		String postContent = request.getParameter("postContent"); // 글 내용
 		String majorTag = request.getParameter("majorTag"); // 학과 태그
 
-		System.out.println("postId: " + postIdStr);
-		System.out.println("userId: " + userId);
-		System.out.println("postTitle: " + postTitle);
-		System.out.println("postContent: " + postContent);
-		System.out.println("majorTag: " + majorTag);
-
 		// postId 유효성 검사
 		int postId = 0;
 		try {
@@ -259,5 +252,25 @@ public class BookPostService {
 		int result = bookPostDAO.bookPostDelete(postId);
 		return result;
 	}
+
+	public void bookReplyUploadService(HttpServletRequest request) {
+		int postId = Integer.parseInt(request.getParameter("postId"));
+		String userId = request.getParameter("userId");
+		String replyContent = request.getParameter("replyContent");
+		
+		BookPostReplyVo replyVo = new BookPostReplyVo();
+		replyVo.setPostId(postId);
+		replyVo.setUserId(userId);
+		replyVo.setReplyContent(replyContent);
+		
+		bookPostDAO.bookReplyUpload(replyVo);
+	}
+	
+	// 댓글 조회 메서드 추가
+    public List<BookPostReplyVo> bookPostRepliesService(HttpServletRequest request) {
+		int postId = Integer.parseInt(request.getParameter("postId"));
+        return bookPostDAO.bookPostReplies(postId);
+    }
+	
 }
 

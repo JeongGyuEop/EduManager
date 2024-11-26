@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import Dao.BookPostDAO;
 import Service.BookPostService;
+import Vo.BookPostReplyVo;
 import Vo.BookPostVo;
-import Vo.CommentVo;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -49,6 +51,7 @@ public class BookPostController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
+			System.out.println("asdf");
 			doHandle(request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,24 +106,24 @@ public class BookPostController extends HttpServlet {
 			nextPage = "/main.jsp";
 
 			break;
-			
+
 		case "/bookpostboard.bo": // 글 조회 메서드
-			
+
 			bookBoardList = bookPostservice.serviceBoardbooklist();
 			nowPage = request.getParameter("nowPage");
 			nowBlock = request.getParameter("nowBlock");
-			
+
 			center = request.getParameter("center");
-			
+
 			request.setAttribute("center", center);
 			System.out.println(center);
 			request.setAttribute("bookBoardList", bookBoardList);
 
 			request.setAttribute("nowPage", nowPage);
 			request.setAttribute("nowBlock", nowBlock);
-			
+
 			nextPage = "/main.jsp";
-			
+
 			break;
 
 		case "/bookPostUpload.bo": // 글 등록하러 가기
@@ -159,7 +162,6 @@ public class BookPostController extends HttpServlet {
 			}
 			// nextPage 지정
 
-
 			break;
 
 		// 게시글 검색
@@ -177,18 +179,18 @@ public class BookPostController extends HttpServlet {
 		// 게시판상세보기
 		case "/bookread.bo":
 
-
 			BookPostVo bookPost = bookPostservice.serviceBookPost(request);
+			List<BookPostReplyVo> replies = bookPostservice.bookPostRepliesService(request);
 			majorInfo = bookPostservice.majorInfo();
 
 			request.setAttribute("center", "/view_student/booktradingread.jsp");
 			request.setAttribute("bookPost", bookPost);
+			request.setAttribute("replies", replies);
 			request.setAttribute("majorInfo", majorInfo);
 
 			nextPage = "/main.jsp";
 
 			break;
-
 
 		// 게시글 삭제
 		case "/bookpostdelete.do":
@@ -342,9 +344,15 @@ public class BookPostController extends HttpServlet {
 			break;
 
 		// 댓글 입력
-		case "replypro.do":
+		case "/bookpostreply.do":
 
+			bookPostservice.bookReplyUploadService(request);
+			int postId = Integer.parseInt(request.getParameter("postId"));
+			request.setAttribute("postId", postId);
 
+			nextPage = "/Book/bookread.bo";
+
+			break;
 
 		default:
 			break;
