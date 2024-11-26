@@ -1,3 +1,4 @@
+<%@page import="java.net.URLDecoder"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
@@ -15,8 +16,9 @@
     <title>과제 제출</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <%
-    String message = request.getParameter("message");
-    if (message != null) {
+	String message = (String) request.getAttribute("message");
+	if (message != null) {
+    	message = URLDecoder.decode(message, "UTF-8");
 %>
         <script>
             alert('<%= message %>'); // 메시지를 알림으로 표시
@@ -41,9 +43,7 @@
 	                submitButton.prop('disabled', true); // 제출 버튼 비활성화
 	        		
 	                // 다운로드 버튼을 클릭했을 때 전달할 URL
-	        		const downloadUrl = '<%=contextPath%>/submit/downloadAssignment.do?fileName=' 
-                        + encodeURIComponent(response.fileName) 
-                        + '&originalName=' + encodeURIComponent(response.originalName);
+	        		const downloadUrl = '<%=contextPath%>/submit/downloadAssignment.do?fileId=' + response.fileId;
 	        		
 	                $('#submittedAssignments').append(
 	                    '<tr>' +

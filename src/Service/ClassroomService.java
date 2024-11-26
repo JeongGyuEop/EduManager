@@ -1,6 +1,8 @@
 package Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import Dao.ClassroomDAO;
 import Vo.ClassroomVo;
@@ -16,12 +18,22 @@ public class ClassroomService {
 		classroomdao = new ClassroomDAO();
 	}
 	
-	//-------------(Major 관련 service가 있는지 확인하기)
-	// 학과의 정보를 가져오기 위한 함수
-	public String serviceGetMajor(String majorCode) {
-		return classroomdao.getMajorNameInfo(majorCode);
+	//------------
+	// ClassroomService에 새로운 메서드 추가
+	public Map<String, Object> serviceGetCourseRegisterData(String majorCode) {
+		Map<String, Object> data = new HashMap<>();
+		    
+		// 학과 이름 조회
+		String majorName = classroomdao.getMajorNameInfo(majorCode);
+		data.put("majorName", majorName);
+		    
+	    // 강의실 정보 조회
+	    ArrayList<ClassroomVo> list = classroomdao.getClassroomAllInfo();
+	    data.put("classroomList", list);
+		    
+	    return data;
 	}
-
+		
 	//-------------
 	// 강의실 정보를 모두 조회해서 가져오는 기능의 함수
 	public ArrayList<ClassroomVo> serviceGetClassInfo() {

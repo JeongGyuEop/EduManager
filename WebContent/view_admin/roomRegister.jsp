@@ -1,3 +1,4 @@
+<%@page import="java.net.URLDecoder"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 
@@ -67,12 +68,13 @@
     </style>
     
 <%
-    String message = request.getParameter("message");
-    if (message != null) {
+	String message = (String) request.getAttribute("message");
+	if (message != null) {
+    	message = URLDecoder.decode(message, "UTF-8");
 %>
-    <script>
-        alert('<%= message %>'); // 메시지를 알림으로 표시
-    </script>
+        <script>
+            alert('<%= message %>'); // 메시지를 알림으로 표시
+        </script>
 <%
     }
 %>

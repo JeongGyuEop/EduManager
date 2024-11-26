@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import javax.servlet.RequestDispatcher;
@@ -76,12 +77,23 @@ public class SubmissionController extends HttpServlet {
 	    	case "/submitAssignmentPage.bo": // 학생의 과제를 제출하는 화면을 보여주는 2단계 요청 주소를 받으면
 	    		
 	    		String assignment_id = request.getParameter("assignmentId");
+	    		if(assignment_id == null) {
+	    			assignment_id = (String)request.getAttribute("assignmentId");
+	    		}
+	    		
 	    		String assignment_title = request.getParameter("assignmentTitle");
+	    		if(assignment_title == null) {
+	    			assignment_title = (String)request.getAttribute("assignmentTitle");
+	    		}
+	    		
+	    		String message = (String)request.getAttribute("message");
+	    		assignment_title = URLDecoder.decode(assignment_title, "UTF-8");
 	    		center = "/view_classroom/assignment_submission/submitAssignment.jsp";
 	    		
 	    		request.setAttribute("classroomCenter", center);
 	    		request.setAttribute("assignmentId", assignment_id);
 	    		request.setAttribute("assignment_title", assignment_title);
+	    		request.setAttribute("message", message);
 	    		
 	    		nextPage = "/view_classroom/classroom.jsp";
 	    		
@@ -105,33 +117,26 @@ public class SubmissionController extends HttpServlet {
 	    		String assignmentId = multipartRequest.getParameter("assignmentId"); 
 	    		String assignmentTitle = multipartRequest.getParameter("assignmentTitle");
 	    		String studentId = (String)session.getAttribute("student_id"); // 학생 ID
-	    		        
-	    		// submission 테이블에 데이터 저장
-	    		int submissionId = submissionservice.serviceSaveSubmission(assignmentId, studentId);
 	    		
 	    		// 실제 업로드 하기 전의  파일업로드를 하기 위해 jsp에서 선택했던 원본파일명 얻기
 	    		String original_name = multipartRequest.getOriginalFileName("assignmentFile");
-	    		
 	    		// 실제 업로드폴더(실제 서버 업로드폴더경로)에  업로드된 실제 파일명 얻기 
 	    		String file_path = multipartRequest.getFilesystemName("assignmentFile");
 	    		
-	    		// 업로드하기위해 선택한 파일의 원본이름과, 실제업로드한 파일 이름을 DB에 File테이블에 INSERT
-	    		int result = submissionservice.serviceSaveFile(submissionId, file_path, original_name);
-
+	    		// 서비스 호출
+	    		int result = submissionservice.serviceSaveSubmissionWithFile(assignmentId, studentId, file_path, original_name);
 	    		if(result == 1) {
-				    response.sendRedirect(request.getContextPath() +"/submit/submitAssignmentPage.bo?message="
-				    		+ URLEncoder.encode("과제 제출이 완료되었습니다.", "UTF-8")
-				    		+ "&assignmentId=" + assignmentId
-				    		+ "&assignmentTitle=" +  URLEncoder.encode(assignmentTitle, "UTF-8"));
-				    return;
+				    request.setAttribute("message", "과제 제출이 완료되었습니다.");
 				} else {
-					// 실패 시 message 파라미터만 포함하여 리다이렉트
-					response.sendRedirect(request.getContextPath() +"/submit/submitAssignmentPage.bo?message="
-				    		+ URLEncoder.encode("과제 제출에 실패했습니다.", "UTF-8")
-				    		+ "&assignmentId=" + assignmentId
-				    		+ "&assignmentTitle=" +  URLEncoder.encode(assignmentTitle, "UTF-8"));
-				    return;
+					request.setAttribute("message", "과제 제출에 실패했습니다.");
 				}
+	    		
+	    		request.setAttribute("assignmentId", assignmentId);
+	    		request.setAttribute("assignmentTitle", URLEncoder.encode(assignmentTitle, "UTF-8"));
+	    		
+	    		nextPage = "/submit/submitAssignmentPage.bo";
+	    		
+	    		break;
 	    		
 	    //==========================================================================================
 	    		
@@ -170,8 +175,13 @@ public class SubmissionController extends HttpServlet {
 	    //==========================================================================================
 	    		
 	    	case "/downloadAssignment.do":
-	    	    String fileName = request.getParameter("fileName");
-	    	    String originalName = request.getParameter("originalName");
+	    		String fileId = request.getParameter("fileId"); // fileId를 파라미터로 받음
+
+	    	    // 파일 정보 조회 (fileId를 사용하여 데이터베이스에서 조회)
+	    	    SubmissionVo fileInfo = submissionservice.getFileById(fileId);
+	    	    
+	    	    String fileName = fileInfo.getFileName();
+	    	    String originalName = fileInfo.getOriginalName();
 
 	    	    File file = new File(getServletContext().getRealPath("/submitUploads") + File.separator + fileName);
 	    	    if (file.exists()) {
@@ -201,7 +211,7 @@ public class SubmissionController extends HttpServlet {
 	    //==========================================================================================
 	    		
 	    	case "/deleteFile.do": // 
-	    	    String fileId = request.getParameter("fileId"); // 클라이언트에서 전달된 파일 ID
+	    	    fileId = request.getParameter("fileId"); // 클라이언트에서 전달된 파일 ID
 	    	    // 파일 정보 조회 및 권한 확인
 	    	    SubmissionVo fileData = submissionservice.getFileById(fileId);
 	    	    int submission_id = fileData.getSubmissionId();
