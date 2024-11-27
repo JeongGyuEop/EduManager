@@ -1,9 +1,11 @@
 package Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import Dao.AssignmentDAO;
 import Vo.AssignmentVo;
+import Vo.SubmissionVo;
 
 public class AssignmentService {
 	
@@ -35,6 +37,12 @@ public class AssignmentService {
 	// 교수의 각 강의의 과제를 수정하기 위해 DAO 호출
 	public int serviceUpdateAssignment(AssignmentVo assignmentVo) {
 		return assignmentdao.updateAssignment(assignmentVo);
+	}
+
+	//----------
+	// 학생들이 제출한 과제를 조회하기 위해 DAO 호출
+	public List<SubmissionVo> serviceGetSubmission(String assignmentId) {
+		return assignmentdao.getSubmission(assignmentId);
 	}
 
 }

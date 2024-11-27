@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -12,6 +13,8 @@ import javax.sql.DataSource;
 
 import Vo.AssignmentVo;
 import Vo.CourseVo;
+import Vo.StudentVo;
+import Vo.SubmissionVo;
 
 public class AssignmentDAO {
 		
@@ -163,11 +166,6 @@ public class AssignmentDAO {
 		int result = 0;
 		
 		try {
-			
-			System.out.println("Assignment ID: " + assignmentVo.getAssignmentId());
-			System.out.println("Title: " + assignmentVo.getTitle());
-			System.out.println("Description: " + assignmentVo.getDescription());
-			System.out.println("Due Date: " + assignmentVo.getDueDate());
 
 			con = ds.getConnection();
 			
@@ -196,5 +194,58 @@ public class AssignmentDAO {
 
 		return result;
 	}
+	
+	//----------
+	// 교수가 학생들이 제출한 과제를 조회하기 위해 DB에 연결하는 함수
+	public List<SubmissionVo> getSubmission(String assignmentId) {
+	    String sql = "SELECT s.submission_id, s.assignment_id, s.student_id, si.user_id, u.user_name, " +
+	                 "s.submitted_date, s.feedback, s.grade, sf.file_id, sf.file_name, sf.original_name " +
+	                 "FROM submission s " +
+	                 "LEFT JOIN student_info si ON s.student_id = si.student_id " +
+	                 "LEFT JOIN user u ON si.user_id = u.user_id " +
+	                 "LEFT JOIN submission_file sf ON s.submission_id = sf.submission_id " +
+	                 "WHERE s.assignment_id = ?";
+	    
+	    List<SubmissionVo> submissions = new ArrayList<SubmissionVo>();
+	    
+	    try {
+	        con = ds.getConnection();
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, assignmentId);
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            // SubmissionVo 객체 생성 및 설정
+	            SubmissionVo submission = new SubmissionVo();
+	            submission.setSubmissionId(rs.getInt("submission_id"));
+	            
+	            // StudentVo 객체 생성 및 설정
+	            StudentVo student = new StudentVo();
+	            student.setStudent_id(rs.getString("student_id")); // student_id 설정
+	            student.setUser_name(rs.getString("user_name")); // user_name 설정
+	            
+	            // AssignmentVo 객체 생성 (필요 시)
+	            AssignmentVo assignment = new AssignmentVo();
+	            assignment.setAssignmentId(rs.getInt("assignment_id"));
+	            
+	            submission.setAssignment(assignment);
+	            submission.setStudent(student);
+	            submission.setSubmittedDate(rs.getTimestamp("submitted_date"));
+	            submission.setFeedback(rs.getString("feedback"));
+	            submission.setGrade(rs.getInt("grade"));
+	            submission.setFileId(rs.getInt("file_id"));
+	            submission.setFileName(rs.getString("file_name"));
+	            submission.setOriginalName(rs.getString("original_name"));
+
+	            submissions.add(submission);
+	        }
+	    } catch (Exception e) {
+	        System.out.println("AssignmentDAO의 getSubmission 메소드에서 오류");
+	        e.printStackTrace();
+	    }
+	    
+	    return submissions;
+	}
+
 
 }

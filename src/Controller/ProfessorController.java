@@ -14,6 +14,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import Vo.ProfessorVo;
 import Service.ProfessorService;
@@ -63,6 +67,8 @@ public class ProfessorController extends HttpServlet {
 
 		String action = request.getPathInfo();// 2단계 요청주소
 		System.out.println("요청한 2단계 주소 : " + action);
+		
+		HttpSession session = request.getSession();
 
 		List<ProfessorVo> professorList = null;
 		String professorId = null;
@@ -247,8 +253,69 @@ public class ProfessorController extends HttpServlet {
 	            
     
 	            nextPage = "/main.jsp";
+	            
+	            break;
 	       
-	        break;
+	      //===========================================================================
+	      // 강의 평가 조회
+		case "/evaluationList.bo":
+
+		    // 세션에서 교수 ID 가져오기
+		    String loggedInProfessorId = (String) request.getSession().getAttribute("professor_id"); 
+		    
+			String course_id = request.getParameter("courseId");
+		    
+			
+		    // 강의 평가 데이터 조회
+		    List<ProfessorVo> evaluationList;
+		    if(course_id == null) {
+				evaluationList = prosessservice.getEvaluationsByProfessorId(loggedInProfessorId);
+			} else {
+				evaluationList = prosessservice.getEvaluationsByCourseId(course_id);
+			}
+
+		    // JSP에 데이터 전달
+		    request.setAttribute("evaluationList", evaluationList);
+		    
+		    center = "/view_classroom/evaluation/evaluationProfessorList.jsp";
+		    request.setAttribute("classroomCenter", center);
+		    
+		    nextPage = "/view_classroom/classroom.jsp";
+		    
+		    break;
+		    
+		  //=====================================================================
+		 // 강의 목록 조회 및 강의 평가 검색
+		case "/evaluationSearch.bo":
+			
+			professor_id = (String)session.getAttribute("professor_id");
+			
+			// 강의 목록 조회 (교수가 담당한 강의들)
+			List<ProfessorVo> courseList = prosessservice.getCoursesByProfessorId(professor_id);
+
+			// JSON 배열 생성
+			JSONArray jsonCourseArray = new JSONArray();
+
+			for (ProfessorVo course : courseList) {
+			    
+			    // JSONObject 생성 및 매핑
+			    JSONObject courseJson = new JSONObject();
+			    courseJson.put("courseId", course.getCourseId());
+			    courseJson.put("courseName", course.getCourseName());
+			    
+			    // JSON 배열에 추가
+			    jsonCourseArray.put(courseJson);
+			}
+
+			response.setContentType("application/json; charset=UTF-8");	
+			
+			// JSON 응답 반환
+    	    out.print(jsonCourseArray);
+    	    out.flush();
+    	    out.close();
+		    
+		   return;
+
 
 		default:
 			break;
