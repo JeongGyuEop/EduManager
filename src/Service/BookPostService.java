@@ -246,13 +246,13 @@ public class BookPostService {
 
 		return 1; // 성공 시 1 반환
 	}
-
+//게시글 삭제
 	public int bookPostDelete(HttpServletRequest request) {
 		String postId = request.getParameter("postId");
 		int result = bookPostDAO.bookPostDelete(postId);
 		return result;
 	}
-
+//댓글 등록
 	public void bookReplyUploadService(HttpServletRequest request) {
 		int postId = Integer.parseInt(request.getParameter("postId"));
 		String userId = request.getParameter("userId");
@@ -271,6 +271,20 @@ public class BookPostService {
 		int postId = Integer.parseInt(request.getParameter("postId"));
         return bookPostDAO.bookPostReplies(postId);
     }
+   
+ // 댓글 삭제 서비스
+    public void bookReplyDeleteService(int replyId) {
+        bookPostDAO.bookReplyDelete(replyId); // DAO에서 댓글 삭제 실행
+    }
+
+	public BookPostVo serviceBookPost(int postId) {
+		return bookPostDAO.bookPost(postId);
+	}
+
+	public List<BookPostReplyVo> bookPostRepliesService(int postId) {
+		return bookPostDAO.bookPostReplies(postId);
+	}
+    
 	
 }
 

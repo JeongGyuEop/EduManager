@@ -83,6 +83,34 @@ String uploadDir = properties.getProperty("upload.dir");
 <head>
 <meta charset="UTF-8">
 <title>상세확인</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+	$(document).on('click', '.reply-update', function(event) {
+		event.preventDefault();
+		
+		// 클릭된 버튼이 속한 form 요소의 값들을 저장합니다.
+        var formElement = $(this).closest('form');
+		
+		console.log(formElement.find('input[name="replyId"]'),"");
+		
+        var replyId = formElement.find('input[name="replyId"]').val();
+        var postId = formElement.find('input[name="postId"]').val();
+        var replyContent = formElement.next('tr').find('#transeform').text();
+        
+        // 확인용 알림창
+        alert("Reply ID: " + replyId + "\nPost ID: " + postId + "\nReply Content: " + replyContent);
+
+        // 이후 로직에 저장된 값을 사용할 수 있습니다.
+        console.log("Reply ID: ", replyId);
+        console.log("Post ID: ", postId);
+        console.log("Reply Content: ", replyContent);
+		
+		// 클릭된 버튼이 속한 form 요소를 삭제합니다.
+        $(this).closest('form').remove();
+        // 그 form 내부에 포함된 tr도 삭제합니다.
+        $(this).closest('tr').remove();
+	});
+</script>
 </head>
 <body>
 	<div>
@@ -96,7 +124,6 @@ String uploadDir = properties.getProperty("upload.dir");
 					<td><label for="postUserId">작성자:</label><%=postUserId%></td>
 					<td><label for="createdAt">작성일:</label><%=createdAt%></td>
 				</tr>
-				</tr>
 			</thead>
 			<tbody>
 				<tr>
@@ -104,13 +131,16 @@ String uploadDir = properties.getProperty("upload.dir");
 						<div id="preview" style="display: flex; flex-wrap: wrap;">
 							<%
 							if (images != null && !images.isEmpty()) {
-								for (BookImage image : images) {
-									String imagePath = image.getImage_path();
 							%>
-							<img src="<%=request.getContextPath() + imagePath%>"
+							<%
+							for (BookImage image : images) {
+							%>
+							<img src="<%=request.getContextPath() + image.getImage_path()%>"
 								style="width: 178px; height: 178px; margin: 2px;" />
 							<%
 							}
+							%>
+							<%
 							} else {
 							%>
 							<p>이미지가 없습니다.</p>
@@ -119,7 +149,6 @@ String uploadDir = properties.getProperty("upload.dir");
 							%>
 						</div></td>
 				</tr>
-
 				<tr>
 					<td colspan="4"><label for="postContent">내용:</label><%=postContent%></td>
 				</tr>
@@ -136,23 +165,29 @@ String uploadDir = properties.getProperty("upload.dir");
 					if (userId != null && userId.equals(postUserId)) {
 					%>
 					<!-- 작성자가 동일할 경우에만 수정/삭제 버튼 표시 -->
-					<td><form action="<%=contextPath%>/Book/bookpostupdate.bo"
+					<td>
+						<form action="<%=contextPath%>/Book/bookpostupdate.bo"
 							method="get">
-							<input type="hidden" value="<%=postId%>" name="postId"><input
+							<input type="hidden" value="<%=postId%>" name="postId"> <input
 								type="submit" value="수정하기">
-						</form></td>
-					<td><form action="<%=contextPath%>/Book/bookpostdelete.do">
-							<input type="hidden" value="<%=postId%>" name="postId"><input
+						</form>
+					</td>
+					<td>
+						<form action="<%=contextPath%>/Book/bookpostdelete.do">
+							<input type="hidden" value="<%=postId%>" name="postId"> <input
 								type="submit" value="삭제하기">
-						</form></td>
+						</form>
+					</td>
 					<%
 					}
 					%>
-					<%--목록 --%>
-					<td><form action="<%=contextPath%>/Book/bookpostboard.bo">
+					<td>
+						<!-- 목록 -->
+						<form action="<%=contextPath%>/Book/bookpostboard.bo">
 							<input type="hidden" value="/view_student/booktradingboard.jsp"
-								name="center"><input type="submit" value="목록">
-						</form></td>
+								name="center"> <input type="submit" value="목록">
+						</form>
+					</td>
 				</tr>
 			</tfoot>
 		</table>
@@ -166,22 +201,20 @@ String uploadDir = properties.getProperty("upload.dir");
 					<h4>댓글 목록</h4>
 					<!-- replies 리스트를 반복 -->
 					<c:forEach var="reply" items="${replies}">
-
 						<table border="1" cellspacing="0" cellpadding="8">
 							<tr>
-								<%-- <td>${reply.replyId}</td> --%>
 								<td>${reply.userId}</td>
 								<td>${reply.replytimeAt}</td>
 							</tr>
-							<form action="" method="get">
-								<input type="hidden" ${reply.replyId }>
+							<form action="<%=contextPath%>/Book/bookpostreplyDelete.do"
+								method="get" class="reply-update-form">
+								<input type="hidden" value="${reply.replyId}" name="replyId">
+								<input type="hidden" value="<%=postId%>" name="postId">
 								<tr>
-								
-									<td id="transeform" colspan="3">${reply.replyContent}
-										<button>수정</button>
-										<!-- js function호출로 replyContent 내부 값을 저장 후 tr 내부 전부 삭제 -->
-										<!-- 삭제된 tr 내부에 td(replyContet)와 수정완료 버튼(input type='submit') 생성 -->
-										<input type="submit" value="삭제">
+									<td id="transeform" colspan="3">${reply.replyContent}</td>
+									<td>
+										<button class="reply-update">수정</button> <input type="submit"
+										value="삭제">
 									</td>
 								</tr>
 							</form>
@@ -190,7 +223,6 @@ String uploadDir = properties.getProperty("upload.dir");
 				</div>
 			</c:if>
 		</div>
-
 		<!-- 댓글 입력 폼 -->
 		<form action="<%=contextPath%>/Book/bookpostreply.do" method="post">
 			<input type="hidden" name="postId" value="<%=postId%>"> <input
@@ -199,8 +231,5 @@ String uploadDir = properties.getProperty("upload.dir");
 			<input type="submit" value="댓글 등록">
 		</form>
 	</div>
-	<script type="text/javascript">
-		
-	</script>
 </body>
 </html>

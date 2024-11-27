@@ -476,6 +476,7 @@ public class BookPostDAO {
 		return result;
 	}
 
+	//댓글 입력
 	public void bookReplyUpload(BookPostReplyVo replyVo) {
 		String sqlInsertReply = "INSERT INTO book_reply (user_id, post_id, reply_content, replytimeAt) VALUES (?, ?, ?, NOW())";
 
@@ -496,7 +497,7 @@ public class BookPostDAO {
 			closeResource();
 		}
 	}
-	
+	//댓글 저장
 	public List<BookPostReplyVo> bookPostReplies(int postId) {
 	    List<BookPostReplyVo> replies = new ArrayList<>();
 	    String sqlSelectReply = "SELECT reply_id, user_id, reply_content, replytimeAt FROM book_reply WHERE post_id=? ORDER BY replytimeAt DESC;";
@@ -528,5 +529,36 @@ public class BookPostDAO {
 	    return replies;
 	}
 
+	
+
+    // 댓글 삭제
+	public void bookReplyDelete(int replyId) {
+	    String sql = "DELETE FROM book_reply WHERE reply_id = ?";
+	    try (Connection con = ds.getConnection(); 
+	         PreparedStatement pstmt = con.prepareStatement(sql)) {
+	        pstmt.setInt(1, replyId);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	    	closeResource();
+	    }
+	}
+	
+	
+	/*
+	 * // 댓글 수정 public boolean bookupdateReply(int replyId, String replyContent) {
+	 * String sqlUpdateReply =
+	 * "UPDATE book_reply SET reply_content = ?, replytimeAt = NOW() WHERE reply_id = ?"
+	 * ; boolean isUpdated = false;
+	 * 
+	 * try { con = ds.getConnection(); pstmt = con.prepareStatement(sqlUpdateReply);
+	 * pstmt.setString(1, replyContent); // 수정된 댓글 내용 pstmt.setInt(2, replyId); //
+	 * 댓글 ID int result = pstmt.executeUpdate(); // 쿼리 실행
+	 * 
+	 * if (result > 0) { isUpdated = true; } } catch (SQLException e) {
+	 * e.printStackTrace(); } finally { closeResource(); // 자원 해제 } return
+	 * isUpdated; }
+	 */
 
 }
