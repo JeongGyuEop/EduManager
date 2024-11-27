@@ -61,6 +61,8 @@ html, body {
     font-size: 0.9rem;
 }
 
+
+
 /* 날짜 셀의 너비 조정 */
 .fc-daygrid-day {
     width: 92px !important; /* 각 셀의 너비 설정 */

@@ -1,3 +1,6 @@
+<%@page import="java.net.URLEncoder"%>
+<%@ page import="java.security.SecureRandom" %>
+<%@ page import="java.math.BigInteger" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
@@ -8,6 +11,8 @@
     String id = (String)session.getAttribute("id");
     String role = (String)session.getAttribute("role");
     String name = (String)session.getAttribute("name");
+    
+
 %>
     
 <!doctype html>

@@ -1,10 +1,19 @@
 package Service;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import Dao.BoardDAO;
 import Dao.MemberDAO;
@@ -139,4 +148,64 @@ public class BoardService {
 			throw new IllegalArgumentException("삭제할 일정이 선택되지 않았습니다.");
 		}
 	}
+
+	//=======================
+	// 중고서점 API 사
+	public List<JSONObject> fetchAllData(String apiUrl, String apiKey) {
+	    
+	    List<JSONObject> allData = new ArrayList<>(); // 데이터를 저장할 리스트
+	    int page = 1; // 첫 번째 페이지
+	    int perPage = 20; // 한 페이지당 데이터 수를 20으로 설정
+	    boolean hasNextPage = true;
+	        
+	    while (hasNextPage) {
+	        try {
+
+	            URI uri = new URI(apiUrl + "?serviceKey=" + apiKey + "&page=" + page + "&perPage=" + perPage);
+	            URL url = uri.toURL(); // URI를 URL로 변환
+	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	            conn.setRequestMethod("GET");
+	            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+	            int responseCode = conn.getResponseCode();
+	            if (responseCode == HttpURLConnection.HTTP_OK) { // HTTP 상태 코드 200
+	                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+	                StringBuilder response = new StringBuilder();
+	                String line;
+	                while ((line = br.readLine()) != null) {
+	                    response.append(line);
+	                }
+	                br.close();
+	                
+	                // JSON 데이터 파싱
+	                JSONParser parser = new JSONParser();
+	                JSONObject jsonObject = (JSONObject) parser.parse(response.toString());
+
+	                // "data" 배열 가져오기
+	                JSONArray dataArray = (JSONArray) jsonObject.get("data");
+	                for (Object obj : dataArray) {
+	                    allData.add((JSONObject) obj); // 데이터 통합
+	                }
+	                
+	             // 페이징 처리
+	                long currentCount = (long) jsonObject.get("currentCount"); // 현재 가져온 데이터 수
+	                long totalCount = (long) jsonObject.get("totalCount"); // 전체 데이터 수
+	                if (allData.size() >= totalCount || currentCount < perPage) {
+	                    hasNextPage = false; // 더 이상 가져올 데이터가 없음
+	                } else {
+	                    page++; // 다음 페이지 요청
+	                }
+	                
+	            } else {
+	                System.out.println("API 호출 실패. 응답 코드: " + responseCode);
+	                hasNextPage = false;
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            hasNextPage = false;
+	        }
+	    }
+	    return allData; // 데이터 반환
+	}
+
 }

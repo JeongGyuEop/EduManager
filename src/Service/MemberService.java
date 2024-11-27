@@ -1,14 +1,11 @@
 package Service;
 
-import java.sql.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import Dao.MemberDAO;
-import Vo.MemberVo;
 
 // 부장
 // - 단위 기능 별로 메소드를 만들어서 그 기능을 처리하는 클래스
@@ -16,6 +13,11 @@ public class MemberService {
 
 	// MemberDAO 객체의 주소를 저장할 참조변수
 	MemberDAO memberDao;
+
+	private static final String CLIENT_ID = "2J_JyNSOWEr60rZNN6d6";
+	private static final String CLIENT_SECRET = "5dNnJEq2mz";
+	private static final String TOKEN_URL = "https://nid.naver.com/oauth2.0/token";
+	private static final String USER_INFO_URL = "https://openapi.naver.com/v1/nid/me";
 
 	// 기본 생성자 - 위 memberDao변수에 new MemberDAO() 객체를 만들어서 저장하는 역할
 	public MemberService() {
@@ -39,7 +41,7 @@ public class MemberService {
 			// HttpSession메모리에 입력한 아이디 바인딩
 			session.setAttribute("role", userInfo.get("role"));
 			session.setAttribute("name", userInfo.get("name"));
-		    session.setAttribute("majorcode", userInfo.get("majorcode"));
+			session.setAttribute("majorcode", userInfo.get("majorcode"));
 			session.setAttribute("id", login_id);
 		}
 

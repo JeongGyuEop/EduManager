@@ -2,8 +2,6 @@ package Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -18,7 +16,6 @@ import javax.servlet.http.HttpSession;
 import Service.MemberService;
 import Service.MenuItemService;
 
-import Vo.MemberVo;
 //import Vo.CarConfirmVo;
 //import Vo.CarListVo;
 //import Vo.CarOrderVo;
@@ -166,6 +163,7 @@ public class MemberController extends HttpServlet {
 			break;
 
 		// =========================================================================================
+		
 		case "/logout.me": // 로그아웃 요청을 한 2단계 요청주소 일 때
 
 			// 부장 시키자
@@ -195,8 +193,8 @@ public class MemberController extends HttpServlet {
 			out.println("</body></html>");
 
 			break;
-
-		// ==========================================================================================
+            
+        // ==========================================================================================
 
         default:
             nextPage = "/main.jsp";
