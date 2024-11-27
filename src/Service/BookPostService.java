@@ -284,6 +284,13 @@ public class BookPostService {
 	public List<BookPostReplyVo> bookPostRepliesService(int postId) {
 		return bookPostDAO.bookPostReplies(postId);
 	}
+
+	public void bookReplyUpdateService(HttpServletRequest request) {
+		int replyId = Integer.parseInt(request.getParameter("replyId"));
+		String replyContent = request.getParameter("replyContent");
+		
+		bookPostDAO.bookReplyUpdate(replyId, replyContent);
+	}
     
 	
 }

@@ -192,22 +192,22 @@ public class BookPostController extends HttpServlet {
 			nextPage = "/main.jsp";
 
 			break;
-			
+
 		case "/bookread2.bo":
-			
+
 			postId = (int) request.getAttribute("postId");
-			
+
 			bookPost = bookPostservice.serviceBookPost(postId);
 			replies = bookPostservice.bookPostRepliesService(postId);
 			majorInfo = bookPostservice.majorInfo();
-			
+
 			request.setAttribute("center", "/view_student/booktradingread.jsp");
 			request.setAttribute("bookPost", bookPost);
 			request.setAttribute("replies", replies);
 			request.setAttribute("majorInfo", majorInfo);
-			
+
 			nextPage = "/main.jsp";
-			
+
 			break;
 
 		// 게시글 삭제
@@ -371,38 +371,35 @@ public class BookPostController extends HttpServlet {
 			nextPage = "/Book/bookread.bo";
 
 			break;
-			
-	  
-//댓글삭제
-        	 // 댓글 삭제 처리 후 게시글과 댓글 정보를 다시 조회하는 코드
-        case "/bookpostreplyDelete.do":
-            // 삭제할 댓글 ID와 게시글 ID 가져오기
-            int replyId = Integer.parseInt(request.getParameter("replyId"));
-            postId = Integer.parseInt(request.getParameter("postId"));
-            
-            // 댓글 삭제
-            bookPostservice.bookReplyDeleteService(replyId);
 
-            // 삭제 후 해당 게시글과 댓글 목록을 새로 조회            
-            request.setAttribute("postId", postId);
-       //     bookPost = bookPostservice.serviceBookPost(request);
-		//	replies = bookPostservice.bookPostRepliesService(request);
+//댓글삭제
+		// 댓글 삭제 처리 후 게시글과 댓글 정보를 다시 조회하는 코드
+		case "/bookpostreplyDelete.do":
+			// 삭제할 댓글 ID와 게시글 ID 가져오기
+			int replyId = Integer.parseInt(request.getParameter("replyId"));
+			postId = Integer.parseInt(request.getParameter("postId"));
+
+			// 댓글 삭제
+			bookPostservice.bookReplyDeleteService(replyId);
+
+			// 삭제 후 해당 게시글과 댓글 목록을 새로 조회
+			request.setAttribute("postId", postId);
+			// bookPost = bookPostservice.serviceBookPost(request);
+			// replies = bookPostservice.bookPostRepliesService(request);
 			/*
 			 * BookPostVo bookPost_ = bookPostservice.getBookPostById(postId); // 게시글 조회
 			 * List<BookPostReplyVo> updatedReplies =
 			 * bookPostservice.bookPostRepliesService(postId); // 댓글 목록 조회
-			 */            
-            // 게시글 정보와 댓글 목록을 request에 설정
-        //    request.setAttribute("bookPost", bookPost);
-        //    request.setAttribute("replies", replies);
-            
-           
-            // 삭제 후 게시글 상세보기 페이지로 이동
-            nextPage = "/Book/bookread2.bo";  // 게시글과 댓글을 함께 보여주는 페이지
-            
-            break;
-            
-            
+			 */
+			// 게시글 정보와 댓글 목록을 request에 설정
+			// request.setAttribute("bookPost", bookPost);
+			// request.setAttribute("replies", replies);
+
+			// 삭제 후 게시글 상세보기 페이지로 이동
+			nextPage = "/Book/bookread2.bo"; // 게시글과 댓글을 함께 보여주는 페이지
+
+			break;
+
 		/*
 		 * // 댓글 수정 case "/bookpostreplyUpdate.do": // 요청에서 파라미터 가져오기 replyId =
 		 * Integer.parseInt(request.getParameter("replyId")); String replyContent =
@@ -418,6 +415,17 @@ public class BookPostController extends HttpServlet {
 		 * 
 		 * break;
 		 */
+		case "/bookpostreplyUpdate.do":
+
+			postId = Integer.parseInt(request.getParameter("postId"));
+
+			bookPostservice.bookReplyUpdateService(request);
+			
+			request.setAttribute("postId", postId);
+
+			nextPage = "/Book/bookread2.bo";
+
+			break;
 
 		default:
 			break;

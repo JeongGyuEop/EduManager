@@ -544,7 +544,25 @@ public class BookPostDAO {
 	    	closeResource();
 	    }
 	}
-	
+
+	// 댓글 수정
+	public void bookReplyUpdate(int replyId, String replyContent) {
+		
+		String sqlUpdateReply = "UPDATE book_reply SET reply_content = ?, replytimeAt = NOW() WHERE reply_id = ?";
+		
+        try {
+            con = ds.getConnection();
+            pstmt = con.prepareStatement(sqlUpdateReply);
+            pstmt.setString(1, replyContent);
+            pstmt.setInt(2, replyId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResource();
+        }
+        
+    }
 	
 	/*
 	 * // 댓글 수정 public boolean bookupdateReply(int replyId, String replyContent) {
