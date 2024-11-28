@@ -39,5 +39,28 @@ public class ProfessorService {
 		return professorDao.deleteProfessor(professorId);
 
 	}
+	//============================================================
+	// 교수가 강의 평가 조회
+	public List<ProfessorVo> getEvaluationsByProfessorId(String loggedInProfessorId) {
+		// DAO에서 강의 평가 리스트를 가져옴
+        return professorDao.getEvaluationsByProfessorId(loggedInProfessorId);
+	}
+	
+	
+	
+	
+	
+	
+	
+	//============================================================
+	// 교수가 담당한 강의 목록 가져오기
+	public List<ProfessorVo> getCoursesByProfessorId(String searchProfessorId) {
+	    return professorDao.getCoursesByProfessorId(searchProfessorId);
+	}
+
+	// 선택된 강의의 평가 목록 가져오기
+	public List<ProfessorVo> getEvaluationsByCourseId(String courseId) {
+	    return professorDao.getEvaluationsByCourseId(courseId);
+	}
 
 }

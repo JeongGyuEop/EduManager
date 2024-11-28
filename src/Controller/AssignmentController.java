@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,6 +21,7 @@ import org.json.simple.JSONObject;
 import Service.AssignmentService;
 import Vo.AssignmentVo;
 import Vo.CourseVo;
+import Vo.SubmissionVo;
 
 @WebServlet("/assign/*")
 public class AssignmentController extends HttpServlet {
@@ -47,8 +49,6 @@ public class AssignmentController extends HttpServlet {
 	protected void doHandle(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 
-        HttpSession session = request.getSession();
-		
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8"); // MIME TYPE 설정
 		
@@ -70,11 +70,20 @@ public class AssignmentController extends HttpServlet {
 		//==========================================================================================
 	    
 	    	case "/assignmentManage.bo": // 교수의 각 강의의 과제관리 화면을 보여주는 2단계 요청 주소를 받으면
-	    		String course_id = request.getParameter("courseId");
 	    		center = request.getParameter("center");
+	    		if (center == null) { // 값이 없으면 클라이언트 데이터 확인
+		    		center = (String)request.getAttribute("center");
+	    		}
+	    		
+	    		String course_id = request.getParameter("courseId");
+	    		if (course_id == null) { // 값이 없으면 클라이언트 데이터 확인
+		    		course_id = (String)request.getAttribute("course_id");
+	    		}
+	    		String message = (String)request.getAttribute("message");
 	    		
 	    		request.setAttribute("classroomCenter", center);
 	    		request.setAttribute("courseId", course_id);
+	    		request.setAttribute("message", message);
 	    		
 	    		nextPage = "/view_classroom/classroom.jsp";
 	    		
@@ -140,20 +149,19 @@ public class AssignmentController extends HttpServlet {
 	            int result = assignmentservice.serviceCreateAssignment(assignmentVo);
 	    		
 	            if(result == 1) {
-				    response.sendRedirect(request.getContextPath() +"/assign/assignmentManage.bo?message="
-				    		+ URLEncoder.encode("과제 등록이 완료되었습니다.", "UTF-8")
-				    		+ "&courseId=" + course_id
-				    		+ "&center=/view_classroom/assignment_submission/assignmentManage.jsp");
-				    return;
+		            request.setAttribute("message", URLEncoder.encode("과제 등록이 완료되었습니다.", "UTF-8"));
 				} else {
-					// 실패 시 message 파라미터만 포함하여 리다이렉트
-				    response.sendRedirect(request.getContextPath() +"/assign/assignmentManage.bo?message=" 
-				                          + URLEncoder.encode("과제 등록에 실패했습니다. 다시 입력해 주세요.", "UTF-8") 
-								    	  + "&courseId=" + course_id
-				                          + "center=/view_classroom/assignment_submission/assignmentManage.jsp");
-				    return;
+		            request.setAttribute("message", URLEncoder.encode("과제 등록에 실패했습니다. 다시 입력해 주세요", "UTF-8"));
 				}
 	            
+	            
+	            center = "/view_classroom/assignment_submission/assignmentManage.jsp";
+	            request.setAttribute("center", center);
+	            request.setAttribute("courseId", course_id);
+	            
+	            nextPage = "/assign/assignmentManage.bo";
+	            
+	            break;
 	    //==========================================================================================
 	    		
 	    	case "/deleteAssignment.do": // 해당 과목의 과제를 삭제하는 2단계 요청주소를 받으면
@@ -164,19 +172,18 @@ public class AssignmentController extends HttpServlet {
 	    		int deleteAssignmentResult = assignmentservice.serviceDeleteAssignment(assignment_id);
 	    		
 	    		if(deleteAssignmentResult == 1) {
-				    response.sendRedirect(request.getContextPath() +"/assign/assignmentManage.bo?message="
-				    		+ URLEncoder.encode("과제가 삭제되었습니다.", "UTF-8") 
-				    		+ "&courseId=" + course_id
-				    		+ "&center=/view_classroom/assignment_submission/assignmentManage.jsp");
-				    return;
+		            request.setAttribute("message", URLEncoder.encode("과제가 삭제되었습니다.", "UTF-8"));
 				} else {
-					// 실패 시 message 파라미터만 포함하여 리다이렉트
-				    response.sendRedirect(request.getContextPath() +"/assign/assignmentManage.bo?message=" 
-				                          + URLEncoder.encode("과제 삭제에 실패했습니다. 다시 입력해 주세요.", "UTF-8") 
-								    	  + "&courseId=" + course_id
-				                          + "center=/view_classroom/assignment_submission/assignmentManage.jsp");
-				    return;
+		            request.setAttribute("message", URLEncoder.encode("과제 삭제에 실패했습니다. 다시 입력해 주세요.", "UTF-8"));
 				}
+	    		
+	    		center = "/view_classroom/assignment_submission/assignmentManage.jsp";
+	            request.setAttribute("center", center);
+	            request.setAttribute("courseId", course_id);
+	            
+	            nextPage = "/assign/assignmentManage.bo";
+	            
+	            break;
 	    		
 	    //==========================================================================================
 	    		
@@ -213,6 +220,28 @@ public class AssignmentController extends HttpServlet {
 	    			out.close();
 				    return;
 				}
+	    		
+	    //==========================================================================================
+	    		
+	    	case "/confirmSubmit.bo" : // 학생들이 제출한 과제를 조회하는 2단계 요청 주소를 받으면
+	    		
+	    		String assignmentId = request.getParameter("assignmentId");
+	    		String assignmentTitle = request.getParameter("assignmentTitle");
+	    		
+	    		List<SubmissionVo> submissions = assignmentservice.serviceGetSubmission(assignmentId);
+
+	    		center = "/view_classroom/assignment_submission/assignmentConfirm.jsp";
+	    		
+	    		// request에 데이터 저장
+	    	    request.setAttribute("assignmentId", assignmentId);
+	    	    request.setAttribute("assignmentTitle", assignmentTitle);
+	    	    request.setAttribute("submissions", submissions);
+	    	    request.setAttribute("classroomCenter", center);
+	    		
+	    		nextPage = "/view_classroom/classroom.jsp";
+	    	    
+	    		break;
+	    		
 	    		
 	    //==========================================================================================
 	    		

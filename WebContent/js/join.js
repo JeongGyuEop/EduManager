@@ -26,10 +26,10 @@ $("#id").focusout(function() {
 		$.ajax(
 
 			{
-				url: "http://localhost:8090/AnbdProject/member/joinIdCheck.me",
+				url: "http://localhost:8090/EduManager/member/joinIdCheck.me",
 				type: "post",
 				async: true,  //비동기통신
-				data: { id: $("#id").val() },  // MemberController 서버페이지에 요청할 값 설정
+				data: { user_id: $("#id").val() },  // MemberController 서버페이지에 요청할 값 설정
 				dataType: "text",  // MemberController서버페이지로 부터 예상 응답받을 데이터 종류 설정
 				success: function(data, textStatus) {   //요청통신에 성공했을 때 콜백함수가 자동으로 호출됨. 
 					//data매개변수로 MemberController가 응답한 데이터가 넘어옴.

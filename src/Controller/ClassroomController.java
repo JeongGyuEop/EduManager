@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.el.ListELResolver;
 import javax.servlet.RequestDispatcher;
@@ -21,7 +22,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import Service.ClassroomService;
+import Service.MenuItemService;
 import Service.StudentService;
+import Vo.BoardVo;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
 import Vo.EnrollmentVo;
@@ -59,8 +62,6 @@ public class ClassroomController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8"); // MIME TYPE 설정
 		
-		String contextPath = request.getContextPath();
-		
 		//웹브라우저로 출력할 출력 스트림 생성
 	    PrintWriter out = null;
 	      
@@ -92,28 +93,19 @@ public class ClassroomController extends HttpServlet {
 				
 	    	case "/course_register.bo": // 수강관리 화면을 보여주는 요청을 받으면
 	    		
-	    		center = request.getParameter("classroomCenter");
+	    		String majorCode = (String)session.getAttribute("majorcode");
 	    		
-	    		String majorcode = (String)session.getAttribute("majorcode");
+	    		 // 서비스 계층을 통해 데이터를 가져옴
+	    	    Map<String, Object> courseRegisterData = classroomservice.serviceGetCourseRegisterData(majorCode);
+	    	    
+	    	    // 데이터 추출
+	    	    String majorName = (String) courseRegisterData.get("majorName");
+	    	    ArrayList<ClassroomVo> list = (ArrayList<ClassroomVo>) courseRegisterData.get("classroomList");
 	    		
-	    		// 학과 이름 조회
-	    		String majorName = classroomservice.serviceGetMajor(majorcode);
-	    		System.out.println(majorName);
-	    		
-	    		
-
-	    	    ArrayList<ClassroomVo> list = null;
-	    		// 강의실 정보 조회
-	    		list = classroomservice.serviceGetClassInfo();
-	    		
-//				로그인할 때 session 값으로 저장한 값
-//	    		session.setAttribute("role", userInfo.get("role"));
-//	    		session.setAttribute("name", userInfo.get("name"));
-//	    		session.setAttribute("id", login_id);
-	    		
+	    		center = "/view_classroom/courseRegister.jsp";
+	    		request.setAttribute("classroomCenter", center);
 	    		request.setAttribute("majorname", majorName);
 	    		request.setAttribute("rooms", list);
-	    		request.setAttribute("classroomCenter", center);
 	    		
 				nextPage = "/view_classroom/classroom.jsp";
 				
@@ -123,25 +115,23 @@ public class ClassroomController extends HttpServlet {
 			
 			// 강의 등록을 했을 때 전달 받는 2단계 경로 
 	    	case "/course_register.do":
-	    		
 	    		String course_name = request.getParameter("course_name");
-	    		majorcode = (String) session.getAttribute("majorcode");
+	    		majorCode = (String) session.getAttribute("majorcode");
 	    		String room_id = request.getParameter("room_id");
 	    		String professor_id = request.getParameter("professor_id");
 	    		
-	    		int result = classroomservice.serviceRegisterInsertCourse(course_name, majorcode, room_id, professor_id); 
+	    		int result = classroomservice.serviceRegisterInsertCourse(course_name, majorCode, room_id, professor_id); 
 	    		
 	    		if(result == 1) {
-				    response.sendRedirect(contextPath +"/classroom/course_search.bo?message="
-				    		+ URLEncoder.encode("강의 등록이 완료되었습니다.", "UTF-8") + "&classroomCenter=/view_classroom/courseSearch.jsp");
-				    return;
+				    request.setAttribute("message", URLEncoder.encode("강의 등록이 완료되었습니다.", "UTF-8"));
+				    request.setAttribute("center", "/view_classroom/courseSearch.jsp");
+		    		nextPage = "/classroom/course_search.bo";
 				} else {
-					// 실패 시 message 파라미터만 포함하여 리다이렉트
-				    response.sendRedirect(contextPath +"/classroom/course_register.bo?message=" 
-				                          + URLEncoder.encode("강의 등록에 실패했습니다. 다시 입력해 주세요.", "UTF-8") + "&classroomCenter=/view_classroom/courseRegister.jsp");
-				    return;
+				    request.setAttribute("message", URLEncoder.encode("강의 등록에 실패했습니다. 다시 입력해 주세요.", "UTF-8"));
+		    		nextPage = "/classroom/course_register.bo";
 				}
 	    		
+	    		break;
 	    		
 		//==========================================================================================
 			    
@@ -150,13 +140,17 @@ public class ClassroomController extends HttpServlet {
 	    		ArrayList<CourseVo> courseList = new ArrayList<CourseVo>();
 	    		
 	    		professor_id = (String) session.getAttribute("professor_id");
+	    		String message = (String)request.getAttribute("message");
+		    	center = (String)request.getAttribute("center");
+	    		if (center == null) { // 값이 없으면 클라이언트 데이터 확인
+	    			center = request.getParameter("center");
+	    		}
 	    		
 	    		courseList = classroomservice.serviceCourseSearch(professor_id);
 	    		
-	    		center = request.getParameter("classroomCenter");
-	    		
 	    		request.setAttribute("courseList", courseList);
 	    		request.setAttribute("classroomCenter", center);
+	    		request.setAttribute("message", message);
 	    		
 				nextPage = "/view_classroom/classroom.jsp";
 				
@@ -200,27 +194,29 @@ public class ClassroomController extends HttpServlet {
 	            String course_id = request.getParameter("courseId");
 	            course_name = request.getParameter("courseName");
 	            room_id = request.getParameter("classroomId");
-//	    		majorcode = (String) session.getAttribute("majorcode");
-//	    		professor_id = (String) session.getAttribute("professor_id");
 	    		
 	    		int courseUpdateResult = classroomservice.serviceUpdateCourse(course_id, course_name, room_id);
 	    		
-	    		if(courseUpdateResult == 1) {
+	    		response.setContentType("application/json");
+	    		response.setCharacterEncoding("UTF-8");
+	    		out = response.getWriter();
 
-	    	        out = response.getWriter();
-	    	        out.print("강의 수정 완료");
-	    	        out.flush();
-	    	        return;
-	    		}
-	    		
-	    		break;
+	    		if(courseUpdateResult == 1) {
+	    			// JSON으로 성공 메시지 반환
+	    			out.print("{\"status\":\"success\"}");
+	    		    return;
+				} else {
+					// JSON으로 실패 메시지 반환
+					out.print("{\"status\":\"error\"}");
+				    return;
+				}
+				
 	    		
 	    //==========================================================================================
-				
-	    	// 로그인된 교수의 강의실의 목록을 조회해서 가져온다.
-	    	case "/getClassroomList.do":
 	    	
-	    		majorcode = (String)session.getAttribute("majorcode");
+	    	case "/getClassroomList.do": // 로그인된 교수의 강의실의 목록을 조회하는 2단계 요청 주소를 받으면
+	    	
+	    		majorCode = (String)session.getAttribute("majorcode");
 
 	    	    ArrayList<ClassroomVo> classroomList = null;
 	    		// 강의실 정보 조회
@@ -247,31 +243,34 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    //==========================================================================================
 				
-	    	case "/deleteCourse.do":
+	    	case "/deleteCourse.do": // 교수가 등록한 강의를 삭제하는 2단계 요청 주소를 받으면
 	    		
 	    		course_id = request.getParameter("id");
-	    		System.out.println(course_id);
 	    		
 	    		int deleteResult = classroomservice.serviceDeleteCourse(course_id); 
-
+	    		
 	    		if(deleteResult == 1) {
-				    response.sendRedirect(contextPath +"/classroom/course_search.bo?message="
-				    		+ URLEncoder.encode("강의가 정상적으로 삭제되었습니다.", "UTF-8") + "&classroomCenter=/view_classroom/courseSearch.jsp");
-				    return;
-				} else {
-					// 실패 시 message 파라미터만 포함하여 리다이렉트
-				    response.sendRedirect(contextPath +"/classroom/course_search.bo?message=" 
-				                      + URLEncoder.encode("강의 삭제에 실패했습니다.", "UTF-8") + "&classroomCenter=/view_classroom/courseSearch.jsp");
-				    return;
-				}
+	    			request.setAttribute("message",  URLEncoder.encode("강의 삭제가 완료되었습니다.", "UTF-8"));
+	    		} else {
+	    			request.setAttribute("message",  URLEncoder.encode("강의 삭제에 실패했습니다.", "UTF-8"));
+	    		}
+	    		
+	    		center = "/view_classroom/courseSearch.jsp";
+	    		request.setAttribute("center", center);
+	    		
+	    		nextPage = "/classroom/course_search.bo";
+	    		
+				break;
 				
 	    //==========================================================================================
 				
 	    	case "/roomRegister.bo":
 	    		
-	    		center = request.getParameter("center");
+	    		center = "/view_admin/roomRegister.jsp";
+	    		message = (String)request.getAttribute("message");
 	    		
 	    		request.setAttribute("center", center);
+	    		request.setAttribute("message", message);
 	    		
 				nextPage = "/main.jsp";
 	    		
@@ -288,16 +287,14 @@ public class ClassroomController extends HttpServlet {
 	    		result = classroomservice.serviceRoomRegister(room_id, capacity, equipment);
 	    		
 	    		if(result == 1) {
-				    response.sendRedirect(contextPath +"/classroom/roomSearch.bo?message="
-				    		+ URLEncoder.encode("강의실이 정상적으로 등록되었습니다.", "UTF-8") + "&center=/view_admin/roomSearch.jsp");
-				    return;
-				} else {
-					// 실패 시 message 파라미터만 포함하여 리다이렉트
-				    response.sendRedirect(contextPath +"/classroom/roomRegister.bo?message=" 
-				                      + URLEncoder.encode("강의실 등록에 실패했습니다. 다시 입력하세요.", "UTF-8") + "&center=/view_admin/roomRegister.jsp");
-				    return;
-				}
+	    			request.setAttribute("message",  URLEncoder.encode("강의실이 정상적으로 등록되었습니다.", "UTF-8"));
+	    			nextPage = "/classroom/roomSearch.bo";
+	    		} else {
+	    			request.setAttribute("message",  URLEncoder.encode("강의실 등록에 실패했습니다. 다시 입력하세요.", "UTF-8"));
+	    			nextPage = "/classroom/roomRegister.bo";
+	    		}
 	    		
+	    		break;
 	    		
 	    //==========================================================================================
 			    
@@ -307,10 +304,12 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    		roomList = classroomservice.serviceGetClassInfo();
 	    		
-	    		center = request.getParameter("center");
+	    		center = "/view_admin/roomSearch.jsp";
+	    		message = (String)request.getAttribute("message");
 	    		
 	    		request.setAttribute("roomList", roomList);
 	    		request.setAttribute("center", center);
+	    		request.setAttribute("message", message);
 	    		
 				nextPage = "/main.jsp";
 				
@@ -318,7 +317,7 @@ public class ClassroomController extends HttpServlet {
 	    		
 		//==========================================================================================
 				
-	    	case "/updateRoom.do":
+	    	case "/updateRoom.do": // 강의실 수정에 대한 2단계 요청 주소를 받았을 때
 	    		
 	    		room_id = (String)request.getParameter("room_id");
 	    		capacity = (String) request.getParameter("capacity");
@@ -337,7 +336,7 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    //==========================================================================================
 				
-	    	case "/deleteRoom.do":
+	    	case "/deleteRoom.do": // 강의실 삭제에 대한 2단계 요청 주소를 받았을 때
 	    		
 	    		room_id = request.getParameter("room_id");
 	    		
@@ -475,8 +474,6 @@ public class ClassroomController extends HttpServlet {
 	    	        response.getWriter().write("유효한 숫자를 입력해주세요.");
 	    	    }
 	    		
-	    		
-	    		
 	    		break;
 	    		
 	    //==========================================================================================
@@ -516,13 +513,14 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    		courseList1 = classroomservice.serviceCourseList(studentId);
 	    		courseList2 = classroomservice.serviceCourseSelect(studentId);
-	    		System.out.println(courseList2);
+	    		
+	    		boolean isEnrollmentPeriod = classroomservice.isEnrollmentPeriod();
 	    		
 	    		center = request.getParameter("classroomCenter");
 	    		
-	    		session.setAttribute("courseList", courseList1);
-	    		session.setAttribute("courseList2", courseList2);
-	    		
+	    		request.setAttribute("courseList", courseList1);
+	    		request.setAttribute("courseList2", courseList2);
+	    		request.setAttribute("isEnrollmentPeriod", isEnrollmentPeriod);
 	    		request.setAttribute("classroomCenter", center);
 	    		
 				nextPage = "/view_classroom/classroom.jsp";
@@ -610,10 +608,9 @@ public class ClassroomController extends HttpServlet {
 	    			response.getWriter().write("Fail");
 	    			return;
 	    		}
-	    		
+	    					
 	    //==========================================================================================
-	    	
-
+    		
 	    	default:
 	    		break;
 	    }

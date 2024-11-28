@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%> 
 
 <%
+	request.setCharacterEncoding("UTF-8");
 	String contextPath = request.getContextPath();
 	String role = (String) session.getAttribute("role");
 	String profName = (String) session.getAttribute("name");
@@ -40,29 +41,18 @@
 
                         	// 강의 ID를 포함한 링크로 수정
                             let courseHtml = 
-                                '<a class="nav-link collapsed" href="<%=contextPath%>/classroom/assignmentManage.do?courseId=' + course.courseId + '" data-bs-toggle="collapse" data-bs-target="#collapseCourse' + courseIndex + '" aria-expanded="false" aria-controls="collapseCourse' + courseIndex + '">' +
+                            	'<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCourse' + courseIndex + '" aria-expanded="false" aria-controls="collapseCourse' + courseIndex + '" >' +
 	                                '<div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>' +
-	                                	course.courseName + ' <!-- 강의 이름 표시 -->' +
+	                                course.courseName + ' <!-- 강의 이름 표시 -->' +
 	                                '<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>' +
-                                '</a>' +
-                                
-		<%	if(role.equals("교수")) { %> // 현재 로그인 한 사람이 교수인 경우
-                                '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
+
+	                            '</a>' +
+	                            '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
 	                                '<nav class="sb-sidenav-menu-nested nav">' +
-		                                '<a class="nav-link" href="<%=contextPath%>/assign/assignmentManage.bo?center=/view_classroom/assignment_submission/assignmentManage.jsp&courseId=' + course.courseId + '">과제</a>' +
-		                                '<a class="nav-link" href="<%=contextPath%>/classroom/materialManage.do?courseId=' + course.courseId + '">공지사항</a>' +
+	                                    '<a class="nav-link" href="#" onclick="submitAssignmentForm(\'' + course.courseId + '\')">과제</a>' +
+	                                    '<a class="nav-link" href="#" onclick="submitMaterialForm(\'' + course.courseId + '\')">공지사항</a>' +
 	                                '</nav>' +
-                                '</div>';
-								
-		<%	} else { %> // 학생인 경우
-							    '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
-							        '<nav class="sb-sidenav-menu-nested nav">' +
-							            '<a class="nav-link" href="<%=contextPath%>/submission/assignmentManage.do?courseId=' + course.courseId + '">과제</a>' +
-							            '<a class="nav-link" href="<%=contextPath%>/classroom/materialManage.do?courseId=' + course.courseId + '">공지사항</a>' + 
-							        '</nav>' +
-							    '</div>';
-							    
-		<%	} %> 
+	                             '</div>';
 
 							$('#courseTargetElement').append(courseHtml);
 
@@ -75,12 +65,34 @@
                 }
             });
         });
+        
+        // 과제 페이지에 대한 GET 요청
+        function submitAssignmentForm(courseId) {
+            let form = $('<form></form>');
+            form.attr('action', '<%=contextPath%>/assign/assignmentManage.bo');
+            form.attr('method', 'POST');
+            form.append('<input type="hidden" name="center" value="/view_classroom/assignment_submission/assignmentManage.jsp">');
+            form.append('<input type="hidden" name="courseId" value="' + courseId + '">');
+            $('body').append(form);
+            form.submit();
+        }
+
+        // 공지사항 페이지에 대한 GET 요청
+        function submitMaterialForm(courseId) {
+            let form = $('<form></form>');
+            form.attr('action', '<%=contextPath%>/classroomboard/noticeList.bo');
+            form.attr('method', 'GET');
+            form.append('<input type="hidden" name="center" value="/view_classroom/assignment_notice/professorNotice.jsp">');
+            form.append('<input type="hidden" name="courseId" value="' + courseId + '">');
+            $('body').append(form);
+            form.submit();
+        }
         </script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="index.html">강의실</a>
+            <a class="navbar-brand ps-3" href="#">강의실</a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -118,8 +130,8 @@
                             </a>
                             <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_register.bo?classroomCenter=/view_classroom/courseRegister.jsp">수강 등록</a>
-                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo?classroomCenter=/view_classroom/courseSearch.jsp">수강 조회(수정/삭제)</a>
+                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_register.bo">수강 등록</a>
+                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo?center=/view_classroom/courseSearch.jsp">수강 조회(수정/삭제)</a>
                                 </nav>
                             </div>
 							
@@ -130,10 +142,17 @@
                             
                             <!-- 사이드바 성적 조회 영역 -->
                             <div class="sb-sidenav-menu-heading">SCORE</div>
-                            <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo?classroomCenter=/view_classroom/courseList.jsp">
+                            <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo?center=/view_classroom/courseList.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 성적 관리
                             </a>
+                            
+                            <!-- 사이드바 강의 평가 영역 -->
+                            <a class="nav-link" href="<%=contextPath%>/professor/evaluationList.bo">
+    							<div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+   			 					강의 평가
+							</a>
+                            
                             
 					<%	} else { %>
                             <!-- 사이드바 수강신청 영역 -->
@@ -152,6 +171,12 @@
                             <a class="nav-link" href="<%=contextPath%>/classroom/grade_search.bo?classroomCenter=/view_classroom/gradeList.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 성적 조회
+                            </a>
+                            
+                            <!-- 강의 평가 항목 추가 -->
+                            <a class="nav-link" href="<%=contextPath%>/student/evaluationRegister.do">
+                                <div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+                                강의 평가
                             </a>
                     <%	} %> 
                         </div>

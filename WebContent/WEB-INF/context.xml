@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<Context>
+<Host name="localhost"  appBase="webapps" unpackWARs="true" autoDeploy="true">
+<Context path="/" docBase="EduManager" reloadable="true">
 
 	<Resource
     	name = "jdbc/jspbeginner"
@@ -15,20 +15,5 @@
     /> 
 	
 </Context>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<Context docBase="C:/Users/602/EduManagerImage" path="/EduManagerImage" />
+</Host>
