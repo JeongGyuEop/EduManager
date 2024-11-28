@@ -5,189 +5,80 @@
 <%
     request.setCharacterEncoding("UTF-8");
     String contextPath = request.getContextPath();
-   	String key = (String)request.getAttribute("key");
-   	String word = (String)request.getAttribute("word");
+    String key = (String)request.getAttribute("key");
+    String word = (String)request.getAttribute("word");
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>게시판</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항</title>
 
-<style>
-    /* 전체 페이지 스타일 */
-    body {
-        font-family: 'Arial', sans-serif; /* 기본 폰트 설정 */
-        background-color: #f8f9fa; /* 밝은 회색 배경 */
-        margin: 0;
-        padding: 20px; /* 페이지 내부 여백 */
-        line-height: 1.6; /* 텍스트 줄 간격 */
-    }
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    /* 제목 스타일 */
-    h1, h2 {
-        text-align: center; /* 제목을 가운데 정렬 */
-        color: #343a40; /* 짙은 회색 텍스트 */
-        margin: 20px 0; /* 위아래 여백 */
-        font-size: 24px; /* 폰트 크기 */
-        font-weight: bold; /* 굵은 글씨 */
-    }
-
-    /* 테이블 스타일 */
-    table {
-        width: 95%; /* 테이블 너비 */
-        margin: 20px auto; /* 상하 여백, 가운데 정렬 */
-        border-collapse: collapse; /* 테이블 셀 간격 제거 */
-        background-color: white; /* 테이블 배경 */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-        border-radius: 5px; /* 모서리를 둥글게 */
-    }
-
-    th, td {
-        padding: 12px 15px; /* 셀 내부 여백 */
-        text-align: center; /* 텍스트 가운데 정렬 */
-        border-bottom: 1px solid #dee2e6; /* 아래쪽 테두리 */
-    }
-
-    th {
-        background-color: #198754; /* 초록색 배경 */
-        color: white; /* 흰색 텍스트 */
-        font-size: 16px; /* 큰 텍스트 */
-        font-weight: bold; /* 굵은 글씨 */
-    }
-
-    td {
-        font-size: 14px; /* 일반 텍스트 크기 */
-        color: #495057; /* 짙은 회색 */
-    }
-
-    tr:nth-child(even) {
-        background-color: #f8f9fa; /* 짝수 행 배경 */
-    }
-
-    tr:hover {
-        background-color: #e9ecef; /* 마우스 오버 시 배경색 */
-    }
-
-    /* 검색 영역 스타일 */
-    .search-bar {
-        display: flex; /* 플렉스 레이아웃 */
-        justify-content: center; /* 가운데 정렬 */
-        align-items: center; /* 세로 정렬 */
-        margin: 20px auto; /* 여백 */
-        width: 70%; /* 검색 영역 너비 */
-    }
-
-    .search-bar select,
-    .search-bar input[type="text"] {
-        font-size: 14px; /* 입력 필드 텍스트 크기 */
-        padding: 8px; /* 필드 내부 여백 */
-        margin-right: 10px; /* 필드 간 간격 */
-        border: 1px solid #ced4da; /* 필드 테두리 색상 */
-        border-radius: 5px; /* 모서리를 둥글게 */
-    }
-
-    .search-bar input[type="submit"],
-    .search-bar button {
-        background-color: #007bff; /* 파란색 버튼 */
-        color: white; /* 흰색 텍스트 */
-        font-size: 14px; /* 버튼 텍스트 크기 */
-        padding: 8px 16px; /* 버튼 내부 여백 */
-        border: none; /* 버튼 테두리 제거 */
-        border-radius: 5px; /* 모서리를 둥글게 */
-        cursor: pointer; /* 클릭 가능 커서 */
-    }
-
-    .search-bar input[type="submit"]:hover,
-    .search-bar button:hover {
-        background-color: #0056b3; /* 버튼 호버 시 색상 */
-    }
-
-    /* 페이지네이션 스타일 */
-    .pagination {
-        display: flex; /* 플렉스 레이아웃 */
-        justify-content: center; /* 가운데 정렬 */
-        margin: 20px auto; /* 여백 */
-    }
-
-    .pagination a {
-        font-size: 14px; /* 텍스트 크기 */
-        color: #198754; /* 초록색 */
-        text-decoration: none; /* 밑줄 제거 */
-        padding: 8px 12px; /* 링크 내부 여백 */
-        margin: 0 5px; /* 링크 간 간격 */
-        border: 1px solid #dee2e6; /* 테두리 색상 */
-        border-radius: 5px; /* 모서리를 둥글게 */
-        background-color: #ffffff; /* 흰색 배경 */
-    }
-
-    .pagination a:hover {
-        background-color: #198754; /* 호버 시 초록색 배경 */
-        color: white; /* 흰색 텍스트 */
-    }
-
-    /* 답글 들여쓰기 스타일 */
-    .reply-indent {
-        display: flex; /* 플렉스 레이아웃 */
-        align-items: center; /* 세로 정렬 */
-    }
-
-    /* 버튼 스타일 */
-    button,
-    input[type="button"] {
-        background-color: #007bff; /* 파란색 배경 */
-        color: white; /* 흰색 텍스트 */
-        font-size: 14px; /* 텍스트 크기 */
-        font-weight: bold; /* 굵은 글씨 */
-        padding: 10px 20px; /* 버튼 내부 여백 */
-        border: none; /* 테두리 제거 */
-        border-radius: 5px; /* 모서리를 둥글게 */
-        cursor: pointer; /* 클릭 가능 커서 */
-    }
-
-    button:hover,
-    input[type="button"]:hover {
-        background-color: #0056b3; /* 호버 시 색상 */
-    }
-
-    /* 읽기 전용 필드 스타일 */
-    input[readonly] {
-        background-color: #e9ecef; /* 연한 회색 배경 */
-        color: #6c757d; /* 짙은 회색 텍스트 */
-    }
-
-    /* 에러 메시지 스타일 */
-    #pwInput {
-        color: red; /* 빨간색 텍스트 */
-        text-align: center; /* 가운데 정렬 */
-        margin-top: 10px; /* 위쪽 여백 */
-        font-weight: bold; /* 굵은 글씨 */
-    }
-</style>
-
-<script type="text/javascript">
-    // 검색어 입력 유효성 검사 함수
-    function fnSearch() {
-        var word = document.getElementById("word").value;
-
-        if (word == null || word === "") {
-            alert("검색어를 입력하세요.");
-            document.getElementById("word").focus();
-            return false;
-        } else {
-            document.frmSearch.submit();
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
         }
-    }
 
-    // 게시글 상세 조회 요청 함수
-    function fnRead(val) {
-        document.frmRead.action = "<%=contextPath%>/Board/read.bo";
-        document.frmRead.notice_id.value = val;
-        document.frmRead.submit();
-    }
-</script>
+        .table-container {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .table th {
+            background-color: #198754;
+            color: white;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .pagination a {
+            color: #198754;
+            text-decoration: none;
+        }
+
+        .pagination a:hover {
+            background-color: #198754;
+            color: white;
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar select, .search-bar input {
+            margin-right: 10px;
+        }
+
+        .search-bar .btn {
+          display: inline-flex !important; /* 버튼 내부 요소를 가로 정렬 */
+          align-items: center !important; /* 텍스트를 세로 중앙 정렬 */
+          justify-content: center !important; /* 텍스트를 가로 중앙 정렬 */
+          white-space: nowrap !important; /* 텍스트 줄바꿈 방지 */
+          height: auto !important; /* 버튼 높이를 내용에 맞게 조정 */
+          padding: 0.375rem 0.75rem !important; /* 버튼 내부 여백 조정 */
+          font-size: 1rem !important; /* 버튼 폰트 크기 설정 */
+          line-height: normal !important; /* 텍스트 높이 조정 */
+          text-align: center !important; /* 텍스트 정렬 */
+        }
+    </style>
 </head>
-<body>
+<body class="bg-light">
 <%
     int totalRecord = 0;
     int numPerPage = 5;
@@ -221,85 +112,117 @@
     <input type="hidden" name="nowBlock" value="<%=nowBlock%>">
 </form>
 
-<!-- 게시판 테이블 -->
-<table>
-    <thead>
-        <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>내용</th>
-            <th>작성자</th>
-            <th>날짜</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% if (list.isEmpty()) { %>
-        <tr>
-            <td colspan="5">등록된 글이 없습니다.</td>
-        </tr>
-        <% } else {
-            for (int i = beginPerPage; i < (beginPerPage + numPerPage); i++) {
-                if (i == totalRecord) break;
-                BoardVo vo = list.get(i);
-        %>
-        <tr>
-            <td><%=vo.getNotice_id()%></td>
-            <td>
-                <div class="reply-indent">
-                   <%
-					    int width = 0; // 답변글에 대한 이미지 들여쓰기 너비값
-					    if (vo.getB_level() > 0) { // 답글인 경우
-					        width = vo.getB_level() * 10; // 들여쓰기 너비 계산
-					%>
-					    <img src="<%=contextPath%>/common/notice/images/level.gif" width="<%=width%>" height="15">
-					    <img src="<%=contextPath%>/common/notice/images/re.gif">
-					<% } %>
+    <div class="bg-white p-4 rounded shadow-sm">
+        <h1 class="text-center text-success">공지사항</h1>
 
-                    <a href="javascript:fnRead('<%=vo.getNotice_id()%>')" style="align-items: center;"><%=vo.getTitle()%></a>
-                </div>
-            </td>
-            <td><%=vo.getContent()%></td>
-            <td><%=vo.getUserName().getUser_name()%></td>
-            <td><%=vo.getCreated_date()%></td>
-        </tr>
-        <% } } %>
-    </tbody>
-</table>
+        <!-- 검색 영역 -->
+        <div class="search-bar">
+            <form action="<%=contextPath%>/Board/searchlist.bo" method="post" name="frmSearch" class="d-flex" onsubmit="return fnSearch();">
+                <select name="key" class="form-select w-auto me-2">
+                    <option value="titleContent">제목 + 내용</option>
+                    <option value="name">작성자</option>
+                </select>
+                <input type="text" name="word" id="word" class="form-control" placeholder="검색어를 입력하세요">
+                <button type="submit" class="btn btn-primary">검색</button>
+            </form>
+        </div>
 
-<!-- 검색 영역 -->
-<div class="search-bar">
-    <form action="<%=contextPath%>/Board/searchlist.bo" method="post" name="frmSearch" onsubmit="fnSearch(); return false;">
-        <select name="key">
-            <option value="titleContent">제목 + 내용</option>
-            <option value="name">작성자</option>
-        </select>
-        <input type="text" name="word" id="word">
-        <input type="submit" value="검색">
-    </form>
-    <button id="newContent" onclick="location.href='<%=contextPath%>/Board/write.bo?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>'" style="visibility:hidden">새 글쓰기</button>
-</div>
+        <!-- 게시판 테이블 -->
+        <table class="table table-bordered table-hover">
+            <thead class="table-success">
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>내용</th>
+                    <th>작성자</th>
+                    <th>날짜</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% 
+                    if (list.isEmpty()) {
+                %>
+                <tr>
+                    <td colspan="5" class="text-center text-muted">등록된 글이 없습니다.</td>
+                </tr>
+                <% } else {
+                    for (int i = beginPerPage; i < (beginPerPage + numPerPage); i++) {
+                        if (i == totalRecord) break;
+                        BoardVo vo = list.get(i);
+                %>
+                <tr>
+                    <td><%=vo.getNotice_id()%></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <% if (vo.getB_level() > 0) { %>
+                                <img src="<%=contextPath%>/common/notice/images/level.gif" width="<%=vo.getB_level() * 10%>" height="15" alt="level">
+                                <img src="<%=contextPath%>/common/notice/images/re.gif" alt="reply">
+                            <% } %>
+                            <a href="javascript:fnRead('<%=vo.getNotice_id()%>')" class="ms-2 text-decoration-none text-primary"><%=vo.getTitle()%></a>
+                        </div>
+                    </td>
+                    <td><%=vo.getContent()%></td>
+                    <td><%=vo.getUserName().getUser_name()%></td>
+                    <td><%=vo.getCreated_date()%></td>
+                </tr>
+                <% } } %>
+            </tbody>
+        </table>
 
-<!-- 페이지네이션 -->
-<div class="pagination">
-    <% 
-    String searchParams = "";
-    if (key != null && word != null) {
-        searchParams = "&key=" + key + "&word=" + URLEncoder.encode(word, "UTF-8");
-    }	
-    if (totalRecord != 0) {
-        if (nowBlock > 0) { %>
-    <a href="<%=contextPath%>/Board/list.bo?center=/common/notice/list.jsp&nowBlock=<%=nowBlock - 1%>&nowPage=<%=((nowBlock - 1) * pagePerBlock)%><%=searchParams%>">◀ 이전</a>
-    <% }
-        for (int i = 0; i < pagePerBlock; i++) {
-            int pageNum = (nowBlock * pagePerBlock) + i + 1;
-            if (pageNum > totalPage) break; %>
-    <a href="<%=contextPath%>/Board/list.bo?center=/common/notice/list.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=pageNum - 1%><%=searchParams%>"><%=pageNum%></a>
-    <% }
-        if (totalBlock > nowBlock + 1) { %>
-    <a href="<%=contextPath%>/Board/list.bo?center=/common/notice/list.jsp&nowBlock=<%=nowBlock + 1%>&nowPage=<%=(nowBlock + 1) * pagePerBlock%><%=searchParams%>">▶ 다음</a>
-    <% } } %>
-</div>
+        <!-- 페이지네이션 -->
+        <nav class="d-flex justify-content-center">
+            <ul class="pagination">
+                <% 
+                    String searchParams = "";
+                    if (key != null && word != null) {
+                        searchParams = "&key=" + key + "&word=" + URLEncoder.encode(word, "UTF-8");
+                    }
+                    if (totalRecord != 0) {
+                        if (nowBlock > 0) { 
+                %>
+                <li class="page-item">
+                    <a class="page-link" href="<%=contextPath%>/Board/list.bo?center=/common/notice/list.jsp&nowBlock=<%=nowBlock - 1%>&nowPage=<%=((nowBlock - 1) * pagePerBlock)%><%=searchParams%>">◀ 이전</a>
+                </li>
+                <% } 
+                    for (int i = 0; i < pagePerBlock; i++) {
+                        int pageNum = (nowBlock * pagePerBlock) + i + 1;
+                        if (pageNum > totalPage) break; 
+                %>
+                <li class="page-item"><a class="page-link" href="<%=contextPath%>/Board/list.bo?center=/common/notice/list.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=pageNum - 1%><%=searchParams%>"><%=pageNum%></a></li>
+                <% } 
+                    if (totalBlock > nowBlock + 1) { 
+                %>
+                <li class="page-item">
+                    <a class="page-link" href="<%=contextPath%>/Board/list.bo?center=/common/notice/list.jsp&nowBlock=<%=nowBlock + 1%>&nowPage=<%=(nowBlock + 1) * pagePerBlock%><%=searchParams%>">▶ 다음</a>
+                </li>
+                <% } } %>
+            </ul>
+        </nav>
+    </div>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+	// 검색어 입력 유효성 검사 함수
+	function fnSearch() {
+	    var word = document.getElementById("word").value;
+	
+	    if (word == null || word === "") {
+	        alert("검색어를 입력하세요.");
+	        document.getElementById("word").focus();
+	        return false;
+	    } else {
+	        return true;
+	    }
+	}
+	
+	// 게시글 상세 조회 요청 함수
+	function fnRead(val) {
+	    document.frmRead.action = "<%=contextPath%>/Board/read.bo";
+	    document.frmRead.notice_id.value = val;
+	    document.frmRead.submit();
+	}
+</script>
 
 </body>
 </html>

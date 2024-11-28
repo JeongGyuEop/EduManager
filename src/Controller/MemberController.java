@@ -3,6 +3,7 @@ package Controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import Service.BoardService;
 //import Dao.CarDAO;
 import Service.MemberService;
 import Service.MenuItemService;
-
+import Vo.BoardVo;
 import Vo.MemberVo;
 //import Vo.CarConfirmVo;
 //import Vo.CarListVo;
@@ -33,10 +35,12 @@ import Vo.MemberVo;
 public class MemberController extends HttpServlet {
 	// 부장
 	MemberService memberservice;
+	BoardService boardservice;
 
 	@Override
 	public void init() throws ServletException {
 		memberservice = new MemberService();
+		boardservice = new BoardService();
 	}
 
 	// doGet doPost 메소드 오버라이딩
@@ -75,6 +79,10 @@ public class MemberController extends HttpServlet {
 		switch (action) {
 		case "/main.bo": // CarMain.jsp 메인화면 2단계 요청 주소를 받으면
 
+			ArrayList<BoardVo> list = (ArrayList<BoardVo>) boardservice.serviceBoardList();
+			request.setAttribute("list", list);
+			
+			
 			nextPage = "/main.jsp";
 
 			break;
@@ -179,24 +187,14 @@ public class MemberController extends HttpServlet {
 			// 세션 가져오기
 			session = request.getSession(false); // 세션이 없으면 null 반환
 			if (session == null) {
-				out.println("<html><body>");
-				out.println("<script>");
-				out.println("alert('로그아웃이 완료되었습니다.');");
-				out.println("window.location.href = '/EduManager/main.jsp';");
-				out.println("</script>");
-				out.println("</body></html>");
-
-				out.close();
-
-				return;
+	            request.setAttribute("message", URLEncoder.encode("로그아웃이 완료되었습니다.", "UTF-8"));
+			} else {
+	            request.setAttribute("message", URLEncoder.encode("로그아웃에 실패하였습니다. 다시 시도해주세요.", "UTF-8"));
 			}
+				
+			nextPage = "/member/main.bo";
 
-			out.println("<html><body>");
-			out.println("<script>");
-			out.println("alert('로그아웃에 실패하였습니다. 다시 시도해주세요.');");
-			out.println("</script>");
-			out.println("</body></html>");
-
+		
 			break;
 
 		// ==========================================================================================
