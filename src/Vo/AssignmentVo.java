@@ -1,21 +1,21 @@
 package Vo;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 public class AssignmentVo {
     private int assignmentId;      // 과제 ID (기본 키)
     private CourseVo course;       // 강의 객체 (외래키 참조)
     private String title;          // 과제 제목
     private String description;    // 과제 설명
-    private LocalDate dueDate;     // 제출 기한
-    private LocalDateTime createdDate; // 생성일
+    private Date dueDate;     // 제출 기한
+    private Timestamp createdDate; // 생성일
 
     // 기본 생성자
     public AssignmentVo() {}
 
     // 매개변수 생성자
-    public AssignmentVo(int assignmentId, CourseVo course, String title, String description, LocalDate dueDate, LocalDateTime createdDate) {
+    public AssignmentVo(int assignmentId, CourseVo course, String title, String description, Date dueDate, Timestamp createdDate) {
         this.assignmentId = assignmentId;
         this.course = course;
         this.title = title;
@@ -57,19 +57,19 @@ public class AssignmentVo {
         this.description = description;
     }
 
-    public LocalDate getDueDate() {
+    public Date getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
+    public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public Timestamp getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
+    public void setCreatedDate(Timestamp createdDate) {
         this.createdDate = createdDate;
     }
 }

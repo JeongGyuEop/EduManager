@@ -1,3 +1,4 @@
+<%@page import="java.net.URLDecoder"%>
 <%@ page import="Vo.ClassroomVo" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="java.util.ArrayList" %>
@@ -19,7 +20,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
+<%
+	String message = (String) request.getAttribute("message");
+	if (message != null) {
+    	message = URLDecoder.decode(message, "UTF-8");
+%>
+        <script>
+            alert('<%= message %>'); // 메시지를 알림으로 표시
+        </script>
+<%
+    }
+%>
     <style>
         body {
             background-color: #f0f2f5;
