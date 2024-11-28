@@ -1,3 +1,6 @@
+<%@page import="java.net.URLEncoder"%>
+<%@ page import="java.security.SecureRandom" %>
+<%@ page import="java.math.BigInteger" %>
 <%@page import="java.net.URLDecoder"%>
 <%@page import="Vo.BoardVo"%>
 <%@page import="java.util.ArrayList"%>
@@ -11,6 +14,8 @@
     String id = (String)session.getAttribute("id");
     String role = (String)session.getAttribute("role");
     String name = (String)session.getAttribute("name");
+    
+
 %>
     
 <!doctype html>

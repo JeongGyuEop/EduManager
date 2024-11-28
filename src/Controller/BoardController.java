@@ -1,7 +1,11 @@
 package Controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -27,6 +34,10 @@ import Vo.ScheduleVo;
 
 @WebServlet("/Board/*")
 public class BoardController extends HttpServlet {
+	
+	private static final String API_URL = "https://api.odcloud.kr/api/15119003/v1/uddi:1e2e76a4-4f20-4333-b213-ef48bcc229e2"; // 공공 데이터 API URL
+    private static final String API_KEY = "7tx2GdotjwcVVoEbUMYHBmLh1U%2BGByBoL8%2B2cRyFeJ5G1HHRDFO9kLORh5IKMxALLLurfzPVEQTriUxq90qchA%3D%3D"; // 발급받은 API 키
+
 	private static final long serialVersionUID = 1L;
 	BoardService boardservice;
 
@@ -143,9 +154,9 @@ public class BoardController extends HttpServlet {
 		     //request내장객체에 조회된 정보 바인딩
 		     request.setAttribute("list", list);
 			 request.setAttribute("key", key);
-		      request.setAttribute("word", word);
+		     request.setAttribute("word", word);
 		      
-		     if(role_.equals("관리자")) {
+		     if(role_ != null && role_.equals("관리자")) {
 			     //VIEW중앙화면 주소경로 바인딩
 			     request.setAttribute("center", "view_admin/noticeManage.jsp");
 		     }else { 
@@ -419,9 +430,26 @@ public class BoardController extends HttpServlet {
 	
 				response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + URLEncoder.encode(month, "UTF-8"));
 				return;
-			default:
-				break;
-			}
+		
+	//================================================================================================
+	
+			case "/bookShopMap.bo":
+			    // 모든 데이터를 가져옴
+			    List<JSONObject> allData = boardservice.fetchAllData(API_URL, API_KEY);
+		        // JSP에 "dataString" 전달
+		        request.setAttribute("apiData", allData);
+			        
+		        center = "/common/bookShopMap.jsp";
+		        request.setAttribute("center", center);
+		        nextPage = "/main.jsp";
+		        
+			    break; 
+			
+	//================================================================================================
+			
+		default:
+			break;
+		}
 
 		// 다음 페이지로 포워딩
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
