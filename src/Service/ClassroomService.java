@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import Dao.ClassroomDAO;
+import Vo.BoardVo;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
 import Vo.EnrollmentVo;
 import Vo.StudentVo;
+import java.time.LocalDateTime;
 
 public class ClassroomService {
 
@@ -144,6 +146,17 @@ public class ClassroomService {
 	public ArrayList<CourseVo> serviceCourseSelect(String studentId) {
 		return classroomdao.courseSelect(studentId);
 	}
+
+	public boolean isEnrollmentPeriod() {
+	    // 수강신청 기간 설정
+	    LocalDateTime startDate = LocalDateTime.of(2024, 11, 27, 9, 0);
+	    LocalDateTime endDate = LocalDateTime.of(2024, 12, 1, 18, 0);
+	    LocalDateTime now = LocalDateTime.now();
+	    return now.isAfter(startDate) && now.isBefore(endDate);
+	}
+
+
+
 
 
 

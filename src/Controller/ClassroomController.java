@@ -22,7 +22,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import Service.ClassroomService;
+import Service.MenuItemService;
 import Service.StudentService;
+import Vo.BoardVo;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
 import Vo.EnrollmentVo;
@@ -511,13 +513,14 @@ public class ClassroomController extends HttpServlet {
 	    		
 	    		courseList1 = classroomservice.serviceCourseList(studentId);
 	    		courseList2 = classroomservice.serviceCourseSelect(studentId);
-	    		System.out.println(courseList2);
+	    		
+	    		boolean isEnrollmentPeriod = classroomservice.isEnrollmentPeriod();
 	    		
 	    		center = request.getParameter("classroomCenter");
 	    		
-	    		session.setAttribute("courseList", courseList1);
-	    		session.setAttribute("courseList2", courseList2);
-	    		
+	    		request.setAttribute("courseList", courseList1);
+	    		request.setAttribute("courseList2", courseList2);
+	    		request.setAttribute("isEnrollmentPeriod", isEnrollmentPeriod);
 	    		request.setAttribute("classroomCenter", center);
 	    		
 				nextPage = "/view_classroom/classroom.jsp";
@@ -605,10 +608,9 @@ public class ClassroomController extends HttpServlet {
 	    			response.getWriter().write("Fail");
 	    			return;
 	    		}
-	    		
+	    					
 	    //==========================================================================================
-	    	
-
+    		
 	    	default:
 	    		break;
 	    }

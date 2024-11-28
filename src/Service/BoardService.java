@@ -187,7 +187,7 @@ public class BoardService {
 	                    allData.add((JSONObject) obj); // 데이터 통합
 	                }
 	                
-	             // 페이징 처리
+	                // 페이징 처리
 	                long currentCount = (long) jsonObject.get("currentCount"); // 현재 가져온 데이터 수
 	                long totalCount = (long) jsonObject.get("totalCount"); // 전체 데이터 수
 	                if (allData.size() >= totalCount || currentCount < perPage) {

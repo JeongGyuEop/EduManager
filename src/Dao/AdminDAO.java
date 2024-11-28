@@ -148,9 +148,14 @@ public class AdminDAO {
 //관리자 특정 조회
 	public List<AdminVo> getMemberList(String searchWord) {
 
-		String query = "SELECT " + "u.user_id, u.user_name, u.birthDate, u.gender, u.address, "
-				+ "u.phone, u.email, u.role, a.admin_id, a.department, a.access_level " + "FROM user u "
-				+ "LEFT JOIN admin_info a ON u.user_id = a.user_id " + "WHERE u.user_id = ? OR a.admin_id = ?";
+		String query =  "SELECT " +
+			            "u.user_id, u.user_name, u.birthDate, u.gender, u.address, " +
+			            "u.phone, u.email, u.role, a.admin_id, a.department, a.access_level " +
+			            "FROM user u " +
+			            "LEFT JOIN admin_info a ON u.user_id = a.user_id " +
+			            "WHERE (u.user_id = ? OR a.admin_id = ?) " +
+			            "AND u.user_id IS NOT NULL " +
+			            "AND a.admin_id IS NOT NULL";
 
 		List<AdminVo> memberList = new ArrayList<>();
 
