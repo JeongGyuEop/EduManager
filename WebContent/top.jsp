@@ -55,7 +55,7 @@
 				}
 			%>
 			<!-- 중앙 제목 -->
-			<a class="navbar-brand mx-auto text-center" href="#"
+			<a class="navbar-brand mx-auto text-center" href="<%=contextPath%>/member/main.bo"
 				style="position: absolute; left: 50%; transform: translateX(-50%);">
 				<i class="fas fa-graduation-cap"></i> 학사 지원 프로그램
 			</a>

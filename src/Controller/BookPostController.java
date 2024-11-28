@@ -162,7 +162,8 @@ public class BookPostController extends HttpServlet {
 				request.setAttribute("center", "/view_student/booktradingboard.jsp");
 			}
 			// nextPage 지정
-
+			nextPage="/Book/booktradingboard.bo";
+			
 			break;
 
 		// 게시글 검색

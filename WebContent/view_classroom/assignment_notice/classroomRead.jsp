@@ -1,33 +1,30 @@
-<%@page import="Vo.BoardVo"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@page import="Vo.ClassroomBoardVo"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
  
 <%
-	request.setCharacterEncoding("UTF-8");
-	String contextPath = request.getContextPath();
-	
-	//조회한 글정보 얻기
-	BoardVo vo = (BoardVo)request.getAttribute("vo");
-	String author_id = vo.getAuthor_id();//조회한 글을 작성한 사람
-	String title = vo.getTitle();//조회한 글제목
-	String content = vo.getContent().replace("/r/n", "<br>");//조회한 글 내용
-	
-	String notice_id = (String)request.getAttribute("notice_id");
-	String nowPage = (String)request.getAttribute("nowPage");
-	String nowBlock = (String)request.getAttribute("nowBlock");
-	
-	String id = (String)session.getAttribute("id");
-	String name = (String)session.getAttribute("name");
-	String role_ = (String)session.getAttribute("role");
-	
-%>		
-
+    request.setCharacterEncoding("UTF-8");
+    String contextPath = request.getContextPath();
+    
+    // 조회한 글 정보
+    ClassroomBoardVo vo = (ClassroomBoardVo)request.getAttribute("vo");
+    String author_id = vo.getAuthor_id(); // 작성자
+    String title = vo.getTitle(); // 글 제목
+    String content = vo.getContent().replace("/r/n", "<br>"); // 글 내용
+    
+    String course_id = (String)request.getAttribute("course_id");
+    String notice_id = (String)request.getAttribute("notice_id");
+    String nowPage = (String)request.getAttribute("nowPage");
+    String nowBlock = (String)request.getAttribute("nowBlock");
+    String id = (String)session.getAttribute("id");
+    String name = (String)session.getAttribute("name");
+    String role_ = (String)session.getAttribute("role");
+%>
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>글 수정 화면</title>
+<title>글 화면</title>
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
@@ -60,7 +57,7 @@
 </head>
 <body class="bg-light">
 <div class="container form-container">
-    <h1 class="page-title">글 수정 화면</h1>
+    <h1 class="page-title">글 화면</h1>
     <form id="formModify">
         <div class="mb-3 row">
             <label for="writer" class="col-sm-2 col-form-label text-end"><strong>작성자</strong></label>
@@ -88,13 +85,18 @@
         </div>
     </form>
 </div>
-
-<!-- 답변 버튼을 클릭했을때 답변을 작성할 수 있는 화면 요청 -->
-<form id="replyForm" action="<%=contextPath%>/Board/reply.do">
-    <input type="hidden" name="notice_id" value="<%=notice_id%>" id="notice_id">
-    <input type="hidden" name="id" value="<%=id%>">
-</form>
-
+<%-- 답변 버튼을 클릭했을때 답변을 작성할수 있는 화면 요청! --%>
+	<form id="replyForm"  action="<%=contextPath%>/classroomboard/reply.do">
+	
+		<%--주글 의 글번호 전달 --%>
+		<input type="hidden" name="notice_id" 
+							 value="<%=notice_id%>" 
+							 id="notice_id">
+		<%--답변글을 작성하는 사람의 로그인된 아이디를 전달--%>					 
+		<input type="hidden" name="id" value="<%=id%>">					 
+		<input type="hidden" name="course_id" value="<%=course_id%>">					 
+	
+	</form>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -109,7 +111,7 @@
         let result = window.confirm("정말로 글을 삭제하시겠습니까?");
         if (result) {
             $.ajax({
-                url: "<%=contextPath%>/Board/deleteBoard.do",
+                url: "<%=contextPath%>/classroomboard/deleteList.do",
                 type: "post",
                 data: { notice_id: notice_id },
                 dataType: "text",
@@ -134,7 +136,7 @@
         let content = $("#content").val();
 
         $.ajax({
-            url: "<%=contextPath%>/Board/updateBoard.do",
+            url: "<%=contextPath%>/classroomboard/updateList.do",
             type: "post",
             data: {
                 title: title,
@@ -157,16 +159,15 @@
 
     // 사용자 권한에 따라 버튼 활성화/비활성화
     $(document).ready(function() {
-        const role = "<%=role_%>";
-        if (role === "관리자") {
+        const role = "<%=role_ %>";
+        if (role === "교수") {
             $("#update").css("visibility", "visible");
             $("#delete").css("visibility", "visible");
-            $("#reply").css("visibility", "visible");
         } else {
             $("#update").css("visibility", "hidden");
             $("#delete").css("visibility", "hidden");
-            $("#reply").css("visibility", "hidden");
-            
+
+            // 제목과 내용 입력창 비활성화
             $("#title").prop("disabled", true);
             $("#content").prop("disabled", true);
         }
@@ -174,14 +175,7 @@
 
     // 목록 버튼 클릭 이벤트
     $("#list").click(function() {
-		const role = "<%=role_%>";
-        let url = null;
-        
-        if(role === "관리자"){
-         	url = "<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>";
-        }else{
-         	url = "<%=contextPath%>/Board/list.bo?center=/common/notice/list.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>";
-        }
+        let url = "<%=contextPath%>/classroomboard/noticeList.bo?center=/view_classroom/assignment_notice/professorNotice.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>&courseId=<%=course_id%>";
         window.location.href = url;
     });
 </script>

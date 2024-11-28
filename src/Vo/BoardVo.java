@@ -8,6 +8,8 @@ public class BoardVo {
     private String author_id, title, content;
     private Date created_date;
 
+    private MemberVo userName;
+    
     @Override
     public String toString() {
         return "BoardVo{" +
@@ -111,4 +113,13 @@ public class BoardVo {
     public void setB_level(int b_level) {
         this.b_level = b_level;
     }
+
+	public MemberVo getUserName() {
+		return userName;
+	}
+
+	public void setUserName(MemberVo userName) {
+		this.userName = userName;
+	}
+    
 }
