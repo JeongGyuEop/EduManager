@@ -278,6 +278,108 @@ public class ProfessorDAO {
 		        return isDeleted;
 		    }
 		    
+		    //===========================================================================
+		    //교수가 담당한 과목의 학생이 적은 강의평가를 조회하는 메서드
+		    public List<ProfessorVo> getEvaluationsByProfessorId(String professorId) {
+		        List<ProfessorVo> evaluationList = new ArrayList<>();
+		        String sql = "SELECT e.course_id, e.student_id, e.rating, e.comments, c.course_name " +
+		                     "FROM course_evaluation e " +
+		                     "JOIN course c ON e.course_id = c.course_id " +
+		                     "WHERE c.professor_id = ?";
+
+		        try {
+		            con = ds.getConnection(); 
+		            pstmt = con.prepareStatement(sql); 
+		            pstmt.setString(1, professorId); 
+		            rs = pstmt.executeQuery(); 
+
+		            // 결과 처리
+		            while (rs.next()) {
+		                ProfessorVo evaluation = new ProfessorVo();
+		                evaluation.setCourseId(rs.getString("course_id"));       // 강의 ID		                
+		                evaluation.setCourseName(rs.getString("course_name"));   // 강의 이름
+		                //evaluation.setUser_id(rs.getString("student_id"));       // 학생 ID
+		                evaluation.setRating(rs.getInt("rating")); // 평점 저장
+		                evaluation.setComments(rs.getString("comments")); // 평가 내용 저장         // 평가 내용 저장 (필요에 따라 필드 이름 변경 가능)
+		                evaluationList.add(evaluation);
+		            }
+		        } catch (SQLException e) {
+		            System.out.println("ProfessorDAO의 getEvaluationsByProfessorId 메소드 오류");
+		            e.printStackTrace();
+		        } finally {
+		            closeResource(); // 자원 해제
+		        }
+
+		        return evaluationList;
+		    }
+		    
+		    
+		    
+		    
+		    
+		    
+		    //========================================================================
+		 // 교수가 담당한 강의 목록 조회
+		    public List<ProfessorVo> getCoursesByProfessorId(String searchProfessorId) {
+		        List<ProfessorVo> courseList = new ArrayList<>();
+		        String sql = "SELECT course_id, course_name FROM course WHERE professor_id = ?";
+
+		        try {
+		            con = ds.getConnection();
+		            pstmt = con.prepareStatement(sql);
+		            pstmt.setString(1, searchProfessorId);
+		            rs = pstmt.executeQuery();
+
+		            while (rs.next()) {
+		                ProfessorVo course = new ProfessorVo();
+		                course.setCourseId(rs.getString("course_id"));
+		                course.setCourseName(rs.getString("course_name"));
+		                courseList.add(course);
+		            }
+		        } catch (SQLException e) {
+		            System.out.println("getCoursesByProfessorId 오류: " + e.getMessage());
+		        } finally {
+		            closeResource();
+		        }
+
+		        return courseList;
+		    }
+		    
+		 // 특정 강의의 평가 목록 조회
+		    public List<ProfessorVo> getEvaluationsByCourseId(String courseId) {
+		        List<ProfessorVo> evaluationList = new ArrayList<>();
+		        String sql = "SELECT e.course_id, e.student_id, e.rating, e.comments, c.course_name " +
+		                     "FROM course_evaluation e " +
+		                     "JOIN course c ON e.course_id = c.course_id " +
+		                     "WHERE e.course_id = ?";
+
+		        try {
+		            con = ds.getConnection();
+		            pstmt = con.prepareStatement(sql);
+		            pstmt.setString(1, courseId);
+		            rs = pstmt.executeQuery();
+
+		            while (rs.next()) {
+		                ProfessorVo evaluation = new ProfessorVo();
+		                evaluation.setCourseId(rs.getString("course_id"));
+		                evaluation.setCourseName(rs.getString("course_name"));
+		                //evaluation.setUser_id(rs.getString("student_id"));
+		                evaluation.setRating(rs.getInt("rating"));
+		                evaluation.setComments(rs.getString("comments"));
+		                evaluationList.add(evaluation);
+		            }
+		            System.out.println("DAO: Evaluation List Size = " + evaluationList.size());
+		        } catch (SQLException e) {
+		            System.out.println("getEvaluationsByCourseId 오류: " + e.getMessage());
+		        } finally {
+		            closeResource();
+		        }
+
+		        return evaluationList;
+		    }
+
+
+
 }
 		    
 	

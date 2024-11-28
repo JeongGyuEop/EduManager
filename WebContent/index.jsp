@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
     
     <%
-    	String contextPath = request.getContextPath();
+   	 	String contextPath = request.getContextPath();
     %>
 
 

@@ -1,3 +1,4 @@
+<%@page import="java.net.URLDecoder"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="Vo.CourseVo"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -31,14 +32,15 @@ String profName = (String) session.getAttribute("name");
 </style>
 
 <%
-	String message = request.getParameter("message");
+	String message = (String) request.getAttribute("message");
 	if (message != null) {
+    	message = URLDecoder.decode(message, "UTF-8");
 %>
-		<script>
-			alert('<%=message%>'); // 메시지를 알림으로 표시
-		</script>
+        <script>
+            alert('<%= message %>'); // 메시지를 알림으로 표시
+        </script>
 <%
-	}
+    }
 %>
 
 
@@ -46,15 +48,15 @@ String profName = (String) session.getAttribute("name");
 function enableEdit(courseId) {
 
     // jQuery를 사용하여 강의명 셀을 input 필드로 변경
-    const courseNameCell = $('#courseName-' + courseId);
+    const courseNameCell = $('#courseName_' + courseId);
     
     // 요소가 undefined가 아닌지 확인하고 텍스트 가져오기
     const courseName = courseNameCell.text() ? courseNameCell.text().trim() : "";
-    courseNameCell.html('<input type="text" id="editInput-' + courseId + '" class="form-control" value="' + courseName + '">');
+    courseNameCell.html('<input type="text" id="editInput_' + courseId + '" class="form-control" value="' + courseName + '">');
     
     // 강의실 셀을 선택 가능하도록 변경
-    const classroomCell = $('#classroom-' + courseId);
-    classroomCell.html('<select id="classroomSelect-' + courseId + '" class="form-select"></select>');
+    const classroomCell = $('#classroom_' + courseId);
+    classroomCell.html('<select id="classroomSelect_' + courseId + '" class="form-select"></select>');
 
     // DB에서 강의실 목록을 가져와서 select 태그에 추가
     $.ajax({
@@ -62,7 +64,7 @@ function enableEdit(courseId) {
         type: 'post',
         dataType: 'json',
         success: function(classrooms) {
-            const classroomSelect = $('#classroomSelect-' + courseId);
+            const classroomSelect = $('#classroomSelect_' + courseId);
             classroomSelect.empty(); // 기존 옵션 제거
 
             // 강의실 목록을 select 옵션으로 추가
@@ -79,17 +81,16 @@ function enableEdit(courseId) {
     });
     
  	// 수정 버튼을 숨기고, 수정 완료 버튼을 표시
-    $('#editBtn-' + courseId).hide();
-    $('#saveBtn-' + courseId).show();
+    $('#editBtn_' + courseId).hide();
+    $('#saveBtn_' + courseId).show();
     
 }
 
 function saveEdit(courseId) {
-    console.log("saveEdit 함수 호출됨: ", courseId);
 
     // 수정된 강의명과 선택된 강의실 가져오기
-    const newCourseName = $('#editInput-' + courseId).val();
-    const selectedClassroom = $('#classroomSelect-' + courseId).val();
+    const newCourseName = $('#editInput_' + courseId).val();
+    const selectedClassroom = $('#classroomSelect_' + courseId).val();
 
     // 서버로 저장 요청을 보내려면 Ajax 호출 추가
     $.ajax({
@@ -101,22 +102,33 @@ function saveEdit(courseId) {
             classroomId: selectedClassroom
         },
         success: function(response) {
-            // 성공적으로 저장된 후, UI 업데이트
-            $('#courseName-' + courseId).text(newCourseName);
-            $('#classroom-' + courseId).text($('#classroomSelect-' + courseId + ' option:selected').text());
-
-            // 버튼 상태를 원래대로 복구
-            $('#editBtn-' + courseId).show();
-            $('#saveBtn-' + courseId).hide();
-
-            console.log("강의 수정 완료!");
-            alert("강의 수정 완료!");
+        	if (response.status === "success") {
+        		
+	            // 성공적으로 저장된 후, UI 업데이트
+	            $('#courseName_' + courseId).text(newCourseName);
+	            $('#classroom_' + courseId).text($('#classroomSelect_' + courseId + ' option:selected').text());
+	
+	            // 버튼 상태를 원래대로 복구
+	            $('#editBtn_' + courseId).show();
+	            $('#saveBtn_' + courseId).hide();
+	
+	            alert("강의 수정 완료!");
+	            
+        	} else {
+                alert("강의 수정에 실패했습니다.");
+            }
         },
         error: function(xhr, status, error) {
-            console.error("수정사항을 저장하는 데 실패했습니다:", error);
-            alert("강의 수정 실패!");
+            alert("강의 수정 처리중 오류!");
         }
     });
+}
+
+// 삭제 버튼 클릭 이벤트로 폼을 제출
+function submitDeleteForm(courseId) {
+    if (confirm("삭제하시겠습니까?")) {
+        document.getElementById("deleteForm_" + courseId).submit();
+    }
 }
 </script>
 
@@ -141,20 +153,22 @@ function saveEdit(courseId) {
 						<%
 						for (CourseVo course : courseList) {
 						%>
-						<tr>
+						<tr id="row_<%= course.getCourse_id() %>">
 							<td><%= course.getCourse_id() %></td>
-                            <td id="courseName-<%= course.getCourse_id() %>"><%= course.getCourse_name() %></td>
-							<td id="classroom-<%= course.getCourse_id() %>">
+                            <td id="courseName_<%= course.getCourse_id() %>"><%= course.getCourse_name() %></td>
+							<td id="classroom_<%= course.getCourse_id() %>">
 								<%= course.getClassroom().getRoom_id() %> (<%= course.getClassroom().getCapacity() %> / <%= course.getClassroom().getEquipment() %>)
 							</td>
 							<td>
-								<button id="editBtn-<%= course.getCourse_id() %>" class="btn btn-green" onclick="enableEdit('<%= course.getCourse_id() %>')">수정</button>
-								<button id="saveBtn-<%= course.getCourse_id() %>" class="btn btn-green" style="display:none;" onclick="saveEdit('<%= course.getCourse_id() %>')">수정 완료</button>
+								<button id="editBtn_<%= course.getCourse_id() %>" class="btn btn-green" onclick="enableEdit('<%= course.getCourse_id() %>')">수정</button>
+								<button id="saveBtn_<%= course.getCourse_id() %>" class="btn btn-green" style="display:none;" onclick="saveEdit('<%= course.getCourse_id() %>')">수정 완료</button>
 							</td>
 							<td>
-								<a href="<%=contextPath%>/classroom/deleteCourse.do?id=<%=course.getCourse_id()%>&classroomCenter=/view_classroom/courseSearch.jsp" class="btn btn-green">
-									삭제
-								</a>
+								<form id="deleteForm_<%= course.getCourse_id() %>" action="<%=contextPath%>/classroom/deleteCourse.do" method="POST">
+								        <input type="hidden" name="id" value="<%= course.getCourse_id() %>">
+								        <input type="hidden" name="classroomCenter" value="/view_classroom/courseSearch.jsp">
+								        <button type="button" class="btn btn-green" onclick="submitDeleteForm('<%= course.getCourse_id() %>')">삭제</button>
+							    </form>
 							</td>
 						</tr>
 						<%

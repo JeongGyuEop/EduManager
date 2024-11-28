@@ -1,3 +1,9 @@
+<%@page import="java.net.URLEncoder"%>
+<%@ page import="java.security.SecureRandom" %>
+<%@ page import="java.math.BigInteger" %>
+<%@page import="java.net.URLDecoder"%>
+<%@page import="Vo.BoardVo"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
@@ -8,6 +14,8 @@
     String id = (String)session.getAttribute("id");
     String role = (String)session.getAttribute("role");
     String name = (String)session.getAttribute("name");
+    
+
 %>
     
 <!doctype html>
@@ -29,9 +37,122 @@
   	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   	
 	<link href="<%=contextPath %>/css/startpage.css" rel="stylesheet">
+	
+	<style>
+    /* 공지사항 상자 스타일 */
+    .notice-box {
+        background-color: #f8f9fa; /* 배경색 */
+        border: 1px solid #dee2e6; /* 테두리 색상 */
+        border-radius: 10px; /* 모서리 둥글게 */
+        padding: 20px; /* 내부 여백 */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 박스 그림자 */
+    }
+
+    /* 공지사항 제목 스타일 */
+    .notice-box h2 {
+        font-size: 20px; /* 글자 크기 */
+        color: #333; /* 텍스트 색상 */
+        border-bottom: 2px solid #dee2e6; /* 제목 하단 경계선 */
+        padding-bottom: 10px; /* 제목 아래 여백 */
+        margin-bottom: 20px; /* 제목과 내용 사이 여백 */
+    }
+
+    /* 공지사항 테이블 스타일 */
+    .notice-table {
+        width: 100%; /* 테이블 너비 */
+        border-collapse: collapse; /* 테두리 병합 */
+        background-color: #ffffff; /* 테이블 배경색 */
+        font-size: 14px; /* 글꼴 크기 */
+    }
+
+    .notice-table thead tr {
+        background-color: #e9ecef; /* 헤더 배경색 */
+        text-align: center; /* 텍스트 중앙 정렬 */
+        font-weight: bold; /* 텍스트 굵게 */
+        color: #495057; /* 텍스트 색상 */
+    }
+
+    .notice-table th, .notice-table td {
+        border: 1px solid #dee2e6; /* 테두리 색상 */
+        padding: 10px; /* 셀 내부 여백 */
+        text-align: center; /* 셀 텍스트 중앙 정렬 */
+    }
+
+    .notice-table tbody tr:nth-child(odd) {
+        background-color: #f9f9f9; /* 홀수 행 배경색 */
+    }
+
+    .notice-table tbody tr:nth-child(even) {
+        background-color: #ffffff; /* 짝수 행 배경색 */
+    }
+
+    .notice-table tbody tr:hover {
+        background-color: #f1f3f5; /* 마우스 오버 시 배경색 */
+        cursor: pointer; /* 마우스 포인터 모양 */
+    }
+
+    /* 공지사항 링크 스타일 */
+    .notice-table a {
+        text-decoration: none; /* 링크 밑줄 제거 */
+        color: #007bff; /* 기본 링크 색상 */
+    }
+
+    .notice-table a:hover {
+        text-decoration: underline; /* 마우스 오버 시 밑줄 */
+        color: #0056b3; /* 텍스트 색상 변경 */
+    }
+
+    /* 페이지네이션 스타일 */
+    .pagination {
+        display: flex; /* 가로 정렬 */
+        justify-content: center; /* 중앙 정렬 */
+        margin-top: 20px; /* 위 여백 */
+        font-size: 14px; /* 글꼴 크기 */
+    }
+
+    .pagination a {
+        margin: 0 5px; /* 버튼 간 간격 */
+        padding: 8px 12px; /* 버튼 내부 여백 */
+        text-decoration: none; /* 링크 밑줄 제거 */
+        color: #007bff; /* 기본 링크 색상 */
+        border: 1px solid #dee2e6; /* 테두리 색상 */
+        border-radius: 4px; /* 모서리 둥글게 */
+    }
+
+    .pagination a:hover {
+        background-color: #f1f1f1; /* 마우스 오버 시 배경색 */
+        color: #0056b3; /* 마우스 오버 시 텍스트 색상 */
+    }
+
+    .pagination a.active {
+        background-color: #007bff; /* 활성화된 버튼 배경색 */
+        color: white; /* 활성화된 버튼 텍스트 색상 */
+        pointer-events: none; /* 클릭 비활성화 */
+    }
+
+    /* 공지사항이 비어있을 때 스타일 */
+    .notice-empty {
+        text-align: center; /* 중앙 정렬 */
+        color: #6c757d; /* 텍스트 색상 */
+        font-size: 14px; /* 글꼴 크기 */
+        padding: 20px; /* 내부 여백 */
+    }
+</style>
+	
 
   </head>
   <body>
+  	<%
+	String message = (String) request.getAttribute("message");
+	if (message != null) {
+    	message = URLDecoder.decode(message, "UTF-8");
+	%>
+	        <script>
+	            alert('<%= message %>'); // 메시지를 알림으로 표시
+	        </script>
+	<%
+	    }
+	%>
   <script>
     let slideIndex = 0;
     const images = [
@@ -70,10 +191,17 @@
 
     // 페이지 로드 시 자동 슬라이드 시작
     startAutoSlide();
+    
+    // 게시글 상세 조회 요청 함수
+    function fnRead(val) {
+        document.frmRead.action = "<%=contextPath%>/Board/read.bo";
+        document.frmRead.notice_id.value = val;
+        document.frmRead.submit();
+    }
+    
     </script>
 </head>
 <body>
-
 	<!-- 배경 이미지 -->
     <div class="background" ></div>
     
@@ -146,15 +274,100 @@
 		            <jsp:include page="/common/calendar.jsp" />
 		        </div>
 		    </div>
-		    <div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
-		        <div class="h-100 p-5 bg-body-tertiary border rounded-3">
-		            <h2>공지 사항</h2>
-		            <div>여기에는 공지사항이 들어갈 영역입니다.</div>
-		        </div>
-		    </div>
-		</div>
-    
+		   <div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
+    <div class="notice-box">
+        <h2>공지 사항</h2>
+        <%
+            int totalRecord = 0;
+            int numPerPage = 5;
+            int pagePerBlock = 3;
+            int totalPage = 0;
+            int totalBlock = 0;
+            int nowPage = 0;
+            int nowBlock = 0;
+            int beginPerPage = 0;
+
+            ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
+            totalRecord = list.size();
+
+            if (request.getAttribute("nowPage") != null) {
+                nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
+            }
+
+            beginPerPage = nowPage * numPerPage;
+            totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
+            totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
+
+            if (request.getAttribute("nowBlock") != null) {
+                nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
+            }
+        %>
+        <form name="frmRead">
+            <input type="hidden" name="notice_id">
+            <input type="hidden" name="nowPage" value="<%=nowPage%>">
+            <input type="hidden" name="nowBlock" value="<%=nowBlock%>">
+        </form>
+        <div>
+            <table class="notice-table">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>날짜</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (list.isEmpty()) { %>
+                    <tr>
+                        <td colspan="5" class="notice-empty">등록된 글이 없습니다.</td>
+                    </tr>
+                    <% } else {
+                        for (int i = beginPerPage; i < (beginPerPage + numPerPage); i++) {
+                            if (i == totalRecord) break;
+                            BoardVo vo = list.get(i);
+                    %>
+                    <tr>
+                        <td><%=vo.getNotice_id()%></td>
+                        <td>
+                            <div class="reply-indent">
+                                <%
+                                    int width = 0; // 답변글에 대한 들여쓰기 너비값
+                                    if (vo.getB_level() > 0) { // 답글인 경우
+                                        width = vo.getB_level() * 10; // 들여쓰기 너비 계산
+                                %>
+                                    <img src="<%=contextPath%>/common/notice/images/level.gif" width="<%=width%>" height="15">
+                                    <img src="<%=contextPath%>/common/notice/images/re.gif">
+                                <% } %>
+                                <a href="javascript:fnRead('<%=vo.getNotice_id()%>')"><%=vo.getTitle()%></a>
+                            </div>
+                        </td>
+                        <td><%=vo.getUserName().getUser_name()%></td>
+                        <td><%=vo.getCreated_date()%></td>
+                    </tr>
+                    <% } } %>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <% 
+                if (totalRecord != 0) {
+                    if (nowBlock > 0) { %>
+                <a href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock - 1%>&nowPage=<%=((nowBlock - 1) * pagePerBlock)%>">◀ 이전</a>
+                <% }
+                    for (int i = 0; i < pagePerBlock; i++) {
+                        int pageNum = (nowBlock * pagePerBlock) + i + 1;
+                        if (pageNum > totalPage) break; %>
+                <a href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=pageNum - 1%>"><%=pageNum%></a>
+                <% }
+                    if (totalBlock > nowBlock + 1) { %>
+                <a href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock + 1%>&nowPage=<%=(nowBlock + 1) * pagePerBlock%>">▶ 다음</a>
+                <% } } %>
+            </div>
+        </div>
+    </div>
 </div>
+
+
   <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');

@@ -5,3 +5,5 @@
 .settings/
 /build/
 .DS_Store
+WebContent/images/
+/WebContent/submitUploads/
