@@ -134,6 +134,57 @@ public class MajorInputDAO {
 		return validationResult;
 	}
 
+	public int majorSearchValidationTel(String editMajorTel) {
+		System.out.println("majorSearchValidationTel" + editMajorTel);
+		
+		validationResult = NONE;
+		
+		try {
+			con = ds.getConnection();
+			sql = "SELECT majortel FROM majorinformation WHERE majortel = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, editMajorTel);
+			rs = pstmt.executeQuery();
+			// 중복된 전화번호가 존재할 경우
+			if (rs.next()) {
+				validationResult = EXISTS;
+				System.out.println("존재하는 전화번호입니다.");
+			}
+		} catch (SQLException e) {
+			System.out.println("SQL 오류 발생: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, rs);
+		}
+		// 값 반환
+		return validationResult;
+	}
+	
+		public int editMajorTel(String editMajorCode, String editMajorTel) {
+		System.out.println("editMajor" + editMajorCode);
+		System.out.println("editMajorTel" + editMajorTel);
+
+		int editResult = FAILURE;
+		String sql = "UPDATE majorinformation SET majortel=? WHERE majorcode=?";
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, editMajorTel);
+			pstmt.setString(2, String.format("%02d", Integer.parseInt(editMajorCode)));
+			editResult = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("SQL 오류 발생: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, null);
+		}
+		return editResult;
+	}
+	
 	public int majorInput(String newMajorName, String newMajorTel) {
 		int addResult = FAILURE;
 		Connection con = null;
