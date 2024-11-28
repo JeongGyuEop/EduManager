@@ -14,8 +14,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
 import Dao.BoardDAO;
 import Service.BoardService;
 import Service.MenuItemService;
@@ -27,12 +29,11 @@ import Vo.ScheduleVo;
 public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	BoardService boardservice;
-	private BoardDAO boardDAO;
 
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		boardDAO = new BoardDAO();
+		new BoardDAO();
 		boardservice = new BoardService();
 	}
 
@@ -56,15 +57,6 @@ public class BoardController extends HttpServlet {
 		}
 	}
 
-	// JSON 문자열 내 특수 문자를 이스케이프 처리하는 메서드
-	private String escapeJson(String str) {
-		if (str == null) {
-			return "";
-		}
-		return str.replace("\\", "\\\\").replace("\"", "\\\"").replace("/", "\\/").replace("\b", "\\b")
-				.replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t");
-	}
-
 	// 모든 요청을 처리하는 메인 메서드
 	protected void doHandle(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException, Exception {
@@ -74,6 +66,7 @@ public class BoardController extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		PrintWriter out = response.getWriter();
+		String contextPath = request.getContextPath();
 
 		String nextPage = null;
 		String center = null;
@@ -84,9 +77,9 @@ public class BoardController extends HttpServlet {
 
 		String startDate = null;
 		String endDate = null;
-	    String month = null;
-	    
-	    System.out.println("2단계 요청 주소 : " + action);
+		String month = null;
+
+		System.out.println("2단계 요청 주소 : " + action);
 
 		// 액션에 따라 분기 처리
 	    switch(action) {
@@ -105,7 +98,7 @@ public class BoardController extends HttpServlet {
 			
 			// MenuItemService를 사용하여 역할에 맞는 메뉴 HTML 생성
     		MenuItemService menuService = new MenuItemService();
-    		String contextPath = request.getContextPath();
+    		contextPath = request.getContextPath();
     		String role =(String)session.getAttribute("role");
     		System.out.println(role);
     		
@@ -324,7 +317,6 @@ public class BoardController extends HttpServlet {
 			//부장님 호출
 			boardservice.serviceReplyInsertBoard(super_notice_id, reply_writer, reply_title, reply_content, reply_id);
 
-//			
 			//답변글  추가에 성공하면 
 			//다시 전체 글목록 조회 해서 보여주기 위한 재요청 주소를 
 			//nextPage변수에 저장
@@ -336,24 +328,23 @@ public class BoardController extends HttpServlet {
 		    	 nextPage = "/Board/list.bo?center=/view_student/noticeStudent.jsp";
 		     }
 			
-			
 			break;
 
 		case "/boardCalendar.bo":
-			
+
 			center = "/common/calendar.jsp";
-			
+
 			request.setAttribute("center", center);
-			
+
 			nextPage = "/main.jsp";
-			
+
 			break;
-			
+
 		case "/boardCalendar.do":
 			// 일정 데이터를 JSON 형식으로 응답하는 기능
 			startDate = request.getParameter("start");
 			endDate = request.getParameter("end");
-			
+
 			try {
 				List<ScheduleVo> eventList = boardservice.getEvents(startDate, endDate);
 				Gson gson = new Gson();
@@ -364,7 +355,7 @@ public class BoardController extends HttpServlet {
 					jsonEvent.addProperty("title", event.getEvent_name());
 					jsonEvent.addProperty("start", dateFormat.format(event.getStart_date()));
 					jsonEvent.addProperty("end", dateFormat.format(event.getEnd_date()));
-					jsonEvent.addProperty("description", event.getDescription());					
+					jsonEvent.addProperty("description", event.getDescription());
 					jsonEvents.add(jsonEvent);
 				}
 				String jsonResponse = gson.toJson(jsonEvents);
@@ -384,38 +375,40 @@ public class BoardController extends HttpServlet {
 				e.printStackTrace();
 			}
 			return;
-			
-			
+
 		case "/viewSchedule.bo":
-            month = request.getParameter("month");
-            if (month != null && !month.isEmpty()) {
-                boardservice.processViewSchedule(request);
-            }
-            
-            center = request.getParameter("center");
-            request.setAttribute("center", center);
-            
-            nextPage = "/main.jsp";
-            
-            break;
-            
+			month = request.getParameter("month");
+			if (month != null && !month.isEmpty()) {
+				boardservice.processViewSchedule(request);
+			}
+
+			center = request.getParameter("center");
+			request.setAttribute("center", center);
+
+			nextPage = "/main.jsp";
+
+			break;
+
 		case "/addSchedule":
 			boardservice.addSchedule(request);
 			startDate = request.getParameter("startDate");
-		    month = startDate.substring(0, 7);
-		    response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + month);
+			month = startDate.substring(0, 7);
+			response.sendRedirect(request.getContextPath()
+					+ "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + month);
 			return;
 		case "/updateSchedule":
 			boardservice.updateSchedule(request);
 			month = request.getParameter("month");
-			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + URLEncoder.encode(month, "UTF-8"));
+			response.sendRedirect(
+					request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month="
+							+ URLEncoder.encode(month, "UTF-8"));
 			return;
 		case "/deleteSchedule":
 			boardservice.deleteSchedule(request);
 			month = request.getParameter("month");
+
 			response.sendRedirect(request.getContextPath() + "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp&month=" + URLEncoder.encode(month, "UTF-8"));
 			return;
-			
 		default:
 			break;
 		}

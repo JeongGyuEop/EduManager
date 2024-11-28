@@ -3,7 +3,6 @@ package Service;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import Dao.BoardDAO;
@@ -74,20 +73,20 @@ public class BoardService {
 	public List<ScheduleVo> getEvents(String startDate, String endDate) throws Exception {
 		return boarddao.getEvents(startDate, endDate);
 	}
-	
+
 	public void processViewSchedule(HttpServletRequest request) {
-        String month = request.getParameter("month");
-        if (month != null && !month.isEmpty()) {
-            String[] parts = month.split("-");
-            if (parts.length == 2) {
-                String year = parts[0];
-                String monthPart = parts[1];
-                List<ScheduleVo> scheduleList = boarddao.getEventsByMonth(year, monthPart);
-                request.setAttribute("scheduleList", scheduleList);
-            }
-        }
-    }
-	
+		String month = request.getParameter("month");
+		if (month != null && !month.isEmpty()) {
+			String[] parts = month.split("-");
+			if (parts.length == 2) {
+				String year = parts[0];
+				String monthPart = parts[1];
+				List<ScheduleVo> scheduleList = boarddao.getEventsByMonth(year, monthPart);
+				request.setAttribute("scheduleList", scheduleList);
+			}
+		}
+	}
+
 	public void addSchedule(HttpServletRequest request) {
 		String title = request.getParameter("title");
 		String startDate = request.getParameter("startDate");
@@ -139,4 +138,5 @@ public class BoardService {
 			throw new IllegalArgumentException("삭제할 일정이 선택되지 않았습니다.");
 		}
 	}
+
 }
