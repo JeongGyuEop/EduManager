@@ -5,7 +5,7 @@
 	request.setCharacterEncoding("UTF-8");
 	String contextPath = request.getContextPath();
 	String role = (String) session.getAttribute("role");
-	String profName = (String) session.getAttribute("name");
+	String name = (String) session.getAttribute("name");
 
 %>    
 
@@ -87,6 +87,24 @@
             $('body').append(form);
             form.submit();
         }
+        
+        function chatWinOpen() {
+            // 팝업 창 크기 설정
+            var width = 320;
+            var height = 400;
+
+         	// 팝업 창 위치 설정 (우측 하단)
+            var left = window.screen.availWidth - width - 120;  // 화면의 오른쪽 끝에서 20px 안쪽
+            var top = window.screen.availHeight - height - 150; // 화면의 아래쪽 끝에서 20px 안쪽
+
+            // 팝업 창 열기
+            var popup = window.open("<%=contextPath%>/common/ChatWindow.jsp", "ChatWindow", "width=" + width + ", height=" +height + ", left=" + left +" , top=" + top);
+
+            // 팝업 창이 제대로 열리지 않을 경우 알림
+            if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                alert("팝업 차단이 활성화되어 있습니다. 팝업 차단을 해제하고 다시 시도해주세요.");
+            }
+        }
         </script>
     </head>
     <body class="sb-nav-fixed">
@@ -100,7 +118,7 @@
 			<!-- Navbar-->
 			    <ul class="navbar-nav ms-auto d-flex align-items-center">
 			        <li class="nav-item">
-			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
+			            <p class="text-white mb-0 me-3">반갑습니다. <%=name %> <%=role %>님!</p>
 			        </li>
 			        <li class="nav-item dropdown">
 			            <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -183,6 +201,13 @@
                     </div>
                 </nav>
             </div>
+            
+            
+        <!-- 채팅 버튼 -->
+		<a href="javascript:void(0);" id="chat" onclick="chatWinOpen();" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"> 
+		    <img src="../img/chatIcon.png" alt="채팅" style="width: 50px; height: 50px;"/> 
+		</a>
+
             
 <%
 		String classroomCenter = (String)request.getAttribute("classroomCenter");
