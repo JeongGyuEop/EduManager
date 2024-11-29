@@ -51,7 +51,7 @@
                             action: 'getEvents' // 서버에서의 동작 지정
                         },
                         success: function(response) {
-                            successCallback(response); // 이벤트 데이터를 성공적으로 가져온 경우 콜백 호출
+                            successCallback(response);
                         },
                         error: function(xhr, status, error) {
                             console.error('이벤트 데이터를 불러오는 중 오류 발생:', error); // 오류 로그 출력
