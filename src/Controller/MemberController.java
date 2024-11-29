@@ -118,19 +118,14 @@ public class MemberController extends HttpServlet {
 			
 			if(role.equals("학생")) {
     			// 재요청할 전체 메인화면 주소를 저장
-    			center = "/view_student/studentHome.jsp";
 
 			    session.setAttribute("student_id", userInfo.get("student_id"));
 			    
     		}else if(role.equals("교수")) {
     			// 재요청할 전체 메인화면 주소를 저장
-    			center = "/view_professor/professorHome.jsp";
 
 			    session.setAttribute("professor_id", userInfo.get("professor_id"));
 			    
-    		}else if(role.equals("관리자")) {
-    			// 재요청할 전체 메인화면 주소를 저장
-    			center = "/view_admin/adminHome.jsp";
     		}
 
 			// MenuItemService를 사용하여 역할에 맞는 메뉴 HTML 생성
@@ -146,7 +141,7 @@ public class MemberController extends HttpServlet {
 			request.setAttribute("center", center);
 			session.setAttribute("menuHtml", menuHtml); // 생성된 menuHtml 설정
 
-			nextPage = "/main.jsp";
+			nextPage = "/member/main.bo";
 
 			break;
 

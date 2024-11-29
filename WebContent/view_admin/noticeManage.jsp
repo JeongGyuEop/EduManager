@@ -7,6 +7,30 @@
     String contextPath = request.getContextPath();
     String key = (String)request.getAttribute("key");
     String word = (String)request.getAttribute("word");
+
+    int totalRecord = 0; // 전체 게시글 수
+    int numPerPage = 5; // 한 페이지에 표시할 게시글 수
+    int pagePerBlock = 3; // 한 블록에 표시할 페이지 수
+    int totalPage = 0; // 총 페이지 수
+    int totalBlock = 0; // 총 블록 수
+    int nowPage = 0; // 현재 페이지
+    int nowBlock = 0; // 현재 블록
+    int beginPerPage = 0; // 페이지 내 게시글 시작 번호
+
+    // 게시글 리스트
+    ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
+    totalRecord = list.size();
+
+    // 현재 페이지와 블록 정보
+    if (request.getAttribute("nowPage") != null) {
+        nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
+    }
+    beginPerPage = nowPage * numPerPage;
+    totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
+    totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
+    if (request.getAttribute("nowBlock") != null) {
+        nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
+    }
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -16,41 +40,75 @@
     <title>공지사항</title>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
+            background-color: #f0f2f5;
             font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
         }
 
-        .table-container {
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+        #board-container {
+            max-width: 100%;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+           /*  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); */
+            margin: 0px auto;
         }
 
-        .table th {
-            background-color: #198754;
+        #board-title {
+            font-size: 40px;
+            font-weight: bold;
+            color: #4a90e2;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #board-table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+
+        #board-table th, #board-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        #board-table th {
+            background-color: #4a90e2;
             color: white;
+            font-weight: bold;
+            text-align: center;
         }
 
-        .table-hover tbody tr:hover {
-            background-color: #e9ecef;
+        #board-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        #board-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn-link {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+
+        .btn-link:hover {
+            text-decoration: underline;
         }
 
         .pagination a {
-            color: #198754;
+            color: #4a90e2;
             text-decoration: none;
         }
 
         .pagination a:hover {
-            background-color: #198754;
+            background-color: #4a90e2;
             color: white;
         }
 
@@ -61,20 +119,38 @@
             margin-bottom: 20px;
         }
 
-        .search-bar select, .search-bar input {
-            margin-right: 10px;
+        .search-bar select, .search-bar input, .search-bar .btn {
+            height: 40px;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        .search-bar select {
+            width: 170px;
+            padding: 5px 10px;
+        }
+
+        .search-bar input {
+            flex-grow: 1;
+            margin: 0 10px;
+            padding: 5px 10px;
         }
 
         .search-bar .btn {
-            display: inline-flex !important; /* 버튼 내부 요소를 가로 정렬 */
-            align-items: center !important; /* 텍스트를 세로 중앙 정렬 */
-            justify-content: center !important; /* 텍스트를 가로 중앙 정렬 */
-            white-space: nowrap !important; /* 텍스트 줄바꿈 방지 */
-            height: auto !important; /* 버튼 높이를 내용에 맞게 조정 */
-            padding: 0.375rem 0.75rem !important; /* 버튼 내부 여백 조정 */
-            font-size: 1rem !important; /* 버튼 폰트 크기 설정 */
-            line-height: normal !important; /* 텍스트 높이 조정 */
-            text-align: center !important; /* 텍스트 정렬 */
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 0 15px;
+            display: inline-flex;
+            white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar .btn:hover {
+            background-color: #357abd;
         }
     </style>
 
@@ -97,31 +173,6 @@
     </script>
 </head>
 <body>
-    <%
-        int totalRecord = 0;
-        int numPerPage = 5;
-        int pagePerBlock = 3;
-        int totalPage = 0;
-        int totalBlock = 0;
-        int nowPage = 0;
-        int nowBlock = 0;
-        int beginPerPage = 0;
-
-        ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
-        totalRecord = list.size();
-
-        if (request.getAttribute("nowPage") != null) {
-            nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
-        }
-
-        beginPerPage = nowPage * numPerPage;
-        totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
-        totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
-
-        if (request.getAttribute("nowBlock") != null) {
-            nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
-        }
-    %>
 
     <!-- 글 상세 조회용 폼 -->
     <form name="frmRead">
@@ -130,26 +181,26 @@
         <input type="hidden" name="nowBlock" value="<%=nowBlock%>">
     </form>
 
-    <div class="container mt-4">
-        <h1 class="text-center text-success">공지사항</h1>
+    <div id="board-container">
+        <h1 id="board-title"><i class="fas fa-bullhorn"></i> 공지사항</h1>
 
         <!-- 검색 영역 -->
         <div class="search-bar">
             <form action="<%=contextPath%>/Board/searchlist.bo" method="post" name="frmSearch" class="d-flex" onsubmit="return fnSearch();">
-                <select name="key" class="form-select w-auto me-2">
+                <select name="key" class="form-select">
                     <option value="titleContent">제목 + 내용</option>
                     <option value="name">작성자</option>
                 </select>
                 <input type="text" name="word" id="word" class="form-control" placeholder="검색어를 입력하세요">
-                <button type="submit" class="btn btn-primary">검색</button>
+                <button type="submit" class="btn">검 색</button>
             </form>
-            <button id="newContent" onclick="location.href='<%=contextPath%>/Board/write.bo?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>'"
+             <button id="newContent" onclick="location.href='<%=contextPath%>/Board/write.bo?nowPage=<%=nowPage%>&nowBlock=<%=nowBlock%>'"
                 class="btn btn-success ms-3">새 글쓰기</button>
         </div>
 
         <!-- 게시판 테이블 -->
-        <table class="table table-bordered table-hover">
-            <thead class="table-success">
+        <table id="board-table">
+            <thead>
                 <tr>
                     <th>번호</th>
                     <th>제목</th>
@@ -167,16 +218,18 @@
                     for (int i = beginPerPage; i < (beginPerPage + numPerPage); i++) {
                         if (i == totalRecord) break;
                         BoardVo vo = list.get(i);
+
+                        // b_level에 따라 들여쓰기 동적 계산
+                        int indent = vo.getB_level() * 20; 
                 %>
                 <tr>
                     <td><%=vo.getNotice_id()%></td>
                     <td>
-                        <div class="d-flex align-items-center">
+                        <div style="margin-left: <%=indent%>px;">
                             <% if (vo.getB_level() > 0) { %>
-                                <img src="<%=contextPath%>/common/notice/images/level.gif" width="<%=vo.getB_level() * 10%>" height="15" alt="level">
                                 <img src="<%=contextPath%>/common/notice/images/re.gif" alt="reply">
                             <% } %>
-                            <a href="javascript:fnRead('<%=vo.getNotice_id()%>')" class="ms-2 text-decoration-none text-primary"><%=vo.getTitle()%></a>
+                            <a href="javascript:fnRead('<%=vo.getNotice_id()%>')" class="btn-link"><%=vo.getTitle()%></a>
                         </div>
                     </td>
                     <td><%=vo.getContent()%></td>
@@ -188,7 +241,7 @@
         </table>
 
         <!-- 페이지네이션 -->
-        <nav class="d-flex justify-content-center mt-4">
+        <nav class="d-flex justify-content-center">
             <ul class="pagination">
                 <% 
                     String searchParams = "";
@@ -206,9 +259,7 @@
                         int pageNum = (nowBlock * pagePerBlock) + i + 1;
                         if (pageNum > totalPage) break; 
                 %>
-                <li class="page-item">
-                    <a class="page-link" href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=pageNum - 1%><%=searchParams%>"><%=pageNum%></a>
-                </li>
+                <li class="page-item"><a class="page-link" href="<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=pageNum - 1%><%=searchParams%>"><%=pageNum%></a></li>
                 <% } 
                     if (totalBlock > nowBlock + 1) { 
                 %>
@@ -218,8 +269,10 @@
                 <% } } %>
             </ul>
         </nav>
+    </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>

@@ -20,7 +20,7 @@
 
 <body>
     <div class="container mt-5">
-        <div class="h-100 p-5 bg-body-tertiary rounded-3">
+        <div class="h-100 bg-body-tertiary rounded-3">
             <h2>학사 일정</h2>
             <div id="calendar"></div>
         </div>

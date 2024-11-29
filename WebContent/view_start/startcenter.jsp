@@ -137,6 +137,11 @@
         font-size: 14px; /* 글꼴 크기 */
         padding: 20px; /* 내부 여백 */
     }
+    
+ 
+    
+    
+    
 </style>
 	
 
@@ -207,11 +212,9 @@
     
 	<div class="container" style="margin-top: 100px">
 	
-	
-	    <div class="row align-items-stretch">
-	    
-			<!-- 슬라이드 이미지 영역 -->
-			<div class="col-md-8">
+		<div class="row align-items-stretch">
+					<!-- 슬라이드 이미지 영역 -->
+			<div class="col-md-12">
 			    <!-- 고정된 크기 설정 (높이를 줄여서 세로 크기 조정) -->
 			    <div class="p-5 bg-body-tertiary rounded-3" style="height: 450px;">
 			        <div id="imageCarousel" class="carousel slide h-100" data-bs-ride="carousel" style="height: 100%;">
@@ -241,9 +244,28 @@
 			        </div>
 			    </div>
 			</div>
+		</div>
+	    
 
-	        <!-- 로그인 박스 -->
-	        <div class="col-md-4">
+
+	       
+	        
+	    
+    
+		<div class="row align-items-md-stretch mt-4"> <!-- 행 전체에 하단 여백 추가 -->
+		    <!-- 학사 일정 영역 -->
+		<div class="col-md-7" style="margin-bottom: 10px;"> <!-- 학사 일정 상자에 하단 여백 추가 -->
+		    <div class="h-100 bg-body-tertiary rounded-3" style="padding: 15px;"> <!-- 안쪽 여백 통일 -->
+		        <jsp:include page="/common/calendar.jsp" />
+		    </div>
+		</div>
+
+
+		   <div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
+		   
+		          <div class="notice-box">
+         <!-- 로그인 박스 -->
+	       
 	            <div class="h-100 p-5 bg-light border rounded-3 d-flex flex-column justify-content-center">
 			
 			<%  if(id == null) {  %>
@@ -263,21 +285,14 @@
 					반갑습니다. <br> <%=name %> <%=role %>님!
 			<%  }  %>     
 	            </div>
-	        </div>
-	        
-	    </div>
-    
-		<div class="row align-items-md-stretch mt-4"> <!-- 행 전체에 하단 여백 추가 -->
-		    <!-- 학사 일정 영역 -->
-		    <div class="col-md-7" style="margin-bottom: 10px;"> <!-- 학사 일정 상자에 하단 여백 추가 -->
-		        <div class="h-100 p-5 bg-body-tertiary rounded-3">
-		            <jsp:include page="/common/calendar.jsp" />
-		        </div>
-		    </div>
-		   <div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
-    <div class="notice-box">
-        <h2>공지 사항</h2>
-        <%
+    </div>
+		   
+		           <br>
+        <br>
+
+				<div class="notice-box">
+					<h2>공지 사항</h2>
+					<%
             int totalRecord = 0;
             int numPerPage = 5;
             int pagePerBlock = 3;
@@ -302,70 +317,80 @@
                 nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
             }
         %>
-        <form name="frmRead">
-            <input type="hidden" name="notice_id">
-            <input type="hidden" name="nowPage" value="<%=nowPage%>">
-            <input type="hidden" name="nowBlock" value="<%=nowBlock%>">
-        </form>
-        <div>
-            <table class="notice-table">
-                <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>제목</th>
-                        <th>작성자</th>
-                        <th>날짜</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (list.isEmpty()) { %>
-                    <tr>
-                        <td colspan="5" class="notice-empty">등록된 글이 없습니다.</td>
-                    </tr>
-                    <% } else {
+					<form name="frmRead">
+						<input type="hidden" name="notice_id"> <input
+							type="hidden" name="nowPage" value="<%=nowPage%>"> <input
+							type="hidden" name="nowBlock" value="<%=nowBlock%>">
+					</form>
+					<div>
+						<table class="notice-table">
+							<thead>
+								<tr>
+									<th>번호</th>
+									<th>제목</th>
+									<th>작성자</th>
+									<th>날짜</th>
+								</tr>
+							</thead>
+							<tbody>
+								<% if (list.isEmpty()) { %>
+								<tr>
+									<td colspan="5" class="notice-empty">등록된 글이 없습니다.</td>
+								</tr>
+								<% } else {
                         for (int i = beginPerPage; i < (beginPerPage + numPerPage); i++) {
                             if (i == totalRecord) break;
                             BoardVo vo = list.get(i);
                     %>
-                    <tr>
-                        <td><%=vo.getNotice_id()%></td>
-                        <td>
-                            <div class="reply-indent">
-                                <%
+								<tr>
+									<td><%=vo.getNotice_id()%></td>
+									<td>
+										<div class="reply-indent">
+											<%
                                     int width = 0; // 답변글에 대한 들여쓰기 너비값
                                     if (vo.getB_level() > 0) { // 답글인 경우
                                         width = vo.getB_level() * 10; // 들여쓰기 너비 계산
                                 %>
-                                    <img src="<%=contextPath%>/common/notice/images/level.gif" width="<%=width%>" height="15">
-                                    <img src="<%=contextPath%>/common/notice/images/re.gif">
-                                <% } %>
-                                <a href="javascript:fnRead('<%=vo.getNotice_id()%>')"><%=vo.getTitle()%></a>
-                            </div>
-                        </td>
-                        <td><%=vo.getUserName().getUser_name()%></td>
-                        <td><%=vo.getCreated_date()%></td>
-                    </tr>
-                    <% } } %>
-                </tbody>
-            </table>
-            <div class="pagination">
-                <% 
+											<img src="<%=contextPath%>/common/notice/images/level.gif"
+												width="<%=width%>" height="15"> <img
+												src="<%=contextPath%>/common/notice/images/re.gif">
+											<% } %>
+											<a href="javascript:fnRead('<%=vo.getNotice_id()%>')"><%=vo.getTitle()%></a>
+										</div>
+									</td>
+									<td><%=vo.getUserName().getUser_name()%></td>
+									<td><%=vo.getCreated_date()%></td>
+								</tr>
+								<% } } %>
+							</tbody>
+						</table>
+						<div class="pagination">
+							<% 
                 if (totalRecord != 0) {
                     if (nowBlock > 0) { %>
-                <a href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock - 1%>&nowPage=<%=((nowBlock - 1) * pagePerBlock)%>">◀ 이전</a>
-                <% }
+							<a
+								href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock - 1%>&nowPage=<%=((nowBlock - 1) * pagePerBlock)%>">◀
+								이전</a>
+							<% }
                     for (int i = 0; i < pagePerBlock; i++) {
                         int pageNum = (nowBlock * pagePerBlock) + i + 1;
                         if (pageNum > totalPage) break; %>
-                <a href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=pageNum - 1%>"><%=pageNum%></a>
-                <% }
+							<a
+								href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=pageNum - 1%>"><%=pageNum%></a>
+							<% }
                     if (totalBlock > nowBlock + 1) { %>
-                <a href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock + 1%>&nowPage=<%=(nowBlock + 1) * pagePerBlock%>">▶ 다음</a>
-                <% } } %>
-            </div>
-        </div>
-    </div>
-</div>
+							<a
+								href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock + 1%>&nowPage=<%=(nowBlock + 1) * pagePerBlock%>">▶
+								다음</a>
+							<% } } %>
+						</div>
+					</div>
+				</div>
+
+
+
+
+			</div>
 
 
   <script>
