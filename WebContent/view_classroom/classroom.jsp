@@ -45,6 +45,7 @@
 	                                '<div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>' +
 	                                course.courseName + ' <!-- 강의 이름 표시 -->' +
 	                                '<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>' +
+
 	                            '</a>' +
 	                            '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
 	                                '<nav class="sb-sidenav-menu-nested nav">' +
@@ -79,8 +80,9 @@
         // 공지사항 페이지에 대한 GET 요청
         function submitMaterialForm(courseId) {
             let form = $('<form></form>');
-            form.attr('action', '<%=contextPath%>/classroom/materialManage.do');
+            form.attr('action', '<%=contextPath%>/classroomboard/noticeList.bo');
             form.attr('method', 'GET');
+            form.append('<input type="hidden" name="center" value="/view_classroom/assignment_notice/professorNotice.jsp">');
             form.append('<input type="hidden" name="courseId" value="' + courseId + '">');
             $('body').append(form);
             form.submit();

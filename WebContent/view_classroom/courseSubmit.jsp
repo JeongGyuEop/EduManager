@@ -6,8 +6,9 @@
 
 <%
     String contextPath = request.getContextPath();
-    ArrayList<CourseVo> courseList = (ArrayList<CourseVo>) session.getAttribute("courseList");
-    ArrayList<CourseVo> courseList2 = (ArrayList<CourseVo>) session.getAttribute("courseList2");
+    ArrayList<CourseVo> courseList = (ArrayList<CourseVo>)request.getAttribute("courseList");
+    ArrayList<CourseVo> courseList2 = (ArrayList<CourseVo>) request.getAttribute("courseList2");
+    Boolean isEnrollmentPeriod = (Boolean) request.getAttribute("isEnrollmentPeriod");
 %>
 
 <!DOCTYPE html>
@@ -37,6 +38,13 @@
 </head>
 <body class="bg-light">
     <main class="container my-5">
+        <!-- 수강신청 기간 알림 -->
+        <c:if test="${!isEnrollmentPeriod}">
+            <div class="alert alert-danger text-center" role="alert">
+                현재는 수강신청 기간이 아닙니다. 수강신청 가능 기간: 2024-11-26 09:00 ~ 2024-12-01 18:00
+            </div>
+        </c:if>
+
         <div class="card shadow-sm">
             <h2 class="text-center mb-4">수강 목록</h2>
             <div class="card-body">
@@ -58,7 +66,11 @@
                             <td><%=course.getProfessor_name().getUser_name()%></td>
                             <td><%=course.getRoom_id()%></td>
                             <td>
-                                <button class="btn btn-green register-btn" onclick="moveToApply(this)">수강</button>
+                                <% if (isEnrollmentPeriod) { %>
+                                    <button class="btn btn-green register-btn" onclick="moveToApply(this)">수강</button>
+                                <% } else { %>
+                                    <button class="btn btn-green register-btn" disabled>기간 외</button>
+                                <% } %>
                             </td>
                         </tr>
                         <% } %>
@@ -90,7 +102,11 @@
                             <td><%=course1.getProfessor_name().getUser_name()%></td>
                             <td><%=course1.getRoom_id()%></td>
                             <td>
-                                <button class="btn btn-danger cancel-btn" onclick="moveToCourse(this)">취소</button>
+                                <% if (isEnrollmentPeriod) { %>
+                                    <button class="btn btn-danger cancel-btn" onclick="moveToCourse(this)">취소</button>
+                                <% } else { %>
+                                    <button class="btn btn-danger cancel-btn" disabled>기간 외</button>
+                                <% } %>
                             </td>
                         </tr>
                         <% } %>

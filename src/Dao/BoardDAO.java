@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +18,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import Vo.BoardVo;
+import Vo.MemberVo;
 import Vo.BookPostVo;
 import Vo.ScheduleVo;
 
@@ -62,7 +64,10 @@ public class BoardDAO {
 			
 			try {
 				con = ds.getConnection();//DB연결
-				sql = "select * from notice order by b_group asc";
+				sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, u.user_name, n.title, n.content, n.created_date "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+						+ "order by b_group asc, notice_id desc ";
 				pstmt = con.prepareStatement(sql);
 				rs = pstmt.executeQuery();
 				
@@ -77,6 +82,11 @@ public class BoardDAO {
 											 rs.getString("title"), 
 											 rs.getString("content"), 
 											 rs.getDate("created_date"));
+					
+					MemberVo memvo = new MemberVo();
+					memvo.setUser_name(rs.getString("user_name"));
+					vo.setUserName(memvo);
+					
 					list.add(vo);			
 				}			
 			} catch (Exception e) {
@@ -101,22 +111,28 @@ public class BoardDAO {
 				//검색기준열의 값  제목+내용 선택했다면?
 				if(key.equals("titleContent")) {
 					
-					sql = "select * from notice "
-						+ "where title like  '%"+word+"%' "
-						+ "OR content like '%"+word+"%' "
-						+ "order by b_group asc";
+					sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, n.title, n.content, n.created_date, u.user_name "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+						+ "where n.title like  '%"+word+"%' "
+						+ "OR n.content like '%"+word+"%' "
+						+ "order by n.b_group asc";
 					
 				}else {//검색기준열의 값 작성자 선택했다면?
 					
-					sql = "select * from notice "
-					    + " where author_id like '%"+word+"%' "
-					    + "order by b_group asc";
+					sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, n.title, n.content, n.created_date, u.user_name "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+					    + "where u.user_name like '%"+word+"%' "
+					    + "order by n.b_group asc";
 				} 
 						
 			}else {//검색어를 입력하지 않았다면?
 				//모든 글의 열목록 조회
-				sql = "select * from notice "
-						+ "order by b_group asc";
+				sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, n.title, n.content, n.created_date, u.user_name  "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+						+ "order by n.b_group asc";
 				
 			}
 			
@@ -137,6 +153,12 @@ public class BoardDAO {
 							 rs.getString("title"), 
 							 rs.getString("content"), 
 							 rs.getDate("created_date"));
+					
+					MemberVo memvo = new MemberVo();
+					
+					memvo.setUser_name(rs.getString("user_name"));
+					vo.setUserName(memvo);
+					
 					list.add(vo);			
 				}			
 				
@@ -193,7 +215,11 @@ public class BoardDAO {
 			
 			try {
 				con = ds.getConnection();
-				sql = "select * from notice where notice_id=?";
+				sql = "select n.notice_id, n.b_group, n.b_level, n.author_id, n.title, n.content, n.created_date, u.user_name "
+						+ "from notice n "
+						+ "join user u on n.author_id = u.user_id "
+						+ " where notice_id=?";
+				
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1,  Integer.parseInt(notice_id));
 				rs = pstmt.executeQuery();
@@ -208,6 +234,11 @@ public class BoardDAO {
 							 rs.getString("title"), 
 							 rs.getString("content"), 
 							 rs.getDate("created_date"));
+					MemberVo memvo = new MemberVo();
+					memvo.setUser_name(rs.getString("user_name"));
+					
+					vo.setUserName(memvo);
+					
 				}
 			} catch (Exception e) {
 				System.out.println("BoardDAO의 boardRead메소드");
@@ -359,8 +390,8 @@ public class BoardDAO {
 				event.setSchedule_id(rs.getInt("schedule_id"));
 				event.setEvent_name(rs.getString("event_name"));
 				event.setDescription(rs.getString("description"));
-				event.setStart_date(rs.getString("start_date"));
-				event.setEnd_date(rs.getString("end_date"));
+				event.setStart_date(rs.getDate("start_date"));
+				event.setEnd_date(rs.getDate("end_date"));
 				events.add(event);
 			}
 		} catch (SQLException e) {
@@ -403,8 +434,8 @@ public class BoardDAO {
 				ScheduleVo event = new ScheduleVo(rs.getInt("schedule_id"),
 												  rs.getString("event_name"),
 												  rs.getString("description"),
-												  rs.getString("start_date"),
-												  rs.getString("end_date"));
+												  rs.getDate("start_date"),
+												  rs.getDate("end_date"));
 				events.add(event);
 			}
 		} catch (SQLException e) {
@@ -420,21 +451,21 @@ public class BoardDAO {
 		return events;
 	}
 
-	public boolean isValidSchedule(String eventName, String startDate, String endDate, String description) {
-		// 간단한 유효성 검사 로직을 구현
-		if (eventName == null || eventName.isEmpty()) {
-			return false;
-		}
-		if (startDate == null || startDate.isEmpty()) {
-			return false;
-		}
-		if (endDate == null || endDate.isEmpty()) {
-			return false;
-		}
-		if (description == null || description.isEmpty()) {
-			return false;
-		}
-		return true;
+	public boolean isValidSchedule(String eventName, Date startDate, Date endDate, String description) {
+	    // 간단한 유효성 검사 로직을 구현
+	    if (eventName == null || eventName.trim().isEmpty()) {
+	        return false;
+	    }
+	    if (startDate == null) {
+	        return false;
+	    }
+	    if (endDate == null) {
+	        return false;
+	    }
+	    if (description == null || description.trim().isEmpty()) {
+	        return false;
+	    }
+	    return true;
 	}
 
 	public void insertSchedule(ScheduleVo schedule) {
@@ -443,8 +474,8 @@ public class BoardDAO {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, schedule.getEvent_name());
-			pstmt.setString(2, schedule.getStart_date());
-			pstmt.setString(3, schedule.getEnd_date());
+			pstmt.setDate(2, schedule.getStart_date());
+			pstmt.setDate(3, schedule.getEnd_date());
 			pstmt.setString(4, schedule.getDescription());
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -462,8 +493,8 @@ public class BoardDAO {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, schedule.getEvent_name());
-			pstmt.setString(2, schedule.getStart_date());
-			pstmt.setString(3, schedule.getEnd_date());
+			pstmt.setDate(2, schedule.getStart_date());
+			pstmt.setDate(3, schedule.getEnd_date());
 			pstmt.setString(4, schedule.getDescription());
 			pstmt.setInt(5, schedule.getSchedule_id());
 			pstmt.executeUpdate();
