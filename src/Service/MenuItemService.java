@@ -38,7 +38,9 @@ public class MenuItemService {
                 new MenuItemVo("학과 수정/삭제", "/major/searchMajor.do"),
 
             	new MenuItemVo("강의실 등록", "/classroom/roomRegister.bo"),
-            	new MenuItemVo("강의실 조회", "/classroom/roomSearch.bo")
+            	new MenuItemVo("강의실 조회", "/classroom/roomSearch.bo"),
+            	
+            	new MenuItemVo("수강신청 기간 설정", "/classroom/enrollmentPeriodPage.bo")
             	
             )),
             

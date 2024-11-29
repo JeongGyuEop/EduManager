@@ -3,6 +3,11 @@ package Controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -514,8 +519,18 @@ public class ClassroomController extends HttpServlet {
 	    		courseList1 = classroomservice.serviceCourseList(studentId);
 	    		courseList2 = classroomservice.serviceCourseSelect(studentId);
 	    		
+	    		//수강신청 기간인지 확인
 	    		boolean isEnrollmentPeriod = classroomservice.isEnrollmentPeriod();
 	    		
+	    		// 수강신청 기간 정보 조회
+	    	    LocalDateTime[] enrollmentPeriod = classroomservice.getEnrollmentPeriod();
+	    		
+	    	    if (enrollmentPeriod != null) {
+	    	        request.setAttribute("startDate", enrollmentPeriod[0]); // 시작 날짜
+	    	        request.setAttribute("endDate", enrollmentPeriod[1]);   // 종료 날짜
+	    	    }
+	    	    
+	    	    
 	    		center = request.getParameter("classroomCenter");
 	    		
 	    		request.setAttribute("courseList", courseList1);
@@ -610,7 +625,54 @@ public class ClassroomController extends HttpServlet {
 	    		}
 	    					
 	    //==========================================================================================
-    		
+	    	case "/enrollmentPeriodPage.bo": // 수강신청 기간 설정 페이지로 이동
+	    		request.setAttribute("center", "/view_classroom/coursePeriod.jsp" );
+	    	    nextPage = "/main.jsp"; // 설정 페이지 경로
+	    	    break;
+	    	
+	    //==========================================================================================	  
+	    	    
+	    	case "/setEnrollmentPeriod.do": // 수강신청 기간 설정 요청
+	    	    String startDateStr = request.getParameter("start_date"); // 시작 날짜
+	    	    String endDateStr = request.getParameter("end_date");     // 종료 날짜
+	    	    String description = request.getParameter("description"); // 설명
+
+	    	    try {
+	    	        // 날짜 문자열을 LocalDateTime으로 변환
+	    	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+	    	        LocalDateTime startDateTime = LocalDateTime.parse(startDateStr, formatter);
+	    	        LocalDateTime endDateTime = LocalDateTime.parse(endDateStr, formatter);
+
+	    	        // MySQL DATETIME에 맞는 Timestamp로 변환
+	    	        Timestamp startTimestamp = Timestamp.valueOf(startDateTime);
+	    	        Timestamp endTimestamp = Timestamp.valueOf(endDateTime);
+
+	    	        // 서비스 호출
+	    	        boolean result2 = classroomservice.setEnrollmentPeriod(startTimestamp, endTimestamp, description);
+	    	        
+	    	        if (result2) {
+	    	            request.setAttribute("message", "수강신청 기간이 성공적으로 설정되었습니다.");
+	    	            request.setAttribute("startDate", startDateStr); // 원래 포맷 유지
+	    	            request.setAttribute("endDate", endDateStr);     // 원래 포맷 유지
+	    	            request.setAttribute("description", description); // 설정된 설명
+	    	        } else {
+	    	            request.setAttribute("message", "수강신청 기간 설정에 실패했습니다.");
+	    	        }
+	    	    } catch (Exception e) {
+	    	        e.printStackTrace(); // 예외 발생 시 출력
+	    	        request.setAttribute("message", "입력 값 변환 중 오류가 발생했습니다.");
+	    	    }
+
+	    	    center = "/view_classroom/enrollmentPeriodResult.jsp";
+	    	    request.setAttribute("center", center);
+
+	    	    nextPage = "/main.jsp";
+	    	    break;
+
+	    //==========================================================================================	  
+
+	    		
+	    		
 	    	default:
 	    		break;
 	    }
