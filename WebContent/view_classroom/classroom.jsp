@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%> 
 
 <%
+	request.setCharacterEncoding("UTF-8");
 	String contextPath = request.getContextPath();
 	String role = (String) session.getAttribute("role");
 	String profName = (String) session.getAttribute("name");
@@ -20,12 +21,76 @@
         <title>강의실 메인 페이지</title>
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="<%=contextPath %>/css/classroom_styles.css" rel="stylesheet" />
-        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
+        <script>
+        $(document).ready(function() {
+            $.ajax({
+<%	if(role.equals("교수")) { %>
+                url: '<%=contextPath%>/classroom/courseNameSearch.do', 
+<%	} else { %>
+				url: '<%=contextPath%>/classroom/studentCourseSearch.do', 
+<%	} %> 
+                method: 'GET',
+                dataType: 'json',
+                success: function(courseList) {
+                	
+                    if (courseList && courseList.length > 0) {
+                        let courseIndex = 1;
+                        courseList.forEach(course => {
+
+                        	// 강의 ID를 포함한 링크로 수정
+                            let courseHtml = 
+                            	'<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCourse' + courseIndex + '" aria-expanded="false" aria-controls="collapseCourse' + courseIndex + '" >' +
+	                                '<div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>' +
+	                                course.courseName + ' <!-- 강의 이름 표시 -->' +
+	                                '<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>' +
+	                            '</a>' +
+	                            '<div class="collapse" id="collapseCourse' + courseIndex + '" aria-labelledby="headingCourse' + courseIndex + '" data-bs-parent="#sidenavAccordion">' +
+	                                '<nav class="sb-sidenav-menu-nested nav">' +
+	                                    '<a class="nav-link" href="#" onclick="submitAssignmentForm(\'' + course.courseId + '\')">과제</a>' +
+	                                    '<a class="nav-link" href="#" onclick="submitMaterialForm(\'' + course.courseId + '\')">공지사항</a>' +
+	                                '</nav>' +
+	                             '</div>';
+
+							$('#courseTargetElement').append(courseHtml);
+
+                            courseIndex++;
+                        });
+                    }
+                },
+                error: function(error) {
+                    console.error('Error fetching course list:', error);
+                }
+            });
+        });
+        
+        // 과제 페이지에 대한 GET 요청
+        function submitAssignmentForm(courseId) {
+            let form = $('<form></form>');
+            form.attr('action', '<%=contextPath%>/assign/assignmentManage.bo');
+            form.attr('method', 'POST');
+            form.append('<input type="hidden" name="center" value="/view_classroom/assignment_submission/assignmentManage.jsp">');
+            form.append('<input type="hidden" name="courseId" value="' + courseId + '">');
+            $('body').append(form);
+            form.submit();
+        }
+
+        // 공지사항 페이지에 대한 GET 요청
+        function submitMaterialForm(courseId) {
+            let form = $('<form></form>');
+            form.attr('action', '<%=contextPath%>/classroom/materialManage.do');
+            form.attr('method', 'GET');
+            form.append('<input type="hidden" name="courseId" value="' + courseId + '">');
+            $('body').append(form);
+            form.submit();
+        }
+        </script>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="index.html">강의실</a>
+            <a class="navbar-brand ps-3" href="#">강의실</a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -33,7 +98,7 @@
 			<!-- Navbar-->
 			    <ul class="navbar-nav ms-auto d-flex align-items-center">
 			        <li class="nav-item">
-			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> 교수님!</p>
+			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
 			        </li>
 			        <li class="nav-item dropdown">
 			            <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
@@ -63,111 +128,53 @@
                             </a>
                             <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_register.bo?classroomCenter=/view_classroom/courseRegister.jsp">수강 등록</a>
-                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo?classroomCenter=/view_classroom/courseSearch.jsp">수강 조회(수정/삭제)</a>
+                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_register.bo">수강 등록</a>
+                                    <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo?center=/view_classroom/courseSearch.jsp">수강 조회(수정/삭제)</a>
                                 </nav>
                             </div>
 							
 							<!-- 사이드바 나의 수업 영역 -->
-                            <!-- 사이드바 나의 수업 영역 -->
 							<div class="sb-sidenav-menu-heading">My Courses</div>
-							
-							<%-- <%
-							    List<CourseVo> courseList = (List<CourseVo>) request.getAttribute("courseList");
-							    if (courseList != null) {
-							        int courseIndex = 1;
-							        for (CourseVo course : courseList) {
-							%> --%>
-							<%--             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCourse<%= courseIndex %>" aria-expanded="false" aria-controls="collapseCourse<%= courseIndex %>">
-							                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-							                <%= course.getCourseName() %> <!-- 강의 이름 표시 -->
-							                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-							            </a>
-							            <div class="collapse" id="collapseCourse<%= courseIndex %>" aria-labelledby="headingCourse<%= courseIndex %>" data-bs-parent="#sidenavAccordion">
-							                <nav class="sb-sidenav-menu-nested nav">
-							                    <a class="nav-link" href="assignment.html">과제</a> <!-- 과제 링크 예시 -->
-							                    <a class="nav-link" href="material.html">자료</a> <!-- 강의 자료 링크 예시 -->
-							                </nav>
-							            </div> --%>
-							<%-- <%
-							            courseIndex++;
-							        }
-							    }
-							%> --%>
+							<!-- AJAX로 동적 생성되는 강의 목록 -->
+                            <div id="courseTargetElement"></div>
                             
                             <!-- 사이드바 성적 조회 영역 -->
                             <div class="sb-sidenav-menu-heading">SCORE</div>
-                            <a class="nav-link" href="charts.html">
+                            <a class="nav-link" href="<%=contextPath%>/classroom/course_search.bo?center=/view_classroom/courseList.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                ?????
+                                성적 관리
                             </a>
-                            <a class="nav-link" href="tables.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                ?????
-                            </a>
+                            
+                            <!-- 사이드바 강의 평가 영역 -->
+                            <a class="nav-link" href="<%=contextPath%>/professor/evaluationList.bo">
+    							<div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+   			 					강의 평가
+							</a>
+                            
                             
 					<%	} else { %>
                             <!-- 사이드바 수강신청 영역 -->
                             <div class="sb-sidenav-menu-heading">Course Registration</div>
-                            <a class="nav-link" href="index.html">
+                            <a class="nav-link" href="<%=contextPath%>/classroom/course_submit.bo?classroomCenter=/view_classroom/courseSubmit.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 수강신청
                             </a>
                             
                             <!-- 사이드바 나의 수업 영역 -->
                             <div class="sb-sidenav-menu-heading">My Course</div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                ??????
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                                Pages
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                        Authentication
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="login.html">Login</a>
-                                            <a class="nav-link" href="register.html">Register</a>
-                                            <a class="nav-link" href="password.html">Forgot Password</a>
-                                        </nav>
-                                    </div>
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                        Error
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="401.html">401 Page</a>
-                                            <a class="nav-link" href="404.html">404 Page</a>
-                                            <a class="nav-link" href="500.html">500 Page</a>
-                                        </nav>
-                                    </div>
-                                </nav>
-                            </div>
+                            <div id="courseTargetElement"></div>
                             
                             <!-- 사이드바 성적 조회 영역 -->
                             <div class="sb-sidenav-menu-heading">SCORE</div>
-                            <a class="nav-link" href="charts.html">
+                            <a class="nav-link" href="<%=contextPath%>/classroom/grade_search.bo?classroomCenter=/view_classroom/gradeList.jsp">
                                 <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                                 성적 조회
                             </a>
-                            <a class="nav-link" href="tables.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Tables
+                            
+                            <!-- 강의 평가 항목 추가 -->
+                            <a class="nav-link" href="<%=contextPath%>/student/evaluationRegister.do">
+                                <div class="sb-nav-link-icon"><i class="fas fa-star"></i></div>
+                                강의 평가
                             </a>
                     <%	} %> 
                         </div>
@@ -187,8 +194,6 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="../assets/demo/chart-area-demo.js"></script>
-        <script src="../assets/demo/chart-bar-demo.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
         <script src="../js/datatables-simple-demo.js"></script>
     </body>

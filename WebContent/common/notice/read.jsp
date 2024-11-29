@@ -19,6 +19,7 @@
 	
 	
 	String id = (String)session.getAttribute("id");
+	String role_ = (String)session.getAttribute("role");
 %>		
 
 
@@ -67,6 +68,12 @@
 											</td>
 										</tr>
 										<tr>
+											<td bgcolor="#e4e4e4" class="text2">
+												<div align="center"></div>
+											</td>
+											<td colspan="2" bgcolor="#f5f5f5" style="text-align: left">
+												<input type="hidden" name="role" id="role" value="<%=role_%>" />
+											</td>
 											<td colspan="2" bgcolor="#f5f5f5" style="text-align: left">
 												<p id="pwInput"></p>
 											</td>
@@ -82,20 +89,17 @@
 							<td style="width: 48%">
 								<div align="right" id="menuButton" >
 								<%--수정하기 --%>	
-									<input type="button" id="update" value="수정" />&nbsp;&nbsp; 
+									<input type="button" id="update" value="수정" style="visibility:visible;"/>&nbsp;&nbsp; 
 								<%--삭제하기 --%>	
-									<input type="button" id="delete" onclick="javascript:deletePro('<%=notice_id%>');" value="삭제" />&nbsp;&nbsp; 
+									<input type="button" id="delete" onclick="javascript:deletePro('<%=notice_id%>');" value="삭제" style="visibility:visible;"/>&nbsp;&nbsp; 
 								<%--답변달기 --%>
-									<input type="button" id="reply" value="답변" />&nbsp;&nbsp;
+									<input type="button" id="reply" value="답변" style="visibility:visible;"/>&nbsp;&nbsp;
 								</div>
 							</td>
 							<td width="10%">
 								<div align="center">
 									<%--목록 이미지 버튼 --%>
-									<input type="button" 
-											id="list" 
-											onclick="location.href='<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>'"
-											value="목록" />&nbsp;
+									<input type="button" id="list" value="목록" />&nbsp;
 								</div>
 							</td>
 							<td width="42%"></td>
@@ -251,62 +255,50 @@
 			});
 		});
 	
-	
-		//글 수정 삭제를 위해 글 비밀번호를 입력하고 포커스가 떠난 이벤트가 발생했을때
-		$("#pass").on("focusout", function(){
-			
-			$.ajax({
-				 url:"<%=contextPath%>/Board/password.do",
-				 type:"post",
-				 async:true,
-				 data:{ b_idx: $("#b_idx").val(),
-					    pass:$("#pass").val() },
-				 dataType:"text",
-				 success:function(responseData){
-					 				//"비밀번호틀림" 또는 "비밀번호맞음" 
-					 	console.log(responseData);
-					 				
-					 	if(responseData === "비밀번호틀림"){
-					 		
-					 		$("#pwInput").text("글의 비밀번호가 다릅니다")
-					 					 .css("color","red");
-					 		
-					 		//수정을 위해 입력할수 있는 <input>2개 , <textarea>1개 비활성화(입력할수 없게)
-					 		document.getElementById("email").disabled = true;
-					 		document.getElementById("title").disabled = true;
-					 		document.getElementById("content").disabled = true;
-					 		
-					 		//수정하기 , 삭제하기  <input type="img"> 버튼 2개 비활성화 (숨김)
-					 		$("#update").css("visibility","hidden");
-					 		$("#delete").css("visibility","hidden");
-					 	
-					 							 		
-					 	}else{//"비밀번호맞음"
-					 		
-					 		$("#pwInput").text("글의 비밀번호가 일치합니다.")
-		 					 			 .css("color","green");
-					 		
-					 		//수정을 위해 입력할수 있는 <input>2개 , <textarea>1개 활성화(입력할수 있게)
-					 		document.getElementById("email").disabled = false;
-					 		document.getElementById("title").disabled = false;
-					 		document.getElementById("content").disabled = false;
-					 		
-					 		//수정하기 , 삭제하기  <input type="img"> 버튼 2개 활성화 (보이게)
-					 		$("#update").css("visibility","visible");
-					 		$("#delete").css("visibility","visible");
-					 	
-					 	}			
-					 				 				
-				 },
-				 error:function(){
-					 alert("비동기 통신 장애");
-				 }
-			});
-		});
-	
-
-	
 		
+		// 관리자인지 확인하여 수정,삭제 버튼 제목,내용 입력창 활성화 , 비활성화 
+		 $(document).ready(function() {
+	            // role 값이 관리자일 때만 수정 및 삭제 버튼을 보이게 설정
+	            const role = "<%= role_ %>";
+	            
+	            if (role === "관리자") {
+	                $("#update").css("visibility", "visible");
+	                $("#delete").css("visibility", "visible");
+	                $("#reply").css("visibility", "visible");
+	            } else {
+	                $("#update").css("visibility", "hidden");
+	                $("#delete").css("visibility", "hidden");
+	                $("#reply").css("visibility", "hidden");
+
+	                // 제목과 내용 입력창 비활성화
+	                $("#title").prop("disabled", true);
+	                $("#content").prop("disabled", true);
+	            }
+	        });
+		 
+		
+// 목록 버튼 클릭시 role 값 비교하여 각자에 맞는 jsp로 넘어감 
+	     $(document).ready(function () {
+	         // 조건에 따라 URL 설정
+	         const role = "<%= role_ %>";
+	         const contextPath = "<%= contextPath %>";
+	         const nowBlock = "<%= nowBlock %>";
+	         const nowPage = "<%= nowPage %>";
+	         
+	         // 목록 버튼 클릭 이벤트 등록
+	         $("#list").on("click", function () {
+	             let url;
+	             
+	             if (role === "관리자") {
+	                 url = "<%=contextPath%>/Board/list.bo?center=/view_admin/noticeManage.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>";
+	             } else {
+	                 url = "<%=contextPath%>/Board/list.bo?center=/common/notice/list.jsp&nowBlock=<%=nowBlock%>&nowPage=<%=nowPage%>";
+	             } 
+	             
+	             // 설정된 URL로 이동
+	             window.location.href = url;
+	         });
+	     });
 	</script>
 	
 	
