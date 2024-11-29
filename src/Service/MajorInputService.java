@@ -60,15 +60,16 @@ public class MajorInputService {
 		}
 
 		// majorCode가 존재하는지 여부를 미리 저장하여 사용
-		boolean isCodeExists = (majorInputDAO.majorSearchValidationCode(editMajorCode) == EXISTS);
-		boolean isNameExists = (majorInputDAO.majorSearchValidationName(editMajorName) == EXISTS);
+		int isCodeExists = majorInputDAO.majorSearchValidationCode(editMajorCode);
+		int isNameExists = majorInputDAO.majorSearchValidationName(editMajorName);
+		int isTelExists = majorInputDAO.majorSearchValidationTel(editMajorTel);
 
-		if (isCodeExists && !isNameExists) {
-		    // 코드가 존재하고 이름이 존재하지 않음 (중복 아님), 수정 작업 진행
+		if (isCodeExists == EXISTS && isNameExists != EXISTS) {
+		    // 코드가 존재하고 이름이 존재하지 않음 (중복 아님), 전체 수정 작업 진행
 		    return majorInputDAO.editMajor(editMajorCode, editMajorName, editMajorTel);
-		} else if (isNameExists) {
-		    // 이름이 존재함 (중복), 수정 작업 불가
-		    return EXISTS;
+		} else if (isCodeExists == EXISTS && isNameExists == EXISTS && isTelExists != EXISTS) {
+		    // 코드와 이름이 존재하지만 (중복), 전화번호만 바꼈을 때 전체 수정 작업 진행
+			return majorInputDAO.editMajorTel(editMajorCode, editMajorTel);
 		} else {
 		    // 코드가 존재하지 않거나 기타 실패
 		    return FAILURE;

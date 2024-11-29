@@ -270,8 +270,8 @@ public class BoardDAO {
 				event.setSchedule_id(rs.getInt("schedule_id"));
 				event.setEvent_name(rs.getString("event_name"));
 				event.setDescription(rs.getString("description"));
-				event.setStart_date(rs.getDate("start_date"));
-				event.setEnd_date(rs.getDate("end_date"));
+				event.setStart_date(rs.getString("start_date"));
+				event.setEnd_date(rs.getString("end_date"));
 				events.add(event);
 			}
 		} catch (SQLException e) {
@@ -311,8 +311,11 @@ public class BoardDAO {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				ScheduleVo event = new ScheduleVo(rs.getInt("schedule_id"), rs.getString("event_name"),
-						rs.getString("description"), rs.getDate("start_date"), rs.getDate("end_date"));
+				ScheduleVo event = new ScheduleVo(rs.getInt("schedule_id"),
+												  rs.getString("event_name"),
+												  rs.getString("description"),
+												  rs.getString("start_date"),
+												  rs.getString("end_date"));
 				events.add(event);
 			}
 		} catch (SQLException e) {
@@ -351,8 +354,8 @@ public class BoardDAO {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, schedule.getEvent_name());
-			pstmt.setDate(2, schedule.getStart_date());
-			pstmt.setDate(3, schedule.getEnd_date());
+			pstmt.setString(2, schedule.getStart_date());
+			pstmt.setString(3, schedule.getEnd_date());
 			pstmt.setString(4, schedule.getDescription());
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -370,8 +373,8 @@ public class BoardDAO {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, schedule.getEvent_name());
-			pstmt.setDate(2, schedule.getStart_date());
-			pstmt.setDate(3, schedule.getEnd_date());
+			pstmt.setString(2, schedule.getStart_date());
+			pstmt.setString(3, schedule.getEnd_date());
 			pstmt.setString(4, schedule.getDescription());
 			pstmt.setInt(5, schedule.getSchedule_id());
 			pstmt.executeUpdate();

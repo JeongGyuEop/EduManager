@@ -209,13 +209,12 @@ public class BoardController extends HttpServlet {
 				List<ScheduleVo> eventList = boardservice.getEvents(startDate, endDate);
 				Gson gson = new Gson();
 				List<JsonObject> jsonEvents = new ArrayList<>();
-				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				for (ScheduleVo event : eventList) {
 					JsonObject jsonEvent = new JsonObject();
 					jsonEvent.addProperty("title", event.getEvent_name());
-					jsonEvent.addProperty("start", dateFormat.format(event.getStart_date()));
-					jsonEvent.addProperty("end", dateFormat.format(event.getEnd_date()));
-					jsonEvent.addProperty("description", event.getDescription());
+				    jsonEvent.addProperty("start", event.getStart_date());
+				    jsonEvent.addProperty("end", event.getEnd_date());
+				    jsonEvent.addProperty("description", event.getDescription());
 					jsonEvents.add(jsonEvent);
 				}
 				String jsonResponse = gson.toJson(jsonEvents);

@@ -89,8 +89,8 @@ public class BoardService {
 		if (boarddao.isValidSchedule(title, startDate, endDate, content)) {
 			ScheduleVo newSchedule = new ScheduleVo();
 			newSchedule.setEvent_name(title);
-			newSchedule.setStart_date(Date.valueOf(startDate));
-			newSchedule.setEnd_date(Date.valueOf(endDate));
+			newSchedule.setStart_date(startDate);
+			newSchedule.setEnd_date(endDate);
 			newSchedule.setDescription(content);
 
 			boarddao.insertSchedule(newSchedule);
@@ -110,8 +110,8 @@ public class BoardService {
 			ScheduleVo updatedSchedule = new ScheduleVo();
 			updatedSchedule.setSchedule_id(scheduleId);
 			updatedSchedule.setEvent_name(title);
-			updatedSchedule.setStart_date(Date.valueOf(startDate));
-			updatedSchedule.setEnd_date(Date.valueOf(endDate));
+			updatedSchedule.setStart_date(startDate);
+			updatedSchedule.setEnd_date(endDate);
 			updatedSchedule.setDescription(content);
 
 			boarddao.updateSchedule(updatedSchedule);
