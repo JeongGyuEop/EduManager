@@ -1,29 +1,57 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%
     String contextPath = request.getContextPath();
-
 %>
 <!DOCTYPE html>
-<html lang="ko">
-
+<html>
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>학사 일정</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery 최신 버전 추가 -->
+    <script src="https://code.jquery.com/jquery-latest.min.js"
+        crossorigin="anonymous"></script>
+    <!-- 외부 CSS 파일 연결 -->
+    <link rel="stylesheet" type="text/css" href="<%=contextPath%>/css/majorCSS.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- FullCalendar CSS -->
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
+        }
+        #calendar-container {
+            max-width: 900px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+            margin: 50px auto;
+        }
+        #calendar-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4a90e2;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
 <body>
-    <div class="container mt-5">
-        <div class="h-100 p-5 bg-body-tertiary rounded-3">
-            <h2>학사 일정</h2>
-            <div id="calendar"></div>
-        </div>
+    <div id="calendar-container">
+        <h2 id="calendar-title">학사 일정</h2>
+        <div id="calendar"></div>
     </div>
 
     <script>
@@ -41,7 +69,6 @@
                 events: function(fetchInfo, successCallback, failureCallback) {
                     // 서버로부터 이벤트 데이터를 가져오는 함수
                     $.ajax({
-                    	
                         url: '<%=contextPath%>/Board/boardCalendar.do', // 이벤트 데이터를 가져올 URL
                         type: 'GET',
                         dataType: 'json',
@@ -70,5 +97,4 @@
         });
     </script>
 </body>
-
 </html>

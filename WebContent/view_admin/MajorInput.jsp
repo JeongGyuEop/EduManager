@@ -10,8 +10,82 @@
 <head>
     <meta charset="UTF-8">
     <title>New Major Input Page</title>
-    <!-- 외부 CSS 파일 연결 -->
+     <!-- 외부 CSS 파일 연결 -->
     <link rel="stylesheet" type="text/css" href="<%=contextPath%>/css/majorCSS.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
+        }
+        #major-container {
+            max-width: 900px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+            margin: 50px auto;
+        }
+        #major-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4a90e2;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #major-form {
+            margin-bottom: 30px;
+        }
+        #major-form label {
+            font-weight: bold;
+        }
+        #major-form input[type="text"],
+        #major-form input[type="tel"],
+        #major-form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        #major-form input[type="submit"] {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #major-form input[type="submit"]:hover {
+            background-color: #3a78c2;
+        }
+        #major-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        #major-table th, #major-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        #major-table th {
+            background-color: #f7f7f7;
+            font-weight: bold;
+            color: #333;
+        }
+        #major-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        #major-count {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #4a90e2;
+        }
+    </style>
     <script type="text/javascript">
         window.onload = function () {
             inputResult();  
@@ -95,17 +169,14 @@
 </head>
 
 <body>
-    <div>
-        <form class="form-container" action="<%=contextPath%>/major/MajorInput.do" method="get"
-            onsubmit="return handleSubmit()">
+    <div id="major-container">
+        <h2 id="major-title">학과 수정 및 삭제</h2>
+        <form id="major-form" action="<%=contextPath%>/major/MajorInput.do" method="get" onsubmit="return validateForm()">
             <label for="MajorNameInput">신규 학과명:</label>
-            <input type="text"
-                id="MajorNameInput" name="MajorNameInput" placeholder="**학과"
-                required="required">
+            <input type="text" id="MajorNameInput" name="MajorNameInput" placeholder="**학과" required="required">
             <label for="MajorTelInput">학과 사무실 전화번호:</label>
-            <input type="tel" id="MajorTelInput" name="MajorTelInput"
-                placeholder="02-123-1234">
-            <button type="submit">제출</button>
+            <input type="tel" id="MajorTelInput" name="MajorTelInput" placeholder="02-123-1234">
+            <input type="submit" value="제출">
         </form>
     </div>
     <div
