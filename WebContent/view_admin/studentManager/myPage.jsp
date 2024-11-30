@@ -102,6 +102,7 @@
     }
 </style>
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -134,10 +135,50 @@
         }
         return true;
     }
+    
+  	//전화번호에 제한되는 함수 추가
+    // 숫자만 입력 가능하도록 제한
+    //ASCII 코드 48~57은 숫자('0'~'9')에 해당
+    //ASCII 코드 32 이하의 값은 제어 문자(예: Enter, Backspace, Tab 등)
+  	//숫자가 아니거나, 일반 입력 문자가 아닌 경우 false를 반환하여 입력을 차단해 알림창이 뜨도록 설정
+    // 입력 값 실시간 검사 (oninput 사용)
+function isNumber(event) {
+        const charCode = event.which ? event.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
 
+ // 최대 11자리까지 입력하도록 제한 (숫자만 유지)
+    function checkPhoneLength(input) {
+        // 숫자가 아닌 모든 문자 제거 (한글 포함)
+        input.value = input.value.replace(/[^0-9]/g, '');
+
+        // 11자리 이상 입력 시 알림창 표시
+        if (input.value.length > 11) {
+            alert("전화번호는 최대 11자리까지만 입력 가능합니다.");
+            input.value = input.value.slice(0, 11); // 11자리까지만 남기기
+        }
+    }
+ 
+ // 숫자만 입력 가능, 한글과 영어 입력 시 알림창 표시
+   function isNumber(event) {
+    const charCode = event.which ? event.which : event.keyCode;
+
+    // 숫자가 아닌 값 입력 시 알림창 표시
+    if (charCode < 48 || charCode > 57) {
+        alert("숫자인지 확인하세요.");
+        return false; // 숫자가 아니면 입력 차단
+    }
+
+    return true; // 숫자 입력 허용
+}
+
+ 
     function updateInfo() {
         if (!validateForm()) return false;
-
+		// Ajax를 이용해서 비동기적 통신이 가능하도록 설정
         $.ajax({
             type: "POST",
             url: "<%=contextPath%>/student/updateMyInfo.do",
@@ -189,51 +230,53 @@
 
 </head>
 <body>
-    <div id="myPage-container">
-        <h2 id="myPage-title"><i class="fas fa-user-circle"></i> 마이페이지</h2>
-        <%
-            StudentVo member = (StudentVo) request.getAttribute("member");
-            if (member != null) { 
-        %>
+ <div id="myPage-container">
+
+    <h2  id="myPage-title"><i class="fas fa-user-circle"></i>학생 정보 수정</h2>
+    <%
+        StudentVo member = (StudentVo) request.getAttribute("member");
+        if (member != null) { 
+    %>
         <form id="myForm" name="myForm" onsubmit="return updateInfo();">
             <table>
-                <tr>
-                    <th>아이디</th>
+                
+                <tr><td><label>아 이 디</label></td>
                     <td><input type="text" name="user_id" value="<%= member.getUser_id() %>" readonly></td>
                 </tr>
-                <tr>
-                    <th>이름</th>
+                
+                <tr><td><label>이 름</label></td>
                     <td><input type="text" name="user_name" value="<%= member.getUser_name() %>" readonly></td>
                 </tr>
-                <tr>
-                    <th>주소</th>
+                
+                <tr><td><label>주 소</label></td>
                     <td>
                         <input type="text" name="address" id="address" value="<%= member.getAddress() %>" placeholder="우편번호로 검색 후 상세주소까지 입력">
                         <button type="button" onclick="sample4_execDaumPostcode()">주소 찾기</button>
                     </td>
                 </tr>
-                <tr>
-                    <th>전화번호</th>
-                    <td><input type="text" name="phone" value="<%= member.getPhone() %>" placeholder="전화번호"></td>
+                                
+                <tr><td><label>전 화 번 호</label></td> <!--전화번호는 숫자만 가능하고 최대 11자리 까지 가능하게 설정. 더 입력하려하면 알림창 뜨게 설정  -->
+                    <td><input type="text" name="phone" value="<%= member.getPhone() %>" placeholder="전화번호"  onkeypress="return isNumber(event);" oninput="checkPhoneLength(this);"></td>
                 </tr>
-                <tr>
-                    <th>이메일</th>
+                
+                <tr><td><label>이 메 일</label></td>
                     <td><input type="text" name="email" value="<%= member.getEmail() %>" placeholder="이메일"></td>
                 </tr>
-                <tr>
-                    <th>현재 비밀번호</th>
+                
+                <tr><td><label>현 재 비 밀 번 호</label></td>
                     <td><input type="text" name="current_pw" value="<%= member.getUser_pw() %>" readonly></td>
                 </tr>
-                <tr>
-                    <th>새 비밀번호</th>
+                
+                <tr><td><label>새 비 밀 번 호</label></td>
                     <td><input type="password" name="user_pw" placeholder="새 비밀번호"></td>
                 </tr>
-                <tr>
-                    <th>새 비밀번호 확인</th>
+                
+                <tr><td><label>새 비 밀 번 호 확 인</label></td>
                     <td><input type="password" name="confirm_pw" required placeholder="새 비밀번호 확인"></td>
                 </tr>
             </table>
-            <div class="button-container">
+            
+             <div class="button-container">
                 <button type="submit">수정</button>
             </div>
         </form>
@@ -241,9 +284,10 @@
             } else { 
         %>
         <p>회원 정보를 불러올 수 없습니다.</p>
-        <%
-            }
-        %>
+
+    <%
+        }
+    %>
     </div>
 </body>
 </html>

@@ -42,8 +42,7 @@ String message = request.getParameter("message");
 if (message != null) {
 %>
 <script>
-			alert('<%=message%>
-	'); // 메시지를 알림으로 표시
+			alert('<%=message%>'); // 메시지를 알림으로 표시
 </script>
 <%
 }
