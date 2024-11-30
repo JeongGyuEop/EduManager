@@ -17,11 +17,11 @@
             gap: 10px;
         }
 
-        /* 모바일 폰 프레임 스타일 */
+         /* 핸드폰 프레임 색상 변경 */
         .mobile-frame {
             width: 500px;
             height: 700px;
-            border: 16px solid #333;
+            border: 16px solid #555; /* 색상 변경 */
             border-top-width: 60px;
             border-bottom-width: 60px;
             border-radius: 36px;
@@ -30,7 +30,14 @@
             overflow: hidden;
         }
 
-        /* 지도 스타일 */
+        /* 테이블 열 너비 조정 */
+        table.dataTable thead th {
+            white-space: nowrap;
+        }
+        table.dataTable td:nth-child(3) {
+            width: 150px; /* 전화번호 열 너비 */
+        }
+
         #map {
             width: 100%;
             height: 100%;
@@ -68,39 +75,43 @@
 </head>
 <body>
     <div class="container">
-    <h1 class="my-4">전국 중고 서점</h1>
-
-    <!-- 지도와 리스트 -->
-    <div id="content">
-        <!-- 모바일 프레임 -->
-        <div class="mobile-frame">
-            <!-- 지도 -->
-            <div id="map"></div>
+            <!-- 페이지 헤더 -->
+        <div class="text-center mb-4 mt-5">
+            <h1 class="display-6"><i class="fas fa-book"></i> 전국 중고 서점</h1> <!-- 아이콘 변경 -->
+            <p class="lead">전국에 있는 중고 서점을 찾아볼 수 있습니다.</p>
         </div>
 
-        <!-- 매장 리스트 -->
-        <div id="store-list">
-            <!-- DataTable -->
-            <table id="storeTable" class="display">
-                <thead>
-                    <tr>
-                        <th>시설명</th>
-                        <th>주소</th>
-                        <th>전화번호</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- JavaScript에서 동적으로 데이터 추가 -->
-                </tbody>
-            </table>
+        <!-- 지도와 리스트 -->
+        <div id="content" class="d-flex gap-3">
+            <!-- 모바일 프레임 -->
+            <div class="mobile-frame">
+                <!-- 지도 -->
+                <div id="map"></div>
+            </div>
 
-			<hr>
-            <!-- 선택한 매장 상세 정보 표시 영역 -->
-            <div id="store-details" class="mt-4">
-                <!-- JavaScript에서 동적으로 상세 정보 추가 -->
+            <!-- 매장 리스트 -->
+            <div id="store-list">
+                <!-- DataTable -->
+                <table id="storeTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>시설명</th>
+                            <th>주소</th>
+                            <th>전화번호</th> <!-- 너비 조정됨 -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- JavaScript에서 동적으로 데이터 추가 -->
+                    </tbody>
+                </table>
+
+                <hr>
+                <!-- 선택한 매장 상세 정보 표시 영역 -->
+                <div id="store-details" class="mt-4">
+                    <!-- JavaScript에서 동적으로 상세 정보 추가 -->
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- Bootstrap과 jQuery JS 추가 -->

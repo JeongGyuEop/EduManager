@@ -7,28 +7,33 @@
     String contextPath = request.getContextPath();
     String course_id = (String) request.getParameter("courseId");
     String role = (String)session.getAttribute("role");
+    
+	String message = (String) request.getAttribute("message");
+	if (message != null) {
+		message = URLDecoder.decode(message, "UTF-8");
+	}
+    	
 %>
 
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>과제 관리</title>
-<%
-	String message = (String) request.getAttribute("message");
-	if (message != null) {
-    	message = URLDecoder.decode(message, "UTF-8");
-%>
-        <script>
-            alert('<%= message %>'); // 메시지를 알림으로 표시
-        </script>
-<%
-    }
-%>
+
 <script>
     $(document).ready(function() {
     	
     	var role = "<%= role %>";
+    	const message = '<%= message != null ? message : "" %>';
+        if (message) {
+            alert(message);
+            // 메시지를 출력한 후 히스토리 상태를 초기화
+            history.replaceState(null, null, location.href);
+        }
 
         //-------------
         // 과제 조회 탭에서 AJAX로 데이터 불러오기
@@ -57,11 +62,13 @@
 						                '<td class="editable editable-description">' + assignment.description + '</td>';
 					if(role === "교수") {
 						    	row += '<td>' +
-						                    '<button class="btn btn-sm btn-primary edit-btn">수정</button>' +
-						                    '<button class="btn btn-sm btn-success complete-btn" style="display:none;">완료</button>' +
-						                    '<button class="btn btn-sm btn-secondary cancel-btn" style="display:none;">취소</button>' +
-						          	        '<button class="btn btn-sm btn-danger delete-btn">삭제</button>' +
-						                    '<button class="btn btn-sm btn-success view-btn">제출물 보기</button>' +
+									    	'<div class="d-flex gap-2 justify-content-center">' +
+										        '<button class="btn btn-outline-primary btn-sm edit-btn">수정</button>' +
+										        '<button class="btn btn-outline-success btn-sm complete-btn" style="display:none;">완료</button>' +
+										        '<button class="btn btn-outline-secondary btn-sm cancel-btn" style="display:none;">취소</button>' +
+										        '<button class="btn btn-outline-danger btn-sm delete-btn">삭제</button>' +
+										        '<button class="btn btn-outline-success btn-sm view-btn">제출물 보기</button>' +
+										    '</div>' +
 						           	   '</td>' +
 						           '</tr>';
                 	} else {
@@ -273,67 +280,80 @@
 </script>
 </head>
 <body>
-<div class="container mt-4">
-    <h2 class="text-center mb-4">과제 관리</h2>
+<div class="container mt-5">
+    <!-- 페이지 헤더 -->
+    <div class="text-center mb-4">
+        <h1 class="display-4"><i class="fas fa-tasks"></i> 과제 관리</h1>
+        <p class="lead">과제를 조회하거나 새로 등록할 수 있습니다.</p>
+    </div>
     
     <!-- 탭 -->
     <ul class="nav nav-tabs" id="assignmentTabs" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="assignment-list-tab" data-bs-toggle="tab" href="#assignment-list" role="tab" aria-controls="assignment-list" aria-selected="true">과제 조회</a>
+            <button class="nav-link active" id="assignment-list-tab" data-bs-toggle="tab" data-bs-target="#assignment-list" type="button" role="tab" aria-controls="assignment-list" aria-selected="true">과제 조회</button>
         </li>
-<% if(role.equals("교수")) { %>
+        <% if ("교수".equals(role)) { %>
         <li class="nav-item">
-            <a class="nav-link" id="assignment-create-tab" data-bs-toggle="tab" href="#assignment-create" role="tab" aria-controls="assignment-create" aria-selected="false">과제 등록</a>
+            <button class="nav-link" id="assignment-create-tab" data-bs-toggle="tab" data-bs-target="#assignment-create" type="button" role="tab" aria-controls="assignment-create" aria-selected="false">과제 등록</button>
         </li>
-<% } %>
+        <% } %>
     </ul>
 
     <!-- 탭 내용 -->
     <div class="tab-content mt-4" id="assignmentTabsContent">
         <!-- 과제 조회 -->
         <div class="tab-pane fade show active" id="assignment-list" role="tabpanel" aria-labelledby="assignment-list-tab">
-            <table id="assignmentTable" class="table table-bordered text-center">
-                <thead class="table-success">
-                    <tr>
-                        <th>과제 제목</th>
-                        <th>제출 가능 기간</th>
-                        <th>설명</th>
-                        <th>관리</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- AJAX로 데이터가 동적으로 추가됨 -->
-                </tbody>
-            </table>
+            <div class="card shadow-lg p-4">
+                <table id="assignmentTable" class="table table-bordered text-center">
+                    <thead class="table-success">
+                        <tr>
+                            <th>과제 제목</th>
+                            <th>제출 가능 기간</th>
+                            <th>설명</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- AJAX로 데이터가 동적으로 추가됨 -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- 과제 등록 -->
+        <% if ("교수".equals(role)) { %>
         <div class="tab-pane fade" id="assignment-create" role="tabpanel" aria-labelledby="assignment-create-tab">
-            <form method="post" action="<%= contextPath %>/assign/createAssignment.do" class="p-4 border rounded">
-                <div class="mb-3">
-                    <label for="title" class="form-label">제목:</label>
-                    <input type="text" name="title" id="title" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">설명:</label>
-                    <textarea name="description" id="description" class="form-control" rows="3" required></textarea>
-                </div>
-                <div class="mb-3">
-				    <label for="startDate" class="form-label">시작 날짜:</label>
-				    <input type="date" name="startDate" id="startDate" class="form-control" required>
-				</div>
-				<div class="mb-3">
-				    <label for="endDate" class="form-label">마감 날짜:</label>
-				    <input type="date" name="endDate" id="endDate" class="form-control" required>
-				</div>
-                <input type="hidden" name="courseId" value="<%= course_id %>">
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">등록</button>
-                </div>
-            </form>
+            <div class="card shadow-lg p-4">
+                <form method="post" action="<%= contextPath %>/assign/createAssignment.do">
+                    <div class="mb-3">
+                        <label for="title" class="form-label"><i class="fas fa-heading"></i> 제목</label>
+                        <input type="text" name="title" id="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label"><i class="fas fa-align-left"></i> 설명</label>
+                        <textarea name="description" id="description" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="startDate" class="form-label"><i class="fas fa-calendar-alt"></i> 시작 날짜</label>
+                            <input type="date" name="startDate" id="startDate" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="endDate" class="form-label"><i class="fas fa-calendar-check"></i> 마감 날짜</label>
+                            <input type="date" name="endDate" id="endDate" class="form-control" required>
+                        </div>
+                    </div>
+                    <input type="hidden" name="courseId" value="<%= course_id %>">
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> 등록</button>
+                    </div>
+                </form>
+            </div>
         </div>
+        <% } %>
     </div>
 </div>
+
 
 </body>
 </html>
