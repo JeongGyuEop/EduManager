@@ -18,6 +18,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> <!-- 달력구조 -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script> <!-- 달력구조 -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script> <!-- 한/영 -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    
     <style>
         body, html {
             height: 100%;
@@ -26,7 +29,7 @@
             font-family: 'Arial', sans-serif;
         }
         #calendar-container {
-            max-width: 900px;
+            max-width: 895px;
             background-color: #ffffff;
             padding: 30px;
             border-radius: 12px;
@@ -44,7 +47,7 @@
 </head>
 <body>
     <div id="calendar-container">
-        <h2 id="calendar-title">학사 일정</h2>
+        <h2 id="calendar-title"><i class="fas fa-calendar-check"></i> 학사 일정</h2>
         <div id="calendar"></div>
     </div>
 
@@ -55,9 +58,9 @@
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth', // 기본 보기 형식 설정 (월간 보기)
                 headerToolbar: {
-                    left: 'prev,next today', // 이전, 다음, 오늘 버튼 표시
+                    left: 'prev today', // 이전, 다음, 오늘 버튼 표시
                     center: 'title', // 캘린더 제목을 중앙에 표시
-                    right: 'dayGridMonth,timeGridWeek' // 월간 및 주간 보기 버튼 표시
+                    right: 'next'
                 },
                 locale: 'ko', // 한국어 로케일 설정
                 events: function(fetchInfo, successCallback, failureCallback) {
