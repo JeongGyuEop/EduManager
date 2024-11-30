@@ -132,11 +132,9 @@
                                 ClassroomBoardVo vo = list.get(i);
                                 
                     %>
-                    <tr>
+                    <tr onclick="javascript:fnRead('<%=vo.getNotice_id()%>')">
                         <td><%=vo.getNotice_id()%></td>
-                        <td>
-                        	<a href="javascript:fnRead('<%=vo.getNotice_id()%>')"><%=vo.getTitle()%></a>
-                        </td>
+                        <td><%=vo.getTitle()%></td>
                         <td><%=vo.getContent()%></td>
                         <td><%=vo.getUserName().getUser_name()%></td>
                         <td><%=vo.getCreated_date()%></td>

@@ -285,10 +285,9 @@
 					반갑습니다. <br> <%=name %> <%=role %>님!
 			<%  }  %>     
 	            </div>
-    </div>
+	           </div>
 		   
-		           <br>
-        <br>
+		          <br><br>
 
 				<div class="notice-box">
 					<h2>공지 사항</h2>
