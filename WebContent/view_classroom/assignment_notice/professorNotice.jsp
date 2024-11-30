@@ -47,6 +47,7 @@
 </script>
 </head>
 <body class="bg-light">
+<main class="container my-5" >
 <%
     int totalRecord = 0;
     int numPerPage = 5;
@@ -81,7 +82,7 @@
     <input type="hidden" name="course_id" value="<%=course_id%>">
 </form>
 
-<main class="container my-5" >
+
     <h2 class="text-center mb-4">교수 공지사항</h2>
 
     <!-- 검색 영역 -->
@@ -129,18 +130,12 @@
                         } else {
                             for (int i = beginPerPage; i < (beginPerPage + numPerPage) && i < totalRecord; i++) {
                                 ClassroomBoardVo vo = list.get(i);
-                                int width = vo.getB_level() > 0 ? vo.getB_level() * 10 : 0; // 답글 들여쓰기 너비
+                                
                     %>
                     <tr>
                         <td><%=vo.getNotice_id()%></td>
                         <td>
-                            <div style="margin-left: <%=width%>px;">
-                                <% if (vo.getB_level() > 0) { %>
-                                    <img src="<%=contextPath%>/common/notice/images/level.gif" width="15" height="15">
-                                    <img src="<%=contextPath%>/common/notice/images/re.gif" width="15" height="15">
-                                <% } %>
-                                <a href="javascript:fnRead('<%=vo.getNotice_id()%>')"><%=vo.getTitle()%></a>
-                            </div>
+                        	<a href="javascript:fnRead('<%=vo.getNotice_id()%>')"><%=vo.getTitle()%></a>
                         </td>
                         <td><%=vo.getContent()%></td>
                         <td><%=vo.getUserName().getUser_name()%></td>

@@ -79,7 +79,7 @@
 		</div>
 
 		<!-- 아래 줄 바꿈된 메뉴 항목들, 간격 조정 -->
-		<div class="nav-container">
+		<div class="nav-container" style="z-index: 1000;">
 			<div class="container-fluid d-flex justify-content-center mt-2">
 				<ul class="navbar-nav d-flex flex-row justify-content-center">
 					<!-- 이 부분에 justify-content-center 추가 -->

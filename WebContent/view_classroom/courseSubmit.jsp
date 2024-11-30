@@ -59,7 +59,7 @@
         </c:if>
 
         <div class="card shadow-sm">
-            <h2 class="text-center mb-4">수강 목록</h2>
+            <h2 class="text-center mb-4 mt-4">수강 목록</h2>
             <div class="card-body">
                 <table class="table table-bordered table-hover text-center align-middle">
                     <thead class="table-success">
@@ -95,7 +95,7 @@
         <hr>
         <br>
         <div class="card shadow-sm">
-            <h2 class="text-center mb-4">신청 목록</h2>
+            <h2 class="text-center mb-4 mt-4">신청 목록</h2>
             <div class="card-body">
                 <table class="table table-bordered table-hover text-center align-middle">
                     <thead class="table-success">
