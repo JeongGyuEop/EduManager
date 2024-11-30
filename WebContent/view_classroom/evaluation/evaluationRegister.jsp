@@ -57,7 +57,7 @@ h2 {
 	transition: background-color 0.3s ease; /* 부드러운 색상 전환 */
 }
 
-.btn:hover {
+.btn-e:hover {
 	background-color: #C4D9D0; /* 호버 시 더 어두운 색상 */
 }
 

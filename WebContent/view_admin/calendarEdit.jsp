@@ -30,7 +30,6 @@ body, html {
 	height: 100%;
 	margin: 0;
 	padding: 0;
-	background-color: #f0f2f5;
 	font-family: 'Arial', sans-serif;
 }
 

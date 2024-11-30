@@ -31,7 +31,7 @@
     transition: background-color 0.3s;
 }
 
-.btn:hover {
+.btn-e:hover {
     background-color: #C4D9D0;
 }
 
