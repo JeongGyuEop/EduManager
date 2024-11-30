@@ -84,17 +84,18 @@ public class BoardService {
 		return boarddao.getEvents(startDate, endDate);
 	}
 	
-	public void processViewSchedule(HttpServletRequest request) {
+	public List<ScheduleVo> processViewSchedule(HttpServletRequest request) {
         String month = request.getParameter("month");
+        List<ScheduleVo> scheduleList = new ArrayList<ScheduleVo>();
         if (month != null && !month.isEmpty()) {
             String[] parts = month.split("-");
             if (parts.length == 2) {
                 String year = parts[0];
                 String monthPart = parts[1];
-                List<ScheduleVo> scheduleList = boarddao.getEventsByMonth(year, monthPart);
-                request.setAttribute("scheduleList", scheduleList);
+                scheduleList = boarddao.getEventsByMonth(year, monthPart);
             }
         }
+        return scheduleList;
     }
 	
 	public void addSchedule(HttpServletRequest request) {

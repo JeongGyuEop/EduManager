@@ -403,13 +403,15 @@ public class BoardController extends HttpServlet {
                 return;
 	
 			case "/viewSchedule.bo":
+		        List<ScheduleVo> scheduleList = new ArrayList<ScheduleVo>();
 				month = request.getParameter("month");
 				if (month != null && !month.isEmpty()) {
-					boardservice.processViewSchedule(request);
+					scheduleList = boardservice.processViewSchedule(request);
 				}
 	
 				center = request.getParameter("center");
-				request.setAttribute("center", center);
+				request.setAttribute("scheduleList",scheduleList);
+				request.setAttribute("center", "/view_admin/calendarEdit.jsp");
 	
 				nextPage = "/main.jsp";
 	

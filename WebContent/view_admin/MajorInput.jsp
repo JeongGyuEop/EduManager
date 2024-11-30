@@ -170,27 +170,17 @@
 
 <body>
     <div id="major-container">
-        <h2 id="major-title">학과 수정 및 삭제</h2>
-        <form id="major-form" action="<%=contextPath%>/major/MajorInput.do" method="get" onsubmit="return validateForm()">
+        <h2 id="major-title">신규 학과 추가</h2>
+        <form id="major-form" action="<%=contextPath%>/major/MajorInput.do" method="post" onsubmit="return validateForm()">
             <label for="MajorNameInput">신규 학과명:</label>
             <input type="text" id="MajorNameInput" name="MajorNameInput" placeholder="**학과" required="required">
             <label for="MajorTelInput">학과 사무실 전화번호:</label>
             <input type="tel" id="MajorTelInput" name="MajorTelInput" placeholder="02-123-1234">
             <input type="submit" value="제출">
         </form>
-    </div>
-    <div
-        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <div>
-            <h3>학과 정보</h3>
-        </div>
-        <div>
-            <a href="<%=contextPath%>/view_admin/EditDeleteMajor.jsp"
-                onclick="openCustomPopup(this.href); return false;">수정 및 삭제</a>
-        </div>
-    </div>
-    <div>
-        <table id="major-table" class="major-table">
+    
+        <h3 id="major-table-title" style="text-align: center;">학과 목록</h3>
+        <table id="major-table" class="table table-striped">
             <thead>
                 <tr>
                     <th>학과 코드</th>
@@ -198,8 +188,14 @@
                     <th>학과 사무실 전화번호</th>
                 </tr>
             </thead>
-            <tbody></tbody>
-            <tfoot></tfoot>
+            <tbody>
+                <!-- 학과 데이터는 JavaScript를 통해 동적으로 추가될 예정 -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="3" id="major-count">학과 정보가 없습니다!</th>
+                </tr>
+            </tfoot>
         </table>
     </div>
 

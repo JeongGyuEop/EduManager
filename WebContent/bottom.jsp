@@ -46,7 +46,7 @@
 					<i class="fas fa-map-marker-alt"></i> 주소: 서울특별시 강남구 학사로 123
 				</p>
 				<p>
-					<a href="${pageContext.request.contextPath}/welcomRoad.jsp"
+					<a href="${pageContext.request.contextPath}/common/welcomRoad.jsp"
 						class="text-light text-decoration-none"
 						onclick="window.open(this.href, 'popupWindow', 'width=441,height=781,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=yes,status=no'); return false;">
 						찾아오시는 길 </a>

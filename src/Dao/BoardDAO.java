@@ -376,8 +376,8 @@ public class BoardDAO {
 		String EndDay = String.valueOf(YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).lengthOfMonth());
 		String monthStart = year + "-" + String.format("%02d", Integer.parseInt(month)) + "-01";
 		String monthEnd = year + "-" + String.format("%02d", Integer.parseInt(month)) + "-" + EndDay;
-
-		String sql = "SELECT * FROM academic_schedule WHERE start_date <= ? AND end_date >= ?";
+		
+		String sql = "SELECT * FROM academic_schedule WHERE start_date <= ? AND end_date >= ? ORDER BY start_date ASC";
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(sql);
