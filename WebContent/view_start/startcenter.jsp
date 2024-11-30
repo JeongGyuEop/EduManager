@@ -33,8 +33,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
     
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" >
+  	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" ></script>
   	
 	<link href="<%=contextPath %>/css/startpage.css" rel="stylesheet">
 	
@@ -245,12 +245,6 @@
 			    </div>
 			</div>
 		</div>
-	    
-
-
-	       
-	        
-	    
     
 		<div class="row align-items-md-stretch mt-4"> <!-- 행 전체에 하단 여백 추가 -->
 		    <!-- 학사 일정 영역 -->
@@ -259,15 +253,10 @@
 		        <jsp:include page="/common/calendar.jsp" />
 		    </div>
 		</div>
-
-
-		   <div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
-		   
-		          <div class="notice-box">
-         <!-- 로그인 박스 -->
-	       
-	            <div class="h-100 p-5 bg-light border rounded-3 d-flex flex-column justify-content-center">
-			
+		<div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
+			<div class="notice-box">
+         		<!-- 로그인 박스 -->
+	        	<div class="h-100 p-5 bg-light border rounded-3 d-flex flex-column justify-content-center">
 			<%  if(id == null) {  %>
 	                <h2>로그인</h2>
 	                <form action="<%=contextPath%>/member/login.do" method="post">
@@ -285,38 +274,36 @@
 					반갑습니다. <br> <%=name %> <%=role %>님!
 			<%  }  %>     
 	            </div>
-    </div>
-		   
-		           <br>
-        <br>
-
-				<div class="notice-box">
-					<h2>공지 사항</h2>
-					<%
-            int totalRecord = 0;
-            int numPerPage = 5;
-            int pagePerBlock = 3;
-            int totalPage = 0;
-            int totalBlock = 0;
-            int nowPage = 0;
-            int nowBlock = 0;
-            int beginPerPage = 0;
-
-            ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
-            totalRecord = list.size();
-
-            if (request.getAttribute("nowPage") != null) {
-                nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
-            }
-
-            beginPerPage = nowPage * numPerPage;
-            totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
-            totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
-
-            if (request.getAttribute("nowBlock") != null) {
-                nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
-            }
-        %>
+    		</div>
+		    <br>
+        	<br>
+			<div class="notice-box">
+				<h2>공지 사항</h2>
+				<%
+		            int totalRecord = 0;
+		            int numPerPage = 5;
+		            int pagePerBlock = 3;
+		            int totalPage = 0;
+		            int totalBlock = 0;
+		            int nowPage = 0;
+		            int nowBlock = 0;
+		            int beginPerPage = 0;
+		
+		            ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
+		            totalRecord = list.size();
+		
+		            if (request.getAttribute("nowPage") != null) {
+		                nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
+		            }
+		
+		            beginPerPage = nowPage * numPerPage;
+		            totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
+		            totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
+		
+		            if (request.getAttribute("nowBlock") != null) {
+		                nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
+		            }
+		        %>
 					<form name="frmRead">
 						<input type="hidden" name="notice_id"> <input
 							type="hidden" name="nowPage" value="<%=nowPage%>"> <input
@@ -386,13 +373,9 @@
 						</div>
 					</div>
 				</div>
-
-
-
-
 			</div>
-
-
+		</div>
+	</div>
   <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
