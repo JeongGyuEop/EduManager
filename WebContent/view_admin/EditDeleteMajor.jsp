@@ -9,6 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <title>EditDeleteMajor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- jQuery 최신 버전 추가 -->
     <script src="https://code.jquery.com/jquery-latest.min.js"
         crossorigin="anonymous"></script>
@@ -187,7 +188,7 @@
 </head>
 <body>
     <div id="major-container">
-        <h2 id="major-title">학과 수정 및 삭제</h2>
+        <h2 id="major-title"><i class="fas fa-trash"></i> 학과 수정 및 삭제</h2>
         <form id="major-form" action="<%=contextPath%>/major/searchMajor.do" method="get">
             <label for="searchMajor">학과 이름 또는 학과 번호:</label>
             <input type="text" id="searchMajor" name="searchMajor" placeholder="학과 이름 또는 번호를 입력하세요">

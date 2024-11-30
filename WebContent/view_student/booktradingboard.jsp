@@ -46,6 +46,7 @@ if (request.getAttribute("nowBlock") != null) {
 <html>
 <head>
     <title>목록조회</title>
+    
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
@@ -146,7 +147,7 @@ if (request.getAttribute("nowBlock") != null) {
 </head>
 <body>
     <div id="major-container">
-        <h2 id="major-title">목록조회</h2>
+        <h2 id="major-title"><i class="fas fa-book"></i> 중고책 거래</h2>
         <!-- 글제목 클릭 시 글 상세보기 요청 폼 -->
         <form name="frmRead">
             <input type="hidden" name="postId">

@@ -9,6 +9,9 @@
 <head>
 <meta charset="UTF-8">
 <title>일정 관리 페이지</title>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 <!-- jQuery 최신 버전 추가 -->
 <script src="https://code.jquery.com/jquery-latest.min.js"
 	crossorigin="anonymous"></script>
@@ -65,18 +68,38 @@ table.table-bordered th {
 	font-weight: bold;
 	color: #333;
 }
+
+input[type="text"] {
+	width: 12ch;
+}
+
+textarea {
+	width: 28ch;
+	height: 3.5ch;
+	padding: 0;
+	margin: 0;
+}
+
+input[type="date"], textarea, input[type="text"] {
+	padding: 0;
+	margin: 0;
+}
+
+#title{
+	width : 100%;
+}
+
 </style>
 </head>
 <body>
 	<div id="schedule-container">
-		<h2 id="schedule-title">일정 관리</h2>
+		<h2 id="schedule-title"><i class="fas fa-calendar-plus"></i> 일정 관리</h2>
 
 		<!-- 일정 추가 폼 -->
 		<form id="scheduleForm" action="<%=contextPath%>/Board/addSchedule"
 			method="post">
 			<div class="form-group">
-				<label for="title">일정 제목:</label> <input type="text" id="title"
-					name="title" class="form-control" required>
+				<label for="title">일정 제목:</label> <input type="text" id="title" name="title" class="form-control" required>
 			</div>
 			<div class="form-group">
 				<label for="startDate">시작 일자:</label> <input type="date"

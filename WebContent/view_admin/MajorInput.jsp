@@ -9,6 +9,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>New Major Input Page</title>
      <!-- 외부 CSS 파일 연결 -->
     <link rel="stylesheet" type="text/css" href="<%=contextPath%>/css/majorCSS.css">
@@ -170,7 +171,7 @@
 
 <body>
     <div id="major-container">
-        <h2 id="major-title">신규 학과 추가</h2>
+        <h2 id="major-title"><i class="fas fa-plus"></i> 신규 학과 추가</h2>
         <form id="major-form" action="<%=contextPath%>/major/MajorInput.do" method="post" onsubmit="return validateForm()">
             <label for="MajorNameInput">신규 학과명:</label>
             <input type="text" id="MajorNameInput" name="MajorNameInput" placeholder="**학과" required="required">
