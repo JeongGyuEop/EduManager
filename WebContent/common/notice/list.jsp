@@ -208,7 +208,7 @@
                             width = vo.getB_level() * 10;
                         }
                 %>
-                <tr>
+                <tr onclick="javascript:fnRead('<%=vo.getNotice_id()%>')" >
                     <td><%=vo.getNotice_id()%></td>
                     <td>
                         <% if (vo.getB_level() > 0) { %>
@@ -216,7 +216,7 @@
                                  width="<%=width%>" height="15">
                             <img src="<%=contextPath%>/common/notice/images/re.gif">
                         <% } %>
-                        <a href="javascript:fnRead('<%=vo.getNotice_id()%>')" class="btn-link"><%=vo.getTitle()%></a>
+                        <%=vo.getTitle()%>
                     </td>
                     <td><%=vo.getContent()%></td>
                     <td><%=vo.getUserName().getUser_name()%></td>

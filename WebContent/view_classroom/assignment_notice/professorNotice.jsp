@@ -130,19 +130,11 @@
                         } else {
                             for (int i = beginPerPage; i < (beginPerPage + numPerPage) && i < totalRecord; i++) {
                                 ClassroomBoardVo vo = list.get(i);
-                                int width = vo.getB_level() > 0 ? vo.getB_level() * 10 : 0; // 답글 들여쓰기 너비
+                                
                     %>
-                    <tr>
+                    <tr onclick="javascript:fnRead('<%=vo.getNotice_id()%>')">
                         <td><%=vo.getNotice_id()%></td>
-                        <td>
-                            <div style="margin-left: <%=width%>px;">
-                                <% if (vo.getB_level() > 0) { %>
-                                    <img src="<%=contextPath%>/common/notice/images/level.gif" width="15" height="15">
-                                    <img src="<%=contextPath%>/common/notice/images/re.gif" width="15" height="15">
-                                <% } %>
-                                <a href="javascript:fnRead('<%=vo.getNotice_id()%>')"><%=vo.getTitle()%></a>
-                            </div>
-                        </td>
+                        <td><%=vo.getTitle()%></td>
                         <td><%=vo.getContent()%></td>
                         <td><%=vo.getUserName().getUser_name()%></td>
                         <td><%=vo.getCreated_date()%></td>

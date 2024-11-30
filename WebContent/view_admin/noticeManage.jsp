@@ -222,14 +222,14 @@
                         // b_level에 따라 들여쓰기 동적 계산
                         int indent = vo.getB_level() * 20; 
                 %>
-                <tr>
+                <tr onclick="javascript:fnRead('<%=vo.getNotice_id()%>')">
                     <td><%=vo.getNotice_id()%></td>
                     <td>
                         <div style="margin-left: <%=indent%>px;">
                             <% if (vo.getB_level() > 0) { %>
                                 <img src="<%=contextPath%>/common/notice/images/re.gif" alt="reply">
                             <% } %>
-                            <a href="javascript:fnRead('<%=vo.getNotice_id()%>')" class="btn-link"><%=vo.getTitle()%></a>
+                            <%=vo.getTitle()%>
                         </div>
                     </td>
                     <td><%=vo.getContent()%></td>

@@ -626,7 +626,7 @@ public class ClassroomController extends HttpServlet {
 	    					
 	    //==========================================================================================
 	    	case "/enrollmentPeriodPage.bo": // 수강신청 기간 설정 페이지로 이동
-	    		request.setAttribute("center", "/view_classroom/coursePeriod.jsp" );
+	    		request.setAttribute("center", "/view_admin/coursePeriod.jsp" );
 	    	    nextPage = "/main.jsp"; // 설정 페이지 경로
 	    	    break;
 	    	
@@ -663,7 +663,7 @@ public class ClassroomController extends HttpServlet {
 	    	        request.setAttribute("message", "입력 값 변환 중 오류가 발생했습니다.");
 	    	    }
 
-	    	    center = "/view_classroom/enrollmentPeriodResult.jsp";
+	    	    center = "/view_admin/enrollmentPeriodResult.jsp";
 	    	    request.setAttribute("center", center);
 
 	    	    nextPage = "/main.jsp";

@@ -247,7 +247,7 @@
 		</div>
     
 		<div class="row align-items-md-stretch mt-4"> <!-- 행 전체에 하단 여백 추가 -->
-		    <!-- 학사 일정 영역 -->
+		<!-- 학사 일정 영역 -->
 		<div class="col-md-7" style="margin-bottom: 10px;"> <!-- 학사 일정 상자에 하단 여백 추가 -->
 		    <div class="h-100 bg-body-tertiary rounded-3" style="padding: 15px;"> <!-- 안쪽 여백 통일 -->
 		        <jsp:include page="/common/calendar.jsp" />
@@ -274,36 +274,37 @@
 					반갑습니다. <br> <%=name %> <%=role %>님!
 			<%  }  %>     
 	            </div>
-    		</div>
-		    <br>
-        	<br>
-			<div class="notice-box">
-				<h2>공지 사항</h2>
-				<%
-		            int totalRecord = 0;
-		            int numPerPage = 5;
-		            int pagePerBlock = 3;
-		            int totalPage = 0;
-		            int totalBlock = 0;
-		            int nowPage = 0;
-		            int nowBlock = 0;
-		            int beginPerPage = 0;
-		
-		            ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
-		            totalRecord = list.size();
-		
-		            if (request.getAttribute("nowPage") != null) {
-		                nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
-		            }
-		
-		            beginPerPage = nowPage * numPerPage;
-		            totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
-		            totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
-		
-		            if (request.getAttribute("nowBlock") != null) {
-		                nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
-		            }
-		        %>
+	           </div>
+		   
+		          <br><br>
+
+				<div class="notice-box">
+					<h2>공지 사항</h2>
+					<%
+            int totalRecord = 0;
+            int numPerPage = 5;
+            int pagePerBlock = 3;
+            int totalPage = 0;
+            int totalBlock = 0;
+            int nowPage = 0;
+            int nowBlock = 0;
+            int beginPerPage = 0;
+
+            ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
+            totalRecord = list.size();
+
+            if (request.getAttribute("nowPage") != null) {
+                nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
+            }
+
+            beginPerPage = nowPage * numPerPage;
+            totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
+            totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
+
+            if (request.getAttribute("nowBlock") != null) {
+                nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
+            }
+        %>
 					<form name="frmRead">
 						<input type="hidden" name="notice_id"> <input
 							type="hidden" name="nowPage" value="<%=nowPage%>"> <input
