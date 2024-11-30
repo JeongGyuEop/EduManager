@@ -5,6 +5,7 @@ import java.util.List;
 
 import Dao.AssignmentDAO;
 import Vo.AssignmentVo;
+import Vo.PeriodVo;
 import Vo.SubmissionVo;
 
 public class AssignmentService {
@@ -23,8 +24,8 @@ public class AssignmentService {
 
 	//----------
 	// 교수의 각 강의에 과제를 등록하기 위해 DAO 호출
-	public int serviceCreateAssignment(AssignmentVo assignmentVo) {
-		return assignmentdao.createAssignment(assignmentVo);
+	public int serviceCreateAssignment(AssignmentVo assignmentVo, PeriodVo periodVo) {
+		return assignmentdao.createAssignmentWithPeriod(assignmentVo, periodVo);
 	}
 
 	//----------
@@ -35,8 +36,8 @@ public class AssignmentService {
 
 	//----------
 	// 교수의 각 강의의 과제를 수정하기 위해 DAO 호출
-	public int serviceUpdateAssignment(AssignmentVo assignmentVo) {
-		return assignmentdao.updateAssignment(assignmentVo);
+	public int serviceUpdateAssignment(AssignmentVo assignmentVo, PeriodVo periodVo) {
+		return assignmentdao.updateAssignment(assignmentVo, periodVo);
 	}
 
 	//----------

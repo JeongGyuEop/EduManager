@@ -46,8 +46,9 @@
     };
 </script>
 </head>
-<body class="bg-light">
-<main class="container my-5" >
+<body>
+
+<div class="container my-5" >
 <%
     int totalRecord = 0;
     int numPerPage = 5;
@@ -81,7 +82,6 @@
     <input type="hidden" name="nowBlock" value="<%=nowBlock%>">
     <input type="hidden" name="course_id" value="<%=course_id%>">
 </form>
-
 
     <h2 class="text-center mb-4">교수 공지사항</h2>
 
@@ -187,6 +187,6 @@
             }
         %>
     </div>
-</main>
+</div>
 </body>
 </html>

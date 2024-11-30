@@ -90,28 +90,33 @@
         </script>
     </head>
     <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="#">강의실</a>
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <!-- Navbar Search-->
-            
-			<!-- Navbar-->
-			    <ul class="navbar-nav ms-auto d-flex align-items-center">
-			        <li class="nav-item">
-			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
-			        </li>
-			        <li class="nav-item dropdown">
-			            <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-			            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-			                <li><a class="dropdown-item" href="<%=contextPath%>/member/main.bo?center=view_professor/professorHome.jsp">강의실 나가기</a></li>
-			                <li><hr class="dropdown-divider" /></li>
-			                <li><a class="dropdown-item" href="<%=contextPath%>/member/logout.me">로그아웃</a></li>
-			            </ul>
-			        </li>
-			    </ul>
-        </nav>
+        <!-- 상단 네비게이션 -->
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand ps-3" href="#">강의실</a>
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="navbar-nav ms-auto d-flex align-items-center">
+            <li class="nav-item">
+                <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
+            </li>
+            <li class="nav-item">
+			    <!-- 강의실 나가기 버튼 -->
+			     <button class="btn btn-light me-2" onclick="location.href='<%=contextPath%>/member/main.bo?center=view_professor/professorHome.jsp'">
+			        <i class="fas fa-door-open"></i> 강의실 나가기
+			    </button>
+			</li>
+			<li class="nav-item">
+			    <!-- 로그아웃 버튼 -->
+			    <%-- 
+			    <button class="btn btn-danger" onclick="location.href='<%=contextPath%>/member/logout.me'">
+			        <i class="fas fa-sign-out-alt"></i> 로그아웃
+			    </button>
+			     --%>
+			</li>
+
+        </ul>
+    </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
