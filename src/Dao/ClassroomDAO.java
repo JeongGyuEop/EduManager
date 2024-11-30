@@ -3,6 +3,8 @@ package Dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import javax.naming.Context;
@@ -815,5 +817,66 @@ public class ClassroomDAO {
 		
 		return courseList;
 	}
+
+	// 수강신청 기간 입력
+	public boolean insertEnrollmentPeriod(Timestamp startTimestamp, Timestamp endTimestamp, String description) {
+	    String checkQuery = "SELECT COUNT(*) FROM period_management WHERE type = '수강신청' AND start_date = ? AND end_date = ?";
+	    String insertQuery = "INSERT INTO period_management (type, start_date, end_date, description) VALUES ('수강신청', ?, ?, ?)";
+	    try {
+	        con = ds.getConnection();
+
+	        // 중복 데이터 확인
+	        pstmt = con.prepareStatement(checkQuery);
+	        pstmt.setTimestamp(1, startTimestamp); // LocalDateTime -> Timestamp 변환
+	        pstmt.setTimestamp(2, endTimestamp);   // LocalDateTime -> Timestamp 변환
+	        rs = pstmt.executeQuery();
+	        if (rs.next() && rs.getInt(1) > 0) {
+	            return false; // 중복 데이터가 있으면 삽입하지 않음
+	        }
+
+	        // 데이터 삽입
+	        pstmt = con.prepareStatement(insertQuery);
+	        System.out.println("Input time: " + startTimestamp);
+	        System.out.println("Input time: " + endTimestamp);
+	        pstmt.setTimestamp(1, startTimestamp); // LocalDateTime -> Timestamp 변환
+	        pstmt.setTimestamp(2, endTimestamp);   // LocalDateTime -> Timestamp 변환
+	        pstmt.setString(3, description);
+	        int result = pstmt.executeUpdate();
+	        return result > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return false;
+	}
+
+
+
+	//수강신청 기간 조회
+	public LocalDateTime[] getEnrollmentPeriod() {
+		
+		String query = "SELECT start_date, end_date FROM period_management WHERE type = '수강신청' ORDER BY created_at DESC LIMIT 1";
+
+//	    String query = "SELECT start_date, end_date FROM period_management WHERE type = '수강신청' ORDER BY start_date DESC LIMIT 1";
+	    try {
+	        con = ds.getConnection();
+	        pstmt = con.prepareStatement(query);
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            LocalDateTime startDate = rs.getTimestamp("start_date").toLocalDateTime();
+	            LocalDateTime endDate = rs.getTimestamp("end_date").toLocalDateTime();
+	            return new LocalDateTime[]{startDate, endDate};
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return null;
+	}
+
+
 	
 }

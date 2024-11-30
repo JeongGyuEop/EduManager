@@ -10,16 +10,14 @@
     <meta charset="UTF-8">
     <title>학사 일정</title>
     <!-- jQuery 최신 버전 추가 -->
-    <script src="https://code.jquery.com/jquery-latest.min.js"
-        crossorigin="anonymous"></script>
-    <!-- 외부 CSS 파일 연결 -->
-    <link rel="stylesheet" type="text/css" href="<%=contextPath%>/css/majorCSS.css">
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- FullCalendar CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" > -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet"> <!-- 달력구조 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> <!-- 달력구조 -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script> <!-- 달력구조 -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script> <!-- 한/영 -->
     <style>
         body, html {
             height: 100%;
@@ -29,7 +27,7 @@
             font-family: 'Arial', sans-serif;
         }
         #calendar-container {
-            max-width: 900px;
+            max-width: 895px;
             background-color: #ffffff;
             padding: 30px;
             border-radius: 12px;
@@ -44,9 +42,6 @@
             margin-bottom: 20px;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
 </head>
 <body>
     <div id="calendar-container">

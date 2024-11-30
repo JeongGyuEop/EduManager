@@ -30,6 +30,7 @@
 
 	$(document).ready(function() {
 		const submitButton = $('#assignmentUploadForm button[type="submit"]'); // 제출 버튼
+		
 	    $.ajax({
 	        url: '<%=contextPath%>/submit/getSubmittedAssignments.do',
 	        method: 'GET',

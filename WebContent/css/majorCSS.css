@@ -129,7 +129,7 @@ p {
     outline: none;
 }
 
-/* 반응형 디자인 */
+/* 반응형 디자인
 @media (max-width: 768px) {
     body {
         padding: 0px;
@@ -143,4 +143,4 @@ p {
     .major-table th, .major-table td {
         padding: 10px;
     }
-}
+} */

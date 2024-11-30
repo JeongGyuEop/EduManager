@@ -44,25 +44,39 @@
                 if (assignmentList && assignmentList.length > 0) {
                 	
 	                assignmentList.forEach(function(assignment) {
-	                var row = '<tr data-id="' + assignment.assignmentId + '">' +
-					                '<td class="editable editable-title">' + assignment.title + '</td>' +
-					                '<td class="editable editable-dueDate">' + assignment.dueDate + '</td>' +
-					                '<td class="editable editable-description">' + assignment.description + '</td>';
+
+	                    var now = new Date(); // 현재 날짜
+	                    var startDate = new Date(assignment.startDate); // 시작 날짜
+	                    var endDate = new Date(assignment.endDate); // 종료 날짜
+	                	
+		                var row = '<tr data-id="' + assignment.assignmentId + '">' +
+						                '<td class="editable editable-title">' + assignment.title + '</td>' +
+						                '<td class="editable editable-date">' + 
+						                	assignment.startDate.substring(0, assignment.startDate.lastIndexOf(".")) + ' ~ ' + assignment.endDate.substring(0, assignment.startDate.lastIndexOf(".")) +
+						                '</td>' +
+						                '<td class="editable editable-description">' + assignment.description + '</td>';
 					if(role === "교수") {
-					    	row += '<td>' +
-					                    '<button class="btn btn-sm btn-primary edit-btn">수정</button>' +
-					                    '<button class="btn btn-sm btn-success complete-btn" style="display:none;">완료</button>' +
-					                    '<button class="btn btn-sm btn-secondary cancel-btn" style="display:none;">취소</button>' +
-					          	        '<button class="btn btn-sm btn-danger delete-btn">삭제</button>' +
-					                    '<button class="btn btn-sm btn-success view-btn">제출물 보기</button>' +
-					           	   '</td>' +
-					           '</tr>';
+						    	row += '<td>' +
+						                    '<button class="btn btn-sm btn-primary edit-btn">수정</button>' +
+						                    '<button class="btn btn-sm btn-success complete-btn" style="display:none;">완료</button>' +
+						                    '<button class="btn btn-sm btn-secondary cancel-btn" style="display:none;">취소</button>' +
+						          	        '<button class="btn btn-sm btn-danger delete-btn">삭제</button>' +
+						                    '<button class="btn btn-sm btn-success view-btn">제출물 보기</button>' +
+						           	   '</td>' +
+						           '</tr>';
                 	} else {
-                			row += '<td>' +
-			                            '<button class="btn btn-sm btn-success submission-btn" data-id="' + assignment.assignmentId + 
-			                            '" data-title="' + encodeURIComponent(assignment.title) + '">과제 제출</button>' +
-			                       '</td>' +
-					           '</tr>';
+                		
+                		// 학생 역할에 따라 제출 버튼 처리
+                        if (now >= startDate && now <= endDate) {
+	                            row += '<td>' +
+			                                '<button class="btn btn-sm btn-success submission-btn" data-id="' + assignment.assignmentId + 
+			                                '" data-title="' + encodeURIComponent(assignment.title) + '">과제 제출</button>' +
+			                            '</td>';
+                        } else {
+	                            row += '<td>' +
+			                                '<button class="btn btn-sm btn-secondary disabled-btn" disabled>제출 기간 아님</button>' +
+			                            '</td>';
+                        }
                 	}
 	                        tbody.append(row);
 	                    });
@@ -105,95 +119,104 @@
     
     //-------------
  	// 수정 버튼 클릭 시
-    $(document).on('click', '.edit-btn', function () {
-        var row = $(this).closest('tr'); // 현재 행 가져오기
+	$(document).on('click', '.edit-btn', function () {
+	    var row = $(this).closest('tr'); // 현재 행 가져오기
+	
+	    // 기존 값 저장 (data 속성에 저장)
+	    row.find('.editable').each(function () {
+	        var cell = $(this);
+	        cell.data('original-value', cell.text()); // 기존 값을 저장
+	        var value = cell.text();
+	
+	        // 시작 날짜와 마감 날짜는 date picker 두 개로 변환
+	        if (cell.hasClass('editable-date')) {
+	            cell.html(
+	            	'<div style="display: flex; align-items: center; gap: 10px; justify-content: center;">' +
+	                    '<input type="date" name="startDate" class="form-control start-date" style="width: 150px;">' +
+	                    '<span>~</span>' +
+	                    '<input type="date" name="endDate" class="form-control end-date" style="width: 150px;">' +
+	                '</div>'
+	            );
+	        } else {
+	            cell.html('<input type="text" class="form-control" value="' + value + '">');
+	        }
+	    });
+	
+	    // 모든 버튼 숨기기
+	    row.find('.edit-btn, .delete-btn, .view-btn').hide();
+	
+	    // 완료/취소 버튼 표시
+	    row.find('.complete-btn, .cancel-btn').show();
+	});
 
-        // 기존 값 저장 (data 속성에 저장)
-        row.find('.editable').each(function () {
-            var cell = $(this);
-            cell.data('original-value', cell.text()); // 기존 값을 저장
-            var value = cell.text();
-
-            // 마감일은 date picker로 변환
-            if (cell.hasClass('editable-dueDate')) {
-                cell.html('<input type="date" class="form-control" value="' + value + '">');
-            } else {
-                cell.html('<input type="text" class="form-control" value="' + value + '">');
-            }
-        });
-
-        // 모든 버튼 숨기기
-        row.find('.edit-btn, .delete-btn, .view-btn').hide();
-
-        // 완료/취소 버튼 표시
-        row.find('.complete-btn, .cancel-btn').show();
-    });
-    
 
     //-------------
     // 완료 버튼 클릭 시
-    $(document).on('click', '.complete-btn', function () {
-        var row = $(this).closest('tr'); // 현재 행 가져오기
-        var assignmentId = row.data('id'); // 데이터 ID
-        var title = row.find('.editable-title input').val();
-        var dueDate = row.find('.editable-dueDate input').val();
-        var description = row.find('.editable-description input').val();
+	$(document).on('click', '.complete-btn', function () {
+	    var row = $(this).closest('tr'); // 현재 행 가져오기
+	    var assignmentId = row.data('id'); // 데이터 ID
+	    var title = row.find('.editable-title input').val();
+	    var description = row.find('.editable-description input').val();
+	    var startDate = row.find('.start-date').val(); // 시작 날짜
+	    var endDate = row.find('.end-date').val();     // 마감 날짜
 
-        // AJAX로 수정 요청 보내기
-        $.ajax({
-            url: '<%= contextPath %>/assign/updateAssignment.do',
-            method: 'POST',
-            data: {
-            	courseId: '<%= course_id %>',
-                assignmentId: assignmentId,
-                title: title,
-                dueDate: dueDate,
-                description: description
-            },
-            success: function (response) {
-                if (response === 'success') {
-                    alert('수정이 완료되었습니다.');
-
-                    // 입력 필드를 다시 텍스트로 변경
-                    row.find('.editable-title').html(title);
-                    row.find('.editable-dueDate').html(dueDate);
-                    row.find('.editable-description').html(description);
-
-                    // 완료/취소 버튼 숨기기
-                    row.find('.complete-btn, .cancel-btn').hide();
-
-                    // 수정, 삭제, 제출물확인 버튼 다시 표시
-                    row.find('.edit-btn, .delete-btn, .view-btn').show();
-                } else {
-                    alert('수정에 실패했습니다. 다시 시도해주세요.');
-                }
-            },
-            error: function (error) {
-                alert('수정 요청 중 오류가 발생했습니다.');
-                console.error(error);
-            }
-        });
-    });
-
+	    // AJAX로 수정 요청 보내기
+	    $.ajax({
+	        url: '<%= contextPath %>/assign/updateAssignment.do',
+	        method: 'POST',
+	        data: {
+	            courseId: '<%= course_id %>',
+	            assignmentId: assignmentId,
+	            title: title,
+	            description: description,
+	            startDate: startDate,
+	            endDate: endDate
+	        },
+	        success: function (response) {
+	            if (response === 'success') {
+	                alert('수정이 완료되었습니다.');
+	
+	                // 입력 필드를 다시 텍스트로 변경
+	                row.find('.editable-title').html(title);
+	                row.find('.editable-description').html(description);
+	                row.find('.editable-date').html(
+	                        startDate + ' 00:00:00' + ' ~ ' + endDate + ' 23:59:59'
+	                    );
+	                // 완료/취소 버튼 숨기기
+	                row.find('.complete-btn, .cancel-btn').hide();
+	
+	                // 수정, 삭제, 제출물확인 버튼 다시 표시
+	                row.find('.edit-btn, .delete-btn, .view-btn').show();
+	            } else {
+	                alert('수정에 실패했습니다. 다시 시도해주세요.');
+	            }
+	        },
+	        error: function (error) {
+	            alert('수정 요청 중 오류가 발생했습니다.');
+	            console.error(error);
+	        }
+	    });
+	});
 
     //-------------
     // 취소 버튼 클릭 시
-    $(document).on('click', '.cancel-btn', function () {
-        var row = $(this).closest('tr'); // 현재 행 가져오기
+	$(document).on('click', '.cancel-btn', function () {
+	    var row = $(this).closest('tr'); // 현재 행 가져오기
+	
+	    // 저장된 기존 값으로 복원
+	    row.find('.editable').each(function () {
+	        var cell = $(this);
+	        var originalValue = cell.data('original-value'); // 저장된 기존 값
+	        cell.html(originalValue); // 기존 값으로 복원
+	    });
+	
+	    // 완료/취소 버튼 숨기기
+	    row.find('.complete-btn, .cancel-btn').hide();
+	
+	    // 기본 버튼 다시 표시
+	    row.find('.edit-btn, .delete-btn, .view-btn').show();
+	});
 
-        // 저장된 기존 값으로 복원
-        row.find('.editable').each(function () {
-            var cell = $(this);
-            var originalValue = cell.data('original-value'); // 저장된 기존 값
-            cell.html(originalValue); // 기존 값으로 복원
-        });
-
-        // 완료/취소 버튼 숨기기
-        row.find('.complete-btn, .cancel-btn').hide();
-
-        // 기본 버튼 다시 표시
-        row.find('.edit-btn, .delete-btn, .view-btn').show();
-    });
  
     //-----------
  	// 제출물 보기 버튼 클릭 시
@@ -273,7 +296,7 @@
                 <thead class="table-success">
                     <tr>
                         <th>과제 제목</th>
-                        <th>마감일</th>
+                        <th>제출 가능 기간</th>
                         <th>설명</th>
                         <th>관리</th>
                     </tr>
@@ -296,9 +319,13 @@
                     <textarea name="description" id="description" class="form-control" rows="3" required></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="dueDate" class="form-label">마감일:</label>
-                    <input type="date" name="dueDate" id="dueDate" class="form-control" required>
-                </div>
+				    <label for="startDate" class="form-label">시작 날짜:</label>
+				    <input type="date" name="startDate" id="startDate" class="form-control" required>
+				</div>
+				<div class="mb-3">
+				    <label for="endDate" class="form-label">마감 날짜:</label>
+				    <input type="date" name="endDate" id="endDate" class="form-control" required>
+				</div>
                 <input type="hidden" name="courseId" value="<%= course_id %>">
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">등록</button>

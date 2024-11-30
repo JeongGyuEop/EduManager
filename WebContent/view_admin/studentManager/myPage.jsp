@@ -11,10 +11,94 @@
 <meta charset="UTF-8">
 <title>마이페이지</title>
 
+<!-- Bootstrap CSS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 <style>
-    .disabled-input {
-        background-color: #f0f0f0;
-        pointer-events: none;
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Arial', sans-serif;
+    }
+    #myPage-container {
+        max-width: 900px;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+        margin: 50px auto;
+    }
+    #myPage-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #4a90e2;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+    }
+    table th, table td {
+        border: 1px solid #ddd;
+        padding: 15px;
+        text-align: left;
+        font-size: 16px;
+    }
+    table th {
+        background-color: #4a90e2;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+    }
+    table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    table tr:hover {
+        background-color: #f1f1f1;
+    }
+    input[type="text"], input[type="password"], input[type="email"] {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0px 0px 5px rgba(74, 144, 226, 0.5);
+    }
+    input[readonly] {
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        cursor: not-allowed;
+        color: #6c757d;
+    }
+    input[readonly]:focus {
+        outline: none;
+        border-color: #ddd;
+        box-shadow: none;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 14px;
+        color: white;
+        background-color: #4a90e2;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #357abd;
+    }
+    .button-container {
+        text-align: center;
+        margin-top: 20px;
     }
 </style>
 
@@ -43,7 +127,7 @@
             return false;
         }
 
-        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        var emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
         if (email == null || email === "" || !emailPattern.test(email)) {
             alert("올바른 이메일 형식을 입력해주세요.");
             return false;
@@ -80,11 +164,7 @@
             input.setAttribute("readonly", true);
         });
     }
-</script>
 
-<!-- 다음 주소 API 스크립트 추가 -->
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script>
     function sample4_execDaumPostcode() {
         new daum.Postcode({
             oncomplete: function(data) {
@@ -109,53 +189,61 @@
 
 </head>
 <body>
-    <h2>학생 정보 수정</h2>
-    <%
-        StudentVo member = (StudentVo) request.getAttribute("member");
-        if (member != null) { 
-    %>
+    <div id="myPage-container">
+        <h2 id="myPage-title"><i class="fas fa-user-circle"></i> 마이페이지</h2>
+        <%
+            StudentVo member = (StudentVo) request.getAttribute("member");
+            if (member != null) { 
+        %>
         <form id="myForm" name="myForm" onsubmit="return updateInfo();">
             <table>
-                <tr><td><label>아 이 디</label></td>
+                <tr>
+                    <th>아이디</th>
                     <td><input type="text" name="user_id" value="<%= member.getUser_id() %>" readonly></td>
                 </tr>
-                <tr><td><label>이 름</label></td>
+                <tr>
+                    <th>이름</th>
                     <td><input type="text" name="user_name" value="<%= member.getUser_name() %>" readonly></td>
                 </tr>
-                <tr><td><label>주 소</label></td>
+                <tr>
+                    <th>주소</th>
                     <td>
                         <input type="text" name="address" id="address" value="<%= member.getAddress() %>" placeholder="우편번호로 검색 후 상세주소까지 입력">
                         <button type="button" onclick="sample4_execDaumPostcode()">주소 찾기</button>
                     </td>
                 </tr>
-                <tr><td><label>전 화 번 호</label></td>
+                <tr>
+                    <th>전화번호</th>
                     <td><input type="text" name="phone" value="<%= member.getPhone() %>" placeholder="전화번호"></td>
                 </tr>
-                <tr><td><label>이 메 일</label></td>
+                <tr>
+                    <th>이메일</th>
                     <td><input type="text" name="email" value="<%= member.getEmail() %>" placeholder="이메일"></td>
                 </tr>
-                <tr><td><label>현 재 비 밀 번 호</label></td>
+                <tr>
+                    <th>현재 비밀번호</th>
                     <td><input type="text" name="current_pw" value="<%= member.getUser_pw() %>" readonly></td>
                 </tr>
-                <tr><td><label>새 비 밀 번 호</label></td>
+                <tr>
+                    <th>새 비밀번호</th>
                     <td><input type="password" name="user_pw" placeholder="새 비밀번호"></td>
                 </tr>
-                <tr><td><label>새 비 밀 번 호 확 인</label></td>
+                <tr>
+                    <th>새 비밀번호 확인</th>
                     <td><input type="password" name="confirm_pw" required placeholder="새 비밀번호 확인"></td>
                 </tr>
-                <tr>
-                    <td colspan="2" style="text-align: center;">
-                        <input type="submit" value="수정">
-                    </td>
-                </tr>
             </table>
+            <div class="button-container">
+                <button type="submit">수정</button>
+            </div>
         </form>
-    <%
-        } else { 
-    %>
+        <%
+            } else { 
+        %>
         <p>회원 정보를 불러올 수 없습니다.</p>
-    <%
-        }
-    %>
+        <%
+            }
+        %>
+    </div>
 </body>
 </html>

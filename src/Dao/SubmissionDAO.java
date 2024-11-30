@@ -61,7 +61,7 @@ public class SubmissionDAO {
 		        pstmt.executeUpdate();
 
 		        // 자동 생성된 키(submission_id) 가져오기
-		        ResultSet rs = pstmt.getGeneratedKeys();
+		        rs = pstmt.getGeneratedKeys();
 		        if (rs.next()) {
 		            submissionId = rs.getInt(1);
 		        }

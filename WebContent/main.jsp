@@ -13,12 +13,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EveryOne</title>
-<%-- <link rel="stylesheet" type="text/css"
-	href="<%=contextPath%>/css/style.css">
-<link rel="stylesheet" type="text/css"
-	href="<%=contextPath%>/css/mobile.css"
-	media="screen and (max-width : 568px)">
-<script type="text/javascript" src="<%=contextPath%>/js/mobile.js"></script> --%>
 
 <style>
 html, body {
@@ -36,15 +30,6 @@ html, body {
 <body>
 
 	<c:set var="center" value="${requestScope.center}" />
-	<c:set var="top" value="${requestScope.top}" />
-
-
-	<%-- 메인페이지의 top 영역 (보류) - /view_start/starttop.jsp
-	
-		<c:if test="${top == null }">		
-			<c:set var="top" value="/view_start/starttop.jsp"/>
-		</c:if> 
-	--%>
 
 	<c:if test="${center == null }">
 		<c:set var="center" value="/view_start/startcenter.jsp" />
