@@ -420,7 +420,7 @@ public class ClassroomDAO {
 								+ "JOIN  user u ON s.user_id = u.user_id "
 								+ "LEFT JOIN majorinformation m ON s.majorcode = m.majorcode "
 								+ "LEFT JOIN grade g ON g.student_id = s.student_id AND g.course_id = e.course_id "
-								+ "WHERE e.course_id = ?;";
+								+ "WHERE e.course_id = ?";
 				
 					pstmt = con.prepareStatement(sql);
 					pstmt.setString(1, course_id_);
