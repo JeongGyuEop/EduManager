@@ -28,6 +28,7 @@ import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import Service.BoardService;
 import Service.ClassroomService;
 import Service.MenuItemService;
 import Service.StudentService;
@@ -42,10 +43,12 @@ import Vo.StudentVo;
 public class ClassroomController extends HttpServlet {
 	
 	ClassroomService classroomservice;
+	BoardService boardservice;
 	
 	@Override
 	public void init() throws ServletException {
 		classroomservice = new ClassroomService();
+		boardservice = new BoardService();
 	}
 	
 	// doGet doPost 메소드 오버라이딩
@@ -89,6 +92,9 @@ public class ClassroomController extends HttpServlet {
 	    	case "/classroom.bo": // 학생 계정의 강의실 화면 2단계 요청 주소를 받으면
 	    		
 	    		center = request.getParameter("classroomCenter");
+	    		
+	    		ArrayList<BoardVo> list2 = (ArrayList<BoardVo>) boardservice.serviceBoardList();
+				request.setAttribute("list", list2);
 	    		
 	    		request.setAttribute("classroomCenter", center);
 	    		
