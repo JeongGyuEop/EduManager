@@ -6,6 +6,7 @@
 
 <%
 	request.setCharacterEncoding("UTF-8");
+	String role = (String)session.getAttribute("role");
 %>
 <head>
 <!-- 스타일 및 Bootstrap, Font Awesome 연결 -->
@@ -18,7 +19,7 @@
 </head>
 <body>
 <!-- Footer 영역 -->
-<footer class="bg-dark text-light py-4">
+<footer class="bg-dark text-light py-4 mt-3">
 	<div class="container">
 		<div class="row">
 			<!-- 저작권 및 학교 이름 -->
@@ -31,14 +32,16 @@
 			<div class="col-md-4 text-center mb-3 mb-md-0">
 				<h5>빠른 링크</h5>
 				<ul class="list-unstyled">
-					<li><a href="${pageContext.request.contextPath}/home.jsp"
+					<li><a href="${pageContext.request.contextPath}/member/main.bo"
 						class="text-light text-decoration-none">홈</a></li>
-					<li><a href="${pageContext.request.contextPath}/notices.jsp"
-						class="text-light text-decoration-none">공지사항</a></li>
-					<li><a href="${pageContext.request.contextPath}/calendar.jsp"
-						class="text-light text-decoration-none">캘린더</a></li>
-					<li><a href="${pageContext.request.contextPath}/lecture.jsp"
-						class="text-light text-decoration-none">강의 관리</a></li>
+					
+					<li><a href="${pageContext.request.contextPath}/Board/boardCalendar.bo"
+						class="text-light text-decoration-none">학사일정</a></li>
+					<li><a href="${pageContext.request.contextPath}/common/welcomRoad.jsp"
+						class="text-light text-decoration-none"
+						onclick="window.open(this.href, 'popupWindow', 'width=441,height=781,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=yes,status=no'); return false;">
+						찾아오시는 길 </a>
+					</li>
 				</ul>
 			</div>
 
@@ -52,14 +55,9 @@
 					<i class="fas fa-envelope"></i> 이메일: info@yourschool.edu
 				</p>
 				<p>
-					<i class="fas fa-map-marker-alt"></i> 주소: 서울특별시 강남구 학사로 123
+					<i class="fas fa-map-marker-alt"></i> 주소: 부산광역시 부산진구 신천대로50번길 79
 				</p>
-				<p>
-					<a href="${pageContext.request.contextPath}/common/welcomRoad.jsp"
-						class="text-light text-decoration-none"
-						onclick="window.open(this.href, 'popupWindow', 'width=441,height=781,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=yes,status=no'); return false;">
-						찾아오시는 길 </a>
-				</p>
+				
 			</div>
 		</div>
 		<div class="row mt-3">

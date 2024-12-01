@@ -15,7 +15,29 @@
     String role = (String)session.getAttribute("role");
     String name = (String)session.getAttribute("name");
     
+    int totalRecord = 0;
+    int numPerPage = 5;
+    int pagePerBlock = 3;
+    int totalPage = 0;
+    int totalBlock = 0;
+    int nowPage = 0;
+    int nowBlock = 0;
+    int beginPerPage = 0;
 
+    ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
+    totalRecord = list.size();
+
+    if (request.getAttribute("nowPage") != null) {
+        nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
+    }
+
+    beginPerPage = nowPage * numPerPage;
+    totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
+    totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
+
+    if (request.getAttribute("nowBlock") != null) {
+        nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
+    }
 %>
     
 <!doctype html>
@@ -39,18 +61,28 @@
 	<link href="<%=contextPath %>/css/startpage.css" rel="stylesheet">
 	
 	<style>
+	/* 로그인 박스*/
+	.login-box{    
+	 	background-color: #f8f9fa; /* 배경색 */
+        border: 1px solid #dee2e6; /* 테두리 색상 */
+        border-radius: 10px; /* 모서리 둥글게 */
+        padding: 20px; /* 내부 여백 */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 박스 그림자 */
+	    height: 357px;
+    }
+	
     /* 공지사항 상자 스타일 */
     .notice-box {
         background-color: #f8f9fa; /* 배경색 */
         border: 1px solid #dee2e6; /* 테두리 색상 */
         border-radius: 10px; /* 모서리 둥글게 */
-        padding: 20px; /* 내부 여백 */
+        padding: 35px 20px; /* 내부 여백 */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 박스 그림자 */
     }
 
     /* 공지사항 제목 스타일 */
     .notice-box h2 {
-        font-size: 20px; /* 글자 크기 */
+        font-size: 40px; /* 글자 크기 */
         color: #333; /* 텍스트 색상 */
         border-bottom: 2px solid #dee2e6; /* 제목 하단 경계선 */
         padding-bottom: 10px; /* 제목 아래 여백 */
@@ -78,23 +110,13 @@
         text-align: center; /* 셀 텍스트 중앙 정렬 */
     }
 
-    .notice-table tbody tr:nth-child(odd) {
-        background-color: #f9f9f9; /* 홀수 행 배경색 */
-    }
-
-    .notice-table tbody tr:nth-child(even) {
-        background-color: #ffffff; /* 짝수 행 배경색 */
+    .notice-table tbody tr:nth-child{
+        background-color: #ffffff;
     }
 
     .notice-table tbody tr:hover {
         background-color: #f1f3f5; /* 마우스 오버 시 배경색 */
         cursor: pointer; /* 마우스 포인터 모양 */
-    }
-
-    /* 공지사항 링크 스타일 */
-    .notice-table a {
-        text-decoration: none; /* 링크 밑줄 제거 */
-        color: #007bff; /* 기본 링크 색상 */
     }
 
     .notice-table a:hover {
@@ -136,11 +158,8 @@
         color: #6c757d; /* 텍스트 색상 */
         font-size: 14px; /* 글꼴 크기 */
         padding: 20px; /* 내부 여백 */
+        
     }
-    
- 
-    
-    
     
 </style>
 	
@@ -253,8 +272,10 @@
 		        <jsp:include page="/common/calendar.jsp" />
 		    </div>
 		</div>
-		<div class="col-md-5" style="margin-bottom: 10px;"> <!-- 공지 사항 상자에 하단 여백 추가 -->
-			<div class="notice-box">
+		
+		<div class="col-md-5"> <!-- 공지 사항 상자에 하단 여백 추가 -->
+			
+			<div class="login-box">
          		<!-- 로그인 박스 -->
 	        	<div class="h-100 p-5 bg-light border rounded-3 d-flex flex-column justify-content-center">
 			<%  if(id == null) {  %>
@@ -270,46 +291,25 @@
 	                    </div>
 	                    <button type="submit" class="btn btn-primary w-100">로그인</button>
 	                </form>
-			<%  } else {  %>    
-					반갑습니다. <br> <%=name %> <%=role %>님!
+			<%  } else {  %>  
+				  
+				  	<h4><strong>반갑습니다. <br>  <%=name %> <%=role %>님!</strong></h4>
+	              
 			<%  }  %>     
 	            </div>
 	           </div>
 		   
-		          <br><br>
+		          <br>
 
 				<div class="notice-box">
 					<h2>공지 사항</h2>
-					<%
-            int totalRecord = 0;
-            int numPerPage = 5;
-            int pagePerBlock = 3;
-            int totalPage = 0;
-            int totalBlock = 0;
-            int nowPage = 0;
-            int nowBlock = 0;
-            int beginPerPage = 0;
-
-            ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
-            totalRecord = list.size();
-
-            if (request.getAttribute("nowPage") != null) {
-                nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
-            }
-
-            beginPerPage = nowPage * numPerPage;
-            totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
-            totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
-
-            if (request.getAttribute("nowBlock") != null) {
-                nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
-            }
-        %>
+				
 					<form name="frmRead">
-						<input type="hidden" name="notice_id"> <input
-							type="hidden" name="nowPage" value="<%=nowPage%>"> <input
-							type="hidden" name="nowBlock" value="<%=nowBlock%>">
+						<input type="hidden" name="notice_id">
+						 <input type="hidden" name="nowPage" value="<%=nowPage%>"> 
+						 <input type="hidden" name="nowBlock" value="<%=nowBlock%>">
 					</form>
+					
 					<div>
 						<table class="notice-table">
 							<thead>
@@ -330,7 +330,7 @@
                             if (i == totalRecord) break;
                             BoardVo vo = list.get(i);
                     %>
-								<tr>
+								<tr onclick="javascript:fnRead('<%=vo.getNotice_id()%>')">
 									<td><%=vo.getNotice_id()%></td>
 									<td>
 										<div class="reply-indent">
@@ -343,7 +343,7 @@
 												width="<%=width%>" height="15"> <img
 												src="<%=contextPath%>/common/notice/images/re.gif">
 											<% } %>
-											<a href="javascript:fnRead('<%=vo.getNotice_id()%>')"><%=vo.getTitle()%></a>
+											<%=vo.getTitle()%>
 										</div>
 									</td>
 									<td><%=vo.getUserName().getUser_name()%></td>

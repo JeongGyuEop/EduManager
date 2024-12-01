@@ -92,10 +92,10 @@
     <body class="sb-nav-fixed">
         <!-- 상단 네비게이션 -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand ps-3" href="#">강의실</a>
-        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
+         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
             <i class="fas fa-bars"></i>
         </button>
+        <a class="navbar-brand ps-3" href="#">강의실</a>
         <ul class="navbar-nav ms-auto d-flex align-items-center">
             <li class="nav-item">
                 <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
