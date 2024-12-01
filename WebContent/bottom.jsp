@@ -7,9 +7,18 @@
 <%
 	request.setCharacterEncoding("UTF-8");
 %>
+<head>
+<!-- 스타일 및 Bootstrap, Font Awesome 연결 -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 
+</head>
+<body>
 <!-- Footer 영역 -->
-<footer class="bg-dark text-light py-4 mt-5">
+<footer class="bg-dark text-light py-4">
 	<div class="container">
 		<div class="row">
 			<!-- 저작권 및 학교 이름 -->
@@ -61,9 +70,4 @@
 	</div>
 </footer>
 
-<!-- 스타일 및 Bootstrap, Font Awesome 연결 -->
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+</body>

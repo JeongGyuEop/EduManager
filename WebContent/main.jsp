@@ -41,7 +41,7 @@ html, body {
 				<td height="10%"><jsp:include page="top.jsp" /></td>
 			</tr>
 			<tr>
-				<td height="70%" align="center"><jsp:include page="${center}" />
+				<td height="100vh" align="center"><jsp:include page="${center}" />
 				</td>
 			</tr>
 			<tr align="left">

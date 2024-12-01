@@ -56,9 +56,6 @@
     table tr:nth-child(even) {
         background-color: #f9f9f9;
     }
-    table tr:hover {
-        background-color: #f1f1f1;
-    }
     input[type="text"], input[type="password"], input[type="email"] {
         width: 100%;
         padding: 10px;
