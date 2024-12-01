@@ -12,7 +12,7 @@
 <title>마이페이지</title>
 
 <!-- Bootstrap CSS -->
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -27,7 +27,7 @@
         padding: 30px;
         border-radius: 12px;
         box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
-        margin: 50px auto;
+        margin: 50px auto; 
     }
     #myPage-title {
         font-size: 28px;
@@ -38,12 +38,12 @@
     }
     table {
         width: 100%;
-        margin: 20px 0;
+        margin: 0;
         border-collapse: collapse;
     }
     table th, table td {
         border: 1px solid #ddd;
-        padding: 15px;
+        padding: 0px;
         text-align: left;
         font-size: 16px;
     }
@@ -100,6 +100,8 @@
         text-align: center;
         margin-top: 20px;
     }
+    
+   
 </style>
 
 
@@ -230,7 +232,7 @@ function isNumber(event) {
 
 </head>
 <body>
- <div id="myPage-container">
+ <div id="myPage-container"> 
 
     <h2  id="myPage-title"><i class="fas fa-user-circle"></i>학생 정보 수정</h2>
     <%
