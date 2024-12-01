@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.el.ListELResolver;
 import javax.servlet.RequestDispatcher;
@@ -671,8 +673,30 @@ public class ClassroomController extends HttpServlet {
 
 	    //==========================================================================================	  
 
+	    	case "/allAssignNotice.do":
 	    		
+	    		// 세션에서 student_id 가져오기
+	            session = request.getSession();
+	            studentId = (String) session.getAttribute("student_id");
+
+	            // DAO를 통해 데이터 가져오기
+	            Map<String, List> allAssignNotice = classroomservice.getAssignmentsAndNotices(studentId);
+
+	            // JSON 응답
+	            response.setContentType("application/json");
+	            
+	            center = "/view_classroom/studentMyCourse.jsp";
+	            
+	    		request.setAttribute("classroomCenter", center);
+	            request.setAttribute("allAssignNotice", allAssignNotice);
+	            
 	    		
+	            nextPage="/view_classroom/classroom.jsp";
+	            
+	    		break;
+	    	    
+	    //==========================================================================================	  
+
 	    	default:
 	    		break;
 	    }

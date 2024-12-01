@@ -11,7 +11,18 @@ public class AssignmentVo {
 
 	// 기본 생성자
     public AssignmentVo() {}
+    @Override
+    public String toString() {
+        return "AssignmentVo {" +
+                "assignmentId=" + assignmentId +
+                ", course=" + (course != null ? course.toString() : "null") +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", period=" + (period != null ? period.toString() : "null") +
+                '}';
+    }
 
+    
     // 매개변수 생성자
     public AssignmentVo(int assignmentId, CourseVo course, String title, String description) {
         this.assignmentId = assignmentId;

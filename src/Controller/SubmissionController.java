@@ -101,7 +101,7 @@ public class SubmissionController extends HttpServlet {
 	    		
 	    //==========================================================================================
 	    	    
-	    	case "/uploadAssignment.do": //  2단계 요청 주소를 받으면
+	    	case "/uploadAssignment.do": // 학생이 파일을 제출하기 위한 2단계 요청 주소를 받으면
 	    		
 	    		String uploadPath = getServletContext().getRealPath("") + File.separator + "submitUploads";
 	    		File uploadDir = new File(uploadPath);
@@ -140,7 +140,7 @@ public class SubmissionController extends HttpServlet {
 	    		
 	    //==========================================================================================
 	    		
-	    	case "/getSubmittedAssignments.do": 
+	    	case "/getSubmittedAssignments.do":  // 학생이 제출한 과제의 정보를 조회하기 위한 2단계 요청 주소
 	    	    studentId = (String) session.getAttribute("student_id"); // 학생 ID
 	    	    assignment_id = request.getParameter("assignmentId");
 	    	    
@@ -174,7 +174,7 @@ public class SubmissionController extends HttpServlet {
 	    		
 	    //==========================================================================================
 	    		
-	    	case "/downloadAssignment.do":
+	    	case "/downloadAssignment.do": // 제출한 파일을 다운로드하기 위한 2단계 요청 주소
 	    		String fileId = request.getParameter("fileId"); // fileId를 파라미터로 받음
 
 	    	    // 파일 정보 조회 (fileId를 사용하여 데이터베이스에서 조회)
@@ -210,7 +210,7 @@ public class SubmissionController extends HttpServlet {
 	    		
 	    //==========================================================================================
 	    		
-	    	case "/deleteFile.do": // 
+	    	case "/deleteFile.do": // 학생이 제출한 파일 삭제하기 위한 2단계 요청 주소
 	    	    fileId = request.getParameter("fileId"); // 클라이언트에서 전달된 파일 ID
 	    	    // 파일 정보 조회 및 권한 확인
 	    	    SubmissionVo fileData = submissionservice.getFileById(fileId);

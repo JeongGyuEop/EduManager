@@ -52,7 +52,7 @@ public class MenuItemService {
         
         // 학생 메뉴
         roleMenuMap.put("학생", Arrays.asList(
-            new MenuItemVo("강의실", "/classroom/classroom.bo?classroomCenter=studentMyCourse.jsp"),
+            new MenuItemVo("강의실", "/classroom/allAssignNotice.do"),
             new MenuItemVo("마이페이지", "/student/myPage.bo?center=/view_admin/studentManager/myPage.jsp"),
             new MenuItemVo("공지사항", "/Board/list.bo?center=/common/notice/list.jsp"),
             new MenuItemVo("학사일정", "/Board/boardCalendar.bo"),
