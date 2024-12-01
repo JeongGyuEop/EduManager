@@ -95,14 +95,20 @@
          <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
             <i class="fas fa-bars"></i>
         </button>
-        <a class="navbar-brand ps-3" href="#">강의실</a>
+        
+        <% if(role.equals("교수")){ %>
+        	<a class="navbar-brand ps-3" href="<%=contextPath %>/classroom/classroom.bo?classroomCenter=professorMyCourse.jsp">강의실</a>
+        <% }else{ %>
+    		<a class="navbar-brand ps-3" href="<%=contextPath %>/classroom/allAssignNotice.do">강의실</a>
+        <% } %>
+        
         <ul class="navbar-nav ms-auto d-flex align-items-center">
             <li class="nav-item">
                 <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
             </li>
             <li class="nav-item">
 			    <!-- 강의실 나가기 버튼 -->
-			     <button class="btn btn-light me-2" onclick="location.href='<%=contextPath%>/member/main.bo?center=view_professor/professorHome.jsp'">
+			     <button class="btn btn-light me-2" onclick="location.href='<%=contextPath%>/member/main.bo'">
 			        <i class="fas fa-door-open"></i> 강의실 나가기
 			    </button>
 			</li>
