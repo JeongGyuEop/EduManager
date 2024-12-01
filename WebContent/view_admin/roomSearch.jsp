@@ -118,8 +118,12 @@
     </style>
 </head>
 <body>
+		<!-- 페이지 헤더 -->
+	    <div class="text-center mb-4 mt-5">
+	        <h1 class="display-6"><i class="fas fa-book" style="color: #4a90e2"></i> 강의실 목록</h1> <!-- 아이콘 변경 -->
+	        <p class="lead">현재 강의실을 확인하실 수 있습니다.</p>
+	    </div>
     <div id="classroom-list-container">
-        <h2 id="classroom-list-title"><i class="fas fa-chalkboard-teacher"></i> 강의실 목록</h2>
         <table id="classroom-list-table">
             <thead>
                 <tr id="table-header">

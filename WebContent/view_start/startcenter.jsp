@@ -216,32 +216,42 @@
 					<!-- 슬라이드 이미지 영역 -->
 			<div class="col-md-12">
 			    <!-- 고정된 크기 설정 (높이를 줄여서 세로 크기 조정) -->
-			    <div class="p-5 bg-body-tertiary rounded-3" style="height: 450px;">
-			        <div id="imageCarousel" class="carousel slide h-100" data-bs-ride="carousel" style="height: 100%;">
-			            <div class="carousel-inner h-100">
-			                <!-- 첫 번째 슬라이드 -->
-			                <div class="carousel-item active h-100">
-			                    <img src="<%= contextPath %>/img/background/poster1.png" class="d-block w-100 h-100 object-fit-cover" alt="Poster 1">
-			                </div>
-			                <!-- 두 번째 슬라이드 -->
-			                <div class="carousel-item h-100">
-			                    <img src="<%= contextPath %>/img/background/poster2.png" class="d-block w-100 h-100 object-fit-cover" alt="Poster 2">
-			                </div>
-			                <!-- 세 번째 슬라이드 -->
-			                <div class="carousel-item h-100">
-			                    <img src="<%= contextPath %>/img/background/poster3.png" class="d-block w-100 h-100 object-fit-cover" alt="Poster 3">
-			                </div>
-			            </div>
-			            <!-- 이전/다음 버튼 -->
-			            <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
-			                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-			                <span class="visually-hidden">Previous</span>
-			            </button>
-			            <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
-			                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-			                <span class="visually-hidden">Next</span>
-			            </button>
-			        </div>
+			    <div class="p-5 bg-body-tertiary rounded-3" >
+			        <div id="imageCarousel" class="carousel slide h-100" data-bs-ride="carousel" style="height: 100%; min-height: 400px;">
+				    <div class="carousel-inner h-100">
+				        <!-- 첫 번째 슬라이드 -->
+				        <div class="carousel-item active h-100">
+				            <img src="<%= contextPath %>/img/background/poster1.png" 
+				                 class="d-block w-100" 
+				                 alt="Poster 1" 
+				                 style="max-height: 400px; height: auto;">
+				        </div>
+				        <!-- 두 번째 슬라이드 -->
+				        <div class="carousel-item h-100">
+				            <img src="<%= contextPath %>/img/background/poster2.png" 
+				                 class="d-block w-100" 
+				                 alt="Poster 2" 
+				                 style="max-height: 400px; height: auto;">
+				        </div>
+				        <!-- 세 번째 슬라이드 -->
+				        <div class="carousel-item h-100">
+				            <img src="<%= contextPath %>/img/background/poster3.png" 
+				                 class="d-block w-100" 
+				                 alt="Poster 3" 
+				                 style="max-height: 400px; height: auto;">
+				        </div>
+				    </div>
+				     <!-- 이전/다음 버튼 -->
+					<button class="carousel-control-prev btn btn-dark p-2" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+					    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					    <span class="visually-hidden">Previous</span>
+					</button>
+					<button class="carousel-control-next btn btn-dark  p-2" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+					    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+					    <span class="visually-hidden">Next</span>
+					</button>
+				     
+				</div>
 			    </div>
 			</div>
 		</div>

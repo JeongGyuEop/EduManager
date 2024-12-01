@@ -16,11 +16,19 @@
             display: flex;
             gap: 10px;
         }
-
+		
+		 .form-container {
+            background: #ffffff;
+            padding: 30px;
+            margin: 0px auto 50px ;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
          /* 핸드폰 프레임 색상 변경 */
         .mobile-frame {
-            width: 500px;
-            height: 700px;
+            width: 450px;
+            height: 650px;
             border: 16px solid #555; /* 색상 변경 */
             border-top-width: 60px;
             border-bottom-width: 60px;
@@ -45,7 +53,7 @@
 
         #store-list {
             width: calc(100% - 520px);
-            height: 700px;
+            height: 650px;
             overflow-y: auto;
             padding: 10px;
             border: 1px solid #ddd;
@@ -75,11 +83,13 @@
 </head>
 <body>
     <div class="container">
-            <!-- 페이지 헤더 -->
+        <!-- 페이지 헤더 -->
         <div class="text-center mb-4 mt-5">
-            <h1 class="display-6"><i class="fas fa-book"></i> 전국 중고 서점</h1> <!-- 아이콘 변경 -->
+            <h1 class="display-6"><i class="fas fa-book"  style="color: #4a90e2"></i> 전국 중고 서점</h1> <!-- 아이콘 변경 -->
             <p class="lead">전국에 있는 중고 서점을 찾아볼 수 있습니다.</p>
         </div>
+        
+        <div class="form-container">
 
         <!-- 지도와 리스트 -->
         <div id="content" class="d-flex gap-3">
@@ -112,6 +122,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Bootstrap과 jQuery JS 추가 -->

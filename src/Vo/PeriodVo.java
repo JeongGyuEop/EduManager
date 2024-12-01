@@ -12,6 +12,20 @@ public class PeriodVo {
 	private String description;
 	private Timestamp createdAt;
 
+	@Override
+	public String toString() {
+	    return "PeriodVo {" +
+	            "periodId=" + periodId +
+	            ", type='" + type + '\'' +
+	            ", referenceId=" + referenceId +
+	            ", startDate=" + (startDate != null ? startDate.toString() : "null") +
+	            ", endDate=" + (endDate != null ? endDate.toString() : "null") +
+	            ", description='" + description + '\'' +
+	            ", createdAt=" + (createdAt != null ? createdAt.toString() : "null") +
+	            '}';
+	}
+
+	
 	// Getters and Setters
 	public int getPeriodId() {
 		return periodId;

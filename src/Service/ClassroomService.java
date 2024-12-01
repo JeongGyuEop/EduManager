@@ -2,7 +2,10 @@ package Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.json.simple.JSONArray;
 
 import Dao.ClassroomDAO;
 import Vo.BoardVo;
@@ -174,6 +177,22 @@ public class ClassroomService {
 	// 수강신청 기간 입력
 	public boolean setEnrollmentPeriod(Timestamp startTimestamp, Timestamp endTimestamp, String description) {
 	    return classroomdao.insertEnrollmentPeriod(startTimestamp, endTimestamp, description); // DAO 호출
+	}
+
+	//----------
+	// 학생 강의실 홈에서 학생이 수강하는 모든 강의의 과제와 공지사항을 조회하기 위해 DAO 호출
+	public Map<String, List> getAssignmentsAndNotices(String studentId) {
+	    Map<String, List> result = new HashMap<>();
+	    List assignments = new ArrayList();
+	    List notices = new ArrayList();
+	    
+	    assignments = classroomdao.getAssignments(studentId);
+	    notices = classroomdao.getNotices(studentId);
+
+	    result.put("assignments", assignments);
+	    result.put("notices", notices);
+	    
+	    return result;
 	}
 
 
