@@ -175,7 +175,7 @@
 
         function finishEnrollment() {
             alert("수강신청이 종료되었습니다!");
-            window.location.href = "<%=contextPath%>/classroom/classroom.bo?classroomCenter=/view_classroom/studentMyCourse.jsp";
+            window.location.href = "<%=contextPath%>/classroom/allAssignNotice.do";
         }
     </script>
 </body>
