@@ -79,13 +79,14 @@
             if (assignments != null && !assignments.isEmpty()) {
                 for (Object obj : assignments) {
                     AssignmentVo assignment = (AssignmentVo) obj;
+                    
 %>
                             <tr>
                                 <td><%= assignment.getCourse().getCourse_name() %></td>
                                 <td><%= assignment.getTitle() %></td>
                                 <td><%= assignment.getDescription() %></td>
-                                <td><%= assignment.getPeriod().getStartDate() %></td>
-                                <td><%= assignment.getPeriod().getEndDate() %></td>
+                                <td><%= assignment.getPeriod().getStartDate().toString().substring(0, assignment.getPeriod().getStartDate().toString().lastIndexOf("."))%></td>
+                                <td><%= assignment.getPeriod().getEndDate().toString().substring(0, assignment.getPeriod().getStartDate().toString().lastIndexOf(".")) %></td>
                             </tr>
 <%
                 }
