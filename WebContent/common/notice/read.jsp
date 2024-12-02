@@ -58,12 +58,13 @@
         }
 
         /* 버튼 그룹 스타일 */
-        .btn-group {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
+		.btn-group {
+		    display: flex !important; /* 우선순위 높이기 */
+		    justify-content: center !important; /* 가운데 정렬 */
+		    gap: 10px;
+		    margin-top: 20px;
+		}
+
 
         /* 공통 버튼 스타일 */
         .btn {
@@ -137,9 +138,9 @@
         </div>
         <!-- 버튼 그룹 -->
         <div class="btn-group">
-            <input type="button" id="update" value="수정" class="btn btn-primary"> <!-- 수정 버튼 -->
-            <input type="button" id="delete" onclick="javascript:deletePro('<%=notice_id%>');" value="삭제" class="btn btn-danger"> <!-- 삭제 버튼 -->
-            <input type="button" id="reply" value="답변" class="btn btn-secondary"> <!-- 답변 버튼 -->
+            <input type="button" id="update" value="수정" class="btn btn-primary" style="visibility: hidden;" > <!-- 수정 버튼 -->
+            <input type="button" id="delete" onclick="javascript:deletePro('<%=notice_id%>');" value="삭제" class="btn btn-danger" style="visibility: hidden;"> <!-- 삭제 버튼 -->
+            <input type="button" id="reply" value="답변" class="btn btn-secondary" style="visibility: hidden;"> <!-- 답변 버튼 -->
             <input type="button" id="list" value="목록" class="btn btn-light"> <!-- 목록 버튼 -->
         </div>
     </form>
