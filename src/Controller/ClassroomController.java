@@ -516,40 +516,80 @@ public class ClassroomController extends HttpServlet {
 		        return; 
 	    		
 	    //==========================================================================================
-		
-	    	case "/course_submit.bo": //수강신청 전체 과목 조회
-	    		
-	    		ArrayList<CourseVo> courseList1 = new ArrayList<CourseVo>();
-	    		ArrayList<CourseVo> courseList2 = new ArrayList<CourseVo>();
-	 
-	    		String studentId = (String)session.getAttribute("student_id");
-	    		
-	    		courseList1 = classroomservice.serviceCourseList(studentId);
-	    		courseList2 = classroomservice.serviceCourseSelect(studentId);
-	    		
-	    		//수강신청 기간인지 확인
-	    		boolean isEnrollmentPeriod = classroomservice.isEnrollmentPeriod();
-	    		
-	    		// 수강신청 기간 정보 조회
+	    	case "/course_submit.bo": // 수강신청 전체 과목 조회 요청 처리
+
+	    	    // 수강신청 가능한 과목 목록을 담을 리스트
+	    	    ArrayList<CourseVo> courseList1 = new ArrayList<>();
+	    	    // 이미 수강신청한 과목 목록을 담을 리스트
+	    	    ArrayList<CourseVo> courseList2 = new ArrayList<>();
+
+	    	    // 세션에서 현재 로그인한 학생의 ID를 가져옴
+	    	    String studentId = (String) session.getAttribute("student_id");
+
+	    	    // 현재 학생이 신청 가능한 과목 목록을 서비스에서 조회
+	    	    courseList1 = classroomservice.serviceCourseList(studentId);
+	    	    // 현재 학생이 이미 선택한 과목 목록을 서비스에서 조회
+	    	    courseList2 = classroomservice.serviceCourseSelect(studentId);
+
+	    	    // 수강신청 기간인지 확인하는 메서드 호출 (현재 날짜와 수강신청 기간 비교)
+	    	    boolean isEnrollmentPeriod = classroomservice.isEnrollmentPeriod();
+
+	    	    // 수강신청 기간 정보(시작 날짜와 종료 날짜)를 조회
 	    	    LocalDateTime[] enrollmentPeriod = classroomservice.getEnrollmentPeriod();
-	    		
-	    	    if (enrollmentPeriod != null) {
-	    	        request.setAttribute("startDate", enrollmentPeriod[0]); // 시작 날짜
-	    	        request.setAttribute("endDate", enrollmentPeriod[1]);   // 종료 날짜
+
+	    	    // 수강신청 기간 정보가 없거나 유효하지 않거나 현재가 수강신청 기간이 아닌 경우
+	    	    if (enrollmentPeriod == null || enrollmentPeriod[0] == null || enrollmentPeriod[1] == null || !isEnrollmentPeriod) {
+	    	        // 응답 콘텐츠 타입을 HTML로 설정하고 UTF-8로 인코딩
+	    	        response.setContentType("text/html; charset=UTF-8");
+	    	        
+	    	        // PrintWriter 객체를 가져와 브라우저에 출력 준비
+	    	        out = response.getWriter();
+	    	        
+	    	        // JavaScript로 경고 메시지를 출력
+	    	        out.print("<script>");
+	    	        
+	    	        // 수강신청 기간 정보가 없거나 시작/종료 날짜가 null인 경우
+	    	        if (enrollmentPeriod == null || enrollmentPeriod[0] == null || enrollmentPeriod[1] == null) {
+	    	            // 경고창에 관리자에게 문의하라는 메시지를 출력
+	    	            out.print("alert('수강신청 기간이 설정되지 않았습니다. 관리자에게 문의하세요.');");
+	    	        } else {
+	    	            // 수강신청 기간은 있지만 현재가 수강신청 기간이 아닌 경우
+	    	            out.print("alert('수강신청 기간이 아닙니다.');");
+	    	        }
+	    	        
+	    	        // 이전 페이지로 돌아가는 JavaScript 명령어를 출력
+	    	        out.print("history.back();");
+	    	        
+	    	        // JavaScript 종료 태그
+	    	        out.print("</script>");
+	    	        
+	    	        // 버퍼에 출력된 내용을 클라이언트로 전송
+	    	        out.flush();
+	    	        
+	    	        // PrintWriter 객체 닫기
+	    	        out.close();
+	    	        
+	    	        // 현재 메서드 종료, 이후 로직 실행하지 않음
+	    	        return;
 	    	    }
-	    	    
-	    	    
-	    		center = request.getParameter("classroomCenter");
-	    		
-	    		request.setAttribute("courseList", courseList1);
-	    		request.setAttribute("courseList2", courseList2);
-	    		request.setAttribute("isEnrollmentPeriod", isEnrollmentPeriod);
-	    		request.setAttribute("classroomCenter", center);
-	    		
-				nextPage = "/view_classroom/classroom.jsp";
-	    		
-	    		
-	    		break;
+
+	    	    // 수강신청 가능한 과목 목록을 JSP로 전달
+	    	    request.setAttribute("courseList", courseList1);
+	    	    // 이미 수강신청한 과목 목록을 JSP로 전달
+	    	    request.setAttribute("courseList2", courseList2);
+	    	    // 수강신청 시작 날짜를 JSP로 전달
+	    	    request.setAttribute("startDate", enrollmentPeriod[0]);
+	    	    // 수강신청 종료 날짜를 JSP로 전달
+	    	    request.setAttribute("endDate", enrollmentPeriod[1]);
+	    	    // 현재가 수강신청 기간인지 여부를 JSP로 전달
+	    	    request.setAttribute("isEnrollmentPeriod", isEnrollmentPeriod);
+
+	    	    // 이동할 JSP 경로를 설정 (수강신청 화면)
+	    	    nextPage = "/view_classroom/classroom.jsp";
+
+	    	    // case 블록 종료
+	    	    break;
+
 		        
 		//==========================================================================================
 			    

@@ -946,7 +946,10 @@ public class ClassroomDAO {
 
 	//수강신청 기간 조회
 	public LocalDateTime[] getEnrollmentPeriod() {
-		
+
+        LocalDateTime startDate = null;
+        LocalDateTime endDate = null;
+        
 		String query = "SELECT start_date, end_date FROM period_management WHERE type = '수강신청' ORDER BY created_at DESC LIMIT 1";
 
 //	    String query = "SELECT start_date, end_date FROM period_management WHERE type = '수강신청' ORDER BY start_date DESC LIMIT 1";
@@ -954,10 +957,9 @@ public class ClassroomDAO {
 	        con = ds.getConnection();
 	        pstmt = con.prepareStatement(query);
 	        rs = pstmt.executeQuery();
-
 	        if (rs.next()) {
-	            LocalDateTime startDate = rs.getTimestamp("start_date").toLocalDateTime();
-	            LocalDateTime endDate = rs.getTimestamp("end_date").toLocalDateTime();
+	            startDate = rs.getTimestamp("start_date").toLocalDateTime();
+	            endDate = rs.getTimestamp("end_date").toLocalDateTime();
 	            return new LocalDateTime[]{startDate, endDate};
 	        }
 	    } catch (Exception e) {
@@ -965,7 +967,7 @@ public class ClassroomDAO {
 	    } finally {
 	        closeResource();
 	    }
-	    return null;
+	    return new LocalDateTime[]{startDate, endDate};
 	}
 
 

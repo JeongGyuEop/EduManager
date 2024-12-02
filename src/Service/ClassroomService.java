@@ -161,12 +161,15 @@ public class ClassroomService {
 	    System.out.println(period[0]);
 	    System.out.println(period[1]);
 	    
-	    if (period != null) {
-	        LocalDateTime now = LocalDateTime.now(); // 현재 날짜
-	        return now.isAfter(period[0]) && now.isBefore(period[1]); // 현재 날짜가 수강신청 기간 안에 있는지 
-	        
+	    if (period == null || period[0] == null || period[1] == null) {
+	        return false; // 기간 정보가 없으면 false 반환
 	    }
-	    return false; // 기간 정보가 없으면 false 반환
+
+	    LocalDateTime now = LocalDateTime.now(); // 현재 날짜
+	    return now.isAfter(period[0]) && now.isBefore(period[1]); // 현재 날짜가 수강신청 기간 안에 있는지
+
+	    
+	    
 	}
 
 	//수강신청 기간 조회
