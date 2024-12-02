@@ -56,6 +56,9 @@
     table tr:nth-child(even) {
         background-color: #f9f9f9;
     }
+    table tr:hover {
+        background-color: #f1f1f1;
+    }
     input[type="text"], input[type="password"], input[type="email"] {
         width: 100%;
         padding: 10px;
@@ -127,7 +130,7 @@
             return false;
         }
 
-        var emailPattern = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email == null || email === "" || !emailPattern.test(email)) {
             alert("올바른 이메일 형식을 입력해주세요.");
             return false;
@@ -204,7 +207,11 @@ function isNumber(event) {
             input.setAttribute("readonly", true);
         });
     }
+</script>
 
+<!-- 다음 주소 API 스크립트 추가 -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
     function sample4_execDaumPostcode() {
         new daum.Postcode({
             oncomplete: function(data) {
@@ -253,7 +260,7 @@ function isNumber(event) {
                         <button type="button" onclick="sample4_execDaumPostcode()">주소 찾기</button>
                     </td>
                 </tr>
-                                
+                
                 <tr><td><label>전 화 번 호</label></td> <!--전화번호는 숫자만 가능하고 최대 11자리 까지 가능하게 설정. 더 입력하려하면 알림창 뜨게 설정  -->
                     <td><input type="text" name="phone" value="<%= member.getPhone() %>" placeholder="전화번호"  onkeypress="return isNumber(event);" oninput="checkPhoneLength(this);"></td>
                 </tr>
@@ -279,11 +286,10 @@ function isNumber(event) {
                 <button type="submit">수정</button>
             </div>
         </form>
-        <%
-            } else { 
-        %>
+    <%
+        } else { 
+    %>
         <p>회원 정보를 불러올 수 없습니다.</p>
-
     <%
         }
     %>

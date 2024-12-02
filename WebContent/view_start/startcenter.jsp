@@ -25,20 +25,20 @@
     int beginPerPage = 0;
 
     ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
-    
-	    totalRecord = list.size();
-	
-	    if (request.getAttribute("nowPage") != null) {
-	        nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
-	    }
-	
-	    beginPerPage = nowPage * numPerPage;
-	    totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
-	    totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
-	
-	    if (request.getAttribute("nowBlock") != null) {
-	        nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
-	    }
+
+    totalRecord = list.size();
+
+    if (request.getAttribute("nowPage") != null) {
+        nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
+    }
+
+    beginPerPage = nowPage * numPerPage;
+    totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
+    totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
+
+    if (request.getAttribute("nowBlock") != null) {
+        nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
+    }
 %>
     
 <!doctype html>
@@ -77,7 +77,7 @@
         background-color: #f8f9fa; /* 배경색 */
         border: 1px solid #dee2e6; /* 테두리 색상 */
         border-radius: 10px; /* 모서리 둥글게 */
-        padding: 35px 20px; /* 내부 여백 */
+        padding: 27.5px 20px; /* 내부 여백 */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 박스 그림자 */
     }
 

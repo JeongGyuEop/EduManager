@@ -728,8 +728,6 @@ public class ClassroomController extends HttpServlet {
 	            // DAO를 통해 데이터 가져오기
 	            Map<String, List> allAssignNotice = classroomservice.getAssignmentsAndNotices(studentId);
 
-	            // JSON 응답
-	            response.setContentType("application/json");
 	            
 	            center = "/view_classroom/studentMyCourse.jsp";
 	            

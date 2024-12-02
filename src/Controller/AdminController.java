@@ -49,7 +49,7 @@ public class AdminController extends HttpServlet {
 	request.setCharacterEncoding("UTF-8");
 	response.setContentType("text/html;charset=utf-8");
 	// 웹브라우저로 출력할 출력 스트림 생성
-	PrintWriter out = response.getWriter();
+	PrintWriter out;
 
 	// 조건에 따라서 포워딩 또는 보여줄 VIEW주소 경로를 저장할 변수
 	String nextPage = null;
@@ -147,14 +147,18 @@ public class AdminController extends HttpServlet {
 			// join.jsp파일과 연결된 join.js파일에 작성해 놓은
 			// $.ajax메소드 내부의
 			// success:function의 data매개변수로 웹브라우저를 거쳐 보냅니다!
+			out = response.getWriter();
 			if (result_ == true) {
 				out.write("not_usable");
+				out.flush();
+				out.close();
 				return;
 			} else if (result_ == false) {
 				out.write("usable");
+				out.flush();
+				out.close();
 				return;
 			}
-			break;
 
 		// 관리자 특정조회
 		case "/managerquiry.do":
