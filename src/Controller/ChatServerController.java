@@ -36,14 +36,12 @@ public class ChatServerController {
 	//클라이언트가 접속할때 자동으로 호출되는 메서드 정의
 	 @OnOpen
 	    public void onOpen(Session session) throws IOException {
-	        // HTTP 세션 가져오기
 	  
-
 	        clients.add(session);
 	        System.out.println("웹 소켓 연결:" + session.getId() + " 사용자: " + SessionUtil.name);
 
 	        // 사용자 입장 메시지 전송
-	        broadcastMessage("System", SessionUtil.name + "님이 들어오셨습니다.");
+	   broadcastMessage("System", SessionUtil.name + "님이 들어오셨습니다.");
 	    }
 	
 	//클라이언트로 부터 메세지를 받았을때 자동으로 호출되는 메서드 정의 
@@ -69,9 +67,9 @@ public class ChatServerController {
 	public void onClose(Session session) throws IOException {
 		//연결이 종료된 클라이언트의 세션영역을 Set에서 제거
 		clients.remove(session);
-		System.out.println("웹소켓 종료 : " + session.getId());//종료 로그 출력
+		System.out.println("웹소켓 종료 : " + SessionUtil.name);//종료 로그 출력
 		// 사용자 퇴장을 알리는 메시지를 다른 클라이언트에게 전송
-        broadcastMessage("System", "사용자 " + session.getId() + "님이 퇴장하셨습니다.");
+        broadcastMessage("System", SessionUtil.name + "님이 퇴장하셨습니다.");
 	}
 	
 	//에러가 발생했을때 자동으로 호출되는 메서드

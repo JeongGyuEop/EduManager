@@ -20,8 +20,9 @@
   
   <context-param>
   	<param-name>CHAT_ADDR</param-name>
-  	<param-value>ws://localhost:8090/EduManager</param-value>
+  	<param-value>ws://192.168.0.22:8090/EduManager</param-value>
   </context-param>
+  	<!-- 주소에 맞게 ip입력할 것 -->
   
 </web-app>
 

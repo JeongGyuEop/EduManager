@@ -90,15 +90,15 @@
         
         function chatWinOpen() {
             // 팝업 창 크기 설정
-            var width = 320;
-            var height = 400;
+            var width = 395;
+            var height = 445;
 
          	// 팝업 창 위치 설정 (우측 하단)
             var left = window.screen.availWidth - width - 120;  // 화면의 오른쪽 끝에서 20px 안쪽
             var top = window.screen.availHeight - height - 150; // 화면의 아래쪽 끝에서 20px 안쪽
 
             // 팝업 창 열기
-            var popup = window.open("<%=contextPath%>/common/ChatWindow.jsp", "ChatWindow", "width=" + width + ", height=" +height + ", left=" + left +" , top=" + top);
+            var popup = window.open("<%=contextPath%>/common/ChatWindow.jsp", "ChatWindow", "width=" + width + ",height=" + height + ",left=" + left + ",top=" + top + ",resizable=no,scrollbars=no");
 
             // 팝업 창이 제대로 열리지 않을 경우 알림
             if (!popup || popup.closed || typeof popup.closed === 'undefined') {

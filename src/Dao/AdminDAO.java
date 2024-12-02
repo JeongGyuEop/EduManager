@@ -120,19 +120,16 @@ public class AdminDAO {
 		try {
 			con = ds.getConnection(); // DB연결
 
-			String sql = "SELECT CASE WHEN COUNT(*) = 1 THEN 'true' ELSE 'false' END AS result FROM user WHERE user_id = ?";
+			String sql = "SELECT user_id FROM user WHERE user_id = ?";
 
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, "user_id");
+			pstmt.setString(1, user_id);
 
 			// select전체 문장을 DB에 전송하여 실행한 조회된 결과데이터를 ResultSet임시객체에 담아 반환
 			rs = pstmt.executeQuery();
 
 			if (rs.next()) {// 조회된 제목 행의 커서(화살표)가 조회된 행 줄로 내려왔을때 있으면?
-
-				String value = rs.getString("result"); // "false" 또는 "true"
-				result_ = Boolean.parseBoolean(value); // "false"-> false변환해서 저장
-														// "true"-> true변환해서 저장
+				result_ = true; // "true"-> true변환해서 저장
 			}
 
 		} catch (Exception e) {

@@ -288,7 +288,8 @@
             int beginPerPage = 0;
 
             ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
-            totalRecord = list.size();
+             // list가 null이 아닐 때만 size 체크
+                totalRecord = list.size();
 
             if (request.getAttribute("nowPage") != null) {
                 nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
@@ -301,6 +302,7 @@
             if (request.getAttribute("nowBlock") != null) {
                 nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
             }
+            
         %>
         <form name="frmRead">
             <input type="hidden" name="notice_id">
@@ -361,7 +363,7 @@
                 <% }
                     if (totalBlock > nowBlock + 1) { %>
                 <a href="<%=contextPath%>/Board/list.bo?center=/view_start/startcenter.jsp&nowBlock=<%=nowBlock + 1%>&nowPage=<%=(nowBlock + 1) * pagePerBlock%>">▶ 다음</a>
-                <% } } %>
+                <% }} %>
             </div>
         </div>
     </div>
