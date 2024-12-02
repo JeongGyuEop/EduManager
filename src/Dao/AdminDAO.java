@@ -142,7 +142,7 @@ public class AdminDAO {
 		return result_;// "true" 또는 "false" 부장(MemberService)에게 반환
 	}
 
-//관리자 특정 조회
+//관리자 특정 조회   수정중
 	public List<AdminVo> getMemberList(String searchWord) {
 
 		String query =  "SELECT " +
@@ -150,7 +150,7 @@ public class AdminDAO {
 			            "u.phone, u.email, u.role, a.admin_id, a.department, a.access_level " +
 			            "FROM user u " +
 			            "LEFT JOIN admin_info a ON u.user_id = a.user_id " +
-			            "WHERE (u.user_id = ? OR a.admin_id = ?) " +
+			            "WHERE (CAST(u.user_id AS CHAR) LIKE ? OR CAST(a.admin_id AS CHAR) LIKE ? OR CAST(u.user_name AS CHAR) LIKE ?)" +
 			            "AND u.user_id IS NOT NULL " +
 			            "AND a.admin_id IS NOT NULL";
 
@@ -159,8 +159,9 @@ public class AdminDAO {
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, searchWord); // 첫 번째 ?에 searchWord 바인딩
-			pstmt.setString(2, searchWord); // 두 번째 ?에 searchWord 바인딩
+			pstmt.setString(1, "%" + searchWord + "%");
+			pstmt.setString(2, "%" + searchWord + "%");
+			pstmt.setString(3, "%" + searchWord + "%");
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
