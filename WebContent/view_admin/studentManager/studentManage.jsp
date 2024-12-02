@@ -97,7 +97,6 @@
 window.onload = function() {
     result();
 };
-
 function result(){
     var result = parseInt("${result}", 10);
     if (isNaN(result)) {
@@ -110,7 +109,6 @@ function result(){
     }
 }
 </script>
-
 <!-- 다음 주소 API 스크립트 추가 -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
@@ -133,7 +131,6 @@ function result(){
         }).open();
     }
 </script>
-
 </head>
 <body>
     <div id="student-register-container">

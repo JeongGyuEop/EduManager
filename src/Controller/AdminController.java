@@ -157,7 +157,7 @@ public class AdminController extends HttpServlet {
 				out.write("");
 				out.flush();
 				out.close();
-			return;
+				return;
 			}
 
 		// 관리자 특정조회

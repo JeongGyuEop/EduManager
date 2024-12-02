@@ -2,7 +2,10 @@ package Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.json.simple.JSONArray;
 
 import Dao.ClassroomDAO;
 import Vo.BoardVo;
@@ -10,6 +13,8 @@ import Vo.ClassroomVo;
 import Vo.CourseVo;
 import Vo.EnrollmentVo;
 import Vo.StudentVo;
+
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class ClassroomService {
@@ -147,13 +152,52 @@ public class ClassroomService {
 		return classroomdao.courseSelect(studentId);
 	}
 
+	//수강신청 기간인지 확인
 	public boolean isEnrollmentPeriod() {
-	    // 수강신청 기간 설정
-	    LocalDateTime startDate = LocalDateTime.of(2024, 11, 27, 9, 0);
-	    LocalDateTime endDate = LocalDateTime.of(2024, 12, 1, 18, 0);
-	    LocalDateTime now = LocalDateTime.now();
-	    return now.isAfter(startDate) && now.isBefore(endDate);
+		
+		// 수강신청 기간 정보 조회 
+	    LocalDateTime[] period = classroomdao.getEnrollmentPeriod();
+	    
+	    System.out.println(period[0]);
+	    System.out.println(period[1]);
+	    
+	    if (period == null || period[0] == null || period[1] == null) {
+	        return false; // 기간 정보가 없으면 false 반환
+	    }
+
+	    LocalDateTime now = LocalDateTime.now(); // 현재 날짜
+	    return now.isAfter(period[0]) && now.isBefore(period[1]); // 현재 날짜가 수강신청 기간 안에 있는지
+
+	    
+	    
 	}
+
+	//수강신청 기간 조회
+	public LocalDateTime[] getEnrollmentPeriod() {
+	    return classroomdao.getEnrollmentPeriod(); // DAO에서 기간 조회
+	}
+
+	// 수강신청 기간 입력
+	public boolean setEnrollmentPeriod(Timestamp startTimestamp, Timestamp endTimestamp, String description) {
+	    return classroomdao.insertEnrollmentPeriod(startTimestamp, endTimestamp, description); // DAO 호출
+	}
+
+	//----------
+	// 학생 강의실 홈에서 학생이 수강하는 모든 강의의 과제와 공지사항을 조회하기 위해 DAO 호출
+	public Map<String, List> getAssignmentsAndNotices(String studentId) {
+	    Map<String, List> result = new HashMap<>();
+	    List assignments = new ArrayList();
+	    List notices = new ArrayList();
+	    
+	    assignments = classroomdao.getAssignments(studentId);
+	    notices = classroomdao.getNotices(studentId);
+
+	    result.put("assignments", assignments);
+	    result.put("notices", notices);
+	    
+	    return result;
+	}
+
 
 
 

@@ -100,6 +100,7 @@ public class MajorInputDAO {
 			// 중복된 이름이 존재할 경우
 			if (rs.next()) {
 				validationResult = EXISTS;
+				System.out.println("존재하는 학과 코드입니다.");
 			}
 		} catch (SQLException e) {
 			System.out.println("SQL 오류 발생: " + e.getMessage());
@@ -123,6 +124,7 @@ public class MajorInputDAO {
 			// 중복된 이름이 존재할 경우
 			if (rs.next()) {
 				validationResult = EXISTS;
+				System.out.println("동일한 학과 이름이 존재합니다.");
 			}
 		} catch (SQLException e) {
 			System.out.println("SQL 오류 발생: " + e.getMessage());
@@ -159,32 +161,7 @@ public class MajorInputDAO {
 		// 값 반환
 		return validationResult;
 	}
-	
-		public int editMajorTel(String editMajorCode, String editMajorTel) {
-		System.out.println("editMajor" + editMajorCode);
-		System.out.println("editMajorTel" + editMajorTel);
 
-		int editResult = FAILURE;
-		String sql = "UPDATE majorinformation SET majortel=? WHERE majorcode=?";
-		
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		
-		try {
-			con = ds.getConnection();
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, editMajorTel);
-			pstmt.setString(2, String.format("%02d", Integer.parseInt(editMajorCode)));
-			editResult = pstmt.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println("SQL 오류 발생: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
-			closeDatabaseResources(con, pstmt, null);
-		}
-		return editResult;
-	}
-	
 	public int majorInput(String newMajorName, String newMajorTel) {
 		int addResult = FAILURE;
 		Connection con = null;
@@ -261,9 +238,6 @@ public class MajorInputDAO {
 	}
 
 	public int editMajor(String editMajorCode, String editMajorName, String editMajorTel) {
-		System.out.println("editMajor" + editMajorCode);
-		System.out.println("editMajor" + editMajorName);
-		System.out.println("editMajor" + editMajorTel);
 
 		int editResult = FAILURE;
 
@@ -277,7 +251,29 @@ public class MajorInputDAO {
 			pstmt.setString(2, editMajorTel);
 			pstmt.setString(3, String.format("%02d", Integer.parseInt(editMajorCode)));
 			editResult = pstmt.executeUpdate();
-			System.out.println("editMajor" + editResult);
+		} catch (SQLException e) {
+			System.out.println("SQL 오류 발생: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			closeDatabaseResources(con, pstmt, null);
+		}
+		return editResult;
+	}
+	
+	public int editMajorTel(String editMajorCode, String editMajorTel) {
+
+		int editResult = FAILURE;
+		String sql = "UPDATE majorinformation SET majortel=? WHERE majorcode=?";
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = ds.getConnection();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, editMajorTel);
+			pstmt.setString(2, String.format("%02d", Integer.parseInt(editMajorCode)));
+			editResult = pstmt.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("SQL 오류 발생: " + e.getMessage());
 			e.printStackTrace();
@@ -287,8 +283,9 @@ public class MajorInputDAO {
 		return editResult;
 	}
 
+
 	public int deleteMajor(String editMajorCode) {
-		System.out.println("deleteMajor" + editMajorCode);
+		
 		int deleteResult = FAILURE;
 		Connection con = null;
 		PreparedStatement pstmt = null;

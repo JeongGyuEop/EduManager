@@ -191,7 +191,7 @@ public class AdminDAO {
 
 		return memberList;
 	}
-	
+	//관리자 전체조회
 	public List<AdminVo> getAllMemberList() {
 	    String query = "SELECT "
 	        + "u.user_id, u.user_name, u.birthDate, u.gender, u.address, "

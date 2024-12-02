@@ -25,12 +25,15 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
         <script>
         $(document).ready(function() {
+        	// JSP에서 JavaScript 변수로 role 전달
+            var role = "<%= role != null ? role : "" %>";
+
+            // AJAX 요청
+            var ajaxUrl = role === "교수" 
+                ? "<%=contextPath%>/classroom/courseNameSearch.do"
+                : "<%=contextPath%>/classroom/studentCourseSearch.do";
             $.ajax({
-<%	if(role.equals("교수")) { %>
-                url: '<%=contextPath%>/classroom/courseNameSearch.do', 
-<%	} else { %>
-				url: '<%=contextPath%>/classroom/studentCourseSearch.do', 
-<%	} %> 
+                url: ajaxUrl,
                 method: 'GET',
                 dataType: 'json',
                 success: function(courseList) {
@@ -88,48 +91,42 @@
             form.submit();
         }
         
-        function chatWinOpen() {
-            // 팝업 창 크기 설정
-            var width = 395;
-            var height = 445;
-
-         	// 팝업 창 위치 설정 (우측 하단)
-            var left = window.screen.availWidth - width - 120;  // 화면의 오른쪽 끝에서 20px 안쪽
-            var top = window.screen.availHeight - height - 150; // 화면의 아래쪽 끝에서 20px 안쪽
-
-            // 팝업 창 열기
-            var popup = window.open("<%=contextPath%>/common/ChatWindow.jsp", "ChatWindow", "width=" + width + ",height=" + height + ",left=" + left + ",top=" + top + ",resizable=no,scrollbars=no");
-
-            // 팝업 창이 제대로 열리지 않을 경우 알림
-            if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-                alert("팝업 차단이 활성화되어 있습니다. 팝업 차단을 해제하고 다시 시도해주세요.");
-            }
-        }
         </script>
     </head>
     <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="#">강의실</a>
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <!-- Navbar Search-->
-            
-			<!-- Navbar-->
-			    <ul class="navbar-nav ms-auto d-flex align-items-center">
-			        <li class="nav-item">
-			            <p class="text-white mb-0 me-3">반갑습니다. <%=name %> <%=role %>님!</p>
-			        </li>
-			        <li class="nav-item dropdown">
-			            <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-			            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-			                <li><a class="dropdown-item" href="<%=contextPath%>/member/main.bo?center=view_professor/professorHome.jsp">강의실 나가기</a></li>
-			                <li><hr class="dropdown-divider" /></li>
-			                <li><a class="dropdown-item" href="<%=contextPath%>/member/logout.me">로그아웃</a></li>
-			            </ul>
-			        </li>
-			    </ul>
-        </nav>
+        <!-- 상단 네비게이션 -->
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <% if(role.equals("교수")){ %>
+        	<a class="navbar-brand ps-3" href="<%=contextPath %>/classroom/classroom.bo?classroomCenter=professorMyCourse.jsp">강의실</a>
+        <% }else{ %>
+    		<a class="navbar-brand ps-3" href="<%=contextPath %>/classroom/allAssignNotice.do">강의실</a>
+        <% } %>
+        
+        <ul class="navbar-nav ms-auto d-flex align-items-center">
+            <li class="nav-item">
+                <p class="text-white mb-0 me-3">반갑습니다. <%=name %> <%=role %>님!</p>
+            </li>
+            <li class="nav-item">
+			    <!-- 강의실 나가기 버튼 -->
+			     <button class="btn btn-light me-2" onclick="location.href='<%=contextPath%>/member/main.bo'">
+			        <i class="fas fa-door-open"></i> 강의실 나가기
+			    </button>
+			</li>
+			<li class="nav-item">
+			    <!-- 로그아웃 버튼 -->
+			    <%-- 
+			    <button class="btn btn-danger" onclick="location.href='<%=contextPath%>/member/logout.me'">
+			        <i class="fas fa-sign-out-alt"></i> 로그아웃
+			    </button>
+			     --%>
+			</li>
+
+        </ul>
+    </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
@@ -201,13 +198,6 @@
                     </div>
                 </nav>
             </div>
-            
-            
-        <!-- 채팅 버튼 -->
-		<a href="javascript:void(0);" id="chat" onclick="chatWinOpen();" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"> 
-		    <img src="../img/chatIcon.png" alt="채팅" style="width: 50px; height: 50px;"/> 
-		</a>
-
             
 <%
 		String classroomCenter = (String)request.getAttribute("classroomCenter");

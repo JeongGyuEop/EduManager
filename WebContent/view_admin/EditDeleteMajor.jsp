@@ -9,11 +9,79 @@
 <head>
     <meta charset="UTF-8">
     <title>EditDeleteMajor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- jQuery 최신 버전 추가 -->
     <script src="https://code.jquery.com/jquery-latest.min.js"
         crossorigin="anonymous"></script>
     <!-- 외부 CSS 파일 연결 -->
     <link rel="stylesheet" type="text/css" href="<%=contextPath%>/css/majorCSS.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
+        }
+        #major-container {
+            max-width: 900px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+            margin: 50px auto;
+        }
+        #major-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4a90e2;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #major-form {
+            margin-bottom: 30px;
+        }
+        #major-form label {
+            font-weight: bold;
+        }
+        #major-form input[type="text"],
+        #major-form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        #major-form input[type="submit"] {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #major-form input[type="submit"]:hover {
+            background-color: #3a78c2;
+        }
+        #major-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        #major-table th, #major-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        #major-table th {
+            background-color: #f7f7f7;
+            font-weight: bold;
+            color: #333;
+        }
+        #major-table tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
     
     <script type="text/javascript">
     function handleInputEvent(event, $input) {
@@ -119,30 +187,35 @@
     </script>
 </head>
 <body>
-    <h3>수정 및 삭제할 학과 이름 또는 학과 번호를 입력해주세요.</h3>
-    <form class="form-container" action="<%=contextPath%>/major/searchMajor.do" method="get">
-        <label for="searchMajor">학과 이름 또는 학과 번호:</label>
-        <input type="text"
-            id="searchMajor" name="searchMajor" placeholder="학과 이름 또는 번호를 입력하세요">
-        <input type="submit" value="검색">
-    </form>
+    <div id="major-container">
+        <h2 id="major-title"><i class="fas fa-trash"></i> 학과 수정 및 삭제</h2>
+        <form id="major-form" action="<%=contextPath%>/major/searchMajor.do" method="get">
+            <label for="searchMajor">학과 이름 또는 학과 번호:</label>
+            <input type="text" id="searchMajor" name="searchMajor" placeholder="학과 이름 또는 번호를 입력하세요">
+            <input type="submit" value="검색">
+        </form>
 
-    <h4>검색 결과</h4>
-    <p>수정 : 학과 이름 또는 전화 번호 클릭</p>
-    <p>삭제 : 학과 이름을 공백으로 두면 해당 학과를 삭제</p>
-    <table class="major-table">
-        <tr>
-            <th>학과 코드</th>
-            <th>학과 이름</th>
-            <th>학과 전화번호</th>
-        </tr>
-        <c:forEach var="major" items="${searchList}">
-            <tr>
-                <td>${major.majorCode}</td>
-                <td onclick="makeEditable(this)">${major.majorName}</td>
-                <td onclick="makeEditable(this)">${major.majorTel}</td>
-            </tr>
-        </c:forEach>
-    </table>
+        <h4>검색 결과</h4>
+        <p>수정 : 학과 이름 또는 전화 번호 클릭</p>
+        <p>삭제 : 학과 이름을 공백으로 두면 해당 학과를 삭제</p>
+        <table id="major-table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>학과 코드</th>
+                    <th>학과 이름</th>
+                    <th>학과 전화번호</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="major" items="${searchList}">
+                    <tr>
+                        <td>${major.majorCode}</td>
+                        <td onclick="makeEditable(this)">${major.majorName}</td>
+                        <td onclick="makeEditable(this)">${major.majorTel}</td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

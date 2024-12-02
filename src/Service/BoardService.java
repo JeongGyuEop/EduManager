@@ -84,30 +84,31 @@ public class BoardService {
 		return boarddao.getEvents(startDate, endDate);
 	}
 	
-	public void processViewSchedule(HttpServletRequest request) {
+	public List<ScheduleVo> processViewSchedule(HttpServletRequest request) {
         String month = request.getParameter("month");
+        List<ScheduleVo> scheduleList = new ArrayList<ScheduleVo>();
         if (month != null && !month.isEmpty()) {
             String[] parts = month.split("-");
             if (parts.length == 2) {
                 String year = parts[0];
                 String monthPart = parts[1];
-                List<ScheduleVo> scheduleList = boarddao.getEventsByMonth(year, monthPart);
-                request.setAttribute("scheduleList", scheduleList);
+                scheduleList = boarddao.getEventsByMonth(year, monthPart);
             }
         }
+        return scheduleList;
     }
 	
 	public void addSchedule(HttpServletRequest request) {
 		String title = request.getParameter("title");
-		String startDate = request.getParameter("startDate");
-		String endDate = request.getParameter("endDate");
+		Date startDate = Date.valueOf(request.getParameter("startDate"));
+		Date endDate = Date.valueOf(request.getParameter("endDate"));
 		String content = request.getParameter("content");
 
 		if (boarddao.isValidSchedule(title, startDate, endDate, content)) {
 			ScheduleVo newSchedule = new ScheduleVo();
 			newSchedule.setEvent_name(title);
-			newSchedule.setStart_date(Date.valueOf(startDate));
-			newSchedule.setEnd_date(Date.valueOf(endDate));
+			newSchedule.setStart_date(startDate);
+			newSchedule.setEnd_date(endDate);
 			newSchedule.setDescription(content);
 
 			boarddao.insertSchedule(newSchedule);
@@ -119,16 +120,16 @@ public class BoardService {
 	public void updateSchedule(HttpServletRequest request) {
 		int scheduleId = Integer.parseInt(request.getParameter("schedule_id"));
 		String title = request.getParameter("title");
-		String startDate = request.getParameter("startDate");
-		String endDate = request.getParameter("endDate");
+		Date startDate = Date.valueOf(request.getParameter("startDate"));
+		Date endDate = Date.valueOf(request.getParameter("endDate"));
 		String content = request.getParameter("content");
 
 		if (boarddao.isValidSchedule(title, startDate, endDate, content)) {
 			ScheduleVo updatedSchedule = new ScheduleVo();
 			updatedSchedule.setSchedule_id(scheduleId);
 			updatedSchedule.setEvent_name(title);
-			updatedSchedule.setStart_date(Date.valueOf(startDate));
-			updatedSchedule.setEnd_date(Date.valueOf(endDate));
+			updatedSchedule.setStart_date(startDate);
+			updatedSchedule.setEnd_date(endDate);
 			updatedSchedule.setDescription(content);
 
 			boarddao.updateSchedule(updatedSchedule);

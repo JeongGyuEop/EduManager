@@ -3,16 +3,26 @@ package Dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import Vo.AssignmentVo;
 import Vo.BoardVo;
 import Vo.ClassroomVo;
 import Vo.CourseVo;
 import Vo.EnrollmentVo;
+import Vo.PeriodVo;
 import Vo.ProfessorVo;
 import Vo.StudentVo;
 
@@ -24,6 +34,7 @@ public class ClassroomDAO {
 	PreparedStatement pstmt;
 	ResultSet rs;
 	DataSource ds;
+
 	
 	//컨넥션풀 얻는 생성자
 	public ClassroomDAO() {
@@ -396,7 +407,135 @@ public class ClassroomDAO {
 			return result;
 		}
 		
-		
+		//-------------
+		// 로그인한 학생의 수강 중인 강의를 조회하는 함수
+		public ArrayList<EnrollmentVo> studentCourseSearch(String student_id) {
+			ArrayList<EnrollmentVo> studentCourseList = new ArrayList<EnrollmentVo>();
+			
+			try {
+				
+				con = ds.getConnection();
+				
+				// SQL 쿼리 실행
+	            String query = "SELECT c.course_name, c.course_id "
+	            			 + "FROM enrollment e "
+	            			 + "JOIN course c ON e.course_id = c.course_id "
+	            			 + "WHERE e.student_id = ?";
+	            
+	            pstmt = con.prepareStatement(query);
+	            pstmt.setString(1, student_id);
+	            rs = pstmt.executeQuery();
+	            
+	            // 강의 이름을 리스트에 추가
+	            while (rs.next()) {
+	            	 // CourseVo 객체 생성 및 값 설정
+	                CourseVo course = new CourseVo();
+	                course.setCourse_id(rs.getString("course_id"));
+	                course.setCourse_name(rs.getString("course_name"));
+					
+	                // EnrollmentVo 객체 생성 및 CourseVo 설정
+	                EnrollmentVo enrollment = new EnrollmentVo();
+	                enrollment.setCourse(course); // courseId 대신 CourseVo 객체 설정
+	            	
+	                // EnrollmentVo 리스트에 추가
+	                studentCourseList.add(enrollment);
+	            }
+
+	    		return studentCourseList;
+	    		
+			} catch (Exception e) {
+				System.out.println("ClassroomDAO의 courseSearch메소드에서 오류 ");
+				e.printStackTrace();
+			} finally {
+				closeResource(); // 자원 해제
+			}
+			
+			return studentCourseList;
+		}
+
+		//----------
+		// 학생 강의실에서 수강하는 모든 강의의 과제를 조회하기 위해 DB 연결
+		public List getAssignments(String studentId) {
+
+			System.out.println(studentId);
+		    List assignments = new ArrayList();
+		    
+		    String query = "SELECT c.course_name, a.title, a.description, p.start_date, p.end_date "
+		                 + "FROM enrollment e "
+		                 + "JOIN course c ON e.course_id = c.course_id "
+		                 + "LEFT JOIN assignment a ON c.course_id = a.course_id "
+		                 + "LEFT JOIN period_management p ON a.assignment_id = p.reference_id AND p.type = '과제' "
+		                 + "WHERE e.student_id = ? AND a.title IS NOT NULL";
+		    try {
+		    	con = ds.getConnection();
+		        pstmt = con.prepareStatement(query);
+		        pstmt.setString(1, studentId);
+		        rs = pstmt.executeQuery();
+		        
+		        while (rs.next()) {
+		        	CourseVo course = new CourseVo();
+		        	course.setCourse_name(rs.getString("course_name"));
+		        	
+		        	PeriodVo period = new PeriodVo();
+		        	period.setStartDate(rs.getTimestamp("start_date"));
+		        	period.setEndDate(rs.getTimestamp("end_date"));
+		        	
+		        	AssignmentVo assignment = new AssignmentVo();
+		        	assignment.setCourse(course);
+		        	assignment.setPeriod(period);
+		        	assignment.setTitle(rs.getString("title"));
+		        	assignment.setDescription(rs.getString("description"));
+		        	
+		        	assignments.add(assignment);
+		        	
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    } finally {
+		        closeResource();
+		    }
+		    return assignments;
+		}
+
+		//----------
+		// 학생 강의실에서 수강하는 모든 강의의 공지사항을 조회하기 위해 DB 연결
+		public List getNotices(String studentId) {
+
+			List notice = new ArrayList();
+			
+		    String query = "SELECT c.course_name, n.title, n.content, n.created_date "
+		                 + "FROM enrollment e "
+		                 + "JOIN course c ON e.course_id = c.course_id "
+		                 + "LEFT JOIN classroom_notice n ON c.course_id = n.course_id "
+		                 + "WHERE e.student_id = ? AND n.title IS NOT NULL";
+		    try {
+		    	con = ds.getConnection();
+		        pstmt = con.prepareStatement(query);
+		        pstmt.setString(1, studentId);
+		        rs = pstmt.executeQuery();
+		        
+		        while (rs.next()) {
+		        	
+		        	CourseVo course = new CourseVo();
+		        	course.setCourse_name(rs.getString("course_name"));
+		        	
+		        	BoardVo board = new BoardVo();
+		        	board.setTitle(rs.getString("title"));
+		        	board.setContent(rs.getString("content"));
+		        	board.setCreated_date(rs.getDate("created_date"));
+		        	board.setCourse(course);
+		        	
+		        	notice.add(board);
+		        	
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    } finally {
+		        closeResource();
+		    }
+		    return notice;
+		}
+
 	
 	// 학생 조회 
 		 public ArrayList<StudentVo> studentSearch(String course_id_) {
@@ -418,7 +557,7 @@ public class ClassroomDAO {
 								+ "JOIN  user u ON s.user_id = u.user_id "
 								+ "LEFT JOIN majorinformation m ON s.majorcode = m.majorcode "
 								+ "LEFT JOIN grade g ON g.student_id = s.student_id AND g.course_id = e.course_id "
-								+ "WHERE e.course_id = ?;";
+								+ "WHERE e.course_id = ?";
 				
 					pstmt = con.prepareStatement(sql);
 					pstmt.setString(1, course_id_);
@@ -672,53 +811,7 @@ public class ClassroomDAO {
 		return courseList;
 	}
 
-	//-------------
-	// 로그인한 학생의 수강 중인 강의를 조회하는 함수
-	public ArrayList<EnrollmentVo> studentCourseSearch(String student_id) {
-		
-		ArrayList<EnrollmentVo> studentCourseList = new ArrayList<EnrollmentVo>();
-		
-		try {
-			
-			con = ds.getConnection();
-			
-			// SQL 쿼리 실행
-            String query = "SELECT c.course_name, c.course_id "
-            			 + "FROM enrollment e "
-            			 + "JOIN course c ON e.course_id = c.course_id "
-            			 + "WHERE e.student_id = ?";
-            
-            pstmt = con.prepareStatement(query);
-            pstmt.setString(1, student_id);
-            rs = pstmt.executeQuery();
-            
-            // 강의 이름을 리스트에 추가
-            while (rs.next()) {
-            	 // CourseVo 객체 생성 및 값 설정
-                CourseVo course = new CourseVo();
-                course.setCourse_id(rs.getString("course_id"));
-                course.setCourse_name(rs.getString("course_name"));
-				
-                // EnrollmentVo 객체 생성 및 CourseVo 설정
-                EnrollmentVo enrollment = new EnrollmentVo();
-                enrollment.setCourse(course); // courseId 대신 CourseVo 객체 설정
-            	
-                // EnrollmentVo 리스트에 추가
-                studentCourseList.add(enrollment);
-            }
-
-    		return studentCourseList;
-    		
-		} catch (Exception e) {
-			System.out.println("ClassroomDAO의 courseSearch메소드에서 오류 ");
-			e.printStackTrace();
-		} finally {
-			closeResource(); // 자원 해제
-		}
-		
-		return studentCourseList;
-	}
-
+	
 	// 수강 신청
 	public int courseInsert(String courseId, String studentId) {
 		int result = 0;
@@ -815,5 +908,67 @@ public class ClassroomDAO {
 		
 		return courseList;
 	}
-	
+
+	// 수강신청 기간 입력
+	public boolean insertEnrollmentPeriod(Timestamp startTimestamp, Timestamp endTimestamp, String description) {
+	    String checkQuery = "SELECT COUNT(*) FROM period_management WHERE type = '수강신청' AND start_date = ? AND end_date = ?";
+	    String insertQuery = "INSERT INTO period_management (type, start_date, end_date, description) VALUES ('수강신청', ?, ?, ?)";
+	    try {
+	        con = ds.getConnection();
+
+	        // 중복 데이터 확인
+	        pstmt = con.prepareStatement(checkQuery);
+	        pstmt.setTimestamp(1, startTimestamp); // LocalDateTime -> Timestamp 변환
+	        pstmt.setTimestamp(2, endTimestamp);   // LocalDateTime -> Timestamp 변환
+	        rs = pstmt.executeQuery();
+	        if (rs.next() && rs.getInt(1) > 0) {
+	            return false; // 중복 데이터가 있으면 삽입하지 않음
+	        }
+
+	        // 데이터 삽입
+	        pstmt = con.prepareStatement(insertQuery);
+	        System.out.println("Input time: " + startTimestamp);
+	        System.out.println("Input time: " + endTimestamp);
+	        pstmt.setTimestamp(1, startTimestamp); // LocalDateTime -> Timestamp 변환
+	        pstmt.setTimestamp(2, endTimestamp);   // LocalDateTime -> Timestamp 변환
+	        pstmt.setString(3, description);
+	        int result = pstmt.executeUpdate();
+	        return result > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return false;
+	}
+
+
+
+	//수강신청 기간 조회
+	public LocalDateTime[] getEnrollmentPeriod() {
+
+        LocalDateTime startDate = null;
+        LocalDateTime endDate = null;
+        
+		String query = "SELECT start_date, end_date FROM period_management WHERE type = '수강신청' ORDER BY created_at DESC LIMIT 1";
+
+//	    String query = "SELECT start_date, end_date FROM period_management WHERE type = '수강신청' ORDER BY start_date DESC LIMIT 1";
+	    try {
+	        con = ds.getConnection();
+	        pstmt = con.prepareStatement(query);
+	        rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            startDate = rs.getTimestamp("start_date").toLocalDateTime();
+	            endDate = rs.getTimestamp("end_date").toLocalDateTime();
+	            return new LocalDateTime[]{startDate, endDate};
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeResource();
+	    }
+	    return new LocalDateTime[]{startDate, endDate};
+	}
+
+
 }

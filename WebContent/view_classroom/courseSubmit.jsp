@@ -1,14 +1,26 @@
+<%@page import="java.time.format.DateTimeFormatter"%>
+<%@page import="java.time.LocalDateTime"%>
 <%@page import="Vo.StudentVo"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="Vo.CourseVo"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     String contextPath = request.getContextPath();
     ArrayList<CourseVo> courseList = (ArrayList<CourseVo>)request.getAttribute("courseList");
     ArrayList<CourseVo> courseList2 = (ArrayList<CourseVo>) request.getAttribute("courseList2");
     Boolean isEnrollmentPeriod = (Boolean) request.getAttribute("isEnrollmentPeriod");
+    // Controller에서 전달된 시작 날짜와 종료 날짜 가져오기
+    LocalDateTime startDate = (LocalDateTime) request.getAttribute("startDate");
+    LocalDateTime endDate = (LocalDateTime) request.getAttribute("endDate");
+    
+    // 한글 날짜 형식 포맷터
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
+
+    String formattedStartDate = startDate != null ? startDate.format(formatter) : null;
+    String formattedEndDate = endDate != null ? endDate.format(formatter) : null;
+    
 %>
 
 <!DOCTYPE html>
@@ -35,18 +47,35 @@
             background-color: #d9534f;
         }
     </style>
+    <script type="text/javascript">
+    
+    $(document).ready(function(){
+		
+    	if(${isEnrollmentPeriod} === null){
+	
+    		alert("수강신청 기간이 아닙니다.");
+    		history.back;
+    	
+    	}
+    
+    
+    });
+    
+    </script>
+    
 </head>
 <body class="bg-light">
     <main class="container my-5">
         <!-- 수강신청 기간 알림 -->
         <c:if test="${!isEnrollmentPeriod}">
             <div class="alert alert-danger text-center" role="alert">
-                현재는 수강신청 기간이 아닙니다. 수강신청 가능 기간: 2024-11-26 09:00 ~ 2024-12-01 18:00
-            </div>
+		        현재는 수강신청 기간이 아닙니다. 수강신청 가능 기간: 
+		        <%= formattedStartDate %> ~ <%= formattedEndDate %>
+		    </div>
         </c:if>
 
         <div class="card shadow-sm">
-            <h2 class="text-center mb-4">수강 목록</h2>
+            <h2 class="text-center mb-4 mt-4">수강 목록</h2>
             <div class="card-body">
                 <table class="table table-bordered table-hover text-center align-middle">
                     <thead class="table-success">
@@ -82,7 +111,7 @@
         <hr>
         <br>
         <div class="card shadow-sm">
-            <h2 class="text-center mb-4">신청 목록</h2>
+            <h2 class="text-center mb-4 mt-4">신청 목록</h2>
             <div class="card-body">
                 <table class="table table-bordered table-hover text-center align-middle">
                     <thead class="table-success">
@@ -162,7 +191,7 @@
 
         function finishEnrollment() {
             alert("수강신청이 종료되었습니다!");
-            window.location.href = "<%=contextPath%>/classroom/classroom.bo?classroomCenter=/view_classroom/studentMyCourse.jsp";
+            window.location.href = "<%=contextPath%>/classroom/allAssignNotice.do";
         }
     </script>
 </body>
