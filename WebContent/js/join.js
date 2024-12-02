@@ -1,54 +1,33 @@
-/**
- * 
- */
-
-// 		$("input").keyup(function(){
-// 	    	//모든<p>요소들의 text값을 빈공백으로 설정해 없애 준다.
-// 	    	$("p").text("");
-// 	    });
-
-
-
-
-
 //아이디		 
 $("#id").focusout(function() {
-
-
-
-
-	// 제대로 입력했을 때
-	if ($("#id").val().length >= 3 && $("#id").val().length < 20) {
-
-
+	console.log("id check");
+	const userid = $("#id").val().trim();
+	
+	if (userid.length < 3 || userid.length > 20) {
+	        $("#idInput").text("아이디는 3~20글자 사이로 입력해주세요.").css("color", "red");
+	        return;
+	    }
 		//입력한 아이디가 DB에 저장되어 있는지 없는지 확인 요청
 		//Ajax기술을 이용 하여 비동기 방식으로 MemberController로 합니다.
-		$.ajax(
-
-			{
-				url: "http://localhost:8090/EduManager/admin/joinIdCheck.me",
+		$.ajax({
+				url:contextPath+"/admin/joinIdCheck.me",
 				type: "post",
 				async: true,  //비동기통신
-				data: { user_id: $("#id").val() },  // MemberController 서버페이지에 요청할 값 설정
+				data: { user_id: userid },  // MemberController 서버페이지에 요청할 값 설정
 				dataType: "text",  // MemberController서버페이지로 부터 예상 응답받을 데이터 종류 설정
-				success: function(data, textStatus) {   //요청통신에 성공했을 때 콜백함수가 자동으로 호출됨. 
+				success: function(data) {   //요청통신에 성공했을 때 콜백함수가 자동으로 호출됨. 
 					//data매개변수로 MemberController가 응답한 데이터가 넘어옴.
 					/*not_usable 또는 usable 둘 중 하나를 data매개변수로 전달 받는다*/
 					//MemberController서버페이지에서 전송된 아이디 중복?인지 아닌지 판단하여 현재 join.jsp중앙화면에 보여주는 구문처리
-					if (data == "usable") {  //id가 DB에 없으면?
-						$("#idInput").text("사용할 수 있는 ID입니다.").css("color", "blue");
-
-					} else {   // id가 DB에 있으면
+					if (data === "not_usable") {  //id가 DB에 없으면?
 						$("#idInput").text("이미 사용중인 ID입니다.").css("color", "red");
+					} else {   // id가 DB에 있으면
+						$("#idInput").text("사용할 수 있는 ID입니다.").css("color", "blue");
 					}
 				}
-			}
-		);
-
-	} else {  // 제대로 입력하지 않았을 때	
-		$("#idInput").text("한글,특수문자 없이 3~20글자사이로 작성해 주세요!").css("color", "red");
-	}
-});
+			});
+		}
+);
 
 
 //비밀번호
@@ -196,22 +175,6 @@ $("#access").focusout(function() {
 });
 
 
-// 	   $("#sample4_extraAddress",
-// 			   "#sample4_postcode",
-// 			   "#sample4_roadAddress",
-// 			   "#sample4_jibunAddress",
-// 			   "#sample4_detailAddress").focusout(function() {
-//     		var adVal1 = $("#sample4_postcode").val();
-//     		var adVal2 = $("#sample4_roadAddress").val();
-//     		var adVal3 = $("#sample4_jibunAddress").val();
-//     		var adVal4 = $("#sample4_detailAddress").val();
-//     		var adVal5 = $("#sample4_extraAddress").val();
-//     		if(adVal1 == "" || adVal2 == "" || adVal3 == "" || adVal4 == "" || adVal5 == ""){
-//     			$("#addressInput").text("주소를 모두 작성하여주세요.").css("color","red");
-//     		}else{
-//     			$("#addressInput").text("올바르게 입력되었습니다.").css("color","blue");
-//     		}
-// 	    });
 
 //----------------------------------------------------------------------------
 
@@ -354,7 +317,7 @@ function check() {
 
 	var emailValue = email.val();
 
-	var emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+	var emailReg = /^[a-zA-Z0-9._%+-]{4,}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 
 	var resultEmail = emailReg.test(emailValue);

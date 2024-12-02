@@ -5,7 +5,7 @@
 	request.setCharacterEncoding("UTF-8");
 	String contextPath = request.getContextPath();
 	String role = (String) session.getAttribute("role");
-	String profName = (String) session.getAttribute("name");
+	String name = (String) session.getAttribute("name");
 
 %>    
 
@@ -90,6 +90,7 @@
             $('body').append(form);
             form.submit();
         }
+        
         </script>
     </head>
     <body class="sb-nav-fixed">
@@ -107,7 +108,7 @@
         
         <ul class="navbar-nav ms-auto d-flex align-items-center">
             <li class="nav-item">
-                <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
+                <p class="text-white mb-0 me-3">반갑습니다. <%=name %> <%=role %>님!</p>
             </li>
             <li class="nav-item">
 			    <!-- 강의실 나가기 버튼 -->

@@ -161,7 +161,7 @@ public class MajorInputDAO {
 		// 값 반환
 		return validationResult;
 	}
-	
+
 	public int majorInput(String newMajorName, String newMajorTel) {
 		int addResult = FAILURE;
 		Connection con = null;
@@ -238,9 +238,6 @@ public class MajorInputDAO {
 	}
 
 	public int editMajor(String editMajorCode, String editMajorName, String editMajorTel) {
-		System.out.println("editMajor" + editMajorCode);
-		System.out.println("editMajor" + editMajorName);
-		System.out.println("editMajor" + editMajorTel);
 
 		int editResult = FAILURE;
 
@@ -264,8 +261,6 @@ public class MajorInputDAO {
 	}
 	
 	public int editMajorTel(String editMajorCode, String editMajorTel) {
-		System.out.println("editMajor" + editMajorCode);
-		System.out.println("editMajorTel" + editMajorTel);
 
 		int editResult = FAILURE;
 		String sql = "UPDATE majorinformation SET majortel=? WHERE majorcode=?";
@@ -290,7 +285,6 @@ public class MajorInputDAO {
 
 
 	public int deleteMajor(String editMajorCode) {
-		System.out.println("deleteMajor" + editMajorCode);
 		
 		int deleteResult = FAILURE;
 		Connection con = null;
