@@ -967,7 +967,7 @@ public class ClassroomDAO {
 	    } finally {
 	        closeResource();
 	    }
-	    return new LocalDateTime[]{startDate, endDate};
+	    return null;
 	}
 
 

@@ -203,21 +203,19 @@
                         if (i == totalRecord) break;
                         BoardVo vo = list.get(i);
 
-                        // 답글 들여쓰기 계산
-                        int width = 0;
-                        if (vo.getB_level() > 0) {
-                            width = vo.getB_level() * 10;
-                        }
+                     // 들여쓰기 계산 (레벨 * 픽셀)
+                        int indent = vo.getB_level() * 20; 
                 %>
                 <tr onclick="javascript:fnRead('<%=vo.getNotice_id()%>')" >
                     <td><%=vo.getNotice_id()%></td>
                     <td>
-                        <% if (vo.getB_level() > 0) { %>
-                            <img src="<%=contextPath%>/common/notice/images/level.gif" 
-                                 width="<%=width%>" height="15">
-                            <img src="<%=contextPath%>/common/notice/images/re.gif">
-                        <% } %>
-                        <%=vo.getTitle()%>
+                         <div style="margin-left: <%=indent%>px;">
+                		 <% if (vo.getB_level() > 0) { %>
+	                    <!-- 답변글 아이콘 -->
+	                    <i class="fas fa-reply" style="color: #4a90e2; margin-right: 5px;"></i>
+			                <% } %>
+			                <%=vo.getTitle()%>
+			            </div>
                     </td>
                     <td><%=vo.getContent()%></td>
                     <td><%=vo.getUserName().getUser_name()%></td>

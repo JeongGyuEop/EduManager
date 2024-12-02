@@ -340,22 +340,20 @@
                         for (int i = beginPerPage; i < (beginPerPage + numPerPage); i++) {
                             if (i == totalRecord) break;
                             BoardVo vo = list.get(i);
-                    %>
-								<tr onclick="javascript:fnRead('<%=vo.getNotice_id()%>')">
-									<td><%=vo.getNotice_id()%></td>
-									<td>
-										<div class="reply-indent">
-											<%
-                                    int width = 0; // 답변글에 대한 들여쓰기 너비값
-                                    if (vo.getB_level() > 0) { // 답글인 경우
-                                        width = vo.getB_level() * 10; // 들여쓰기 너비 계산
-                                %>
-											<img src="<%=contextPath%>/common/notice/images/level.gif"
-												width="<%=width%>" height="15"> <img
-												src="<%=contextPath%>/common/notice/images/re.gif">
-											<% } %>
-											<%=vo.getTitle()%>
-										</div>
+
+                           	   // 들여쓰기 계산 (레벨 * 픽셀)
+                               int indent = vo.getB_level() * 20; 
+		                       %>
+		                       <tr onclick="javascript:fnRead('<%=vo.getNotice_id()%>')" >
+		                           <td><%=vo.getNotice_id()%></td>
+		                           <td>
+		                                <div style="margin-left: <%=indent%>px;">
+		                       		 <% if (vo.getB_level() > 0) { %>
+		       	                    <!-- 답변글 아이콘 -->
+		       	                    <i class="fas fa-reply" style="color: #4a90e2; margin-right: 5px;"></i>
+		       			                <% } %>
+		       			                <%=vo.getTitle()%>
+		       			            </div>
 									</td>
 									<td><%=vo.getUserName().getUser_name()%></td>
 									<td><%=vo.getCreated_date()%></td>

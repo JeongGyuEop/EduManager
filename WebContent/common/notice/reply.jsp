@@ -53,11 +53,12 @@
 
         /* 버튼 그룹 스타일 */
         .btn-group {
-            display: flex; /* 플렉스 박스 레이아웃 */
+            display: flex !important; /* 플렉스 박스 레이아웃 */
             justify-content: flex-end; /* 오른쪽 정렬 */
             gap: 10px; /* 버튼 간격 */
             margin-top: 20px; /* 상단 여백 */
         }
+        
 
         /* 읽기 전용 필드 스타일 */
         .form-control[readonly] {

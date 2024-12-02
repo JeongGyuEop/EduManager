@@ -41,6 +41,7 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -209,7 +210,7 @@
                     <th>날짜</th>
                 </tr>
             </thead>
-            <tbody>
+           <%--  <tbody>
                 <% if (list.isEmpty()) { %>
                 <tr>
                     <td colspan="5" class="text-center text-muted">등록된 글이 없습니다.</td>
@@ -237,7 +238,37 @@
                     <td><%=vo.getCreated_date()%></td>
                 </tr>
                 <% } } %>
-            </tbody>
+            </tbody> --%>
+            <tbody>
+    <% if (list.isEmpty()) { %>
+    <tr>
+        <td colspan="5" class="text-center text-muted">등록된 글이 없습니다.</td>
+    </tr>
+    <% } else {
+        for (int i = beginPerPage; i < (beginPerPage + numPerPage); i++) {
+            if (i == totalRecord) break;
+            BoardVo vo = list.get(i);
+
+            // 들여쓰기 계산 (레벨 * 픽셀)
+            int indent = vo.getB_level() * 20; 
+    %>
+    <tr onclick="javascript:fnRead('<%=vo.getNotice_id()%>')" style="cursor: pointer;">
+        <td><%=vo.getNotice_id()%></td>
+        <td>
+            <div style="margin-left: <%=indent%>px;">
+                <% if (vo.getB_level() > 0) { %>
+                    <!-- 답변글 아이콘 -->
+                    <i class="fas fa-reply" style="color: #4a90e2; margin-right: 5px;"></i>
+                <% } %>
+                <%=vo.getTitle()%>
+            </div>
+        </td>
+        <td><%=vo.getContent()%></td>
+        <td><%=vo.getUserName().getUser_name()%></td>
+        <td><%=vo.getCreated_date()%></td>
+    </tr>
+    <% } } %>
+</tbody>
         </table>
 
         <!-- 페이지네이션 -->

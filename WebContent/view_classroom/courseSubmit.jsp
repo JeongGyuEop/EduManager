@@ -47,21 +47,6 @@
             background-color: #d9534f;
         }
     </style>
-    <script type="text/javascript">
-    
-    $(document).ready(function(){
-		
-    	if(${isEnrollmentPeriod} === null){
-	
-    		alert("수강신청 기간이 아닙니다.");
-    		history.back;
-    	
-    	}
-    
-    
-    });
-    
-    </script>
     
 </head>
 <body class="bg-light">
