@@ -22,7 +22,7 @@ public class MenuItemService {
 		// 관리자 메뉴
         roleMenuMap.put("관리자", Arrays.asList(
         		
-            new MenuItemVo("사용자 관리", "#", Arrays.asList(
+            new MenuItemVo("사용자 관리", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp", Arrays.asList(
             	new MenuItemVo("학생 등록", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp"),
                 new MenuItemVo("학생 조회", "/student/viewStudentList.do?"),
                 
@@ -33,7 +33,7 @@ public class MenuItemService {
                 new MenuItemVo("관리자 조회", "/admin/managerview.do?center=/view_admin/adminManager/adminquiry.jsp")
             )),
             
-            new MenuItemVo("학사 관리", "#", Arrays.asList(
+            new MenuItemVo("학사 관리", "/major/MajorInput.do", Arrays.asList(
                 new MenuItemVo("학과 관리", "/major/MajorInput.do"),
                 new MenuItemVo("학과 수정/삭제", "/major/searchMajor.do"),
 
@@ -44,7 +44,7 @@ public class MenuItemService {
             	
             )),
             
-            new MenuItemVo("정보 관리", "#", Arrays.asList(
+            new MenuItemVo("정보 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp", Arrays.asList(
                 new MenuItemVo("공지사항 관리", "/Board/list.bo?center=/view_admin/noticeManage.jsp"),
                 new MenuItemVo("학사일정 관리", "/Board/viewSchedule.bo?center=/view_admin/calendarEdit.jsp")
             ))

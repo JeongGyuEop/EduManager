@@ -44,11 +44,11 @@
         }
 
         .btn-group {
-            display: flex; /* 플렉스 박스 레이아웃 */
-            justify-content: flex-end; /* 버튼 오른쪽 정렬 */
-            gap: 10px; /* 버튼 간격 */
-            margin-top: 20px; /* 상단 여백 */
-        }
+		    display: flex !important; /* 우선순위 높이기 */
+		    justify-content: center !important; /* 가운데 정렬 */
+		    gap: 10px;
+		    margin-top: 20px;
+		}
 
         .form-control[readonly] {
             background-color: #e9ecef; /* 읽기 전용 배경색 */
