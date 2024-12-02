@@ -5,8 +5,8 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f6f9;
     color: #333;
-    margin: 0;
-    padding: 20px;
+    margin: 0px;
+    padding: 0px !important;
 }
 
 /* 제목 스타일 */
@@ -129,10 +129,10 @@ p {
     outline: none;
 }
 
-/* 반응형 디자인 */
+/* 반응형 디자인
 @media (max-width: 768px) {
     body {
-        padding: 10px;
+        padding: 0px;
     }
 
     .form-container, .major-table {
@@ -143,4 +143,4 @@ p {
     .major-table th, .major-table td {
         padding: 10px;
     }
-}
+} */

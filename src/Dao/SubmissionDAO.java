@@ -61,7 +61,7 @@ public class SubmissionDAO {
 		        pstmt.executeUpdate();
 
 		        // 자동 생성된 키(submission_id) 가져오기
-		        ResultSet rs = pstmt.getGeneratedKeys();
+		        rs = pstmt.getGeneratedKeys();
 		        if (rs.next()) {
 		            submissionId = rs.getInt(1);
 		        }
@@ -142,7 +142,7 @@ public class SubmissionDAO {
 	}
 
 	//----------
-	//
+	// 학생이 제출한 파일의 정보를 조회하기 위해 DB 연결
 	public SubmissionVo getFileById(String fileId) {
 		SubmissionVo fileData = null;
 	    String sql = "SELECT * FROM submission_file WHERE file_id = ?";
@@ -171,7 +171,7 @@ public class SubmissionDAO {
 	}
 
 	//----------
-	//
+	// 학생이 제출한 과제(파일)을 삭제하기 위해 DB 연결
 	public int deleteFile(String fileId, int submission_id) {
 		
 		String sql = "DELETE FROM submission_file WHERE file_id = ?";

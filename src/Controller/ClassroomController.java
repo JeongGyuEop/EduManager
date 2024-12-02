@@ -3,11 +3,18 @@ package Controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.el.ListELResolver;
 import javax.servlet.RequestDispatcher;
@@ -21,6 +28,7 @@ import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import Service.BoardService;
 import Service.ClassroomService;
 import Service.MenuItemService;
 import Service.StudentService;
@@ -35,10 +43,12 @@ import Vo.StudentVo;
 public class ClassroomController extends HttpServlet {
 	
 	ClassroomService classroomservice;
+	BoardService boardservice;
 	
 	@Override
 	public void init() throws ServletException {
 		classroomservice = new ClassroomService();
+		boardservice = new BoardService();
 	}
 	
 	// doGet doPost 메소드 오버라이딩
@@ -82,6 +92,9 @@ public class ClassroomController extends HttpServlet {
 	    	case "/classroom.bo": // 학생 계정의 강의실 화면 2단계 요청 주소를 받으면
 	    		
 	    		center = request.getParameter("classroomCenter");
+	    		
+	    		ArrayList<BoardVo> list2 = (ArrayList<BoardVo>) boardservice.serviceBoardList();
+				request.setAttribute("list", list2);
 	    		
 	    		request.setAttribute("classroomCenter", center);
 	    		
@@ -502,31 +515,79 @@ public class ClassroomController extends HttpServlet {
 		        response.getWriter().write("성적이 성공적으로 삭제되었습니다.");
 		        return; 
 	    		
-	    //==========================================================================================
-		
-	    	case "/course_submit.bo": //수강신청 전체 과목 조회
-	    		
-	    		ArrayList<CourseVo> courseList1 = new ArrayList<CourseVo>();
-	    		ArrayList<CourseVo> courseList2 = new ArrayList<CourseVo>();
-	 
-	    		String studentId = (String)session.getAttribute("student_id");
-	    		
-	    		courseList1 = classroomservice.serviceCourseList(studentId);
-	    		courseList2 = classroomservice.serviceCourseSelect(studentId);
-	    		
-	    		boolean isEnrollmentPeriod = classroomservice.isEnrollmentPeriod();
-	    		
-	    		center = request.getParameter("classroomCenter");
-	    		
-	    		request.setAttribute("courseList", courseList1);
-	    		request.setAttribute("courseList2", courseList2);
-	    		request.setAttribute("isEnrollmentPeriod", isEnrollmentPeriod);
+	    //==========================================================================================  
+	    	case "/course_submit.bo": // 수강신청 전체 과목 조회 요청 처리
+
+	    	    // 수강신청 가능한 과목 목록을 담을 리스트
+	    	    ArrayList<CourseVo> courseList1 = new ArrayList<>();
+	    	    // 이미 수강신청한 과목 목록을 담을 리스트
+	    	    ArrayList<CourseVo> courseList2 = new ArrayList<>();
+
+	    	    // 세션에서 현재 로그인한 학생의 ID를 가져옴
+	    	    String studentId = (String) session.getAttribute("student_id");
+
+	    	    // 현재 학생이 신청 가능한 과목 목록을 서비스에서 조회
+	    	    courseList1 = classroomservice.serviceCourseList(studentId);
+	    	    // 현재 학생이 이미 선택한 과목 목록을 서비스에서 조회
+	    	    courseList2 = classroomservice.serviceCourseSelect(studentId);
+
+	    	    // 수강신청 기간 정보(시작 날짜와 종료 날짜)를 조회
+	    	    LocalDateTime[] enrollmentPeriod = classroomservice.getEnrollmentPeriod();
+
+	    	    // 수강신청 기간 정보가 없는 경우 처리
+	    	    if (enrollmentPeriod == null) {
+	    	        // 응답 콘텐츠 타입을 HTML로 설정하고 UTF-8로 인코딩
+	    	        response.setContentType("text/html; charset=UTF-8");
+	    	        
+	    	        // PrintWriter 객체를 가져와 브라우저에 출력 준비
+	    	        out = response.getWriter();
+	    	        
+	    	        // JavaScript로 경고 메시지를 출력
+	    	        out.print("<script>");
+	    	        // 경고창에 관리자에게 문의하라는 메시지를 출력
+	    	        out.print("alert('수강신청 기간이 설정되지 않았습니다. 관리자에게 문의하세요.');");
+	    	        // 이전 페이지로 돌아가는 JavaScript 명령어를 출력
+	    	        out.print("history.back();");
+	    	        // JavaScript 종료 태그
+	    	        out.print("</script>");
+	    	        
+	    	        // 버퍼에 출력된 내용을 클라이언트로 전송
+	    	        out.flush();
+	    	        
+	    	        // PrintWriter 객체 닫기
+	    	        out.close();
+	    	        
+	    	        // 현재 메서드 종료, 이후 로직 실행하지 않음
+	    	        return;
+	    	    }
+
+	    	    // 수강신청 기간인지 확인하는 메서드 호출 (현재 날짜와 수강신청 기간 비교)
+	    	    boolean isEnrollmentPeriod = classroomservice.isEnrollmentPeriod();
+
+	    	    center = request.getParameter("classroomCenter");
+
 	    		request.setAttribute("classroomCenter", center);
 	    		
-				nextPage = "/view_classroom/classroom.jsp";
-	    		
-	    		
-	    		break;
+	    	    // 수강신청 가능한 과목 목록을 JSP로 전달
+	    	    request.setAttribute("courseList", courseList1);
+	    	    // 이미 수강신청한 과목 목록을 JSP로 전달
+	    	    request.setAttribute("courseList2", courseList2);
+	    	    // 수강신청 시작 날짜를 JSP로 전달
+	    	    request.setAttribute("startDate", enrollmentPeriod[0]);
+	    	    // 수강신청 종료 날짜를 JSP로 전달
+	    	    request.setAttribute("endDate", enrollmentPeriod[1]);
+	    	    // 현재가 수강신청 기간인지 여부를 JSP로 전달
+	    	    request.setAttribute("isEnrollmentPeriod", isEnrollmentPeriod);
+
+	    	    
+	    	    
+	    	    // 이동할 JSP 경로를 설정 (수강신청 화면)
+	    	    nextPage = "/view_classroom/classroom.jsp";
+
+	    	    // case 블록 종료
+	    	    break;
+
+
 		        
 		//==========================================================================================
 			    
@@ -610,7 +671,74 @@ public class ClassroomController extends HttpServlet {
 	    		}
 	    					
 	    //==========================================================================================
-    		
+	    	case "/enrollmentPeriodPage.bo": // 수강신청 기간 설정 페이지로 이동
+	    		request.setAttribute("center", "/view_admin/coursePeriod.jsp" );
+	    	    nextPage = "/main.jsp"; // 설정 페이지 경로
+	    	    break;
+	    	
+	    //==========================================================================================	  
+	    	    
+	    	case "/setEnrollmentPeriod.do": // 수강신청 기간 설정 요청
+	    	    String startDateStr = request.getParameter("start_date"); // 시작 날짜
+	    	    String endDateStr = request.getParameter("end_date");     // 종료 날짜
+	    	    String description = request.getParameter("description"); // 설명
+
+	    	    try {
+	    	        // 날짜 문자열을 LocalDateTime으로 변환
+	    	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+	    	        LocalDateTime startDateTime = LocalDateTime.parse(startDateStr, formatter);
+	    	        LocalDateTime endDateTime = LocalDateTime.parse(endDateStr, formatter);
+
+	    	        // MySQL DATETIME에 맞는 Timestamp로 변환
+	    	        Timestamp startTimestamp = Timestamp.valueOf(startDateTime);
+	    	        Timestamp endTimestamp = Timestamp.valueOf(endDateTime);
+
+	    	        // 서비스 호출
+	    	        boolean result2 = classroomservice.setEnrollmentPeriod(startTimestamp, endTimestamp, description);
+	    	        
+	    	        if (result2) {
+	    	            request.setAttribute("message", "수강신청 기간이 성공적으로 설정되었습니다.");
+	    	            request.setAttribute("startDate", startDateStr); // 원래 포맷 유지
+	    	            request.setAttribute("endDate", endDateStr);     // 원래 포맷 유지
+	    	            request.setAttribute("description", description); // 설정된 설명
+	    	        } else {
+	    	            request.setAttribute("message", "수강신청 기간 설정에 실패했습니다.");
+	    	        }
+	    	    } catch (Exception e) {
+	    	        e.printStackTrace(); // 예외 발생 시 출력
+	    	        request.setAttribute("message", "입력 값 변환 중 오류가 발생했습니다.");
+	    	    }
+
+	    	    center = "/view_admin/enrollmentPeriodResult.jsp";
+	    	    request.setAttribute("center", center);
+
+	    	    nextPage = "/main.jsp";
+	    	    break;
+
+	    //==========================================================================================	  
+
+	    	case "/allAssignNotice.do":
+	    		
+	    		// 세션에서 student_id 가져오기
+	            session = request.getSession();
+	            studentId = (String) session.getAttribute("student_id");
+
+	            // DAO를 통해 데이터 가져오기
+	            Map<String, List> allAssignNotice = classroomservice.getAssignmentsAndNotices(studentId);
+
+	            
+	            center = "/view_classroom/studentMyCourse.jsp";
+	            
+	    		request.setAttribute("classroomCenter", center);
+	            request.setAttribute("allAssignNotice", allAssignNotice);
+	            
+	    		
+	            nextPage="/view_classroom/classroom.jsp";
+	            
+	    		break;
+	    	    
+	    //==========================================================================================	  
+
 	    	default:
 	    		break;
 	    }

@@ -35,13 +35,13 @@ public class SubmissionService {
 	}
 
 	//----------
-	//
+	// 학생이 제출한 파일의 id를 조회 하기 위해 DAO 호출
 	public SubmissionVo getFileById(String fileId) {
 		return submissiondao.getFileById(fileId);
 	}
 
 	//----------
-	//
+	// 학생이 제출한 과제(파일)의 정보를 삭제하기 위해 DAO 호출
 	public int deleteFile(String fileId, int submission_id) {
 		return submissiondao.deleteFile(fileId, submission_id);
 	}

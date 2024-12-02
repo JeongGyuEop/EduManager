@@ -22,7 +22,7 @@ public class MenuItemService {
 		// 관리자 메뉴
         roleMenuMap.put("관리자", Arrays.asList(
         		
-            new MenuItemVo("사용자 관리", "/#", Arrays.asList(
+            new MenuItemVo("사용자 관리", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp", Arrays.asList(
             	new MenuItemVo("학생 등록", "/student/studentManage.bo?center=/view_admin/studentManager/studentManage.jsp"),
                 new MenuItemVo("학생 조회", "/student/viewStudentList.do?"),
                 
@@ -33,12 +33,14 @@ public class MenuItemService {
                 new MenuItemVo("관리자 조회", "/admin/managerview.do?center=/view_admin/adminManager/adminquiry.jsp")
             )),
             
-            new MenuItemVo("학사 관리", "departmentManage.jsp", Arrays.asList(
+            new MenuItemVo("학사 관리", "/major/MajorInput.do", Arrays.asList(
                 new MenuItemVo("학과 관리", "/major/MajorInput.do"),
                 new MenuItemVo("학과 수정/삭제", "/major/searchMajor.do"),
 
             	new MenuItemVo("강의실 등록", "/classroom/roomRegister.bo"),
-            	new MenuItemVo("강의실 조회", "/classroom/roomSearch.bo")
+            	new MenuItemVo("강의실 조회", "/classroom/roomSearch.bo"),
+            	
+            	new MenuItemVo("수강신청 기간 설정", "/classroom/enrollmentPeriodPage.bo")
             	
             )),
             
@@ -50,7 +52,7 @@ public class MenuItemService {
         
         // 학생 메뉴
         roleMenuMap.put("학생", Arrays.asList(
-            new MenuItemVo("강의실", "/classroom/classroom.bo?classroomCenter=studentMyCourse.jsp"),
+            new MenuItemVo("강의실", "/classroom/allAssignNotice.do"),
             new MenuItemVo("마이페이지", "/student/myPage.bo?center=/view_admin/studentManager/myPage.jsp"),
             new MenuItemVo("공지사항", "/Board/list.bo?center=/common/notice/list.jsp"),
             new MenuItemVo("학사일정", "/Board/boardCalendar.bo"),
@@ -61,8 +63,7 @@ public class MenuItemService {
         // 교수 메뉴
         roleMenuMap.put("교수", Arrays.asList(
             new MenuItemVo("강의실", "/classroom/classroom.bo?classroomCenter=professorMyCourse.jsp"),
-            new MenuItemVo("공지 사항", "/Board/list.bo?center=/common/notice/list.jsp"),
-            new MenuItemVo("학생 관리", "studentManage.jsp")
+            new MenuItemVo("공지 사항", "/Board/list.bo?center=/common/notice/list.jsp")
         ));
         
 	}
@@ -76,20 +77,11 @@ public class MenuItemService {
 		if (menus != null) {
 	        htmlLoad.append("<ul>");
 	        for (MenuItemVo menu : menus) {
-	            // 역할에 따른 디렉토리 경로 설정
-//	            String rolePath = "";
-//	            if ("관리자".equals(userRole)) {
-//	                rolePath = "/view_admin/";
-//	            } else if ("교수".equals(userRole)) {
-//	                rolePath = "/view_professor/";
-//	            } else if ("학생".equals(userRole)) {
-//	                rolePath = "/view_student/";
-//	            }
 
-	            htmlLoad.append("<li><a href=\"")
-	                .append(contextPath)
+	            htmlLoad.append("<li><a href=")
+                	.append(contextPath)
 	                .append(menu.getPage())
-	                .append("\">")
+	                .append(">")
 	                .append(menu.getName())
 	                .append("</a>");
 
@@ -103,19 +95,19 @@ public class MenuItemService {
 	                        .append(subMenu.getName())
 	                        .append("</a></li>");
 	                    
-	                    // 하위 메뉴의 하위 메뉴 처리
-	                    if (!subMenu.getSubMenus().isEmpty()) {
-	                        htmlLoad.append("<ul>");
-	                        for (MenuItemVo subSubMenu : subMenu.getSubMenus()) {
-	                            htmlLoad.append("<li><a href=\"")
-	                                .append(contextPath)
-	                                .append(subSubMenu.getPage())
-	                                .append("\">")
-	                                .append(subSubMenu.getName())
-	                                .append("</a></li>");
-	                        }
-	                        htmlLoad.append("</ul>");
-	                    }
+//	                    // 하위 메뉴의 하위 메뉴 처리
+//	                    if (!subMenu.getSubMenus().isEmpty()) {
+//	                        htmlLoad.append("<ul>");
+//	                        for (MenuItemVo subSubMenu : subMenu.getSubMenus()) {
+//	                            htmlLoad.append("<li><a href=\"")
+//	                                .append(contextPath)
+//	                                .append(subSubMenu.getPage())
+//	                                .append("\">")
+//	                                .append(subSubMenu.getName())
+//	                                .append("</a></li>");
+//	                        }
+//	                        htmlLoad.append("</ul>");
+//	                    }
 	                    
 	                }
 	                htmlLoad.append("</ul>");
