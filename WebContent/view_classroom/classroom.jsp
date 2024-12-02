@@ -25,12 +25,15 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
         <script>
         $(document).ready(function() {
+        	// JSP에서 JavaScript 변수로 role 전달
+            var role = "<%= role != null ? role : "" %>";
+
+            // AJAX 요청
+            var ajaxUrl = role === "교수" 
+                ? "<%=contextPath%>/classroom/courseNameSearch.do"
+                : "<%=contextPath%>/classroom/studentCourseSearch.do";
             $.ajax({
-<%	if(role.equals("교수")) { %>
-                url: '<%=contextPath%>/classroom/courseNameSearch.do', 
-<%	} else { %>
-				url: '<%=contextPath%>/classroom/studentCourseSearch.do', 
-<%	} %> 
+                url: ajaxUrl,
                 method: 'GET',
                 dataType: 'json',
                 success: function(courseList) {

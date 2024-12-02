@@ -26,7 +26,7 @@ $("#id").focusout(function() {
 		$.ajax(
 
 			{
-				url: "http://localhost:8090/EduManager/member/joinIdCheck.me",
+				url: "http://localhost:8090/EduManager/admin/joinIdCheck.me",
 				type: "post",
 				async: true,  //비동기통신
 				data: { user_id: $("#id").val() },  // MemberController 서버페이지에 요청할 값 설정

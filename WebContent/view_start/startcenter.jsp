@@ -25,19 +25,19 @@
     int beginPerPage = 0;
 
     ArrayList<BoardVo> list = (ArrayList<BoardVo>) request.getAttribute("list");
-    totalRecord = list.size();
-
-    if (request.getAttribute("nowPage") != null) {
-        nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
-    }
-
-    beginPerPage = nowPage * numPerPage;
-    totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
-    totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
-
-    if (request.getAttribute("nowBlock") != null) {
-        nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
-    }
+	    totalRecord = list.size();
+	
+	    if (request.getAttribute("nowPage") != null) {
+	        nowPage = Integer.parseInt(request.getAttribute("nowPage").toString());
+	    }
+	
+	    beginPerPage = nowPage * numPerPage;
+	    totalPage = (int) Math.ceil((double) totalRecord / numPerPage);
+	    totalBlock = (int) Math.ceil((double) totalPage / pagePerBlock);
+	
+	    if (request.getAttribute("nowBlock") != null) {
+	        nowBlock = Integer.parseInt(request.getAttribute("nowBlock").toString());
+	    }
 %>
     
 <!doctype html>
