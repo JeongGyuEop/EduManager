@@ -303,9 +303,12 @@
 	                    <button type="submit" class="btn btn-primary w-100">로그인</button>
 	                </form>
 			<%  } else {  %>  
-				  
-				  	<h4><strong>반갑습니다. <br>  <%=name %> <%=role %>님!</strong></h4>
-	              
+	              <h4 class="display-6"><i class="fas fa-book"  style="color: #4a90e2"></i> <b><%=name %> <%=role %>님!</b></h4> <!-- 아이콘 변경 -->
+	        		<p class="lead"><b>학사 관리 시스템에 오신 것을 환영합니다.</b></p>
+	        		<br><br>
+	        		
+				<button type="button" class="btn btn-primary"
+					onclick="location.href='<%=contextPath%>/member/logout.me'">로그아웃</button>
 			<%  }  %>     
 	            </div>
 	           </div>
