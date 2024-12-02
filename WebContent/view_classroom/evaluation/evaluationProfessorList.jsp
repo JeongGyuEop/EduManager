@@ -42,7 +42,8 @@
 		            <select class="form-select" name="courseId" ></select>
 		        </div>
 		        <div class="col-md-4">
-		            <button type="submit" class="btn btn-primary w-100">검색</button>
+		            <!--  <button type="submit" class="btn btn-primary w-100">검색</button> -->
+		            <button type="submit" class="btn w-100" style="background-color: #c7ded5; color: #333; border: none; border-radius: 5px;">검색</button>
 		        </div>
 		    </div>
 		</form>

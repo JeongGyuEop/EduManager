@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.json.simple.JSONObject;
 import Service.AssignmentService;
 import Vo.AssignmentVo;
 import Vo.CourseVo;
+import Vo.PeriodVo;
 import Vo.SubmissionVo;
 
 @WebServlet("/assign/*")
@@ -109,11 +111,11 @@ public class AssignmentController extends HttpServlet {
 	    	        for (AssignmentVo assignment : assignmentList) {
 	    	            JSONObject assignmentJson = new JSONObject();
 	    	            assignmentJson.put("assignmentId", assignment.getAssignmentId());
-	    	            assignmentJson.put("courseId", assignment.getCourse().getCourse_id());
+	    	            assignmentJson.put("courseId", assignment.getCourse().getCourse_id());// 기간 정보 추가
+	                    assignmentJson.put("startDate", assignment.getPeriod().getStartDate().toString());
+	                    assignmentJson.put("endDate", assignment.getPeriod().getEndDate().toString());
 	    	            assignmentJson.put("title", assignment.getTitle());
 	    	            assignmentJson.put("description", assignment.getDescription());
-	    	            assignmentJson.put("dueDate", assignment.getDueDate().toString());
-	    	            assignmentJson.put("createdDate", assignment.getCreatedDate().toString());
 	    	            
 	    	            // 배열에 추가
 	    	            assignmentArray.add(assignmentJson);
@@ -130,23 +132,29 @@ public class AssignmentController extends HttpServlet {
 	    		
 	    	case "/createAssignment.do": // 해당 과목의 과제를 등록하는 2단계 요청 주소를 받으면
 	    		
-	    		course_id = request.getParameter("courseId");
-	    		String title = request.getParameter("title");
-	    		String description = request.getParameter("description");
-	    		String dueDateString = request.getParameter("dueDate");
+	    		String courseId = request.getParameter("courseId");
+	            String title = request.getParameter("title");
+	            String description = request.getParameter("description");
+
+	            // 날짜 처리
+	            String startDateInput = request.getParameter("startDate");
+	            String endDateInput = request.getParameter("endDate");
 	    		
-	    		Date dueDate = java.sql.Date.valueOf(dueDateString);
-	            
 	            AssignmentVo assignmentVo = new AssignmentVo();
 	            assignmentVo.setTitle(title);
 	            assignmentVo.setDescription(description);
-	            assignmentVo.setDueDate(dueDate);
 
 	            CourseVo course = new CourseVo();
-	            course.setCourse_id(course_id);
+	            course.setCourse_id(courseId);
 	            assignmentVo.setCourse(course);
 	            
-	            int result = assignmentservice.serviceCreateAssignment(assignmentVo);
+	            // 기간 VO 설정
+	            PeriodVo periodVo = new PeriodVo();
+	            periodVo.setType("과제");
+	            periodVo.setStartDate(Timestamp.valueOf(startDateInput + " 00:00:00"));
+	            periodVo.setEndDate(Timestamp.valueOf(endDateInput + " 23:59:59"));
+	            
+	            int result = assignmentservice.serviceCreateAssignment(assignmentVo, periodVo);
 	    		
 	            if(result == 1) {
 		            request.setAttribute("message", URLEncoder.encode("과제 등록이 완료되었습니다.", "UTF-8"));
@@ -157,11 +165,12 @@ public class AssignmentController extends HttpServlet {
 	            
 	            center = "/view_classroom/assignment_submission/assignmentManage.jsp";
 	            request.setAttribute("center", center);
-	            request.setAttribute("courseId", course_id);
+	            request.setAttribute("courseId", courseId);
 	            
 	            nextPage = "/assign/assignmentManage.bo";
 	            
 	            break;
+	            
 	    //==========================================================================================
 	    		
 	    	case "/deleteAssignment.do": // 해당 과목의 과제를 삭제하는 2단계 요청주소를 받으면
@@ -190,25 +199,32 @@ public class AssignmentController extends HttpServlet {
 	    	case "/updateAssignment.do": // 해당 과목의 과제를 수정하는 2단계 요청주소를 받으면
 	    		assignment_id = (String)request.getParameter("assignmentId");
 	    		title = request.getParameter("title");
-	    		dueDateString = (String)request.getParameter("dueDate");
 	    		description = request.getParameter("description");
 	    		
-	    		dueDate = java.sql.Date.valueOf(dueDateString);
-	    		
-	    		System.out.println(assignment_id);
-	    		System.out.println(title);
-	    		System.out.println(description);
-	    		System.out.println(dueDate);
+	    		// 날짜 처리
+	            startDateInput = request.getParameter("startDate");
+	            endDateInput = request.getParameter("endDate");
+	            
+
+	            System.out.println(title);
+	            System.out.println(description);
+	            System.out.println(startDateInput);
+	            System.out.println(endDateInput);
+	            
+	            // 기간 VO 설정
+	            periodVo = new PeriodVo();
+	            periodVo.setType("과제");
+	            periodVo.setStartDate(Timestamp.valueOf(startDateInput + " 00:00:00"));
+	            periodVo.setEndDate(Timestamp.valueOf(endDateInput + " 23:59:59"));
 	    		
 	    		assignmentVo = new AssignmentVo();
 	    		assignmentVo.setAssignmentId(Integer.parseInt(assignment_id));
 	            assignmentVo.setTitle(title);
 	            assignmentVo.setDescription(description);
-	            assignmentVo.setDueDate(dueDate);
 	    		
 	    		course_id = request.getParameter("courseId");
 	    		
-	    		int updateAssignmentResult = assignmentservice.serviceUpdateAssignment(assignmentVo);
+	    		int updateAssignmentResult = assignmentservice.serviceUpdateAssignment(assignmentVo, periodVo);
 	    		
 	    		out = response.getWriter();
 	    		if(updateAssignmentResult == 1) {

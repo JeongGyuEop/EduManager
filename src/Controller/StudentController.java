@@ -90,13 +90,17 @@ public class StudentController extends HttpServlet {
 			// 결과 메시지 설정
 		    String message;
 		    if (result == 1) {
-		        message = "학생 정보가 성공적으로 추가되었습니다.";
+		        message = "학생 정보가 성공적으로 추가되었습니다!";
 		    } else {
-		        message = "학생 정보를 추가하는 데 실패했습니다.";
+		        message = "학생 정보를 추가하는 데 실패했습니다. 중복되는 학번이나 사용자ID인지 확인해주세요!";
 		    }
-
-		    // 전체 학생 목록 페이지로 리다이렉트하며, 등록 결과 메시지 전달
-		    response.sendRedirect(request.getContextPath() + "/student/viewStudentList.do?message=" + URLEncoder.encode(message, "UTF-8"));
+		    
+		    out = response.getWriter();
+		    out.println("<script>");
+		    out.println("alert('" + message + "');");
+		    out.println("location.href='" + request.getContextPath() + "/student/viewStudentList.do';");
+		    out.println("</script>");
+		    out.close();
 		    return;
 
 		// ==========================================================================================
@@ -155,21 +159,30 @@ public class StudentController extends HttpServlet {
 		case "/updateStudent.do": // 수정했을때 보여주는 메세지
 			boolean isUpdated = studentservice.updateStudent(request);
 			String updateMessage = isUpdated ? "학생 정보가 성공적으로 수정되었습니다." : "학생 정보 수정에 실패했습니다.";
-			response.sendRedirect(request.getContextPath() + "/student/viewStudentList.do?message="
-					+ URLEncoder.encode(updateMessage, "UTF-8"));
+			  	out = response.getWriter();
+			    out.println("<script>");
+			    out.println("alert('" + updateMessage + "');");
+			    out.println("location.href='" + request.getContextPath() + "/student/viewStudentList.do';");
+			    out.println("</script>");
+			    out.close();
 			return;
+			
 		// ==========================================================================================
-		case "/deleteStudent.do": // 학생 정보 삭제
+		case "/deleteStudent.do": // 학생 정보 삭제 및 삭제했을 때 보여지는 메세지
 			String studentId = request.getParameter("student_id");
 			boolean isDeleted = studentservice.deleteStudent(studentId);
 			String deleteMessage = isDeleted ? "학생 정보가 성공적으로 삭제되었습니다." : "학생 정보 삭제에 실패했습니다.";
-			response.sendRedirect(request.getContextPath() + "/student/viewStudentList.do?message="
-					+ URLEncoder.encode(deleteMessage, "UTF-8"));
+			 	out = response.getWriter();
+			    out.println("<script>");
+			    out.println("alert('" + deleteMessage + "');");
+			    out.println("location.href='" + request.getContextPath() + "/student/viewStudentList.do';");
+			    out.println("</script>");
+			    out.close();
 			return;
 
 		// ==========================================================================================
 
-		// 마이페이지 이동 처리
+		// 학생으로 로그인했을때 마이페이지 이동 처리
 		case "/myPage.bo":
 			String sessionUserId = (String) session.getAttribute("id");
 			StudentVo member = studentservice.getStudentById(sessionUserId);
@@ -188,13 +201,8 @@ public class StudentController extends HttpServlet {
                response.sendRedirect(request.getContextPath() + "/student/myPage.bo?error=" + URLEncoder.encode("비밀번호를 입력해주세요.", "UTF-8"));
                return;
        		}
-       	//==
-       	
-       	
+	
        		boolean isMyInfoUpdated = studentservice.updateMyInfo(request);
-//       		String myInfoMessage = isMyInfoUpdated ? "정보가 성공적으로 수정되었습니다." : "권한이 없거나 수정에 실패했습니다.";
-//       		response.sendRedirect(request.getContextPath() + "/student/myPage.bo?message="
-//                   + URLEncoder.encode(myInfoMessage, "UTF-8"));
            
            out = response.getWriter();
            if(isMyInfoUpdated) {
@@ -209,7 +217,7 @@ public class StudentController extends HttpServlet {
          
            
            // ==========================================================================================
-        // 강의 평가 등록 페이지로 이동
+        // 학생으로 로그인 했을때 강의 평가 등록 페이지로 이동
        case "/evaluationRegister.do":
            String loggedInStudentId = (String) session.getAttribute("student_id");
            
@@ -231,8 +239,13 @@ public class StudentController extends HttpServlet {
            boolean isEvaluationInserted = studentservice.insertEvaluation(request);
            String evaluationMessage = isEvaluationInserted ? "강의 평가가 성공적으로 등록되었습니다."
                    : "강의 평가 등록에 실패했습니다.";
-           response.sendRedirect(request.getContextPath() + "/student/evaluationRegister.do?message="
-                   + URLEncoder.encode(evaluationMessage, "UTF-8"));
+           
+           out = response.getWriter();
+           out.println("<script>");
+           out.println("alert('" + evaluationMessage + "');");
+           out.println("location.href='" + request.getContextPath() + "/student/evaluationRegister.do';");
+           out.println("</script>");
+           out.close();
            return;
 
        // ===============================================
@@ -260,14 +273,19 @@ public class StudentController extends HttpServlet {
            break;
 
        // ===============================================
-       // 강의 평가 수정 처리
+       // 강의 평가 수정 처리 결과 메세지
        case "/evaluationUpdate.do":
            boolean isEvaluationUpdated = studentservice.updateEvaluation(request);
            String updateEvaluationMessage = isEvaluationUpdated ? "강의 평가가 성공적으로 수정되었습니다."
                    : "강의 평가 수정에 실패했습니다.";
-           response.sendRedirect(request.getContextPath() + "/student/evaluationList.do?message="
-                   + URLEncoder.encode(updateEvaluationMessage, "UTF-8"));
+           out = response.getWriter();
+           out.println("<script>");
+           out.println("alert('" + updateEvaluationMessage + "');");
+           out.println("location.href='" + request.getContextPath() + "/student/evaluationList.do';");
+           out.println("</script>"); 
+           out.close();
            return;
+           
 
        // ===============================================
        // 강의 평가 삭제 처리
@@ -276,8 +294,13 @@ public class StudentController extends HttpServlet {
            boolean isEvaluationDeleted = studentservice.deleteEvaluation(evaluationId);
            String deleteEvaluationMessage = isEvaluationDeleted ? "강의 평가가 성공적으로 삭제되었습니다."
                    : "강의 평가 삭제에 실패했습니다.";
-           response.sendRedirect(request.getContextPath() + "/student/evaluationList.do?message="
-                   + URLEncoder.encode(deleteEvaluationMessage, "UTF-8"));
+           
+           out = response.getWriter();
+           out.println("<script>");
+           out.println("alert('" + deleteEvaluationMessage + "');" );
+           out.println("location.href='" + request.getContextPath() + "/student/evaluationList.do';");
+           out.println("</script>");
+           out.close();
            return;
 
 		default:

@@ -23,12 +23,12 @@ import Vo.AdminVo;
 public class AdminController extends HttpServlet {
 
 	// 부장
-	AdminService memberservice;
+	AdminService adminservice;
 
 	@Override
 	public void init() throws ServletException {
 
-		memberservice = new AdminService();
+		adminservice = new AdminService();
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class AdminController extends HttpServlet {
 	request.setCharacterEncoding("UTF-8");
 	response.setContentType("text/html;charset=utf-8");
 	// 웹브라우저로 출력할 출력 스트림 생성
-	PrintWriter out = response.getWriter();
+	PrintWriter out;
 
 	// 조건에 따라서 포워딩 또는 보여줄 VIEW주소 경로를 저장할 변수
 	String nextPage = null;
@@ -118,7 +118,7 @@ public class AdminController extends HttpServlet {
 			vo.setRole("관리자");
 
 			// 부장에게 시킴
-			result = memberservice.serviceInsertMember(vo);
+			result = adminservice.serviceInsertMember(vo);
 
 			request.setAttribute("result", result);
 
@@ -141,20 +141,24 @@ public class AdminController extends HttpServlet {
 			// 부장 한테 시키자
 			// 입력한 아이디가 DB에 저장되어 있는지 확인 하는 작업
 			// true -> 중복, false -> 중복 아님 둘중 하나를 반환 받음
-			boolean result_ = memberservice.serviceOverLappedId(request);
+			boolean result_ = adminservice.serviceOverLappedId(request);
 
 			// 아이디 중복결과를 다시 한번 확인 하여 조건값을
 			// join.jsp파일과 연결된 join.js파일에 작성해 놓은
 			// $.ajax메소드 내부의
 			// success:function의 data매개변수로 웹브라우저를 거쳐 보냅니다!
-			if (result_ == true) {
+			out = response.getWriter();
+			if (result_) {
 				out.write("not_usable");
+				out.flush();
+				out.close();
 				return;
-			} else if (result_ == false) {
-				out.write("usable");
+			} else {
+				out.write("");
+				out.flush();
+				out.close();
 				return;
 			}
-			break;
 
 		// 관리자 특정조회
 		case "/managerquiry.do":
@@ -162,7 +166,7 @@ public class AdminController extends HttpServlet {
 			searchWord = request.getParameter("searchWord");
 			/* admin_id = request.getParameter("admin_id"); */
 
-			memberList = memberservice.getMemberlist(searchWord);
+			memberList = adminservice.getMemberlist(searchWord);
 
 			center = "/view_admin/adminManager/adminquiry.jsp";
 			
@@ -176,7 +180,7 @@ public class AdminController extends HttpServlet {
 		// 전체 조회
 		case "/managerview.do":
 
-			memberList = memberservice.getAllMemberlist();
+			memberList = adminservice.getAllMemberlist();
 
 			request.setAttribute("member", memberList);
 
@@ -202,7 +206,7 @@ public class AdminController extends HttpServlet {
 
 				if (admin_id != null && !admin_id.isEmpty()) {
 
-					boolean isDeleted = memberservice.managerDelete(admin_id);
+					boolean isDeleted = adminservice.managerDelete(admin_id);
 
 					if (isDeleted) {
 						out.print("{\"success\": true}");
@@ -251,7 +255,7 @@ public class AdminController extends HttpServlet {
 				mvo.setAccess_level(access_level_);
 
 				// 교수 정보를 업데이트
-				boolean isUpdated = memberservice.updateMember(mvo);
+				boolean isUpdated = adminservice.updateMember(mvo);
 	
 				request.setAttribute("member", mvo);
 

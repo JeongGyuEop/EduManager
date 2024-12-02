@@ -25,7 +25,7 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
         font-family: 'Arial', sans-serif;
     }
     #professor-query-container {
-        max-width: 1200px;
+        max-width: 100%;
         background-color: #ffffff;
         padding: 30px;
         border-radius: 12px;
@@ -107,6 +107,22 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
     input[disabled] {
         background-color: #e9ecef;
     }
+     .input-smalll {
+        width: 60px;  
+        padding: 1px;  
+    }
+     .input-small {
+        width: 80px;  
+        padding: 1px;  
+    }
+    .input-mid {
+        width: 100px; 
+        padding: 1px;  
+    }
+    .input-midd {
+        width: 120px; 
+        padding: 1px;  
+    }
 </style>
 </head>
 <body>
@@ -158,10 +174,10 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
 <% if (professorList != null && !professorList.isEmpty()) { %>
     <% for (ProfessorVo vo : professorList) { %>
             <tr id="professor-row-<%= vo.getProfessor_id() %>">
-                <td><input type="text" name="professor_id" class="professor-id" value="<%= vo.getProfessor_id() %>" readonly /></td>
-                <td><input type="text" name="user_name" value="<%= vo.getUser_name() %>" disabled /></td>
-                <td><input type="text" name="majorcode" value="<%= vo.getMajorcode() %>" disabled /></td>
-                <td><input type="date" name="birthDate" value="<%= vo.getBirthDate() %>" disabled /></td>
+                <td><input type="text" name="professor_id" class="professor-id input-smalll" value="<%= vo.getProfessor_id() %>" readonly /></td>
+                <td><input type="text" name="user_name" class="input-mid" value="<%= vo.getUser_name() %>" disabled /></td>
+                <td><input type="text" name="majorcode" class="input-small" value="<%= vo.getMajorcode() %>" disabled /></td>
+                <td><input type="date" name="birthDate" class="input-midd" value="<%= vo.getBirthDate() %>" disabled /></td>
                 <td>
                     <select name="gender" disabled>
                         <option value="M" <%= vo.getGender().equals("M") ? "selected" : "" %>>남성</option>
@@ -169,9 +185,9 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
                     </select>
                 </td>
                 <td><input type="text" name="address" value="<%= vo.getAddress() %>" disabled /></td>
-                <td><input type="text" name="phone" value="<%= vo.getPhone() %>" disabled /></td>
+                <td><input type="text" name="phone" class="input-midd" value="<%= vo.getPhone() %>" disabled /></td>
                 <td><input type="email" name="email" value="<%= vo.getEmail() %>" disabled /></td>
-                <td><input type="date" name="employDate" value="<%= vo.getEmployDate() %>" disabled /></td>
+                <td><input type="date" name="employDate" class="input-midd" value="<%= vo.getEmployDate() %>" disabled /></td>
                 <td><a href="#" class="action-btn edit-btn">정보수정</a></td>
                 <td><a href="#" class="action-btn delete-btn" onclick="deleteProfessor('<%= vo.getProfessor_id() %>'); return false;">삭제</a></td>
             </tr>

@@ -1,13 +1,10 @@
+<!DOCTYPE html>
 <%@page import="java.net.URLDecoder"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-
 <%
-	request.setCharacterEncoding("UTF-8");
-	String contextPath = request.getContextPath();
-
+    request.setCharacterEncoding("UTF-8");
+    String contextPath = request.getContextPath();
 %>
-
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -19,113 +16,91 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #f0f2f5;
-            font-family: 'Arial', sans-serif;
+            background-color: #f7f9fc;
         }
-        #custom-container {
+        .form-container {
             max-width: 600px;
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
-            margin-top: 50px;
-        }
-        .form-group label {
-            font-weight: bold;
-            color: #333;
-        }
-        .form-check-label {
-            margin-left: 5px;
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #4a90e2, #567bdb);
-            border: none;
-            padding: 12px;
-            font-size: 18px;
-            font-weight: bold;
+            background: #ffffff;
+            padding: 30px;
+            margin: 50px auto;
             border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .btn-primary:hover {
-            background: linear-gradient(45deg, #3a78c2, #466abd);
-        }
-        .form-icon {
-            color: #4a90e2;
-            margin-right: 8px;
-        }
-        .header-title {
+        .form-title {
             font-size: 24px;
             font-weight: bold;
-            color: #4a90e2;
             text-align: center;
-            margin-bottom: 30px;
+            color: #007bff;
+            margin-bottom: 20px;
         }
-        .form-check-inline {
-            display: inline-flex;
-            align-items: center;
-            margin-right: 15px;
+        .form-group label {
+            font-weight: 600;
         }
-        
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .form-check-label {
+            margin-left: 8px;
+        }
     </style>
-    
-<%
-	String message = (String) request.getAttribute("message");
-	if (message != null) {
-    	message = URLDecoder.decode(message, "UTF-8");
-%>
-        <script>
-            alert('<%= message %>'); // 메시지를 알림으로 표시
-        </script>
-<%
-    }
-%>
-    
+    <%
+        String message = (String) request.getAttribute("message");
+        if (message != null) {
+            message = URLDecoder.decode(message, "UTF-8");
+    %>
+    <script>
+        alert('<%= message %>'); // 메시지를 알림으로 표시
+    </script>
+    <%
+        }
+    %>
 </head>
 <body>
-    <div class="container" id="custom-container">
-        <h2 class="header-title"><i class="fas fa-chalkboard"></i> 강의실 등록</h2>
-        
-        <form action="<%=contextPath %>/classroom/roomRegister.do" method="post">
-            <div class="form-group">
-                <label for="roomId"><i class="fas fa-door-open form-icon"></i>강의실 ID</label>
-                <input type="text" class="form-control" id="roomId" name="room_id" required placeholder="예: R101">
-            </div>
-
-            <div class="form-group">
-                <label for="capacity"><i class="fas fa-users form-icon"></i>수용 인원</label>
-                <input type="number" class="form-control" id="capacity" name="capacity" required placeholder="최대 수용 인원">
-            </div>
-
-            <div class="form-group">
-                <label><i class="fas fa-tools form-icon"></i>장비</label>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-check form-check-inline">
+    <div class="container">
+    	<!-- 페이지 헤더 -->
+	    <div class="text-center mb-4 mt-5">
+	        <h1 class="display-6"><i class="fas fa-book"  style="color: #4a90e2"></i> 강의실 등록</h1> <!-- 아이콘 변경 -->
+	        <p class="lead">강의실을 등록할 수 있습니다.</p>
+	    </div>
+        <div class="form-container">
+            <form action="<%=contextPath %>/classroom/roomRegister.do" method="post">
+                <div class="form-group">
+                    <label for="roomId"><i class="fas fa-door-open"></i> 강의실 ID</label>
+                    <input type="text" class="form-control" id="roomId" name="room_id" required placeholder="예: R101">
+                </div>
+                <div class="form-group">
+                    <label for="capacity"><i class="fas fa-users"></i> 수용 인원</label>
+                    <input type="number" class="form-control" id="capacity" name="capacity" required placeholder="최대 수용 인원">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-tools"></i> 장비</label>
+                    <div class="d-flex flex-wrap">
+                        <div class="form-check mr-3">
                             <input class="form-check-input" type="checkbox" id="equipment1" name="equipment[]" value="프로젝터">
                             <label class="form-check-label" for="equipment1">프로젝터</label>
                         </div>
-                        <div class="form-check form-check-inline">
+                        <div class="form-check mr-3">
                             <input class="form-check-input" type="checkbox" id="equipment2" name="equipment[]" value="화이트보드">
                             <label class="form-check-label" for="equipment2">화이트보드</label>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="equipment4" name="equipment[]" value="실험 장비">
-                            <label class="form-check-label" for="equipment4">실험 장비</label>
-                        </div>
-                        <div class="form-check form-check-inline">
+                        <div class="form-check mr-3">
                             <input class="form-check-input" type="checkbox" id="equipment3" name="equipment[]" value="컴퓨터실">
                             <label class="form-check-label" for="equipment3">컴퓨터실</label>
                         </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="equipment4" name="equipment[]" value="실험 장비">
+                            <label class="form-check-label" for="equipment4">실험 장비</label>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-save"></i> 등록</button>
-        </form>
+                <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-save"></i> 등록</button>
+            </form>
+        </div>
     </div>
-
-
     <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>

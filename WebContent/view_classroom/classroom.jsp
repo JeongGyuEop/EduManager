@@ -5,7 +5,7 @@
 	request.setCharacterEncoding("UTF-8");
 	String contextPath = request.getContextPath();
 	String role = (String) session.getAttribute("role");
-	String profName = (String) session.getAttribute("name");
+	String name = (String) session.getAttribute("name");
 
 %>    
 
@@ -25,12 +25,15 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
         <script>
         $(document).ready(function() {
+        	// JSP에서 JavaScript 변수로 role 전달
+            var role = "<%= role != null ? role : "" %>";
+
+            // AJAX 요청
+            var ajaxUrl = role === "교수" 
+                ? "<%=contextPath%>/classroom/courseNameSearch.do"
+                : "<%=contextPath%>/classroom/studentCourseSearch.do";
             $.ajax({
-<%	if(role.equals("교수")) { %>
-                url: '<%=contextPath%>/classroom/courseNameSearch.do', 
-<%	} else { %>
-				url: '<%=contextPath%>/classroom/studentCourseSearch.do', 
-<%	} %> 
+                url: ajaxUrl,
                 method: 'GET',
                 dataType: 'json',
                 success: function(courseList) {
@@ -87,31 +90,43 @@
             $('body').append(form);
             form.submit();
         }
+        
         </script>
     </head>
     <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="#">강의실</a>
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <!-- Navbar Search-->
-            
-			<!-- Navbar-->
-			    <ul class="navbar-nav ms-auto d-flex align-items-center">
-			        <li class="nav-item">
-			            <p class="text-white mb-0 me-3">반갑습니다. <%=profName %> <%=role %>님!</p>
-			        </li>
-			        <li class="nav-item dropdown">
-			            <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-			            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-			                <li><a class="dropdown-item" href="<%=contextPath%>/member/main.bo?center=view_professor/professorHome.jsp">강의실 나가기</a></li>
-			                <li><hr class="dropdown-divider" /></li>
-			                <li><a class="dropdown-item" href="<%=contextPath%>/member/logout.me">로그아웃</a></li>
-			            </ul>
-			        </li>
-			    </ul>
-        </nav>
+        <!-- 상단 네비게이션 -->
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <% if(role.equals("교수")){ %>
+        	<a class="navbar-brand ps-3" href="<%=contextPath %>/classroom/classroom.bo?classroomCenter=professorMyCourse.jsp">강의실</a>
+        <% }else{ %>
+    		<a class="navbar-brand ps-3" href="<%=contextPath %>/classroom/allAssignNotice.do">강의실</a>
+        <% } %>
+        
+        <ul class="navbar-nav ms-auto d-flex align-items-center">
+            <li class="nav-item">
+                <p class="text-white mb-0 me-3">반갑습니다. <%=name %> <%=role %>님!</p>
+            </li>
+            <li class="nav-item">
+			    <!-- 강의실 나가기 버튼 -->
+			     <button class="btn btn-light me-2" onclick="location.href='<%=contextPath%>/member/main.bo'">
+			        <i class="fas fa-door-open"></i> 강의실 나가기
+			    </button>
+			</li>
+			<li class="nav-item">
+			    <!-- 로그아웃 버튼 -->
+			    <%-- 
+			    <button class="btn btn-danger" onclick="location.href='<%=contextPath%>/member/logout.me'">
+			        <i class="fas fa-sign-out-alt"></i> 로그아웃
+			    </button>
+			     --%>
+			</li>
+
+        </ul>
+    </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">

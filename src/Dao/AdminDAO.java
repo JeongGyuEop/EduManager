@@ -120,19 +120,16 @@ public class AdminDAO {
 		try {
 			con = ds.getConnection(); // DB연결
 
-			String sql = "SELECT CASE WHEN COUNT(*) = 1 THEN 'true' ELSE 'false' END AS result FROM user WHERE user_id = ?";
+			String sql = "SELECT user_id FROM user WHERE user_id = ?";
 
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, "user_id");
+			pstmt.setString(1, user_id);
 
 			// select전체 문장을 DB에 전송하여 실행한 조회된 결과데이터를 ResultSet임시객체에 담아 반환
 			rs = pstmt.executeQuery();
 
 			if (rs.next()) {// 조회된 제목 행의 커서(화살표)가 조회된 행 줄로 내려왔을때 있으면?
-
-				String value = rs.getString("result"); // "false" 또는 "true"
-				result_ = Boolean.parseBoolean(value); // "false"-> false변환해서 저장
-														// "true"-> true변환해서 저장
+				result_ = true; // "true"-> true변환해서 저장
 			}
 
 		} catch (Exception e) {
@@ -145,7 +142,7 @@ public class AdminDAO {
 		return result_;// "true" 또는 "false" 부장(MemberService)에게 반환
 	}
 
-//관리자 특정 조회
+//관리자 특정 조회   수정중
 	public List<AdminVo> getMemberList(String searchWord) {
 
 		String query =  "SELECT " +
@@ -153,7 +150,7 @@ public class AdminDAO {
 			            "u.phone, u.email, u.role, a.admin_id, a.department, a.access_level " +
 			            "FROM user u " +
 			            "LEFT JOIN admin_info a ON u.user_id = a.user_id " +
-			            "WHERE (u.user_id = ? OR a.admin_id = ?) " +
+			            "WHERE (CAST(u.user_id AS CHAR) LIKE ? OR CAST(a.admin_id AS CHAR) LIKE ? OR CAST(u.user_name AS CHAR) LIKE ?)" +
 			            "AND u.user_id IS NOT NULL " +
 			            "AND a.admin_id IS NOT NULL";
 
@@ -162,8 +159,9 @@ public class AdminDAO {
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, searchWord); // 첫 번째 ?에 searchWord 바인딩
-			pstmt.setString(2, searchWord); // 두 번째 ?에 searchWord 바인딩
+			pstmt.setString(1, "%" + searchWord + "%");
+			pstmt.setString(2, "%" + searchWord + "%");
+			pstmt.setString(3, "%" + searchWord + "%");
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
@@ -194,7 +192,7 @@ public class AdminDAO {
 
 		return memberList;
 	}
-	
+	//관리자 전체조회
 	public List<AdminVo> getAllMemberList() {
 	    String query = "SELECT "
 	        + "u.user_id, u.user_name, u.birthDate, u.gender, u.address, "

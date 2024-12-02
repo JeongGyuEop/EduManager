@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
 import javax.servlet.RequestDispatcher;
@@ -23,6 +24,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import Dao.BoardDAO;
@@ -347,10 +349,7 @@ public class BoardController extends HttpServlet {
 				
 				
 				break;
-	
 				
-			
-	
 			case "/boardCalendar.bo":
 	
 				center = "/common/calendar.jsp";
@@ -362,49 +361,57 @@ public class BoardController extends HttpServlet {
 				break;
 	
 			case "/boardCalendar.do":
-				// 일정 데이터를 JSON 형식으로 응답하는 기능
-				startDate = request.getParameter("start");
-				endDate = request.getParameter("end");
-	
-				try {
-					List<ScheduleVo> eventList = boardservice.getEvents(startDate, endDate);
-					Gson gson = new Gson();
-					List<JsonObject> jsonEvents = new ArrayList<>();
-					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-					for (ScheduleVo event : eventList) {
-						JsonObject jsonEvent = new JsonObject();
-						jsonEvent.addProperty("title", event.getEvent_name());
-						jsonEvent.addProperty("start", dateFormat.format(event.getStart_date()));
-						jsonEvent.addProperty("end", dateFormat.format(event.getEnd_date()));
-						jsonEvent.addProperty("description", event.getDescription());
-						jsonEvents.add(jsonEvent);
-					}
-					String jsonResponse = gson.toJson(jsonEvents);
-					response.setContentType("application/json;charset=UTF-8");
-					out.print(jsonResponse);
-					out.flush();
-				} catch (IllegalArgumentException e) {
-					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-					JsonObject error = new JsonObject();
-					error.addProperty("error", e.getMessage());
-					out.write(error.toString());
-				} catch (RuntimeException e) {
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					JsonObject error = new JsonObject();
-					error.addProperty("error", "서버 내부 오류가 발생했습니다.");
-					out.write(error.toString());
-					e.printStackTrace();
-				}
-				return;
+                // 일정 데이터를 JSON 형식으로 응답하는 기능
+                startDate = request.getParameter("start");
+                endDate = request.getParameter("end");
+
+                try {
+                    List<ScheduleVo> eventList = boardservice.getEvents(startDate, endDate);
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+                    List<JsonObject> jsonEvents = new ArrayList<>();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    for (ScheduleVo event : eventList) {
+                        JsonObject jsonEvent = new JsonObject();
+                        jsonEvent.addProperty("title", event.getEvent_name());
+                        jsonEvent.addProperty("start", dateFormat.format(event.getStart_date()));
+
+                        // end_date 에 하루를 추가하여 저장
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(event.getEnd_date());
+                        calendar.add(Calendar.DAY_OF_MONTH, 1);
+                        jsonEvent.addProperty("end", dateFormat.format(calendar.getTime()));
+
+                        jsonEvent.addProperty("description", event.getDescription());
+                        jsonEvents.add(jsonEvent);
+                    }
+                    String jsonResponse = gson.toJson(jsonEvents);
+                    response.setContentType("application/json;charset=UTF-8");
+                    out.print(jsonResponse);
+                    out.flush();
+                } catch (IllegalArgumentException e) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    JsonObject error = new JsonObject();
+                    error.addProperty("error", e.getMessage());
+                    out.write(error.toString());
+                } catch (RuntimeException e) {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    JsonObject error = new JsonObject();
+                    error.addProperty("error", "서버 내부 오류가 발생했습니다.");
+                    out.write(error.toString());
+                    e.printStackTrace();
+                }
+                return;
 	
 			case "/viewSchedule.bo":
+		        List<ScheduleVo> scheduleList = new ArrayList<ScheduleVo>();
 				month = request.getParameter("month");
 				if (month != null && !month.isEmpty()) {
-					boardservice.processViewSchedule(request);
+					scheduleList = boardservice.processViewSchedule(request);
 				}
 	
 				center = request.getParameter("center");
-				request.setAttribute("center", center);
+				request.setAttribute("scheduleList",scheduleList);
+				request.setAttribute("center", "/view_admin/calendarEdit.jsp");
 	
 				nextPage = "/main.jsp";
 	

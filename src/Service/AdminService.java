@@ -18,12 +18,12 @@ public class AdminService {
 
 	
 	
-	//MemberDAO객체의 주소를 저장할 참조변수
-	AdminDAO memberDao;
+	//adminDao객체의 주소를 저장할 참조변수
+	AdminDAO adminDao;
 	
-	//생성자- 위 memberDao변수에 new MemberDAO()객체를 만들어서 저장하는 역할
+	//생성자- 위 adminDao변수에 new adminDao()객체를 만들어서 저장하는 역할
 	public AdminService() {
-		memberDao = new AdminDAO();
+		adminDao = new AdminDAO();
 	}
 
 	
@@ -32,7 +32,7 @@ public class AdminService {
 					        							
 									
 		//사원아 니가 회원가입 해라 insert~~
-		return memberDao.insertMember(vo);
+		return adminDao.insertMember(vo);
 		
 		
 		
@@ -43,10 +43,9 @@ public class AdminService {
 		public boolean serviceOverLappedId(HttpServletRequest request) {
 			//요청한 아이디 얻기 
 			String id = request.getParameter("user_id");
-			
-			//사원(MemberDAO) 한테 시킴!!!!!!!!
-			//입력한 아이디가 DB에 저장되어 있는 지 확인 하는 작업을 MmemberDAO의 메소드를 호출해서 명령
-			return  memberDao.overlappedId(id);
+			//사원(adminDao) 한테 시킴!!!!!!!!
+			//입력한 아이디가 DB에 저장되어 있는 지 확인 하는 작업을 MadminDao의 메소드를 호출해서 명령
+			return  adminDao.overlappedId(id);
 				    //true 또는 false를 반환 받아 다시 MemberController(사장)에 반환 
 			
 		}
@@ -55,14 +54,14 @@ public class AdminService {
 		// 관리자 특정조회
 		public List<AdminVo> getMemberlist(String searchWord) {
 			
-			return memberDao.getMemberList(searchWord);
+			return adminDao.getMemberList(searchWord);
 		}
 	
 
 		//전체조회
 		public List<AdminVo> getAllMemberlist() {
 			
-			return memberDao.getAllMemberList();
+			return adminDao.getAllMemberList();
 		}
 
 		
@@ -73,7 +72,7 @@ public class AdminService {
 			    throw new IllegalArgumentException("관리자 번호가 유효하지 않습니다.");
 			}
 				
-			return memberDao.managerDelete(admin_id);
+			return adminDao.managerDelete(admin_id);
 		}
 
 		
@@ -81,7 +80,7 @@ public class AdminService {
 		//정보수정
 		public boolean updateMember(AdminVo mvo) {
 			
-			return memberDao.updateMember(mvo);
+			return adminDao.updateMember(mvo);
 		}
 
 

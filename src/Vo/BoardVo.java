@@ -9,8 +9,17 @@ public class BoardVo {
     private Date created_date;
 
     private MemberVo userName;
+    private CourseVo course;
     
-    @Override
+    public CourseVo getCourse() {
+		return course;
+	}
+
+	public void setCourse(CourseVo course) {
+		this.course = course;
+	}
+
+	@Override
     public String toString() {
         return "BoardVo{" +
                 "notice_id=" + notice_id +

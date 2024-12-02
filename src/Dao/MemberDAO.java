@@ -14,6 +14,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import Vo.MemberVo;
+import utils.SessionUtil;
 
 //MVC 중에서 M을 얻기 위한 클래스 
 
@@ -102,6 +103,9 @@ public class MemberDAO {
 	                    userInfo.put("status", rs.getString("status"));
 	                    // 필요한 학생의 고유 정보를 추가로 저장
 	                }
+	                
+					SessionUtil.name = rs.getString("user_name");
+					
 	            } else {
 	                userInfo.put("check", "0"); // 비밀번호 불일치 시 "0" 반환
 	            }

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -375,8 +376,8 @@ public class BoardDAO {
 		String EndDay = String.valueOf(YearMonth.of(Integer.parseInt(year), Integer.parseInt(month)).lengthOfMonth());
 		String monthStart = year + "-" + String.format("%02d", Integer.parseInt(month)) + "-01";
 		String monthEnd = year + "-" + String.format("%02d", Integer.parseInt(month)) + "-" + EndDay;
-
-		String sql = "SELECT * FROM academic_schedule WHERE start_date <= ? AND end_date >= ?";
+		
+		String sql = "SELECT * FROM academic_schedule WHERE start_date <= ? AND end_date >= ? ORDER BY start_date ASC";
 		try {
 			con = ds.getConnection();
 			pstmt = con.prepareStatement(sql);
@@ -430,8 +431,11 @@ public class BoardDAO {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				ScheduleVo event = new ScheduleVo(rs.getInt("schedule_id"), rs.getString("event_name"),
-						rs.getString("description"), rs.getDate("start_date"), rs.getDate("end_date"));
+				ScheduleVo event = new ScheduleVo(rs.getInt("schedule_id"),
+												  rs.getString("event_name"),
+												  rs.getString("description"),
+												  rs.getDate("start_date"),
+												  rs.getDate("end_date"));
 				events.add(event);
 			}
 		} catch (SQLException e) {
@@ -447,21 +451,21 @@ public class BoardDAO {
 		return events;
 	}
 
-	public boolean isValidSchedule(String eventName, String startDate, String endDate, String description) {
-		// 간단한 유효성 검사 로직을 구현
-		if (eventName == null || eventName.isEmpty()) {
-			return false;
-		}
-		if (startDate == null || startDate.isEmpty()) {
-			return false;
-		}
-		if (endDate == null || endDate.isEmpty()) {
-			return false;
-		}
-		if (description == null || description.isEmpty()) {
-			return false;
-		}
-		return true;
+	public boolean isValidSchedule(String eventName, Date startDate, Date endDate, String description) {
+	    // 간단한 유효성 검사 로직을 구현
+	    if (eventName == null || eventName.trim().isEmpty()) {
+	        return false;
+	    }
+	    if (startDate == null) {
+	        return false;
+	    }
+	    if (endDate == null) {
+	        return false;
+	    }
+	    if (description == null || description.trim().isEmpty()) {
+	        return false;
+	    }
+	    return true;
 	}
 
 	public void insertSchedule(ScheduleVo schedule) {

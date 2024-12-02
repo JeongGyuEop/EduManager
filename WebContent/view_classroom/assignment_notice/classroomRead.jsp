@@ -30,7 +30,8 @@
 <style>
     /* 컨테이너 스타일 */
     .form-container {
-        max-width: 800px;
+        max-width: 1000px;
+        height: 525px;
         margin: 50px auto;
         padding: 20px;
         background: #fff;
@@ -80,31 +81,16 @@
         <div class="btn-group">
             <input type="button" id="update" value="수정" class="btn btn-primary">
             <input type="button" id="delete" onclick="javascript:deletePro('<%=notice_id%>');" value="삭제" class="btn btn-danger">
-            <input type="button" id="reply" value="답변" class="btn btn-secondary">
-            <input type="button" id="list" value="목록" class="btn btn-light">
+            <input type="button" id="list" value="목록" class="btn btn-secondary">
         </div>
     </form>
 </div>
-<%-- 답변 버튼을 클릭했을때 답변을 작성할수 있는 화면 요청! --%>
-	<form id="replyForm"  action="<%=contextPath%>/classroomboard/reply.do">
-	
-		<%--주글 의 글번호 전달 --%>
-		<input type="hidden" name="notice_id" 
-							 value="<%=notice_id%>" 
-							 id="notice_id">
-		<%--답변글을 작성하는 사람의 로그인된 아이디를 전달--%>					 
-		<input type="hidden" name="id" value="<%=id%>">					 
-		<input type="hidden" name="course_id" value="<%=course_id%>">					 
-	
-	</form>
+
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script>
-    // 답변 버튼 클릭 이벤트
-    $("#reply").on("click", function() {
-        $("#replyForm").submit();
-    });
+
 
     // 삭제 버튼 클릭 이벤트
     function deletePro(notice_id) {

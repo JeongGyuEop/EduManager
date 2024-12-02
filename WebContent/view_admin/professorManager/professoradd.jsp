@@ -111,13 +111,24 @@
             margin-right: 5px;
         }
     </style>
+    <script type="text/javascript">
+    function handleFormSubmit() {
+        const form = document.getElementById('professorForm');
+        
+        // 사용자에게 메시지를 띄움
+        alert('등록이 완료되었습니다.');
+
+        // 메시지 확인 후 폼 제출
+        form.submit();
+    }
+    </script>
 </head>
 <body>
 
     <div id="professor-register-container">
         <h2 id="professor-register-title"><i class="fas fa-user-plus"></i> 교수 등록</h2>
 
-        <form action="<%=contextPath%>/professor/professor.do" method="get">
+        <form id="professorForm" action="<%=contextPath%>/professor/professor.do" method="post">
             <input type="hidden" name="role" value="교수">
 
             <table id="professor-register-table">
@@ -183,7 +194,7 @@
             </table>
 
             <div class="btn-container">
-                <input type="submit" value="등록">
+                <input type="submit" value="등록"  onclick="handleFormSubmit()">
             </div>
         </form>
     </div>
