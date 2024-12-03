@@ -7,6 +7,8 @@
     String contextPath = request.getContextPath();
 	String assignment_title = (String)request.getAttribute("assignment_title");
 	String assignmentId = (String)request.getAttribute("assignmentId");
+	String courseId = (String)request.getAttribute("courseId");
+	System.out.println(courseId);
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -113,6 +115,18 @@
             }
         });
     });
+    
+ 	// 과제 페이지에 대한 GET 요청
+    function submitAssignmentForm(courseId) {
+        let form = $('<form></form>');
+        form.attr('action', '<%=contextPath%>/assign/assignmentManage.bo');
+        form.attr('method', 'POST');
+        form.append('<input type="hidden" name="center" value="/view_classroom/assignment_submission/assignmentManage.jsp">');
+        form.append('<input type="hidden" name="courseId" value="' + courseId + '">');
+        $('body').append(form);
+        form.submit();
+    }
+    
 </script>
 
 
@@ -121,9 +135,9 @@
     <div class="container mt-5">
 	    <!-- 뒤로 가기 아이콘 -->
 	    <div class="mb-3">
-	        <a href="javascript:history.back();" class="btn btn-outline-secondary">
-	            <i class="fas fa-arrow-left"></i> 뒤로 가기
-	        </a>
+		    <button class="btn btn-secondary btn-sm" onclick="submitAssignmentForm('<%=courseId%>')" title="뒤로가기">
+		        <i class="fas fa-arrow-left"></i>
+		    </button>
 	    </div>
     
         <div class="text-center">
@@ -143,6 +157,7 @@
                 </div>
                 <input type="hidden" name="assignmentId" value="<%= assignmentId %>">
                 <input type="hidden" name="assignmentTitle" value="<%= assignment_title %>">
+                <input type="hidden" name="courseId" value="<%= courseId %>">
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-upload"></i> 제출</button>
                 </div>

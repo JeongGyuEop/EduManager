@@ -26,7 +26,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8"> <!-- 문서 인코딩 설정 -->
-    <title>글 수정 화면</title> <!-- 페이지 제목 -->
+    <title>공지</title> <!-- 페이지 제목 -->
 
     <!-- Bootstrap CSS 라이브러리 -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -111,7 +111,7 @@
 
 <!-- 수정 화면 폼 -->
 <div class="container form-container">
-    <h1 class="page-title">글 수정 화면</h1> <!-- 화면 제목 -->
+    <h1 class="page-title">공지</h1> <!-- 화면 제목 -->
 
     <!-- 글 수정 폼 -->
     <form id="formModify">

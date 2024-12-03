@@ -81,6 +81,11 @@ public class SubmissionController extends HttpServlet {
 	    			assignment_id = (String)request.getAttribute("assignmentId");
 	    		}
 	    		
+	    		String courseId = request.getParameter("courseId");
+	    		if(courseId == null) {
+	    			courseId = (String)request.getAttribute("courseId");
+	    		}
+	    		
 	    		String assignment_title = request.getParameter("assignmentTitle");
 	    		if(assignment_title == null) {
 	    			assignment_title = (String)request.getAttribute("assignmentTitle");
@@ -94,6 +99,7 @@ public class SubmissionController extends HttpServlet {
 	    		request.setAttribute("assignmentId", assignment_id);
 	    		request.setAttribute("assignment_title", assignment_title);
 	    		request.setAttribute("message", message);
+	    		request.setAttribute("courseId", courseId);
 	    		
 	    		nextPage = "/view_classroom/classroom.jsp";
 	    		
@@ -117,6 +123,7 @@ public class SubmissionController extends HttpServlet {
 	    		String assignmentId = multipartRequest.getParameter("assignmentId"); 
 	    		String assignmentTitle = multipartRequest.getParameter("assignmentTitle");
 	    		String studentId = (String)session.getAttribute("student_id"); // 학생 ID
+	    		courseId = multipartRequest.getParameter("courseId");
 	    		
 	    		// 실제 업로드 하기 전의  파일업로드를 하기 위해 jsp에서 선택했던 원본파일명 얻기
 	    		String original_name = multipartRequest.getOriginalFileName("assignmentFile");
@@ -132,6 +139,7 @@ public class SubmissionController extends HttpServlet {
 				}
 	    		
 	    		request.setAttribute("assignmentId", assignmentId);
+	    		request.setAttribute("courseId", courseId);
 	    		request.setAttribute("assignmentTitle", URLEncoder.encode(assignmentTitle, "UTF-8"));
 	    		
 	    		nextPage = "/submit/submitAssignmentPage.bo";
