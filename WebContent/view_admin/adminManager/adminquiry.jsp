@@ -22,17 +22,17 @@
     #admin-list-container {
         max-width: 100%;
         background-color: #ffffff;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
-        margin: 50px auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+        margin: 30px auto;
     }
     #admin-list-title {
-        font-size: 28px;
+        font-size: 22px;
         font-weight: bold;
         color: #4a90e2;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
     .table-responsive {
         width: 100%;
@@ -40,14 +40,14 @@
     }
     #admin-list-table {
         width: 100%;
-        margin: 20px 0;
+        margin: 15px 0;
         border-collapse: collapse;
     }
     #admin-list-table th, #admin-list-table td {
         border: 1px solid #ddd;
-        padding: 10px;
+        padding: 8px;
         text-align: center;
-        font-size: 14px;
+        font-size: 12px;
         white-space: nowrap;
     }
     #admin-list-table th {
@@ -79,8 +79,8 @@
     .form-container form {
         display: flex;
         justify-content: center;
-        gap: 15px;
-        margin-bottom: 20px;
+        gap: 10px;
+        margin-bottom: 15px;
         flex-wrap: wrap;
     }
     .form-container input[type="text"], .form-container input[type="submit"] {
@@ -115,7 +115,7 @@
         padding: 1px;  
     }
     .input-midd {
-        width: 120px; 
+        width: 100px; 
         padding: 1px;  
     }
     input[type="text"], input[type="email"], input[type="date"], select {
@@ -200,7 +200,7 @@
                             <option value="학사관리팀" <%= vo.getDepartment() != null && vo.getDepartment().equals("학사관리팀") ? "selected" : "" %>>학사관리팀</option>
                         </select>
                     </td>
-                    <td><input type="text" name="access_level" class="access input-midd" value="<%=vo.getAccess_level()%>" disabled /></td>
+                    <td><input type="text" name="access_level" class="access input-small" value="<%=vo.getAccess_level()%>" disabled /></td>
                     <td class="edit-action">
                         <a href="javascript:void(0);" class="btn-link action-link edit-button" data-admin-id="<%=vo.getAdmin_id()%>">수정</a>
                     </td>

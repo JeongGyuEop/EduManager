@@ -33,21 +33,26 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
         margin: 50px auto;
     }
     #professor-query-title {
-        font-size: 28px;
+        font-size: 23px;
         font-weight: bold;
         color: #4a90e2;
         text-align: center;
         margin-bottom: 20px;
     }
+    #professor-query-title i {
+        font-size: 16px; /* 아이콘 크기 축소 */
+        vertical-align: middle; /* 텍스트와 아이콘 정렬 */
+    }
     .form-container {
-        margin-top: 20px;
-        width: 100%;
+        margin-top: 10px; /* 상단 간격 조정 */
+        width: 80%; /* 폼 전체 너비 축소 */
+        font-size: 14px; /* 폰트 크기 축소 */
     }
     .form-container form {
         display: flex;
         justify-content: center;
-        gap: 15px;
-        margin-bottom: 20px;
+        gap: 10px;
+        margin-bottom: 15px;
         flex-wrap: wrap;
     }
     .form-container input[type="text"], .form-container input[type="submit"] {
@@ -77,10 +82,11 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
     #professor-table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 1000px; /* 테이블의 최소 너비 설정 */
+        min-width: 400px; /* 테이블의 최소 너비를 축소 */
+    	font-size: 12px; /* 폰트 크기를 줄여 테이블을 작게 표시 */
     }
     #professor-table th, #professor-table td {
-        padding: 12px;
+        padding: 8px;
         text-align: center;
         border: 1px solid #ddd;
         white-space: nowrap; /* 텍스트 줄바꿈 방지 */
@@ -108,7 +114,7 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
         background-color: #e9ecef;
     }
      .input-smalll {
-        width: 60px;  
+        width: 50px;  
         padding: 1px;  
     }
      .input-small {
@@ -209,61 +215,61 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
 
 // 교수 수정
     $(document).ready(function() {
-        // "정보수정" 버튼을 클릭했을 때 해당 행의 입력 필드를 활성화
-        $(".edit-btn").on("click", function(event) {
-            event.preventDefault();
-            var row = $(this).closest('tr'); // 해당 행을 찾기
-            row.find('input, select').prop('disabled', false); // 해당 행의 모든 input, select 활성화
-            $(this).text("저장"); // "정보수정"을 "저장"으로 변경
+    // "정보수정" 버튼 클릭 이벤트
+    $(".edit-btn").on("click", function(event) {
+        event.preventDefault();
 
-            // "저장"을 클릭했을 때 수정된 내용을 서버로 보낼 수 있도록 설정
-            $(this).off("click").on("click", function() {
+        var row = $(this).closest('tr'); // 해당 행을 찾기
+        var button = $(this); // 현재 버튼 참조
+        var isEditMode = button.text() === "저장";
 
-                event.preventDefault();
-                // 해당 행의 입력값들을 가져옴
-                var professorId = row.find('input[name="professor_id"]').val();
-                var userName = row.find('input[name="user_name"]').val();
-                var majorCode = row.find('input[name="majorcode"]').val();
-                var birthDate = row.find('input[name="birthDate"]').val();
-                var gender = row.find('select[name="gender"]').val();
-                var address = row.find('input[name="address"]').val();
-                var phone = row.find('input[name="phone"]').val();
-                var email = row.find('input[name="email"]').val();
-                var employDate = row.find('input[name="employDate"]').val();
+        if (isEditMode) {
+            // "저장" 상태일 때: 입력값 저장 처리
+            var professorId = row.find('input[name="professor_id"]').val();
+            var userName = row.find('input[name="user_name"]').val();
+            var majorCode = row.find('input[name="majorcode"]').val();
+            var birthDate = row.find('input[name="birthDate"]').val();
+            var gender = row.find('select[name="gender"]').val();
+            var address = row.find('input[name="address"]').val();
+            var phone = row.find('input[name="phone"]').val();
+            var email = row.find('input[name="email"]').val();
+            var employDate = row.find('input[name="employDate"]').val();
 
-                // AJAX 요청을 보냄
-                $.ajax({
-                    url: '<%=contextPath%>/professor/updateProfessor.do', // 서블릿의 URL 매핑
-                    type: 'POST',
-                    data: {
-                        professor_id: professorId,
-                        user_name: userName,
-                        majorcode: majorCode,
-                        birthDate: birthDate,
-                        gender: gender,
-                        address: address,
-                        phone: phone,
-                        email: email,
-                        employDate: employDate
-                    },
-                    success: function(response) {
-
-                        if (response === "수정 완료") {
-                            alert("수정이 완료되었습니다.");
-                            // 수정이 완료되면 버튼을 다시 "정보수정"으로 바꿈
-                            $(this).text("정보수정");
-                            row.find('input, select').prop('disabled', true); // 입력 필드를 다시 비활성화
-                        } else {
-                            alert("수정 실패");
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert("수정 실패: " + error);
+            // AJAX 요청
+            $.ajax({
+                url: '<%=contextPath%>/professor/updateProfessor.do',
+                type: 'POST',
+                data: {
+                    professor_id: professorId,
+                    user_name: userName,
+                    majorcode: majorCode,
+                    birthDate: birthDate,
+                    gender: gender,
+                    address: address,
+                    phone: phone,
+                    email: email,
+                    employDate: employDate
+                },
+                success: function(response) {
+                    if (response === "수정 완료") {
+                        alert("수정이 완료되었습니다.");
+                        button.text("정보수정"); // 버튼 텍스트 변경
+                        row.find('input, select').prop('disabled', true); // 입력 필드 비활성화
+                    } else {
+                        alert("수정 실패");
                     }
-                });
+                },
+                error: function(xhr, status, error) {
+                    alert("수정 실패: " + error);
+                }
             });
-        });
+        } else {
+            // "정보수정" 상태일 때: 입력 필드 활성화
+            row.find('input, select').prop('disabled', false);
+            button.text("저장"); // 버튼 텍스트 변경
+        }
     });
+});
 
     // 교수 삭제
     function deleteProfessor(professorId) {
