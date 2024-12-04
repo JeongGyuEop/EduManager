@@ -114,6 +114,8 @@ function saveEdit(courseId) {
                 $('#saveBtn_' + courseId).hide();
                 $('#cancelBtn_' + courseId).hide();
                 alert("강의 수정 완료!");
+
+                location.reload(); // 페이지 새로 고침
             } else {
                 alert("강의 수정에 실패했습니다.");
             }

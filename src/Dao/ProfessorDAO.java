@@ -122,7 +122,7 @@ public class ProfessorDAO {
 		            String query = "SELECT p.professor_id, u.user_name, u.birthDate, u.gender, u.address, "
 		                         + "u.phone, p.majorcode, u.email, p.employment_date "
 		                         + "FROM user u "
-		                         + "JOIN professor_info p ON u.user_id = p.user_id ";
+		                         + "JOIN professor_info p ON u.user_id = p.user_id ORDER BY p.professor_id DESC";
 		            
 		            // 조건문이 하나 이상 있을 때만 WHERE 절 추가
 		            boolean hasCondition = false;

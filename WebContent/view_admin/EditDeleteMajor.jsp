@@ -138,7 +138,6 @@
             },
             success: function(response) {
                 console.log("Update successful");
-                alert("수정 또는 삭제에 성공했습니다.");
                 location.reload();
             },
             error: function(xhr, status, error) {
@@ -191,7 +190,7 @@
         <h2 id="major-title"><i class="fas fa-trash"></i> 학과 수정 및 삭제</h2>
         <form id="major-form" action="<%=contextPath%>/major/searchMajor.do" method="get">
             <label for="searchMajor">학과 이름 또는 학과 번호:</label>
-            <input type="text" id="searchMajor" name="searchMajor" placeholder="학과 이름 또는 번호를 입력하세요">
+            <input type="text" id="searchMajor" name="searchMajor" placeholder="학과 이름 또는 학과 코드를 입력하세요">
             <input type="submit" value="검색">
         </form>
 
