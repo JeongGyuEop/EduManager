@@ -465,7 +465,8 @@ public class ClassroomDAO {
 		                 + "JOIN course c ON e.course_id = c.course_id "
 		                 + "LEFT JOIN assignment a ON c.course_id = a.course_id "
 		                 + "LEFT JOIN period_management p ON a.assignment_id = p.reference_id AND p.type = '과제' "
-		                 + "WHERE e.student_id = ? AND a.title IS NOT NULL";
+		                 + "WHERE e.student_id = ? AND a.title IS NOT NULL "
+		                 + "limit 5";
 		    try {
 		    	con = ds.getConnection();
 		        pstmt = con.prepareStatement(query);
@@ -507,7 +508,8 @@ public class ClassroomDAO {
 		                 + "FROM enrollment e "
 		                 + "JOIN course c ON e.course_id = c.course_id "
 		                 + "LEFT JOIN classroom_notice n ON c.course_id = n.course_id "
-		                 + "WHERE e.student_id = ? AND n.title IS NOT NULL";
+		                 + "WHERE e.student_id = ? AND n.title IS NOT NULL "
+		                 + "limit 5";
 		    try {
 		    	con = ds.getConnection();
 		        pstmt = con.prepareStatement(query);
