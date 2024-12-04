@@ -158,9 +158,6 @@ public class ClassroomService {
 		// 수강신청 기간 정보 조회 
 	    LocalDateTime[] period = classroomdao.getEnrollmentPeriod();
 	    
-	    System.out.println(period[0]);
-	    System.out.println(period[1]);
-	    
 	    if (period == null || period[0] == null || period[1] == null) {
 	        return false; // 기간 정보가 없으면 false 반환
 	    }

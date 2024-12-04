@@ -199,7 +199,7 @@ public class AdminDAO {
 	        + "u.phone, u.email, u.role, a.admin_id, a.department, a.access_level "
 	        + "FROM user u "
 	        + "LEFT JOIN admin_info a ON u.user_id = a.user_id "
-	        + "WHERE u.role = '관리자'";
+	        + "WHERE u.role = '관리자' ORDER BY a.admin_id DESC";
 
 	    List<AdminVo> memberList = new ArrayList<>();
 

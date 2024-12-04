@@ -212,15 +212,12 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
         // "정보수정" 버튼을 클릭했을 때 해당 행의 입력 필드를 활성화
         $(".edit-btn").on("click", function(event) {
             event.preventDefault();
+            
             var row = $(this).closest('tr'); // 해당 행을 찾기
-            row.find('input, select').prop('disabled', false); // 해당 행의 모든 input, select 활성화
-            $(this).text("저장"); // "정보수정"을 "저장"으로 변경
+            var button = $(this);
+            var isEditMode = button.text() === "저장";
 
-            // "저장"을 클릭했을 때 수정된 내용을 서버로 보낼 수 있도록 설정
-            $(this).off("click").on("click", function() {
-
-                event.preventDefault();
-                // 해당 행의 입력값들을 가져옴
+            if(isEditMode) {
                 var professorId = row.find('input[name="professor_id"]').val();
                 var userName = row.find('input[name="user_name"]').val();
                 var majorCode = row.find('input[name="majorcode"]').val();
@@ -251,7 +248,7 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
                         if (response === "수정 완료") {
                             alert("수정이 완료되었습니다.");
                             // 수정이 완료되면 버튼을 다시 "정보수정"으로 바꿈
-                            $(this).text("정보수정");
+                            button.text("정보수정");
                             row.find('input, select').prop('disabled', true); // 입력 필드를 다시 비활성화
                         } else {
                             alert("수정 실패");
@@ -261,7 +258,10 @@ List<ProfessorVo> professorList = (List<ProfessorVo>) request.getAttribute("prof
                         alert("수정 실패: " + error);
                     }
                 });
-            });
+            } else {
+            	row.find('input, select').prop('disabled', false);
+            	button.text("저장");
+            }
         });
     });
 
