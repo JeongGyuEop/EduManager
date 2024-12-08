@@ -38,7 +38,7 @@ import Vo.ScheduleVo;
 public class BoardController extends HttpServlet {
 	
 	private static final String API_URL = "https://api.odcloud.kr/api/15119003/v1/uddi:1e2e76a4-4f20-4333-b213-ef48bcc229e2"; // 공공 데이터 API URL
-    private static final String API_KEY = "7tx2GdotjwcVVoEbUMYHBmLh1U%2BGByBoL8%2B2cRyFeJ5G1HHRDFO9kLORh5IKMxALLLurfzPVEQTriUxq90qchA%3D%3D"; // 발급받은 API 키
+    private static final String API_KEY = "iMwPtfguErXt3nsomu%2B9iu%2FU2zBFzQful35yqHJsSfw4Bpjuo1eEihp1oUGZ0SuKJSWklDADykKuQs7SOL8ESA%3D%3D"; // 발급받은 API 키
 
 	private static final long serialVersionUID = 1L;
 	BoardService boardservice;
@@ -443,6 +443,7 @@ public class BoardController extends HttpServlet {
 			case "/bookShopMap.bo":
 			    // 모든 데이터를 가져옴
 			    List<JSONObject> allData = boardservice.fetchAllData(API_URL, API_KEY);
+			    
 		        // JSP에 "dataString" 전달
 		        request.setAttribute("apiData", allData);
 			        
