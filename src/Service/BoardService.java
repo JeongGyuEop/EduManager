@@ -151,15 +151,15 @@ public class BoardService {
 	}
 
 	//=======================
-	// 중고서점 API 사
+	// 중고서점 API 사용
 	public List<JSONObject> fetchAllData(String apiUrl, String apiKey) {
 	    
 	    List<JSONObject> allData = new ArrayList<>(); // 데이터를 저장할 리스트
 	    int page = 1; // 첫 번째 페이지
-	    int perPage = 20; // 한 페이지당 데이터 수를 20으로 설정
-	    boolean hasNextPage = true;
+	    int perPage = 50; // 한 페이지당 데이터 수를 50으로 설정
+//	    boolean hasNextPage = true;
 	        
-	    while (hasNextPage) {
+//	    while (hasNextPage) {
 	        try {
 
 	            URI uri = new URI(apiUrl + "?serviceKey=" + apiKey + "&page=" + page + "&perPage=" + perPage);
@@ -189,23 +189,23 @@ public class BoardService {
 	                }
 	                
 	                // 페이징 처리
-	                long currentCount = (long) jsonObject.get("currentCount"); // 현재 가져온 데이터 수
-	                long totalCount = (long) jsonObject.get("totalCount"); // 전체 데이터 수
-	                if (allData.size() >= totalCount || currentCount < perPage) {
-	                    hasNextPage = false; // 더 이상 가져올 데이터가 없음
-	                } else {
-	                    page++; // 다음 페이지 요청
-	                }
-	                
+//	                long currentCount = (long) jsonObject.get("currentCount"); // 현재 가져온 데이터 수
+//	                long totalCount = (long) jsonObject.get("totalCount"); // 전체 데이터 수
+//	                if (allData.size() >= totalCount || currentCount < perPage) {
+//	                    hasNextPage = false; // 더 이상 가져올 데이터가 없음
+//	                } else {
+//	                    page++; // 다음 페이지 요청
+//	                }
+//	                
 	            } else {
 	                System.out.println("API 호출 실패. 응답 코드: " + responseCode);
-	                hasNextPage = false;
+//	                hasNextPage = false;
 	            }
 	        } catch (Exception e) {
 	            e.printStackTrace();
-	            hasNextPage = false;
+//	            hasNextPage = false;
 	        }
-	    }
+//	    }
 	    return allData; // 데이터 반환
 	}
 

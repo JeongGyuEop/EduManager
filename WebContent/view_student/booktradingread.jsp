@@ -278,7 +278,7 @@ body {
 			<table>
 				<thead>
 					<tr>
-						<th colspan="2"><label for="postTitle">구 제목:</label> <%=postTitle%></th>
+						<th colspan="2"><label for="postTitle">글 제목:</label> <%=postTitle%></th>
 					</tr>
 					<tr>
 						<td class="align-left"><label for="postUserId">작성자:</label> <%=postUserId%></td>
