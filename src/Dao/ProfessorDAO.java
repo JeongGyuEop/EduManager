@@ -122,17 +122,19 @@ public class ProfessorDAO {
 		            String query = "SELECT p.professor_id, u.user_name, u.birthDate, u.gender, u.address, "
 		                         + "u.phone, p.majorcode, u.email, p.employment_date "
 		                         + "FROM user u "
-		                         + "JOIN professor_info p ON u.user_id = p.user_id ORDER BY p.professor_id DESC";
+		                         + "JOIN professor_info p ON u.user_id = p.user_id ";
 		            
 		            // 조건문이 하나 이상 있을 때만 WHERE 절 추가
 		            boolean hasCondition = false;
 		            if (prof_id != null && !prof_id.isEmpty()) {
-		                query += " WHERE p.professor_id = ?";
+		                query += " WHERE p.professor_id = ? ";
 		                hasCondition = true;
 		            }
 		            if (majorCode != null && !majorCode.isEmpty()) {
-		                query += hasCondition ? " AND p.majorcode = ?" : " WHERE p.majorcode = ?";
+		                query += hasCondition ? " AND p.majorcode = ? " : " WHERE p.majorcode = ?";
 		            }
+		            
+		            query += " ORDER BY p.professor_id DESC";
 
 		            System.out.println(query);
 		            
