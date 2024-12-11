@@ -79,7 +79,7 @@ EduManager는 다음과 같은 주요 디렉토리 및 파일로 구성되어 �
 1. Apache Tomcat 9 이상 설치.
 2. EduManager.war 파일을 Tomcat의 webapps 디렉토리에 배치.
 3. Tomcat 서버를 시작.
-4. 브라우저에서 http://localhost:8080/EduManager/member/main.bo로 접속.
+4. 브라우저에서 http://www.javatjoeun.kro.kr:8080/EduManager/member/main.bo 로 접속.
 
 ## 개발자
 - Jeong Gyu Eop (Leader)
