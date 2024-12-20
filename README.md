@@ -85,3 +85,5 @@ EduManager는 다음과 같은 주요 디렉토리 및 파일로 구성되어 �
 - Jeong Gyu Eop (Leader)
 - Lee Jun Hui
 - Kwon Yu Jin
+- Yee Seung Hyun
+- Kang Min Kyeong
